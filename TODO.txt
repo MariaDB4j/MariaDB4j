@@ -1,0 +1,12 @@
+FIRST
+
+- use http://commons.apache.org/exec/ ?
+
+BEFORE RELEASING
+
+- Apache License header everywhere
+
+
+LATER
+
+- split project into multi-module, e.g. mariaDB4j-core, mariaDB4j-db-win, mariaDB4j-db-linux (and still have a mariaDB4j:mariaDB4j which aggregates them all like initial version)
