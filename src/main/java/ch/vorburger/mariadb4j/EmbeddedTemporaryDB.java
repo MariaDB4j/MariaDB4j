@@ -22,28 +22,29 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 
 /**
- * Embedded Temporary MariaDB (mysql), useful e.g. for integration tests.
+ * Embedded Temporary MariaDB (or MySQL®), useful e.g. for integration tests.
  * 
  * You don't need to give the path to your data directory here, as it
  * automatically picks a temporary data directory (and it automatically unpacks
- * a MariaDB (mysql) to a temporary basedir if needed).
+ * a MariaDB (or MySQL®) to a temporary basedir if needed).
  * 
  * @author Michael Vorburger
  */
 public class EmbeddedTemporaryDB extends EmbeddedDB {
 
 	private boolean deleteOnExit = true;
-	
+
 	public EmbeddedTemporaryDB() {
-		super(tempDataDir());
+		this(tempDataDir());
 	}
 
 	protected EmbeddedTemporaryDB(File datadir) {
 		super(datadir);
+		autoInstall = true;
 	}
 
 	protected static File tempDataDir() {
-		// TODO Implement deleteOnExit 
+		// TODO Implement deleteOnExit
 		throw new UnsupportedOperationException();
 	}
 

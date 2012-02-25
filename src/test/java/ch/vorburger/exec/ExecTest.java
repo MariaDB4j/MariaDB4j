@@ -38,24 +38,24 @@ public class ExecTest {
 	public void testSelfTerminatingExec() throws Exception {
 		String cmd;
 		String arg;
-		
+
 		switch (Platform.is()) {
 		case Windows:
 			cmd = "cmd.exe";
 			arg = "/C dir /X";
 			break;
-			
+
 		case Mac:
 		case Linux:
 		case Solaris:
 			cmd = "ls";
 			arg = "-lh";
 			break;
-			
+
 		default:
 			throw new MariaDB4jException("Unexpected Platform, write test...");
 		}
-		
+
 		CommandBuilder pf = new CommandBuilder();
 		pf.setExecutable(cmd);
 		pf.addArgument(arg);
@@ -83,5 +83,4 @@ public class ExecTest {
 		// TODO assert state is stopped?
 	}
 
-	
 }

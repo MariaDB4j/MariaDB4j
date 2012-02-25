@@ -1,12 +1,15 @@
-FIRST
+BEFORE RELEASING v1
 
-- use http://commons.apache.org/exec/ ?
-
-BEFORE RELEASING
+- contact ABC & XYZ if any thoughts or advise?
 
 - Apache License header everywhere
 
+- LICENSE.txt & README must be included in JAR
 
-LATER
+- pom.xml must have all required elements so that this doesn't complain: 
+  mvn clean verify source:jar javadoc:jar repository:bundle-create
 
-- split project into multi-module, e.g. mariaDB4j-core, mariaDB4j-db-win, mariaDB4j-db-linux (and still have a mariaDB4j:mariaDB4j which aggregates them all like initial version)
+
+LATER, MAY BE
+
+- could split project into multi-module, e.g. exec4j, mariaDB4j-core, mariaDB4j-db-win, mariaDB4j-db-linux (and still have a mariaDB4j:mariaDB4j which aggregates them all like initial version)

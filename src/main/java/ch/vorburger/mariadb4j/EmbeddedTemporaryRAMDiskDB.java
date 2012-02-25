@@ -22,7 +22,7 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 
 /**
- * Embedded MariaDB (mysql).
+ * Embedded MariaDB (or MySQL®).
  * 
  * This one tries to, if possible, place the temporary DB on a RAM Disk.
  * 
@@ -35,8 +35,8 @@ public class EmbeddedTemporaryRAMDiskDB extends EmbeddedTemporaryDB {
 	}
 
 	protected static File tempRAMDiskDataDir() {
-		// TODO Implement deleteOnExit! How to avoid duplicating? 
+		// TODO Implement deleteOnExit! How to avoid duplicating?
 		throw new UnsupportedOperationException();
 	}
-	
+
 }

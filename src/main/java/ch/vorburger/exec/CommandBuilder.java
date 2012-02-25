@@ -26,12 +26,14 @@ import java.util.List;
 /**
  * Builder for a Process.
  * 
- * This is only called CommandBuilder instead of ProcessBuilder so as to not cause confusion with java.lang.ProcessBuilder.
+ * This is only called CommandBuilder instead of ProcessBuilder so as to not
+ * cause confusion with java.lang.ProcessBuilder.
  * 
  * @author Michael Vorburger
  */
 public class CommandBuilder {
-
+	// TODO I think I'll delete this class!
+	
 	// TODO Directory, Environment
 
 	private String executableName;
@@ -45,9 +47,11 @@ public class CommandBuilder {
 	}
 
 	/**
-	 * Sets the executable name.
-	 * The arguments lists is cleared.
-	 * @param name Name of executable process (e.g. "dir" or "notepad.exe" or "ls" etc.)
+	 * Sets the executable name. The arguments lists is cleared.
+	 * 
+	 * @param name
+	 *            Name of executable process (e.g. "dir" or "notepad.exe" or
+	 *            "ls" etc.)
 	 */
 	public void setExecutable(String name) {
 		this.executableName = name;

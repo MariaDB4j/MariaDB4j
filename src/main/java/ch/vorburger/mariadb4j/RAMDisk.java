@@ -24,25 +24,26 @@ import java.io.File;
 /**
  * RAM Disk.
  * 
- * This (of course) doesn't actually implement a RAM Disk in Java,
- * but simply appropriately launches a number of built-in OS specific commands. 
+ * This (of course) doesn't actually implement a RAM Disk in Java, but simply
+ * appropriately launches a number of built-in OS specific commands.
  * 
  * @author Michael Vorburger
  */
 public class RAMDisk {
 
-	// TODO post on http://stackoverflow.com/questions/4428217/can-a-java-ram-disk-be-created-to-be-used-with-the-java-io-api
-	
+	// TODO post on
+	// http://stackoverflow.com/questions/4428217/can-a-java-ram-disk-be-created-to-be-used-with-the-java-io-api
+
 	private boolean stopOnExit = true;
 
 	public RAMDisk(long sizeInBytes) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public void start() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public void stop() {
 		throw new UnsupportedOperationException();
 	}

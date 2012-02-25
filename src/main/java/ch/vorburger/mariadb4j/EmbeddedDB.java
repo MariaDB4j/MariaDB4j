@@ -22,10 +22,10 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 
 /**
- * Embedded MariaDB (mysql).
+ * Embedded MariaDB (or MySQL®).
  * 
  * You need to only give the path to your data directory here; this
- * automatically unpacks a MariaDB (mysql) to a temporary basedir if needed.
+ * automatically unpacks a MariaDB (or MySQL®) to a temporary basedir if needed.
  * 
  * @author Michael Vorburger
  */
@@ -33,6 +33,10 @@ public class EmbeddedDB extends DB {
 
 	public EmbeddedDB(File datadir) {
 		super(basedir(), datadir);
+	}
+
+	public EmbeddedDB(String datadir) {
+		this(new File(datadir));
 	}
 
 	protected static File basedir() {

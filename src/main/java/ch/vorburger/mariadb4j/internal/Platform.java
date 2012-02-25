@@ -31,9 +31,11 @@ public class Platform {
 	public enum Type {
 		Windows("win32"), Linux("linux"), Mac("mac"), Solaris("solaris");
 		private final String code;
+
 		Type(String code) {
 			this.code = code;
 		}
+
 		public String getCode() {
 			return this.code;
 		}
@@ -41,8 +43,9 @@ public class Platform {
 
 	public static Type is() throws MariaDB4jException {
 		String os = System.getProperty("os.name");
-		// See here for possible values of os.name: http://lopica.sourceforge.net/os.html
-		if (os .startsWith("Windows")) {
+		// See here for possible values of os.name:
+		// http://lopica.sourceforge.net/os.html
+		if (os.startsWith("Windows")) {
 			return Type.Windows;
 		} else if ("Linux".equals(os)) {
 			return Type.Linux;
@@ -54,9 +57,9 @@ public class Platform {
 			throw new MariaDB4jException("Sorry, MariaDB4j doesn't support the '" + os + "' OS.");
 		}
 	}
-	
+
 	public static boolean is(Type type) throws MariaDB4jException {
 		return is() == type;
 	}
-	
+
 }
