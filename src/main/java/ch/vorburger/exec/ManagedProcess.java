@@ -20,6 +20,8 @@
 package ch.vorburger.exec;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +46,19 @@ public class ManagedProcess {
 	// https://github.com/mifos/head/blob/master/war-test-exec/src/test/java/org/mifos/server/wartestexec/MifosExecutableWARBasicTest.java)
 
 	private final ProcessBuilder pb;
+	private final ManagedProcessOutputListener output;
+	
 	private Process proc = null;
 	Integer exitValue = null;
 
 	public ManagedProcess(ProcessBuilder pb) {
-		pb.redirectErrorStream(true);
+		pb.redirectErrorStream(true); // TODO remove once stdout/stderr are properly separately managed below...
+		output = new ManagedProcessOutputListener() {
+			@Override
+			public void writeStdOut(int c) {
+				System.out.write(c);
+			}
+		};
 		this.pb = pb;
 	}
 
@@ -56,15 +66,50 @@ public class ManagedProcess {
 		this(mpb.getProcessBuilder());
 	}
 	
-	public void start() throws IOException {
-		if (isRunning()) {
+	public void start() throws IOException, IllegalStateException {
+		if (isAlive()) {
 			throw new IllegalStateException(procName() + " is still running, use another ManagedProcess instance to launch another one");
 		}
 		if (logger.isInfoEnabled())
 			logger.info("Starting {}", procName());
 		proc = pb.start();
+		registerThreads();
 	}
-	
+
+	private void registerThreads() {
+		final InputStream stdout = proc.getInputStream();
+		// TODO Buffer Stream!
+		// TODO How/when will we close this stream/s?
+		Thread stdOutThread = new Thread("Thread to manage stdout of " + procName()) {
+			@Override
+			public void run() {
+				// TODO use: byte[] buffer = new byte[1024];
+				while(true) {
+					try {
+						int nextByte = stdout.read();
+						output.writeStdOut(nextByte);
+					} catch (IOException e) {
+						logger.warn("Unexpected IOException from stdout.read()", e);
+					}
+				}
+			}
+		};
+		stdOutThread.setDaemon(true);
+		stdOutThread.start();
+
+// TODO properly manage stdout/stderr separately 
+//		InputStream stderr = proc.getErrorStream();
+	}
+
+	/**
+	 * Kills the Process.
+	 * 
+	 * If it has already exited by itself before, just returns it exit value.
+	 * Callers might want to use isRunning() to distinguish.
+	 * 
+	 * @return the exit value of the process
+	 * @throws IllegalStateException if the Process was already explicitly stopped (destroy() already called) 
+	 */
 	public int destroy() throws IllegalStateException {
 		if (logger.isInfoEnabled())
 			logger.info("About to stop {}", procName());
@@ -73,13 +118,10 @@ public class ManagedProcess {
 		}
 		proc.destroy();
 		try {
-			// NOTE: We MUST waitFor() after destroy() - on some platforms at
-			// least, such as Windows
+			// NOTE: We MUST waitFor() after destroy() - on some platforms at least, such as Windows
 			exitValue = proc.waitFor();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(
-					"Huh?! This should normally never happen here..."
-							+ procName(), e);
+			throw new RuntimeException("Huh?! This should normally never happen here..." + procName(), e);
 		}
 		proc = null;
 		if (logger.isInfoEnabled())
@@ -87,7 +129,16 @@ public class ManagedProcess {
 		return exitValue;
 	}
 
-	public boolean isRunning() {
+
+	// Java Doc shamelessly copy/pasted from java.lang.Thread#isAlive() :
+    /**
+     * Tests if this process is alive. 
+     * A process is alive if it has been started and has not yet terminated. 
+     *
+     * @return  <code>true</code> if this process is alive;
+     *          <code>false</code> otherwise.
+     */
+	public boolean isAlive() {
 		if (proc == null)
 			return false;
 		try {
@@ -113,6 +164,12 @@ public class ManagedProcess {
 		}
 		return exitValue;
 	}
+
+	// TODO public int waitFor() throws IllegalStateException;
+	// TODO public int waitFor(long maxWaitUntilDestroyTimeout) throws IllegalStateException;
+
+	// ... must throw exception if proc terminates with something else than expected message
+	// TODO public int waitFor(String consoleMessage, maxWaitUntilDestroyTimeout) throws IllegalStateException;
 	
 	private String procName() {
 		return "Program \""

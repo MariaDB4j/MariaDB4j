@@ -40,7 +40,7 @@ public class ManagedProcessTest {
 	@Test
 	public void testBasics() throws Exception {
 		ManagedProcess p = new ManagedProcess(new ProcessBuilder());
-		assertThat(p.isRunning(), is(false));
+		assertThat(p.isAlive(), is(false));
 		try {
 			p.destroy();
 		} catch (IllegalStateException e) {
@@ -78,11 +78,11 @@ public class ManagedProcessTest {
 		}
 
 		ManagedProcess p = new ManagedProcess(pb);
-		assertThat(p.isRunning(), is(false));
+		assertThat(p.isAlive(), is(false));
 		p.start();
-		assertThat(p.isRunning(), is(true));
+		assertThat(p.isAlive(), is(true));
 		Thread.sleep(200); 
-		assertThat(p.isRunning(), is(false));
+		assertThat(p.isAlive(), is(false));
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		// TODO Check that output was produced?
 	}
@@ -97,11 +97,11 @@ public class ManagedProcessTest {
 		}
 		
 		ManagedProcess p = new ManagedProcess(pb);
-		assertThat(p.isRunning(), is(false));
+		assertThat(p.isAlive(), is(false));
 		p.start();
-		assertThat(p.isRunning(), is(true));
+		assertThat(p.isAlive(), is(true));
 		p.destroy();
-		assertThat(p.isRunning(), is(false));
+		assertThat(p.isAlive(), is(false));
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 	}
 

@@ -21,6 +21,7 @@ package ch.vorburger.exec;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,11 +80,25 @@ public class ManagedProcessBuilder {
 	}
 
 	/**
+	 * @see ProcessBuilder#command()
+	 */
+    public List<String> command() {
+    	return pb.command();
+    }
+	
+	/**
 	 * @see ProcessBuilder#directory(File)
 	 */
 	public ManagedProcessBuilder directory(File directory) {
 		pb.directory(directory);
 		return this;
+	}
+	
+	/**
+	 * @see ProcessBuilder#directory()
+	 */
+	public File directory() {
+		return pb.directory();
 	}
 	
 	/**

@@ -22,7 +22,6 @@ package ch.vorburger.mariadb4j;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.junit.Test;
@@ -36,6 +35,14 @@ import org.junit.Test;
  */
 public class MariaDB4jSampleTutorialTest {
 
+	@Test(expected=IOException.class)
+	public void testBadFixedPathMariaDB4j() throws Exception {
+		final String basedir = "src/main/resources/"; // No DB here
+		DB db = new DB(basedir, "target/db1");
+		db.start(); // will fail with an IOException
+	}
+
+	
 	@Test
 	// TODO This test, with it's hard-coded basedir, will probably be removed when I do the resource lookup for embedded, which will implicitly test the same
 	public void testFixedPathMariaDB4j() throws Exception {

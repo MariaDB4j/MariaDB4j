@@ -40,6 +40,8 @@ import ch.vorburger.exec.ManagedProcessBuilder;
  */
 public class DB {
 
+	// TODO Refactor out some of the code here into a kind of ManagedDaemonProcess class?
+	
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
 	protected final File basedir;
@@ -88,15 +90,27 @@ public class DB {
 		
 		mysqld.start();
 		
-		// TODO This is typically for launching a "daemon" - refactor to re-use how?
-		// TODO Check if still running? Nah, because we don't know the time it takes...
-		// TODO Wait for message?
-		//if (!mysqld.isRunning())
+		// TODO What follows is typically for launching a "daemon" - refactor to re-use how?
 			
-		// TODO ping the port to make sure it's up?¨
+		// TODO Wait for an "OK" message instead of waiting
+		// Just "give it a sec"...
+		try {
+			// 300ms is somewhat arbitrary
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
+		// ... to see if we immediately terminated?
+		if (!mysqld.isAlive()) {
+			throw new IOException("Starting DB failed; it already exited with: " + mysqld.exitValue()); // TODO msg
+		}
+
+		// TODO ping the port to make sure it's up?
 		
 		if (autoShutdown) { 
-			Runtime.getRuntime().addShutdownHook(new Thread() {
+			String threadName = "Shutdown Hook Thread for DB " + mysqld.toString();
+			Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
+				@Override
 			    public void run() {
 			    	stopOnShutdown();
 			    }
@@ -110,8 +124,14 @@ public class DB {
 	}
 	
 	public void stop() {
-		// TODO Can (should?) we do better than just kill the mysqld process?!
-		mysqld.destroy();
+		// TODO Can (should?) we do better than just kill the mysqld process?! 
+		// There is probably something we can send through SQL, but then we need the driver...
+		// Does it make any difference?
+		if (mysqld.isAlive()) {
+			mysqld.destroy();
+		} else {
+			logger.warn("DB is asked to stop(), but actually already isn't running anymore - suspicious?"); 
+		}
 	}
 
 	public void check() {
