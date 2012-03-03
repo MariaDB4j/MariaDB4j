@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Embedded MariaDB (or MySQL®).
@@ -31,11 +32,11 @@ import java.io.File;
  */
 public class EmbeddedDB extends DB {
 
-	public EmbeddedDB(File datadir) {
+	public EmbeddedDB(File datadir) throws IOException {
 		super(basedir(), datadir);
 	}
 
-	public EmbeddedDB(String datadir) {
+	public EmbeddedDB(String datadir) throws IOException {
 		this(new File(datadir));
 	}
 

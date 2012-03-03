@@ -31,4 +31,5 @@ public class MariaDB4jException extends Exception {
 		super(message);
 	}
 
+	// TODO Check at the end if a dedicated Exception was actually really of much use - remove otherwise
 }

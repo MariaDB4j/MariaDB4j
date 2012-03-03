@@ -20,11 +20,13 @@
 package ch.vorburger.mariadb4j;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.vorburger.exec.CommandBuilder;
+import ch.vorburger.exec.ManagedProcess;
+import ch.vorburger.exec.ManagedProcessBuilder;
 
 /**
  * MariaDB (or MySQL®) Controller.
@@ -41,55 +43,41 @@ public class DB {
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
 	protected final File basedir;
+	protected final File bindir;
 	protected final File datadir;
 	
-	//protected final CommandBuilder mysqld = null; // new CommandBuilder().setExecutable("mysqld");
-	protected final ProcessBuilder mysqld;
+	protected final ManagedProcess mysqld;
+	protected final ManagedProcess mysql_install;
 
-	// false by default here, but make it true by default in some subclasses
-	protected boolean autoInstall = false;
+	protected boolean autoShutdown = true;
+	protected boolean autoInstallDB = false; // false by default here, but make it true by default in some subclasses
 	protected boolean autoCheck = true;
 
-	public DB(File basedir, File datadir) {
+	public DB(File basedir, File datadir) throws IOException {
 		super();
+		
 		checkExistingReadableDirectory(basedir, "basedir");
 		this.basedir = basedir;
+		this.bindir = new File(basedir, "bin");
+		
 		checkNonNull(datadir, "datadir");
 		this.datadir = datadir;
 		
-		mysqld = new ProcessBuilder("mysqld", "--datadir", datadir.getAbsolutePath()).directory(basedir);
+		mysqld = new ManagedProcessBuilder().add(cmd("mysqld")).add("--datadir").add(datadir).build();
+		mysql_install = new ManagedProcessBuilder().add(cmd("mysql_install_db")).add("--datadir").add(datadir).build();
 	}
 
-	public DB(String basedir, String datadir) {
+	public DB(String basedir, String datadir) throws IOException {
 		this(new File(basedir), new File(datadir));
-	}
-
-	protected void checkExistingReadableDirectory(File dir, String name) {
-		checkNonNull(dir, name);
-		if (!dir.isDirectory())
-			throw new IllegalArgumentException(name + " is not a directory");
-		if (!dir.canRead())
-			throw new IllegalArgumentException(name + " can not be read");
-	}
-
-	private void checkNonNull(File dir, String name) {
-		if (dir == null)
-			throw new IllegalArgumentException(name + " == null");
-		if (dir.getAbsolutePath().trim().length() == 0)
-			throw new IllegalArgumentException(name + " is empty");
 	}
 
 	public void installDB() {
 		throw new UnsupportedOperationException();
 	}
 
-	public void check() {
-		throw new UnsupportedOperationException();
-	}
-
-	public void start() {
+	public void start() throws IOException {
 		if (!datadir.exists()) {
-			if (autoInstall) {
+			if (autoInstallDB) {
 				logger.info("Starting DB and DataDir {} does not exist, so going to creating it as autoInstall is true", datadir);
 				installDB();
 			}
@@ -97,13 +85,40 @@ public class DB {
 				logger.warn("Starting DB and DataDir {} does not exist, this isn't not going to end well... you might want to set autoInstall = true?", datadir);
 			}
 		}
-		throw new UnsupportedOperationException();
+		
+		mysqld.start();
+		
+		// TODO This is typically for launching a "daemon" - refactor to re-use how?
+		// TODO Check if still running? Nah, because we don't know the time it takes...
+		// TODO Wait for message?
+		//if (!mysqld.isRunning())
+			
+		// TODO ping the port to make sure it's up?¨
+		
+		if (autoShutdown) { 
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+			    public void run() {
+			    	stopOnShutdown();
+			    }
+			});
+		}
 	}
 
+	private void stopOnShutdown() {
+		logger.info("Shutdown Hook: JVM is about to exit! Stopping DB...");
+		stop();
+	}
+	
 	public void stop() {
+		// TODO Can (should?) we do better than just kill the mysqld process?!
+		mysqld.destroy();
+	}
+
+	public void check() {
 		throw new UnsupportedOperationException();
 	}
 
+	// ----
 	// TODO document port, autoInstall & autoCheck etc. properly...
 	
 	/**
@@ -120,12 +135,12 @@ public class DB {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean isAutoInstall() {
-		return autoInstall;
+	public boolean isAutoInstallDB() {
+		return autoInstallDB;
 	}
 
-	public void setAutoInstall(boolean autocreate) {
-		this.autoInstall = autocreate;
+	public void setAutoInstallDB(boolean autocreate) {
+		this.autoInstallDB = autocreate;
 	}
 
 	public boolean isAutoCheck() {
@@ -135,4 +150,34 @@ public class DB {
 	public void setAutoCheck(boolean autoCheck) {
 		this.autoCheck = autoCheck;
 	}
+
+	public boolean isAutoShutdown() {
+		return autoShutdown;
+	}
+
+	public void setAutoShutdown(boolean autoShutdown) {
+		this.autoShutdown = autoShutdown;
+	}
+
+	// ---
+	
+	protected File cmd(String cmdName) {
+		return new File(bindir, cmdName);
+	}
+	
+	protected void checkExistingReadableDirectory(File dir, String name) {
+		checkNonNull(dir, name);
+		if (!dir.isDirectory())
+			throw new IllegalArgumentException(name + " is not a directory");
+		if (!dir.canRead())
+			throw new IllegalArgumentException(name + " can not be read");
+	}
+
+	protected void checkNonNull(File dir, String name) {
+		if (dir == null)
+			throw new IllegalArgumentException(name + " == null");
+		if (dir.getAbsolutePath().trim().length() == 0)
+			throw new IllegalArgumentException(name + " is empty");
+	}
+
 }

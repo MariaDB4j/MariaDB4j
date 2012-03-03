@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Embedded MariaDB (or MySQL®).
@@ -30,7 +31,7 @@ import java.io.File;
  */
 public class EmbeddedTemporaryRAMDiskDB extends EmbeddedTemporaryDB {
 
-	public EmbeddedTemporaryRAMDiskDB() {
+	public EmbeddedTemporaryRAMDiskDB() throws IOException {
 		super(tempRAMDiskDataDir());
 	}
 

@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Embedded Temporary MariaDB (or MySQL®), useful e.g. for integration tests.
@@ -34,13 +35,13 @@ public class EmbeddedTemporaryDB extends EmbeddedDB {
 
 	private boolean deleteOnExit = true;
 
-	public EmbeddedTemporaryDB() {
+	public EmbeddedTemporaryDB() throws IOException {
 		this(tempDataDir());
 	}
 
-	protected EmbeddedTemporaryDB(File datadir) {
+	protected EmbeddedTemporaryDB(File datadir) throws IOException {
 		super(datadir);
-		autoInstall = true;
+		autoInstallDB = true;
 	}
 
 	protected static File tempDataDir() {

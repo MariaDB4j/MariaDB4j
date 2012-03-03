@@ -20,7 +20,6 @@
 package ch.vorburger.exec;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,64 +27,55 @@ import org.slf4j.LoggerFactory;
 import ch.vorburger.mariadb4j.DB;
 
 /**
- * OS Process (Executable, Program, Command)
+ * Managed OS Process (Executable, Program, Command).
  * 
  * @see http://commons.apache.org/exec/ but this is Java 1.5 (ProcessBuilder based) compliant, and simpler.  Could be switched later, if there is any need.
  * 
  * @author Michael Vorburger
  */
-public class RunningProcess {
-	// TODO rename to Program?
+public class ManagedProcess {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
-	// TODO Directory, Environment
 	// TODO suck output... in a rolling buffer? @see my
 	// https://github.com/mifos/head/blob/master/war-test-exec/src/test/java/org/mifos/server/wartestexec/MifosExecutableWARBasicTest.java)
-	// TODO Needs timeout management? (again @see my
+	
+	// TODO Needs timeout management? with a waitFor(long ms) (again @see my
 	// https://github.com/mifos/head/blob/master/war-test-exec/src/test/java/org/mifos/server/wartestexec/MifosExecutableWARBasicTest.java)
 
 	private final ProcessBuilder pb;
 	private Process proc = null;
+	Integer exitValue = null;
 
-//	/**
-//	 * Helper to create a ProcessBuilder with redirectErrorStream = true (instead of default false), and the environment cleaned
-//	 * 
-//	 * @return ProcessBuilder
-//	 */
-//	public static ProcessBuilder newProcessBuilder() {
-//		ProcessBuilder pb = new ProcessBuilder();
-//		pb.redirectErrorStream(true);
-//		pb.environment().clear();
-//		return pb;
-//	}
-	
-	public RunningProcess(ProcessBuilder pb) {
+	public ManagedProcess(ProcessBuilder pb) {
 		pb.redirectErrorStream(true);
 		this.pb = pb;
 	}
+
+	public ManagedProcess(ManagedProcessBuilder mpb) {
+		this(mpb.getProcessBuilder());
+	}
 	
-	// package-local, NOT public
-	RunningProcess(List<String> line) throws IOException {
-		pb = new ProcessBuilder(line);
-		pb.redirectErrorStream(true);
+	public void start() throws IOException {
+		if (isRunning()) {
+			throw new IllegalStateException(procName() + " is still running, use another ManagedProcess instance to launch another one");
+		}
 		if (logger.isInfoEnabled())
 			logger.info("Starting {}", procName());
 		proc = pb.start();
 	}
-
-	public int quit() throws IllegalStateException {
+	
+	public int destroy() throws IllegalStateException {
 		if (logger.isInfoEnabled())
 			logger.info("About to stop {}", procName());
 		if (proc == null) {
 			throw new IllegalStateException(procName() + " was already stopped");
 		}
 		proc.destroy();
-		int r;
 		try {
 			// NOTE: We MUST waitFor() after destroy() - on some platforms at
 			// least, such as Windows
-			r = proc.waitFor();
+			exitValue = proc.waitFor();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(
 					"Huh?! This should normally never happen here..."
@@ -93,16 +83,42 @@ public class RunningProcess {
 		}
 		proc = null;
 		if (logger.isInfoEnabled())
-			logger.info("Successfully stopped {}, exit value = {}", procName(),
-					r);
-		return r;
+			logger.info("Successfully stopped {}, exit value = {}", procName(), exitValue);
+		return exitValue;
 	}
 
+	public boolean isRunning() {
+		if (proc == null)
+			return false;
+		try {
+			exitValue = proc.exitValue();
+			return false;
+		} catch (IllegalThreadStateException e) {
+			return true;
+		}
+	}
+	
+    /**
+     * Returns the exit value for the subprocess.
+     *
+     * @return  the exit value of the subprocess represented by this 
+     *          <code>Process</code> object. by convention, the value 
+     *          <code>0</code> indicates normal termination.
+     * @exception  IllegalStateException  if the subprocess represented 
+     *             by this <code>ManagedProcess</code> object has not yet terminated.
+     */
+	public int exitValue() throws IllegalStateException {
+		if (exitValue == null) {
+			throw new IllegalStateException(procName() + " hasn't run yet - no exit value available");
+		}
+		return exitValue;
+	}
+	
 	private String procName() {
 		return "Program \""
 				+ pb.command()
 				+ "\""
-				+ (pb.directory() == null ? "" : " (in directory \""
+				+ (pb.directory() == null ? "" : " (in working directory \""
 						+ pb.directory().getAbsolutePath() + "\")");
 	}
 

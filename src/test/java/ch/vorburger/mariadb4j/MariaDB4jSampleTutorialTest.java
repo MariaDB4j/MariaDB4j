@@ -19,6 +19,7 @@
  */
 package ch.vorburger.mariadb4j;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -37,14 +38,14 @@ public class MariaDB4jSampleTutorialTest {
 
 	@Test
 	// TODO This test, with it's hard-coded basedir, will probably be removed when I do the resource lookup for embedded, which will implicitly test the same
-	public void testFixedPathMariaDB4j() throws SQLException {
+	public void testFixedPathMariaDB4j() throws Exception {
 		final String basedir = "src/main/resources/ch/vorburger/mariadb4j/mariadb-5.3.4-rc/win32";
 		DB db = new DB(basedir, "target/db1");
 		db.start();
 	}
 
 	@Test
-	public void testEmbeddedMariaDB4j() throws SQLException {
+	public void testEmbeddedMariaDB4j() throws Exception {
 		DB db = new EmbeddedDB("target/db1");
 		db.start();
 

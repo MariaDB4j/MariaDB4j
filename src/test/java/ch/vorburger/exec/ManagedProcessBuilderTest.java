@@ -19,7 +19,11 @@
  */
 package ch.vorburger.exec;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -28,59 +32,40 @@ import ch.vorburger.mariadb4j.internal.Platform;
 import ch.vorburger.mariadb4j.internal.Platform.Type;
 
 /**
- * Test Exec Util.
+ * Tests {@link ManagedProcessBuilder}.
  * 
  * @author Michael Vorburger
  */
-public class ExecTest {
+public class ManagedProcessBuilderTest {
 
 	@Test
-	public void testSelfTerminatingExec() throws Exception {
-		String cmd;
-		String arg;
-
-		switch (Platform.is()) {
-		case Windows:
-			cmd = "cmd.exe";
-			arg = "/C dir /X";
-			break;
-
-		case Mac:
-		case Linux:
-		case Solaris:
-			cmd = "ls";
-			arg = "-lh";
-			break;
-
-		default:
-			throw new MariaDB4jException("Unexpected Platform, write test...");
-		}
-
-		CommandBuilder pf = new CommandBuilder();
-		pf.setExecutable(cmd);
-		pf.addArgument(arg);
-		RunningProcess shortProc = pf.exec();
-		// TODO assert non-null PID?
-		// TODO assert state is running?
-		Thread.sleep(2000);
-		// TODO assert state is stopped?
-	}
-
-	@Test
-	public void testMustTerminateExec() throws Exception {
-		String cmd;
+	public void test() throws IOException, MariaDB4jException {
+		ManagedProcessBuilder mbp = new ManagedProcessBuilder();
+		
+		File exec = new File("/somewhere/absolute/bin/thing");
+		mbp.add(exec);
+		
+		File arg = new File("relative/file");
+		mbp.add(arg);
+		
+		File cwd = mbp.getProcessBuilder().directory();
 		if (Platform.is(Type.Windows)) {
-			cmd = "notepad.exe";
+			assertThat(cwd.getAbsolutePath(), is("C:\\somewhere\\absolute\\bin"));
 		} else {
-			cmd = "vi";
+			assertThat(cwd.getAbsolutePath(), is("/somewhere/absolute/bin"));			
 		}
-		CommandBuilder pf = new CommandBuilder();
-		pf.setExecutable(cmd);
-		RunningProcess blockingProc = pf.exec();
-		// TODO assert non-null PID?
-		Thread.sleep(2000);
-		blockingProc.quit();
-		// TODO assert state is stopped?
+		
+		String arg0 = mbp.getProcessBuilder().command().get(0);
+		if (Platform.is(Type.Windows)) {
+			assertThat(arg0, is("C:\\somewhere\\absolute\\bin\\thing"));
+		} else {
+			assertThat(arg0, is("/somewhere/absolute/bin/thing"));			
+		}
+		
+		String arg1 = mbp.getProcessBuilder().command().get(1);
+		assertNotSame(arg1, "relative/file");
+		assertTrue(arg1.contains("relative"));
+		//System.out.println(arg1);
 	}
 
 }
