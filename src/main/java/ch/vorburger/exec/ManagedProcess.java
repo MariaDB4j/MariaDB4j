@@ -28,10 +28,10 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.ProcessDestroyer;
+import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.vorburger.mariadb4j.DB;
 
 /**
  * Managed OS Process (Executable, Program, Command).
@@ -55,10 +55,10 @@ public class ManagedProcess {
 	private final Executor executor = new DefaultExecutor();
 	private final DefaultExecuteResultHandler resultHandler = new LoggingExecuteResultHandler();
 	private final ExecuteWatchdog watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
-	// TODO private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
-	// TODO boolean destroyOnShutdown, boolean isDestroyOnShutdown(), setDestroyOnShutdown(boolean flag) 
+	private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
 
 	private boolean isAlive = false;
+	private boolean destroyOnShutdown = true; 
 	
 	/**
 	 * Package local constructor.
@@ -96,6 +96,10 @@ public class ManagedProcess {
 		
 		executor.execute(commandLine, resultHandler);
 		isAlive = true;
+		
+		if (destroyOnShutdown) {
+			executor.setProcessDestroyer(shutdownHookProcessDestroyer);
+		}
 	}
 
 	/**
@@ -172,6 +176,17 @@ public class ManagedProcess {
 
 	// ---
 	
+	public boolean isDestroyOnShutdown() {
+		return destroyOnShutdown;
+	}
+	
+	public ManagedProcess setDestroyOnShutdown(boolean flag) {
+		this.destroyOnShutdown = flag;
+		return this;
+	}
+	
+	// ---
+	
 	// TODO rename to procLongName()
 	// TODO intro a String procShortName_pid(), e.g. "mysqld-1", from a static Map<String execName, Integer id)
 	private String procName() {
@@ -198,6 +213,14 @@ public class ManagedProcess {
 				logger.error(procName() + " failed unexpectedly", e);
 			}
 			isAlive = false;
+		}
+	}
+
+	public static class LoggingShutdownHookProcessDestroyer extends ShutdownHookProcessDestroyer {
+		@Override
+		public void run() {
+			logger.info("Shutdown Hook: JVM is about to exit! Going to kill destroyOnShutdown processes...");
+			super.run();
 		}
 	}
 

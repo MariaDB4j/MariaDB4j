@@ -40,8 +40,6 @@ import ch.vorburger.exec.ManagedProcessBuilder;
  */
 public class DB {
 
-	// TODO Refactor out some of the code here into a kind of ManagedDaemonProcess class?
-	
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
 	protected final File basedir;
@@ -107,21 +105,22 @@ public class DB {
 
 		// TODO ping the port to make sure it's up?
 		
-		if (autoShutdown) { 
-			String threadName = "Shutdown Hook Thread for DB " + mysqld.toString();
-			Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
-				@Override
-			    public void run() {
-			    	stopOnShutdown();
-			    }
-			});
-		}
+		mysqld.setDestroyOnShutdown(autoShutdown);
+// destroyOnShutdow will just kill mysqld process; if there is a better way later, use our own shutdown hook  instead: (and mysqld.setDestroyOnShutdown(false)) 
+//		if (autoShutdown) {
+//			String threadName = "Shutdown Hook Thread for DB " + mysqld.toString();
+//			Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
+//				@Override
+//			    public void run() {
+//			    	stopOnShutdown();
+//			    }
+//			});
+//		}
 	}
 
-	private void stopOnShutdown() {
-		logger.info("Shutdown Hook: JVM is about to exit! Stopping DB...");
-		stop();
-	}
+//	private void stopOnShutdown() {
+//		stop();
+//	}
 	
 	public void stop() {
 		// TODO Can (should?) we do better than just kill the mysqld process?! 
