@@ -19,10 +19,15 @@
  */
 package ch.vorburger.exec;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,103 +35,106 @@ import ch.vorburger.mariadb4j.DB;
 
 /**
  * Managed OS Process (Executable, Program, Command).
+ * Created by {@link ManagedProcessBuilder#build()}.
  * 
- * @see http://commons.apache.org/exec/ but this is Java 1.5 (ProcessBuilder based) compliant, and simpler.  Could be switched later, if there is any need.
+ * Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec), into SLF4J. 
+ * 
+ * @see Internally based on http://commons.apache.org/exec/ but intentionally not exposing this; could be switched later, if there is any need.
  * 
  * @author Michael Vorburger
  */
 public class ManagedProcess {
-	
-	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
-	// TODO suck output... in a rolling buffer? @see my
-	// https://github.com/mifos/head/blob/master/war-test-exec/src/test/java/org/mifos/server/wartestexec/MifosExecutableWARBasicTest.java)
-	
-	// TODO Needs timeout management? with a waitFor(long ms) (again @see my
-	// https://github.com/mifos/head/blob/master/war-test-exec/src/test/java/org/mifos/server/wartestexec/MifosExecutableWARBasicTest.java)
+	private static final Logger logger = LoggerFactory.getLogger(ManagedProcess.class);
 
-	private final ProcessBuilder pb;
-	private final ManagedProcessOutputListener output;
+	// TODO to suck output... in a rolling buffer? @see my
+		//	public void setCollectOutput(long size);
+		//	public String getOutput();
 	
-	private Process proc = null;
-	Integer exitValue = null;
+	private final CommandLine commandLine;
+	private final Executor executor = new DefaultExecutor();
+	private final DefaultExecuteResultHandler resultHandler = new LoggingExecuteResultHandler();
+	private final ExecuteWatchdog watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
+	// TODO private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
+	// TODO boolean destroyOnShutdown, boolean isDestroyOnShutdown(), setDestroyOnShutdown(boolean flag) 
 
-	public ManagedProcess(ProcessBuilder pb) {
-		pb.redirectErrorStream(true); // TODO remove once stdout/stderr are properly separately managed below...
-		output = new ManagedProcessOutputListener() {
-			@Override
-			public void writeStdOut(int c) {
-				System.out.write(c);
-			}
-		};
-		this.pb = pb;
+	private boolean isAlive = false;
+	
+	/**
+	 * Package local constructor.
+	 * 
+	 * Keep ch.vorburger.exec's API separate from Apache Commons Exec, so it COULD be replaced.
+	 * 
+	 * @see ManagedProcessBuilder#build()
+	 * 
+	 * @param commandLine Apache Commons Exec CommandLine 
+	 * @param directory Working directory, or null
+	 */
+	ManagedProcess(CommandLine commandLine, File directory) {
+		this.commandLine = commandLine;
+		if (directory != null) {
+			executor.setWorkingDirectory(directory);
+		}
+		executor.setWatchdog(watchDog);
 	}
 
-	public ManagedProcess(ManagedProcessBuilder mpb) {
-		this(mpb.getProcessBuilder());
-	}
-	
+	/**
+	 * Starts the Process.
+	 * 
+	 * This method always immediately returns (i.e. launches the process asynchronously).
+	 * Use the different waitFor... methods if you want to "block" on the spawned process.
+	 * 
+	 * @throws IOException if it couldn't be started
+	 * @throws IllegalStateException if it's already started
+	 */
 	public void start() throws IOException, IllegalStateException {
-		if (isAlive()) {
+		if (isAlive) {
 			throw new IllegalStateException(procName() + " is still running, use another ManagedProcess instance to launch another one");
 		}
 		if (logger.isInfoEnabled())
 			logger.info("Starting {}", procName());
-		proc = pb.start();
-		registerThreads();
-	}
-
-	private void registerThreads() {
-		final InputStream stdout = proc.getInputStream();
-		// TODO Buffer Stream!
-		// TODO How/when will we close this stream/s?
-		Thread stdOutThread = new Thread("Thread to manage stdout of " + procName()) {
-			@Override
-			public void run() {
-				// TODO use: byte[] buffer = new byte[1024];
-				while(true) {
-					try {
-						int nextByte = stdout.read();
-						output.writeStdOut(nextByte);
-					} catch (IOException e) {
-						logger.warn("Unexpected IOException from stdout.read()", e);
-					}
-				}
-			}
-		};
-		stdOutThread.setDaemon(true);
-		stdOutThread.start();
-
-// TODO properly manage stdout/stderr separately 
-//		InputStream stderr = proc.getErrorStream();
+		
+		executor.execute(commandLine, resultHandler);
+		isAlive = true;
 	}
 
 	/**
 	 * Kills the Process.
 	 * 
-	 * If it has already exited by itself before, just returns it exit value.
-	 * Callers might want to use isRunning() to distinguish.
-	 * 
-	 * @return the exit value of the process
 	 * @throws IllegalStateException if the Process was already explicitly stopped (destroy() already called) 
 	 */
-	public int destroy() throws IllegalStateException {
-		if (logger.isInfoEnabled())
-			logger.info("About to stop {}", procName());
-		if (proc == null) {
-			throw new IllegalStateException(procName() + " was already stopped");
+// TODO Clarify/test/document behaviour if proc terminated by itself
+//	 * If it has already exited by itself before, just returns it exit value.
+//	 * Callers might want to use isRunning() to distinguish.
+//	 * 
+// TODO There isn't really an exit value on destroy(), is there? (* @return the exit value of the process)
+	public void /*int*/ destroy() throws IllegalStateException {
+		// 
+		// if destroy() is ever giving any trouble, the org.openqa.selenium.os.ProcessUtils may be of interest
+		//
+		if (!isAlive) {
+			throw new IllegalStateException(procName() + " was already stopped (or never started)");
 		}
-		proc.destroy();
-		try {
-			// NOTE: We MUST waitFor() after destroy() - on some platforms at least, such as Windows
-			exitValue = proc.waitFor();
-		} catch (InterruptedException e) {
-			throw new RuntimeException("Huh?! This should normally never happen here..." + procName(), e);
-		}
-		proc = null;
 		if (logger.isInfoEnabled())
-			logger.info("Successfully stopped {}, exit value = {}", procName(), exitValue);
-		return exitValue;
+			logger.info("Going to destroy {}", procName());
+		watchDog.destroyProcess();
+		
+//		try {
+//			// NOTE: We MUST waitFor() after destroy() - on some platforms at least, such as Windows
+//			Process proc;
+//			int exitValue = proc.waitFor();
+//		} catch (InterruptedException e) {
+//			throw new RuntimeException("Huh?! This should normally never happen here..." + procName(), e);
+//		}
+
+		// TODO There isn't really an exit value on destroy(), is there? 
+//		int exitValue = exitValue();
+		if (logger.isInfoEnabled())
+			logger.info("Successfully destroyed {}", procName());
+//			logger.info("Successfully stopped {}, exit value = {}", procName(), exitValue);
+		
+		isAlive = false;
+//		return exitValue;
 	}
 
 
@@ -139,14 +147,8 @@ public class ManagedProcess {
      *          <code>false</code> otherwise.
      */
 	public boolean isAlive() {
-		if (proc == null)
-			return false;
-		try {
-			exitValue = proc.exitValue();
-			return false;
-		} catch (IllegalThreadStateException e) {
-			return true;
-		}
+		// NOPE: return !resultHandler.hasResult();
+		return isAlive;
 	}
 	
     /**
@@ -159,10 +161,7 @@ public class ManagedProcess {
      *             by this <code>ManagedProcess</code> object has not yet terminated.
      */
 	public int exitValue() throws IllegalStateException {
-		if (exitValue == null) {
-			throw new IllegalStateException(procName() + " hasn't run yet - no exit value available");
-		}
-		return exitValue;
+		return resultHandler.getExitValue();
 	}
 
 	// TODO public int waitFor() throws IllegalStateException;
@@ -170,13 +169,36 @@ public class ManagedProcess {
 
 	// ... must throw exception if proc terminates with something else than expected message
 	// TODO public int waitFor(String consoleMessage, maxWaitUntilDestroyTimeout) throws IllegalStateException;
+
+	// ---
 	
+	// TODO rename to procLongName()
+	// TODO intro a String procShortName_pid(), e.g. "mysqld-1", from a static Map<String execName, Integer id)
 	private String procName() {
-		return "Program \""
-				+ pb.command()
-				+ "\""
-				+ (pb.directory() == null ? "" : " (in working directory \""
-						+ pb.directory().getAbsolutePath() + "\")");
+		return "Program " + commandLine.toString() 
+				+ (executor.getWorkingDirectory() == null ? "" : 
+					" (in working directory " + executor.getWorkingDirectory().getAbsolutePath() + ")");
+	}
+
+	// ---
+
+	public class LoggingExecuteResultHandler extends DefaultExecuteResultHandler {
+		@Override
+		public void onProcessComplete(int exitValue) {
+			super.onProcessComplete(exitValue);
+			// TODO use procShortName_pid() ?
+			logger.info(procName() + " just exited, with value " + exitValue);
+			isAlive = false;
+		}
+
+		@Override
+		public void onProcessFailed(ExecuteException e) {
+			super.onProcessFailed(e);
+			if (!watchDog.killedProcess()) {
+				logger.error(procName() + " failed unexpectedly", e);
+			}
+			isAlive = false;
+		}
 	}
 
 }

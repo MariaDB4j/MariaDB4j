@@ -19,8 +19,8 @@
  */
 package ch.vorburger.exec;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
@@ -39,7 +39,7 @@ public class ManagedProcessTest {
 
 	@Test
 	public void testBasics() throws Exception {
-		ManagedProcess p = new ManagedProcess(new ProcessBuilder());
+		ManagedProcess p = new ManagedProcessBuilder("someExec").build();
 		assertThat(p.isAlive(), is(false));
 		try {
 			p.destroy();
@@ -51,58 +51,60 @@ public class ManagedProcessTest {
 		} catch (IllegalStateException e) {
 			// as expected
 		}
-	}
-
-	@Test(expected=IOException.class)
-	public void testNonExistingCommand() throws Exception {
-		ManagedProcess p = new ManagedProcess(new ProcessBuilder("something"));
-		p.start();
+		try {
+			p.start();	
+		} catch (IOException e) {
+			// as expected
+		}
 	}
 	
 	@Test
 	public void testSelfTerminatingExec() throws Exception {
-		ProcessBuilder pb;
+		ManagedProcessBuilder pb;
 		switch (Platform.is()) {
 		case Windows:
-			pb = new ProcessBuilder("cmd.exe", "/C dir /X");
+			pb = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir").addArgument("/X");
 			break;
 
 		case Mac:
 		case Linux:
 		case Solaris:
-			pb = new ProcessBuilder("true", "--version");
+			pb = new ManagedProcessBuilder("true").addArgument("--version");
 			break;
 
 		default:
 			throw new MariaDB4jException("Unexpected Platform, improve the test dude...");
 		}
 
-		ManagedProcess p = new ManagedProcess(pb);
+		ManagedProcess p = pb.build();
 		assertThat(p.isAlive(), is(false));
 		p.start();
-		assertThat(p.isAlive(), is(true));
-		Thread.sleep(200); 
-		assertThat(p.isAlive(), is(false));
+		// Not reliable, as timing dependent: assertThat(p.isAlive(), is(true));
+		// TODO replace the sleep() by pb.waitFor(), once implemented
+		Thread.sleep(200); // should be enough to give it time to run? 
+		// Not reliable, as timing dependent: 
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
-		// TODO Check that output was produced?
+		assertThat(p.isAlive(), is(false));
+		// TODO Check that output was produced, pb.getOutput(), once implemented
 	}
 
 	@Test
 	public void testMustTerminateExec() throws Exception {
-		ProcessBuilder pb;
+		ManagedProcessBuilder pb;
 		if (Platform.is(Type.Windows)) {
-			pb = new ProcessBuilder("notepad.exe");
+			pb = new ManagedProcessBuilder("notepad.exe");
 		} else {
-			pb = new ProcessBuilder("vi"); // TODO ?
+			pb = new ManagedProcessBuilder("vi"); // TODO ?
 		}
 		
-		ManagedProcess p = new ManagedProcess(pb);
+		ManagedProcess p = pb.build();
 		assertThat(p.isAlive(), is(false));
 		p.start();
+		Thread.sleep(200); 
 		assertThat(p.isAlive(), is(true));
 		p.destroy();
 		assertThat(p.isAlive(), is(false));
-		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
+		// can not: p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 	}
 
 }

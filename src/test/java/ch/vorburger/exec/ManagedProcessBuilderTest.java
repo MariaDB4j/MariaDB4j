@@ -40,29 +40,29 @@ public class ManagedProcessBuilderTest {
 
 	@Test
 	public void test() throws IOException, MariaDB4jException {
-		ManagedProcessBuilder mbp = new ManagedProcessBuilder();
-		
-		File exec = new File("/somewhere/absolute/bin/thing");
-		mbp.add(exec);
+		ManagedProcessBuilder mbp = new ManagedProcessBuilder(new File("/somewhere/absolute/bin/thing"));
 		
 		File arg = new File("relative/file");
-		mbp.add(arg);
+		mbp.addArgument(arg);
 		
-		File cwd = mbp.getProcessBuilder().directory();
+		// needed to force auto-setting the directory
+		mbp.getCommandLine();
+		
+		File cwd = mbp.directory();
 		if (Platform.is(Type.Windows)) {
 			assertThat(cwd.getAbsolutePath(), is("C:\\somewhere\\absolute\\bin"));
 		} else {
 			assertThat(cwd.getAbsolutePath(), is("/somewhere/absolute/bin"));			
 		}
 		
-		String arg0 = mbp.getProcessBuilder().command().get(0);
+		String arg0 = mbp.executable();
 		if (Platform.is(Type.Windows)) {
 			assertThat(arg0, is("C:\\somewhere\\absolute\\bin\\thing"));
 		} else {
 			assertThat(arg0, is("/somewhere/absolute/bin/thing"));			
 		}
 		
-		String arg1 = mbp.getProcessBuilder().command().get(1);
+		String arg1 = mbp.getArguments()[0];
 		assertNotSame(arg1, "relative/file");
 		assertTrue(arg1.contains("relative"));
 		//System.out.println(arg1);

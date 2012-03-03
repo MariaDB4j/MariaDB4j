@@ -28,6 +28,8 @@ import ch.vorburger.mariadb4j.MariaDB4jException;
  */
 public class Platform {
 
+	// TOOD replace by org.apache.commons.exec.OS ?
+	
 	public enum Type {
 		Windows("win32"), Linux("linux"), Mac("mac"), Solaris("solaris");
 		private final String code;

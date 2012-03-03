@@ -65,8 +65,8 @@ public class DB {
 		checkNonNull(datadir, "datadir");
 		this.datadir = datadir;
 		
-		mysqld = new ManagedProcessBuilder().add(cmd("mysqld")).add("--datadir").add(datadir).build();
-		mysql_install = new ManagedProcessBuilder().add(cmd("mysql_install_db")).add("--datadir").add(datadir).build();
+		mysqld = new ManagedProcessBuilder(cmd("mysqld")).addArgument("--datadir").addArgument(datadir).build();
+		mysql_install = new ManagedProcessBuilder(cmd("mysql_install_db")).addArgument("--datadir").addArgument(datadir).build();
 	}
 
 	public DB(String basedir, String datadir) throws IOException {
@@ -126,6 +126,7 @@ public class DB {
 	public void stop() {
 		// TODO Can (should?) we do better than just kill the mysqld process?! 
 		// There is probably something we can send through SQL, but then we need the driver...
+		// How do other folks send SIGTERM rather than the SIGKILL from Java?!?
 		// Does it make any difference?
 		if (mysqld.isAlive()) {
 			mysqld.destroy();
