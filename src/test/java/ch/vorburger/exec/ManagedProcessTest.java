@@ -21,6 +21,7 @@ package ch.vorburger.exec;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -79,13 +80,19 @@ public class ManagedProcessTest {
 
 		ManagedProcess p = pb.build();
 		assertThat(p.isAlive(), is(false));
+		p.setConsoleBufferMaxLines(5);
 		p.start();
 		assertThat(p.isAlive(), is(true));
 		// TODO waitFor("bytes free")
 		p.waitFor();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		assertThat(p.isAlive(), is(false));
-		// TODO Check that output was produced, pb.getOutput(), once implemented
+		
+		String recentConsoleOutput = p.getConsole();
+		assertTrue(recentConsoleOutput.length() > 10);
+		assertTrue(recentConsoleOutput.contains("\n"));
+		System.out.println("Recent " + p.getConsoleBufferMaxLines() + " lines of console output:");
+		System.out.println(recentConsoleOutput);
 	}
 
 	@Test

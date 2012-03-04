@@ -42,8 +42,10 @@ import ch.vorburger.exec.SLF4jLogOutputStream.Type;
  * 
  * Intended for controlling external "tools", often "daemons", which produce some text-based control output. 
  * In this form not yet suitable for programs returning binary data via stdout (but could be extended).
+ * Currently it does not yet offer stdin support (but could if needed).
  *
- * Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec), into SLF4J. 
+ * Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec), 
+ * including logging the processes stdout & stderr, into SLF4J (not the System.out.Console). 
  *
  * @see Internally based on http://commons.apache.org/exec/ but intentionally not exposing this; could be switched later, if there is any need.
  * 
@@ -66,6 +68,8 @@ public class ManagedProcess {
 	private boolean isAlive = false;
 	private boolean destroyOnShutdown = true;
 	private String procShortName;
+	private int consoleBufferMaxLines = 50;
+	private RollingLogOutputStream console;
 	
 	/**
 	 * Package local constructor.
@@ -101,22 +105,27 @@ public class ManagedProcess {
 		if (logger.isInfoEnabled())
 			logger.info("Starting {}", procLongName());
 		
-		executor.execute(commandLine, resultHandler);
-		isAlive = true;
-
+		MultiOutputStream stdouts = new MultiOutputStream();
+		MultiOutputStream stderrs = new MultiOutputStream();
+		PumpStreamHandler outputHandler = new PumpStreamHandler(stdouts, stderrs);
+		executor.setStreamHandler(outputHandler);
+		
 		String pid = procShortName();
-		SLF4jLogOutputStream stdout = new SLF4jLogOutputStream(logger, pid, Type.stdout);
-		SLF4jLogOutputStream stderr = new SLF4jLogOutputStream(logger, pid, Type.stderr);
-		PumpStreamHandler slf4jOutputHandler = new PumpStreamHandler(stdout, stderr);
+		stdouts.addOutputStream(new SLF4jLogOutputStream(logger, pid, Type.stdout));
+		stderrs.addOutputStream(new SLF4jLogOutputStream(logger, pid, Type.stderr));
 		
-		MultiExecuteStreamHandler multiExecuteStreamHandler = new MultiExecuteStreamHandler();
-		multiExecuteStreamHandler.add(slf4jOutputHandler);
+		if (consoleBufferMaxLines > 0) {
+			console = new RollingLogOutputStream(consoleBufferMaxLines);
+			stdouts.addOutputStream(console);
+			stderrs.addOutputStream(console);
+		}			
 		
-		executor.setStreamHandler(multiExecuteStreamHandler);
-
 		if (destroyOnShutdown) {
 			executor.setProcessDestroyer(shutdownHookProcessDestroyer);
 		}
+		
+		executor.execute(commandLine, resultHandler);
+		isAlive = true;
 	}
 
 	/**
@@ -225,7 +234,20 @@ public class ManagedProcess {
 		this.destroyOnShutdown = flag;
 		return this;
 	}
+
+	public void setConsoleBufferMaxLines(int consoleBufferMaxLines) {
+		this.consoleBufferMaxLines = consoleBufferMaxLines;
+	}
+
+	public int getConsoleBufferMaxLines() {
+		return consoleBufferMaxLines;
+	}
+
+	public String getConsole() {
+		return console.getRecentLines();
+	}
 	
+
 	// ---
 	
 	private String procShortName() {
