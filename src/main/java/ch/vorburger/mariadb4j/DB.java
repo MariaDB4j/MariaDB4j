@@ -91,6 +91,7 @@ public class DB {
 		// TODO What follows is typically for launching a "daemon" - refactor to re-use how?
 			
 		// TODO Wait for an "OK" message instead of waiting
+		// mysqld.waitFor("some-OK-message-to-determine");
 		// Just "give it a sec"...
 		try {
 			// 300ms is somewhat arbitrary

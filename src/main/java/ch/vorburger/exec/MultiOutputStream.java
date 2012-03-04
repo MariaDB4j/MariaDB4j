@@ -52,8 +52,13 @@ public class MultiOutputStream extends OutputStream {
 		}
 	}
 	
-	public MultiOutputStream addOutputStream(OutputStream delegate) {
+	public synchronized MultiOutputStream addOutputStream(OutputStream delegate) {
 		streams.add(delegate);
+		return this;
+	}
+
+	public synchronized MultiOutputStream removeOutputStream(OutputStream delegate) {
+		streams.remove(delegate);
 		return this;
 	}
 

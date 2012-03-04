@@ -55,10 +55,6 @@ public class ManagedProcess {
 
 	private static final Logger logger = LoggerFactory.getLogger(ManagedProcess.class);
 
-	// TODO to suck output... in a rolling buffer?
-		//	public void setCollectOutput(long size);
-		//	public String getOutput();
-	
 	private final CommandLine commandLine;
 	private final Executor executor = new DefaultExecutor();
 	private final DefaultExecuteResultHandler resultHandler = new LoggingExecuteResultHandler();
@@ -70,6 +66,8 @@ public class ManagedProcess {
 	private String procShortName;
 	private int consoleBufferMaxLines = 50;
 	private RollingLogOutputStream console;
+	private MultiOutputStream stdouts;
+	private MultiOutputStream stderrs;
 	
 	/**
 	 * Package local constructor.
@@ -105,8 +103,8 @@ public class ManagedProcess {
 		if (logger.isInfoEnabled())
 			logger.info("Starting {}", procLongName());
 		
-		MultiOutputStream stdouts = new MultiOutputStream();
-		MultiOutputStream stderrs = new MultiOutputStream();
+		stdouts = new MultiOutputStream();
+		stderrs = new MultiOutputStream();
 		PumpStreamHandler outputHandler = new PumpStreamHandler(stdouts, stderrs);
 		executor.setStreamHandler(outputHandler);
 		
@@ -222,7 +220,29 @@ public class ManagedProcess {
 	}
 
 	// ... must throw exception if proc terminates with something else than expected message
-	// TODO public int waitFor(String consoleMessage, maxWaitUntilDestroyTimeout) throws IllegalStateException;
+	public void waitFor(String messageInConsole) /*throws IllegalStateException*/ {
+		// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
+		if (getConsole().contains(messageInConsole)) {
+			logger.info("Asked to wait for \"{}\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
+			return;
+		}
+		
+		CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
+		stdouts.addOutputStream(checkingConsoleOutputStream);
+		stderrs.addOutputStream(checkingConsoleOutputStream);
+		
+		final int SLEEP_TIME_MS = 50;
+		logger.info("Thread is now going to wait for \"{}\" to appear in Console output of process {}", messageInConsole, procLongName());
+        while (!checkingConsoleOutputStream.hasSeenIt()) {
+            try {
+				Thread.sleep(SLEEP_TIME_MS);
+			} catch (InterruptedException e) {
+				throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+			}
+        }
+		stdouts.removeOutputStream(checkingConsoleOutputStream);
+		stderrs.removeOutputStream(checkingConsoleOutputStream);
+	}
 
 	// ---
 	
@@ -271,7 +291,6 @@ public class ManagedProcess {
 		@Override
 		public void onProcessComplete(int exitValue) {
 			super.onProcessComplete(exitValue);
-			// TODO use procShortName_pid() ?
 			logger.info(procLongName() + " just exited, with value " + exitValue);
 			isAlive = false;
 		}

@@ -83,7 +83,7 @@ public class ManagedProcessTest {
 		p.setConsoleBufferMaxLines(5);
 		p.start();
 		assertThat(p.isAlive(), is(true));
-		// TODO waitFor("bytes free")
+		p.waitFor("bytes free"); // just an illustration
 		p.waitFor();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		assertThat(p.isAlive(), is(false));
