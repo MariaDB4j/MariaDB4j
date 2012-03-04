@@ -40,8 +40,11 @@ import ch.vorburger.exec.SLF4jLogOutputStream.Type;
  * Managed OS Process (Executable, Program, Command).
  * Created by {@link ManagedProcessBuilder#build()}.
  * 
+ * Intended for controlling external "tools", often "daemons", which produce some text-based control output. 
+ * In this form not yet suitable for programs returning binary data via stdout (but could be extended).
+ *
  * Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec), into SLF4J. 
- * 
+ *
  * @see Internally based on http://commons.apache.org/exec/ but intentionally not exposing this; could be switched later, if there is any need.
  * 
  * @author Michael Vorburger
@@ -50,7 +53,7 @@ public class ManagedProcess {
 
 	private static final Logger logger = LoggerFactory.getLogger(ManagedProcess.class);
 
-	// TODO to suck output... in a rolling buffer? @see my
+	// TODO to suck output... in a rolling buffer?
 		//	public void setCollectOutput(long size);
 		//	public String getOutput();
 	
@@ -104,7 +107,12 @@ public class ManagedProcess {
 		String pid = procShortName();
 		SLF4jLogOutputStream stdout = new SLF4jLogOutputStream(logger, pid, Type.stdout);
 		SLF4jLogOutputStream stderr = new SLF4jLogOutputStream(logger, pid, Type.stderr);
-		executor.setStreamHandler(new PumpStreamHandler(stdout, stderr));
+		PumpStreamHandler slf4jOutputHandler = new PumpStreamHandler(stdout, stderr);
+		
+		MultiExecuteStreamHandler multiExecuteStreamHandler = new MultiExecuteStreamHandler();
+		multiExecuteStreamHandler.add(slf4jOutputHandler);
+		
+		executor.setStreamHandler(multiExecuteStreamHandler);
 
 		if (destroyOnShutdown) {
 			executor.setProcessDestroyer(shutdownHookProcessDestroyer);
