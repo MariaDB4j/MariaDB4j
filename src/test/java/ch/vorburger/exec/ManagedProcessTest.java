@@ -56,6 +56,7 @@ public class ManagedProcessTest {
 		} catch (IOException e) {
 			// as expected
 		}
+		p.waitFor();
 	}
 	
 	@Test
@@ -79,13 +80,11 @@ public class ManagedProcessTest {
 		ManagedProcess p = pb.build();
 		assertThat(p.isAlive(), is(false));
 		p.start();
-		// Not reliable, as timing dependent: assertThat(p.isAlive(), is(true));
-		// TODO replace the sleep() by pb.waitFor(), once implemented
-		Thread.sleep(200); // should be enough to give it time to run? 
-		// Not reliable, as timing dependent: 
+		assertThat(p.isAlive(), is(true));
+		// TODO waitFor("bytes free")
+		p.waitFor();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		assertThat(p.isAlive(), is(false));
-		// TODO waitFor("bytes free")
 		// TODO Check that output was produced, pb.getOutput(), once implemented
 	}
 
@@ -101,11 +100,10 @@ public class ManagedProcessTest {
 		ManagedProcess p = pb.build();
 		assertThat(p.isAlive(), is(false));
 		p.start();
-		Thread.sleep(200); 
 		assertThat(p.isAlive(), is(true));
-		p.destroy();
+		p.waitForAndDestroy(200);
 		assertThat(p.isAlive(), is(false));
-		// can not: p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
+		// can not: p.exitValue();
 	}
 
 }

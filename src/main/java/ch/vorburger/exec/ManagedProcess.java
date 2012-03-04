@@ -136,8 +136,9 @@ public class ManagedProcess {
 		if (!isAlive) {
 			throw new IllegalStateException(procLongName() + " was already stopped (or never started)");
 		}
-		if (logger.isInfoEnabled())
-			logger.info("Going to destroy {}", procLongName());
+		if (logger.isDebugEnabled())
+			logger.debug("Going to destroy {}", procLongName());
+
 		watchDog.destroyProcess();
 		
 //		try {
@@ -145,7 +146,7 @@ public class ManagedProcess {
 //			Process proc;
 //			int exitValue = proc.waitFor();
 //		} catch (InterruptedException e) {
-//			throw new RuntimeException("Huh?! This should normally never happen here..." + procName(), e);
+//			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
 //		}
 
 		// TODO There isn't really an exit value on destroy(), is there? 
@@ -185,8 +186,31 @@ public class ManagedProcess {
 		return resultHandler.getExitValue();
 	}
 
-	// TODO public int waitFor() throws IllegalStateException;
-	// TODO public int waitFor(long maxWaitUntilDestroyTimeout) throws IllegalStateException;
+	public void waitFor() /*throws IllegalStateException*/ {
+		try {
+			logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
+			resultHandler.waitFor();
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+		}
+	}
+
+	public void waitFor(long maxWaitUntilDestroyTimeout) /*throws IllegalStateException*/ {
+		try {
+			logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilDestroyTimeout, procLongName());
+			resultHandler.waitFor(maxWaitUntilDestroyTimeout);
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+		}
+	}
+	
+	public void waitForAndDestroy(long maxWaitUntilDestroyTimeout) /*throws IllegalStateException*/ {
+		waitFor(maxWaitUntilDestroyTimeout);
+		if (isAlive()) {
+			logger.info("Process didn't exit within max. {}ms, so going to destroy it now: {}", maxWaitUntilDestroyTimeout, procLongName());
+			destroy();
+		}
+	}
 
 	// ... must throw exception if proc terminates with something else than expected message
 	// TODO public int waitFor(String consoleMessage, maxWaitUntilDestroyTimeout) throws IllegalStateException;
