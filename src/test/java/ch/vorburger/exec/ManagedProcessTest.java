@@ -85,6 +85,7 @@ public class ManagedProcessTest {
 		// Not reliable, as timing dependent: 
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		assertThat(p.isAlive(), is(false));
+		// TODO waitFor("bytes free")
 		// TODO Check that output was produced, pb.getOutput(), once implemented
 	}
 

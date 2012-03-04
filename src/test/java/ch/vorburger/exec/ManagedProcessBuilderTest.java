@@ -39,7 +39,7 @@ import ch.vorburger.mariadb4j.internal.Platform.Type;
 public class ManagedProcessBuilderTest {
 
 	@Test
-	public void test() throws IOException, MariaDB4jException {
+	public void testManagedProcessBuilder() throws IOException, MariaDB4jException {
 		ManagedProcessBuilder mbp = new ManagedProcessBuilder(new File("/somewhere/absolute/bin/thing"));
 		
 		File arg = new File("relative/file");

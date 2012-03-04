@@ -29,9 +29,12 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.ProcessDestroyer;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.vorburger.exec.SLF4jLogOutputStream.Type;
 
 /**
  * Managed OS Process (Executable, Program, Command).
@@ -58,7 +61,8 @@ public class ManagedProcess {
 	private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
 
 	private boolean isAlive = false;
-	private boolean destroyOnShutdown = true; 
+	private boolean destroyOnShutdown = true;
+	private String procShortName;
 	
 	/**
 	 * Package local constructor.
@@ -89,14 +93,19 @@ public class ManagedProcess {
 	 */
 	public void start() throws IOException, IllegalStateException {
 		if (isAlive) {
-			throw new IllegalStateException(procName() + " is still running, use another ManagedProcess instance to launch another one");
+			throw new IllegalStateException(procLongName() + " is still running, use another ManagedProcess instance to launch another one");
 		}
 		if (logger.isInfoEnabled())
-			logger.info("Starting {}", procName());
+			logger.info("Starting {}", procLongName());
 		
 		executor.execute(commandLine, resultHandler);
 		isAlive = true;
-		
+
+		String pid = procShortName();
+		SLF4jLogOutputStream stdout = new SLF4jLogOutputStream(logger, pid, Type.stdout);
+		SLF4jLogOutputStream stderr = new SLF4jLogOutputStream(logger, pid, Type.stderr);
+		executor.setStreamHandler(new PumpStreamHandler(stdout, stderr));
+
 		if (destroyOnShutdown) {
 			executor.setProcessDestroyer(shutdownHookProcessDestroyer);
 		}
@@ -117,10 +126,10 @@ public class ManagedProcess {
 		// if destroy() is ever giving any trouble, the org.openqa.selenium.os.ProcessUtils may be of interest
 		//
 		if (!isAlive) {
-			throw new IllegalStateException(procName() + " was already stopped (or never started)");
+			throw new IllegalStateException(procLongName() + " was already stopped (or never started)");
 		}
 		if (logger.isInfoEnabled())
-			logger.info("Going to destroy {}", procName());
+			logger.info("Going to destroy {}", procLongName());
 		watchDog.destroyProcess();
 		
 //		try {
@@ -134,7 +143,7 @@ public class ManagedProcess {
 		// TODO There isn't really an exit value on destroy(), is there? 
 //		int exitValue = exitValue();
 		if (logger.isInfoEnabled())
-			logger.info("Successfully destroyed {}", procName());
+			logger.info("Successfully destroyed {}", procLongName());
 //			logger.info("Successfully stopped {}, exit value = {}", procName(), exitValue);
 		
 		isAlive = false;
@@ -187,9 +196,16 @@ public class ManagedProcess {
 	
 	// ---
 	
-	// TODO rename to procLongName()
-	// TODO intro a String procShortName_pid(), e.g. "mysqld-1", from a static Map<String execName, Integer id)
-	private String procName() {
+	private String procShortName() {
+		// could later be extended to some sort of fake numeric PID, e.g. "mysqld-1", from a static Map<String execName, Integer id)
+		if (procShortName == null) {
+			File exec = new File(commandLine.getExecutable());
+			procShortName = exec.getName();
+		}
+		return procShortName;
+	}
+	
+	private String procLongName() {
 		return "Program " + commandLine.toString() 
 				+ (executor.getWorkingDirectory() == null ? "" : 
 					" (in working directory " + executor.getWorkingDirectory().getAbsolutePath() + ")");
@@ -202,7 +218,7 @@ public class ManagedProcess {
 		public void onProcessComplete(int exitValue) {
 			super.onProcessComplete(exitValue);
 			// TODO use procShortName_pid() ?
-			logger.info(procName() + " just exited, with value " + exitValue);
+			logger.info(procLongName() + " just exited, with value " + exitValue);
 			isAlive = false;
 		}
 
@@ -210,7 +226,7 @@ public class ManagedProcess {
 		public void onProcessFailed(ExecuteException e) {
 			super.onProcessFailed(e);
 			if (!watchDog.killedProcess()) {
-				logger.error(procName() + " failed unexpectedly", e);
+				logger.error(procLongName() + " failed unexpectedly", e);
 			}
 			isAlive = false;
 		}
