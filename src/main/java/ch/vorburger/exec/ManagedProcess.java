@@ -193,10 +193,11 @@ public class ManagedProcess {
 		return resultHandler.getExitValue();
 	}
 
-	public void waitFor() /*throws IllegalStateException*/ {
+	public int waitFor() /*throws IllegalStateException*/ {
 		try {
 			logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
 			resultHandler.waitFor();
+			return exitValue();
 		} catch (InterruptedException e) {
 			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
 		}

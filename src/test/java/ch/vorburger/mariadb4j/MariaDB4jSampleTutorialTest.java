@@ -48,6 +48,7 @@ public class MariaDB4jSampleTutorialTest {
 	public void testFixedPathMariaDB4j() throws Exception {
 		final String basedir = "src/main/resources/ch/vorburger/mariadb4j/mariadb-5.3.4-rc/win32";
 		DB db = new DB(basedir, "target/db1");
+		db.setAutoInstallDB(true);
 		db.start();
 	}
 

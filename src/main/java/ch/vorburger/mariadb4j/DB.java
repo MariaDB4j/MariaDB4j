@@ -71,8 +71,9 @@ public class DB {
 		this(new File(basedir), new File(datadir));
 	}
 
-	public void installDB() {
-		throw new UnsupportedOperationException();
+	public void installDB() throws IllegalStateException, IOException {
+		mysql_install.start();
+		mysql_install.waitFor();
 	}
 
 	public void start() throws IOException {
@@ -101,7 +102,7 @@ public class DB {
 		}
 		// ... to see if we immediately terminated?
 		if (!mysqld.isAlive()) {
-			throw new IOException("Starting DB failed; it already exited with: " + mysqld.exitValue()); // TODO msg
+			throw new IOException(mysqld.getConsole() + "Starting DB failed; it already exited with: " + mysqld.exitValue()); // TODO msg
 		}
 
 		// TODO ping the port to make sure it's up?
