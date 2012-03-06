@@ -53,6 +53,7 @@ public class DB {
 	protected boolean autoInstallDB = false; // false by default here, but make it true by default in some subclasses
 	protected boolean autoCheck = true;
 
+	// TOOD Use Builder or Factory instead of Constructor? Many more options to come... DBOptions object? 
 	public DB(File basedir, File datadir) throws IOException {
 		super();
 		
