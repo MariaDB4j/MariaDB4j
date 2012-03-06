@@ -17,7 +17,9 @@
  * See also http://www.apache.org/licenses/LICENSE-2.0.html for an
  * explanation of the license and how it is applied.
  */
-package ch.vorburger.mariadb4j.internal;
+package ch.vorburger.exec;
+
+import java.util.Locale;
 
 import ch.vorburger.mariadb4j.MariaDB4jException;
 
@@ -28,7 +30,7 @@ import ch.vorburger.mariadb4j.MariaDB4jException;
  */
 public class Platform {
 
-	// TOOD replace by org.apache.commons.exec.OS ?
+	// This is better than org.apache.commons.exec.OS
 	
 	public enum Type {
 		Windows("win32"), Linux("linux"), Mac("mac"), Solaris("solaris");
@@ -38,25 +40,37 @@ public class Platform {
 			this.code = code;
 		}
 
+		/**
+		 * Platform Code.
+		 * Useful for e.g. directory names of platform specific native applications.
+		 */
 		public String getCode() {
 			return this.code;
 		}
 	}
 
-	public static Type is() throws MariaDB4jException {
-		String os = System.getProperty("os.name");
+	/**
+	 * Gets the current Platform.
+	 * 
+	 * @return Type enumeration
+	 * @throws UnknownPlatformException if unknown OS is encountered
+	 */
+	public static Type is() throws UnknownPlatformException {
+		String os = System.getProperty("os.name").toLowerCase(Locale.US);
+		if (os == null)
+			throw new UnknownPlatformException("Java System Property os.name not set");
 		// See here for possible values of os.name:
 		// http://lopica.sourceforge.net/os.html
-		if (os.startsWith("Windows")) {
+		if (os.contains("windows")) {
 			return Type.Windows;
-		} else if ("Linux".equals(os)) {
+		} else if (os.contains("linux")) {
 			return Type.Linux;
-		} else if ("Solaris".equals(os) || "SunOS".equals(os)) {
+		} else if (os.contains("solaris") || os.contains("sunos")) {
 			return Type.Solaris;
-		} else if ("Mac OS X".equals(os) || "Darwin".equals(os)) {
+		} else if (os.contains("mac os x") || os.contains("darwin")) {
 			return Type.Mac;
 		} else {
-			throw new MariaDB4jException("Sorry, MariaDB4j doesn't support the '" + os + "' OS.");
+			throw new UnknownPlatformException("Unknown Platform; Java System Property, os.name: " + os + ".");
 		}
 	}
 

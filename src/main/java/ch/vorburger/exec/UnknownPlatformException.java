@@ -17,15 +17,19 @@
  * See also http://www.apache.org/licenses/LICENSE-2.0.html for an
  * explanation of the license and how it is applied.
  */
-package ch.vorburger.mariadb4j.internal;
+package ch.vorburger.exec;
 
 /**
- * Helper to extract stuff from JARs.
+ * Exception for unknown runtime/OS.
  * 
- * Stuff may be big and lot's - should be optimized and only do if needed.
+ * @see Platform#is()
  * 
  * @author Michael Vorburger
  */
-public class ExtractorUtil {
+public class UnknownPlatformException extends RuntimeException {
+	private static final long serialVersionUID = 93942871898155435L;
 
+	public UnknownPlatformException(String message) {
+		super(message);
+	}
 }

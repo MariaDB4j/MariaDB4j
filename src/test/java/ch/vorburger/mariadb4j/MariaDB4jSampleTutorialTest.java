@@ -37,33 +37,42 @@ public class MariaDB4jSampleTutorialTest {
 
 	@Test(expected=IOException.class)
 	public void testBadFixedPathMariaDB4j() throws Exception {
-		final String basedir = "src/main/resources/"; // No DB here
+		// No DB in bin/ here, should fail:
+		final String basedir = "src/main/resources/"; 
 		DB db = new DB(basedir, "target/db1");
 		db.start(); // will fail with an IOException
 	}
 
+	@Test
+	public void testEmbeddedMariaDB4jInstallDB() throws Exception {
+		DB db = DBFactory.newEmbeddedTemporaryDB();
+		db.installDB();
+	}
 	
 	@Test
-	// TODO This test, with it's hard-coded basedir, will probably be removed when I do the resource lookup for embedded, which will implicitly test the same
-	public void testFixedPathMariaDB4j() throws Exception {
-		final String basedir = "src/main/resources/ch/vorburger/mariadb4j/mariadb-5.3.4-rc/win32";
-		DB db = new DB(basedir, "target/db1");
-		db.setAutoInstallDB(true);
-		db.start();
-	}
-
-	@Test
 	public void testEmbeddedMariaDB4j() throws Exception {
-		DB db = new EmbeddedDB("target/db1");
+		DB db = DBFactory.newEmbeddedTemporaryDB();
 		db.start();
 
 		// TODO Should DB have a getJdbcURL() ? UID? PWD?
-		Connection conn = DriverManager.getConnection(
-				"jdbc:somejdbcvendor:other data needed by some jdbc vendor",
-				"myLogin", "myPassword");
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "");
 		Statement stmt = conn.createStatement();
+		
+//		stmt.execute("CREATE DATABASE test2;");
+//		stmt.execute("GRANT ALL on test2.* to 'testuser'@'localhost' identified by 'testpwd'");
+//		stmt.execute("FLUSH PRIVILEGES;");
+//		stmt.close();
+//		conn.close();
+		
+//		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test2", "testuser", "testpwd");
+//		Statement stmt = conn.createStatement();
+		
 		stmt.execute("CREATE TABLE hello(world VARCHAR(100))");
-		stmt.execute("INSERT INTO hello VALUES 'Hello, world'");
+		// TODO? stmt.execute("INSERT INTO hello VALUES 'Hello, world'");
+		// TODO? stmt.execute("INSERT INTO hello VALUES \"Hello, world\"");
+		
+		stmt.executeQuery("SELECT * FROM hello");
+		
 		stmt.close();
 		conn.close();
 	}

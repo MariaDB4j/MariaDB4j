@@ -22,6 +22,7 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +73,16 @@ public class DB {
 		this(new File(basedir), new File(datadir));
 	}
 
+	/**
+	 * mysql_install_db.
+	 * This DESTROYS the datadir, in case it exists already.
+	 */
 	public void installDB() throws IllegalStateException, IOException {
+		FileUtils.deleteDirectory(datadir);
+		FileUtils.forceMkdir(datadir);
+		
 		mysql_install.start();
-		mysql_install.waitFor();
+		mysql_install.waitForSuccess();
 	}
 
 	public void start() throws IOException {
@@ -133,7 +141,7 @@ public class DB {
 		if (mysqld.isAlive()) {
 			mysqld.destroy();
 		} else {
-			logger.warn("DB is asked to stop(), but actually already isn't running anymore - suspicious?"); 
+			logger.debug("DB is asked to stop(), but actually already isn't running anymore - suspicious or OK?"); 
 		}
 	}
 
@@ -149,29 +157,34 @@ public class DB {
 	 *             if not yet started and automatic port search is active
 	 * @return TCP/IP port
 	 */
+	// TODO may be this should be part of a more general new DBOptions class instead?
 	public int getPort() throws IllegalStateException {
 		// TODO automatically search free TCP/IP port
 		throw new UnsupportedOperationException();
 	}
 
-	public void setPort(int port) {
+	// TODO may be this should be part of a more general new DBOptions class instead?
+	public DB setPort(int port) {
 		throw new UnsupportedOperationException();
+		//return this;
 	}
 
 	public boolean isAutoInstallDB() {
 		return autoInstallDB;
 	}
 
-	public void setAutoInstallDB(boolean autocreate) {
+	public DB setAutoInstallDB(boolean autocreate) {
 		this.autoInstallDB = autocreate;
+		return this;
 	}
 
 	public boolean isAutoCheck() {
 		return autoCheck;
 	}
 
-	public void setAutoCheck(boolean autoCheck) {
+	public DB setAutoCheck(boolean autoCheck) {
 		this.autoCheck = autoCheck;
+		return this;
 	}
 
 	public boolean isAutoShutdown() {
@@ -191,9 +204,9 @@ public class DB {
 	protected void checkExistingReadableDirectory(File dir, String name) {
 		checkNonNull(dir, name);
 		if (!dir.isDirectory())
-			throw new IllegalArgumentException(name + " is not a directory");
+			throw new IllegalArgumentException(name + " is not a directory: " + dir.toString());
 		if (!dir.canRead())
-			throw new IllegalArgumentException(name + " can not be read");
+			throw new IllegalArgumentException(name + " can not be read: " + dir.toString());
 	}
 
 	protected void checkNonNull(File dir, String name) {

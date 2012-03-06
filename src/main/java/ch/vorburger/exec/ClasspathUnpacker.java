@@ -30,6 +30,8 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 
 /**
  * Utility to "unpack" files from the classpath into a (typically temporary) directory.
+ * Useful to e.g. extract platform specific native binaries from JARs.
+ * Only unpacks if not already there (small optimization).
  * 
  * @author Michael Vorburger
  */
@@ -40,13 +42,13 @@ public class ClasspathUnpacker {
 	/**
 	 * Extract stuff from a package on the classpath to a directory.
 	 * 
-	 * @param packagePath e.g. "com/stuff"
+	 * @param packagePath e.g. "com/stuff" (always forward slash not backslash, never dot)
 	 * @param toDir directory to extract to
 	 * @return 
 	 * @throws IOException if something goes wrong, including if nothing was found on classpath
 	 */
 	public static int extract(String packagePath, File toDir) throws IOException {
-		toDir.mkdirs();
+		FileUtils.forceMkdir(toDir);
 		String locationPattern = "classpath*:" + packagePath + "/**";
 		ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver(); 
 		Resource[] resources = resourcePatternResolver.getResources(locationPattern);

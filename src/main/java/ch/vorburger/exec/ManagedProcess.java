@@ -124,6 +124,35 @@ public class ManagedProcess {
 		
 		executor.execute(commandLine, resultHandler);
 		isAlive = true;
+		
+		// TODO Create Apache Commons Exec bug report! Then reference it here
+//		// This is because ExecuteWatchdog.checkException() has a wrong throws signature - it will always throw an ExecuteException
+//		try {
+//			watchDog.checkException();
+//		} catch (Exception e) {
+//			throw (ExecuteException) e;
+//		}
+
+		// TODO Create Apache Commons Exec bug report #2: DefaultExecutor line 372 swallows exception instead of propagating it
+		
+		// We must give the system a chance to run the background 
+		// thread now, otherwise the resultHandler won't work
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+		}
+		checkResult();
+	}
+
+	protected void checkResult() throws ExecuteException {
+		if (resultHandler.hasResult()) {
+			// We already terminated (or never started)
+			ExecuteException e = resultHandler.getException();
+			if (e != null) {
+				throw new ExecuteException(procLongName() + " failed, last " + getConsoleBufferMaxLines() + " lines of console:\n" + getConsole(), exitValue(), e);
+			}
+		}
 	}
 
 	/**
@@ -131,7 +160,7 @@ public class ManagedProcess {
 	 * 
 	 * @throws IllegalStateException if the Process was already explicitly stopped (destroy() already called) 
 	 */
-// TODO Clarify/test/document behaviour if proc terminated by itself
+// TODO Clarify/test/document behavior if proc terminated by itself
 //	 * If it has already exited by itself before, just returns it exit value.
 //	 * Callers might want to use isRunning() to distinguish.
 //	 * 
@@ -164,6 +193,8 @@ public class ManagedProcess {
 		
 		isAlive = false;
 //		return exitValue;
+		
+		// TODO checkResult(); here?
 	}
 
 
@@ -193,6 +224,12 @@ public class ManagedProcess {
 		return resultHandler.getExitValue();
 	}
 
+	/**
+	 * Waits for the process to terminate.
+	 * Returns immediately if the process already stopped.
+//	 * Throws an IllegalStateException if the process was never started.
+	 * @return exit value
+	 */
 	public int waitFor() /*throws IllegalStateException*/ {
 		try {
 			logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
@@ -203,16 +240,26 @@ public class ManagedProcess {
 		}
 	}
 
-	public void waitFor(long maxWaitUntilDestroyTimeout) /*throws IllegalStateException*/ {
+	public void waitForSuccess() throws ExecuteException {
+		waitFor();
+		checkResult();
+	}
+	
+	public void waitFor(long maxWaitUntilReturning) /*throws IllegalStateException*/ {
 		try {
-			logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilDestroyTimeout, procLongName());
-			resultHandler.waitFor(maxWaitUntilDestroyTimeout);
+			logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilReturning, procLongName());
+			resultHandler.waitFor(maxWaitUntilReturning);
 		} catch (InterruptedException e) {
 			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
 		}
 	}
 	
-	public void waitForAndDestroy(long maxWaitUntilDestroyTimeout) /*throws IllegalStateException*/ {
+	public void waitForSuccess(long maxWaitUntilDestroyTimeout) throws ExecuteException /*throws IllegalStateException*/ {
+		waitFor(maxWaitUntilDestroyTimeout);
+		checkResult();
+	}
+	
+	public void waitForOrDestroy(long maxWaitUntilDestroyTimeout) /*throws IllegalStateException*/ {
 		waitFor(maxWaitUntilDestroyTimeout);
 		if (isAlive()) {
 			logger.info("Process didn't exit within max. {}ms, so going to destroy it now: {}", maxWaitUntilDestroyTimeout, procLongName());
@@ -220,7 +267,12 @@ public class ManagedProcess {
 		}
 	}
 
-	// ... must throw exception if proc terminates with something else than expected message
+	public void waitForSuccessOrDestroy(long maxWaitUntilDestroyTimeout) throws ExecuteException /*throws IllegalStateException*/ {
+		waitForOrDestroy(maxWaitUntilDestroyTimeout);
+		checkResult();
+	}
+	
+	// TODO HIGH must throw exception if proc terminates with something else than expected message! else this may wait forever...
 	public void waitFor(String messageInConsole) /*throws IllegalStateException*/ {
 		// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
 		if (getConsole().contains(messageInConsole)) {

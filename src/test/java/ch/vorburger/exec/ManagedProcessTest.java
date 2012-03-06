@@ -25,11 +25,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
+import ch.vorburger.exec.Platform.Type;
 import ch.vorburger.mariadb4j.MariaDB4jException;
-import ch.vorburger.mariadb4j.internal.Platform;
-import ch.vorburger.mariadb4j.internal.Platform.Type;
 
 /**
  * Tests ManagedProcess.
@@ -44,20 +45,46 @@ public class ManagedProcessTest {
 		assertThat(p.isAlive(), is(false));
 		try {
 			p.destroy();
+			Assert.fail("Should have thrown an IllegalStateException");
 		} catch (IllegalStateException e) {
 			// as expected
 		}
 		try {
 			p.exitValue();
+			Assert.fail("Should have thrown an IllegalStateException");
 		} catch (IllegalStateException e) {
 			// as expected
 		}
 		try {
 			p.start();	
+			Assert.fail("Should have thrown an IOException");
 		} catch (IOException e) {
 			// as expected
 		}
-		p.waitFor();
+//		try {
+//			p.waitFor();
+//			Assert.fail("Should have thrown an IllegalStateException");
+//		} catch (IllegalStateException e) {
+//			// as expected
+//		}
+//		try {
+//			p.waitFor(1234);
+//			Assert.fail("Should have thrown an IllegalStateException");
+//		} catch (IllegalStateException e) {
+//			// as expected
+//		}
+//		try {
+//			p.waitFor("Never say never...");
+//			Assert.fail("Should have thrown an IllegalStateException");
+//		} catch (IllegalStateException e) {
+//			// as expected
+//		}
+//		try {
+//			p.waitForAndDestroy(1234);
+//			Assert.fail("Should have thrown an IllegalStateException");
+//		} catch (IllegalStateException e) {
+//			// as expected
+//		}
 	}
 	
 	@Test
@@ -84,7 +111,7 @@ public class ManagedProcessTest {
 		p.start();
 		assertThat(p.isAlive(), is(true));
 		p.waitFor("bytes free"); // just an illustration
-		p.waitFor();
+		p.waitForSuccess();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		assertThat(p.isAlive(), is(false));
 		
@@ -108,7 +135,7 @@ public class ManagedProcessTest {
 		assertThat(p.isAlive(), is(false));
 		p.start();
 		assertThat(p.isAlive(), is(true));
-		p.waitForAndDestroy(200);
+		p.waitForOrDestroy(200);
 		assertThat(p.isAlive(), is(false));
 		// can not: p.exitValue();
 	}
