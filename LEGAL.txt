@@ -23,5 +23,10 @@ Note that you have to figure out yourself whether you can use the MySQL® JDBC dr
 The MySQL® JDBC driver (Connector/J) is GPL licensed, but due to the MySQL FLOSS License Exception,
 it "permits linking with other components that are licensed under OSI-approved open source licenses".
 
+http://kb.askmonty.org/en/mariadb-faq-is-there-any-java-connector-for-mariadb-than-the-one-from-mysql
+says that For most cases there is no license requirement for using the JDBC connector as the GPL for
+the connector will not affect your application because you have the JDBC manager in between. 
+See the Licensing FAQ <http://kb.askmonty.org/en/licensing-faq> for details.
+
 -----------------------------------------------------------------------------------------------
 IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL 

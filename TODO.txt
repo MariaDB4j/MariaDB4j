@@ -1,15 +1,12 @@
-
-mysql_install_db --datadir totodata [--basedir=/usr/local/mysql]
-
-mysqld --datadir .\totodata
-
-mysql -u root 
-
-mysqlcheck --auto-repair --all-databases -u root
-
-
-
 BEFORE RELEASING v1
+
+- TODOs
+
+- How to do 32 vs 64 bit?! How to detect? How to choose? (Is it even needed? Prio?)
+
+- my.cnf files
+
+- mysqlcheck --auto-repair --all-databases -u root
 
 - contact ABC & XYZ if any thoughts or advise?
 
