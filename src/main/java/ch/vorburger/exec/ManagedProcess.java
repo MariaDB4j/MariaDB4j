@@ -122,6 +122,12 @@ public class ManagedProcess {
 			executor.setProcessDestroyer(shutdownHookProcessDestroyer);
 		}
 		
+		if (commandLine.isFile()) {
+			chmodX(new File(commandLine.getExecutable()));	
+		} else {
+			logger.warn(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which will be a problem on *NIX...)");
+		}
+		
 		executor.execute(commandLine, resultHandler);
 		isAlive = true;
 		
@@ -143,6 +149,17 @@ public class ManagedProcess {
 			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
 		}
 		checkResult();
+	}
+
+	protected void chmodX(File executableFile) {
+		if (!executableFile.canExecute()) {
+			boolean succeeded = executableFile.setExecutable(true);
+			if (succeeded) {
+				logger.info("chmod +x " + executableFile.toString() + " (using java.io.File.setExecutable)");
+			} else {
+				logger.error("Failed to do chmod +x " + executableFile.toString() + " using java.io.File.setExecutable, which will be a problem on *NIX...");
+			}
+		}
 	}
 
 	protected void checkResult() throws ExecuteException {

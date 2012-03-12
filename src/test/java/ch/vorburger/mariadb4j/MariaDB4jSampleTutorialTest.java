@@ -24,6 +24,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -35,6 +37,11 @@ import org.junit.Test;
  */
 public class MariaDB4jSampleTutorialTest {
 
+	@BeforeClass
+	public static void beforeClass() throws IOException {
+		FileUtils.deleteDirectory(DBFactory.getTemporaryBaseDir());
+	}
+	
 	@Test(expected=IOException.class)
 	public void testBadFixedPathMariaDB4j() throws Exception {
 		// No DB in bin/ here, should fail:

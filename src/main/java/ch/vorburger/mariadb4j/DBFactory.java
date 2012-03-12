@@ -62,7 +62,7 @@ public abstract class DBFactory {
 	 * This is useful e.g. for integration tests.
 	 */
 	public static DB newEmbeddedTemporaryDB() throws UnknownPlatformException, IOException {
-		final File datadir = new File(FileUtils.getTempDirectory(), "mariaDB4j/tempDBs/" + System.nanoTime());
+		final File datadir = new File(getTempDirectory(), "mariaDB4j/tempDBs/" + System.nanoTime());
 		
 		final DB db = newEmbeddedDB(datadir);
 		db.setAutoInstallDB(true);
@@ -99,7 +99,7 @@ public abstract class DBFactory {
 	}
 
 	protected static File unpackEmbeddedDB(String nameAndVersion) throws IOException, UnknownPlatformException {
-		return unpackEmbeddedDB(nameAndVersion, new File(FileUtils.getTempDirectory(), "mariaDB4j/base"));
+		return unpackEmbeddedDB(nameAndVersion, getTemporaryBaseDir());
 	}
 
 	protected static File unpackEmbeddedDB(String nameAndVersion, File rootDir) throws IOException {
@@ -107,7 +107,22 @@ public abstract class DBFactory {
 		String packagePath = DB.class.getPackage().getName().replace('.', '/') + '/' + suffix;
 		File dir = new File(rootDir, suffix);
 		ClasspathUnpacker.extract(packagePath, dir);
+		chmodXs(dir);
 		return dir;
+	}
+
+	protected static void chmodXs(File dir) {
+		// TODO Implement chmod +x, with logging, à la what I have done in ManagedProcess...
+		
+	}
+
+	protected static File getTempDirectory() {
+		return FileUtils.getTempDirectory();
+	}
+
+
+	protected static File getTemporaryBaseDir() {
+		return new File(getTempDirectory(), "mariaDB4j/base");
 	}
 
 }

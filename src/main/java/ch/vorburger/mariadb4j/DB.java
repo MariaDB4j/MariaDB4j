@@ -30,9 +30,9 @@ import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
 
 /**
- * MariaDB (or MySQL®) Controller.
+ * MariaDB (or MySQLï¿½) Controller.
  * 
- * You need to give the path to a previously unpacked MariaDB (or MySQL®), as
+ * You need to give the path to a previously unpacked MariaDB (or MySQLï¿½), as
  * well as your data directory, here.
  * 
  * @see EmbeddedDB
@@ -65,8 +65,14 @@ public class DB {
 		checkNonNull(datadir, "datadir");
 		this.datadir = datadir;
 		
-		mysqld = new ManagedProcessBuilder(cmd("mysqld")).addArgument("--datadir").addArgument(datadir).build();
-		mysql_install = new ManagedProcessBuilder(cmd("mysql_install_db")).addArgument("--datadir").addArgument(datadir).build();
+		mysqld = addCommonArgs(new ManagedProcessBuilder(cmd("mysqld"))).build();
+		mysql_install = addCommonArgs(new ManagedProcessBuilder(cmd("mysql_install_db"))).directory(basedir).build();
+	}
+
+	protected ManagedProcessBuilder addCommonArgs(ManagedProcessBuilder builder) throws IOException {
+		builder.addArgument("--datadir").addArgument(datadir);
+		builder.addArgument("--basedir").addArgument(basedir);
+		return builder;
 	}
 
 	public DB(String basedir, String datadir) throws IOException {
