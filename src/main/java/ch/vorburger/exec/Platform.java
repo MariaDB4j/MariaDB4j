@@ -21,8 +21,6 @@ package ch.vorburger.exec;
 
 import java.util.Locale;
 
-import ch.vorburger.mariadb4j.MariaDB4jException;
-
 /**
  * Util for Platform.
  * 
@@ -74,7 +72,7 @@ public class Platform {
 		}
 	}
 
-	public static boolean is(Type type) throws MariaDB4jException {
+	public static boolean is(Type type) {
 		return is() == type;
 	}
 

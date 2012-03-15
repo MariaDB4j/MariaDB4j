@@ -75,8 +75,7 @@ public class ManagedProcessBuilder {
 	}
 
 	public ManagedProcessBuilder addArgument(String argName, File fileArg) throws IOException {
-		addArgument(argName);
-		addArgument(fileArg);
+		addArgument(argName + "=" + fileArg.getCanonicalPath());
 		return this;
 	}
 	

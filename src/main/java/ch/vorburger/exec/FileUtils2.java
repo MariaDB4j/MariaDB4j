@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author Michael Vorburger
  */
 public class FileUtils2 {
-	private static final Logger logger = LoggerFactory.getLogger(ManagedProcess.class);
+	private static final Logger logger = LoggerFactory.getLogger(FileUtils2.class);
 
 	public static void forceExecutable(File executableFile) throws IOException {
 		if (executableFile.exists() && !executableFile.canExecute()) {

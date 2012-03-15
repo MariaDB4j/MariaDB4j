@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -36,9 +38,8 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * @author Michael Vorburger
  */
 public class ClasspathUnpacker {
+	private static final Logger logger = LoggerFactory.getLogger(ClasspathUnpacker.class);
 
-	// TODO Logging
-	
 	/**
 	 * Extract stuff from a package on the classpath to a directory.
 	 * 
@@ -76,6 +77,9 @@ public class ClasspathUnpacker {
 
 			FileUtils.copyURLToFile(url, targetFile);
 			++counter;
+		}
+		if (logger.isInfoEnabled()) {
+			logger.info("Unpacked {} files from {} to {}", new Object[] { counter, locationPattern, toDir });
 		}
 		return counter;
 	}

@@ -108,11 +108,23 @@ public abstract class DBFactory {
 		String packagePath = DB.class.getPackage().getName().replace('.', '/') + '/' + suffix;
 		File dir = new File(rootDir, suffix);
 		ClasspathUnpacker.extract(packagePath, dir);
-		// Now chmod +x all Linux scripts:
-		// This is only for things called indirectly,
-		// the ManagedProcess class already does this for executables
-		// TODO FileUtils2.forceExecutable(new File(dir, "/"));
+		forceAuxiliaryExecutables(dir);
 		return dir;
+	}
+
+	/**
+	 * To chmod +x all Linux scripts.
+	 * This is only for things called indirectly (e.g. bin/my_print_defaults),
+	 * the ManagedProcess class already does this for executables (e.g. bin/mysql_install_db).
+	 * @param dir the directory into which the DB has just been unpacked
+	 * @throws IOException
+	 */
+	protected static void forceAuxiliaryExecutables(File dir) throws IOException {
+		FileUtils2.forceExecutable(new File(dir, "bin/my_print_defaults"));
+		// Needed because if mysql_install_db (which is a shell script
+		// and not an executable on MariaDB v5.3.5 under Linux) is called
+		// BEFORE mysqld is executed in DB (which is normal), +x isn't set yet
+		FileUtils2.forceExecutable(new File(dir, "bin/mysqld"));
 	}
 
 	protected static File getTempDirectory() {

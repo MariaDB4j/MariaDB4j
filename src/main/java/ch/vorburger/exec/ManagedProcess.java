@@ -146,9 +146,16 @@ public class ManagedProcess {
 		try {
 			Thread.sleep(10);
 		} catch (InterruptedException e) {
-			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+			throw handleInterruptedException(e);
 		}
 		checkResult();
+	}
+
+	protected RuntimeException handleInterruptedException(InterruptedException e) throws RuntimeException {
+		// TODO Not sure how to best handle this... opinions welcome (see also below)
+		final String message = "Huh?! InterruptedException should normally never happen here..." + procLongName();
+		logger.error(message, e);
+		return new RuntimeException(message, e);
 	}
 
 	protected void checkResult() throws ExecuteException {
@@ -156,6 +163,7 @@ public class ManagedProcess {
 			// We already terminated (or never started)
 			ExecuteException e = resultHandler.getException();
 			if (e != null) {
+				logger.error(procLongName() + " failed");
 				throw new ExecuteException(procLongName() + " failed, last " + getConsoleBufferMaxLines() + " lines of console:\n" + getConsole(), exitValue(), e);
 			}
 		}
@@ -188,7 +196,7 @@ public class ManagedProcess {
 //			Process proc;
 //			int exitValue = proc.waitFor();
 //		} catch (InterruptedException e) {
-//			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+//			handleInterruptedException(e);
 //		}
 
 		// TODO There isn't really an exit value on destroy(), is there? 
@@ -242,7 +250,7 @@ public class ManagedProcess {
 			resultHandler.waitFor();
 			return exitValue();
 		} catch (InterruptedException e) {
-			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+			throw handleInterruptedException(e);
 		}
 	}
 
@@ -256,7 +264,7 @@ public class ManagedProcess {
 			logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilReturning, procLongName());
 			resultHandler.waitFor(maxWaitUntilReturning);
 		} catch (InterruptedException e) {
-			throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+			throw handleInterruptedException(e);
 		}
 	}
 	
@@ -296,7 +304,7 @@ public class ManagedProcess {
             try {
 				Thread.sleep(SLEEP_TIME_MS);
 			} catch (InterruptedException e) {
-				throw new RuntimeException("Huh?! This should normally never happen here..." + procLongName(), e);
+				throw handleInterruptedException(e);
 			}
         }
 		stdouts.removeOutputStream(checkingConsoleOutputStream);

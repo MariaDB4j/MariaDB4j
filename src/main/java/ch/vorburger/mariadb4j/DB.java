@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
+import ch.vorburger.exec.Platform;
+import ch.vorburger.exec.Platform.Type;
 
 /**
  * MariaDB (or MySQL�) Controller.
@@ -65,9 +67,28 @@ public class DB {
 		checkNonNull(datadir, "datadir");
 		this.datadir = datadir;
 		
-		mysqld = new ManagedProcessBuilder(cmd("mysqld")).addArgument("--basedir", basedir).addArgument("--datadir", datadir).build();
-		// TODO do we HAVE to have basedir for mysql_install_dbe? it's not available on Windows, only Linux, so would have to use an if...
-		mysql_install = new ManagedProcessBuilder(cmd("mysql_install_db")).addArgument("--datadir", datadir).directory(basedir).build();
+		mysqld = mysqld(basedir, datadir);
+		mysql_install = mysql_install_db(basedir, datadir);
+	}
+
+	protected ManagedProcess mysqld(File basedir, File datadir) throws IOException {
+		return new ManagedProcessBuilder(cmd("mysqld")).addArgument("--basedir", basedir).addArgument("--datadir", datadir).build();
+	}
+
+	protected ManagedProcess mysql_install_db(File basedir, File datadir) throws IOException {
+		final ManagedProcessBuilder mysql_install_builder = new ManagedProcessBuilder(cmd("mysql_install_db")).addArgument("--datadir", datadir).directory(basedir);
+		if (Platform.is(Type.Linux)) {
+			mysql_install_builder.addArgument("--basedir", basedir);
+			
+			mysql_install_builder.addArgument("--no-defaults");
+			// TODO remove hard-coded my.cnf! Just for testing.. but still doesn't work! :-(
+			//mysql_install_builder.addArgument("--defaults-file", new File("./TEMP-my.cnf"));
+			
+			mysql_install_builder.addArgument("--force");
+			mysql_install_builder.addArgument("--skip-name-resolve");
+			mysql_install_builder.addArgument("--verbose");
+		}
+		return mysql_install_builder.build();
 	}
 
 	public DB(String basedir, String datadir) throws IOException {
@@ -77,16 +98,18 @@ public class DB {
 	/**
 	 * mysql_install_db.
 	 * This DESTROYS the datadir, in case it exists already.
+	 * @return 
 	 */
-	public void installDB() throws IllegalStateException, IOException {
+	public DB installDB() throws IllegalStateException, IOException {
 		FileUtils.deleteDirectory(datadir);
 		FileUtils.forceMkdir(datadir);
 		
 		mysql_install.start();
 		mysql_install.waitForSuccess();
+		return this;
 	}
 
-	public void start() throws IOException {
+	public DB start() throws IOException {
 		if (!datadir.exists()) {
 			if (autoInstallDB) {
 				logger.info("Starting DB and DataDir {} does not exist, so going to creating it as autoInstall is true", datadir);
@@ -128,13 +151,15 @@ public class DB {
 //			    }
 //			});
 //		}
+
+		return this;
 	}
 
 //	private void stopOnShutdown() {
 //		stop();
 //	}
 	
-	public void stop() {
+	public DB stop() {
 		// TODO Can (should?) we do better than just kill the mysqld process?! 
 		// There is probably something we can send through SQL, but then we need the driver...
 		// How do other folks send SIGTERM rather than the SIGKILL from Java?!?
@@ -144,10 +169,13 @@ public class DB {
 		} else {
 			logger.debug("DB is asked to stop(), but actually already isn't running anymore - suspicious or OK?"); 
 		}
+		return this;
 	}
 
-	public void check() {
+	// TODO Implement me as mysqlcheck --auto-repair --all-databases -u root
+	public DB check() {
 		throw new UnsupportedOperationException();
+		// TODO return this;
 	}
 
 	// ----
@@ -192,8 +220,9 @@ public class DB {
 		return autoShutdown;
 	}
 
-	public void setAutoShutdown(boolean autoShutdown) {
+	public DB setAutoShutdown(boolean autoShutdown) {
 		this.autoShutdown = autoShutdown;
+		return this;
 	}
 
 	// ---

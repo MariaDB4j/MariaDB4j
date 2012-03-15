@@ -7,21 +7,20 @@ MariaDB is "a backward compatible, drop-in replacement of the MySQL® Database Se
 	* FAQ: http://kb.askmonty.org/en/mariadb-faq
 	* Wikipedia: http://en.wikipedia.org/wiki/MariaDB
 
-MariaDB4j is a Java "launcher" for MariaDB.  
-It includes some MariaDB binaries, allowing a Java application to start up a MariaDB without any installation / external dependencies. 
+MariaDB4j is a Java "launcher" for MariaDB, allowing to use it from Java without any installation / external dependencies.
 
 
 How?
 
-TODO: Review/complete this later... but the idea is to support simply:
+MariaDB binaries are in the JAR and extracted to a temporary directory on the fly, then started by Java - with 1 line:
 
-		DB db = new EmbeddedDB("target/db1");
-		db.start();
-		TODO... get a JDBC Connection... or use your favourite connection pool...
+		DB db = DBFactory.newEmbeddedTemporaryDB().start();
 
-TODO LINK - see the MariaDB4jSampleTutorialTest.java for more examples & details. 
+or:
 
-TODO: Publish a 1.0.0 on Maven Central when ready...
+		DB db = DBFactory.newEmbeddedDB(new File("myDB").start();
+		
+Then get a JDBC Connection directly or via your favourite connection pool... business as usual.
 
 	<groupId>ch.vorburger.mariaDB4j</groupId>
 	<artifactId>mariaDB4j</artifactId>
