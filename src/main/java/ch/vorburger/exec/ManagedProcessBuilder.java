@@ -74,6 +74,12 @@ public class ManagedProcessBuilder {
 		return this;
 	}
 
+	public ManagedProcessBuilder addArgument(String argName, File fileArg) throws IOException {
+		addArgument(argName);
+		addArgument(fileArg);
+		return this;
+	}
+	
 	public String[] getArguments() {
 		return commonsExecCommandLine.getArguments();
 	}

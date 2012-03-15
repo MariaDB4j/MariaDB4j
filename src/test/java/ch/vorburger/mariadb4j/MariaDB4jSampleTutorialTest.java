@@ -19,9 +19,12 @@
  */
 package ch.vorburger.mariadb4j;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.apache.commons.io.FileUtils;
@@ -51,14 +54,9 @@ public class MariaDB4jSampleTutorialTest {
 	}
 
 	@Test
-	public void testEmbeddedMariaDB4jInstallDB() throws Exception {
-		DB db = DBFactory.newEmbeddedTemporaryDB();
-		db.installDB();
-	}
-	
-	@Test
 	public void testEmbeddedMariaDB4j() throws Exception {
 		DB db = DBFactory.newEmbeddedTemporaryDB();
+		// Note we are automatically doing db.installDB() here
 		db.start();
 
 		// TODO Should DB have a getJdbcURL() ? UID? PWD?
@@ -70,16 +68,20 @@ public class MariaDB4jSampleTutorialTest {
 //		stmt.execute("FLUSH PRIVILEGES;");
 //		stmt.close();
 //		conn.close();
-		
 //		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test2", "testuser", "testpwd");
 //		Statement stmt = conn.createStatement();
 		
 		stmt.execute("CREATE TABLE hello(world VARCHAR(100))");
-		// TODO? stmt.execute("INSERT INTO hello VALUES 'Hello, world'");
-		// TODO? stmt.execute("INSERT INTO hello VALUES \"Hello, world\"");
+		int i = stmt.executeUpdate("INSERT INTO hello VALUES ('Hello, world')");
+		assertEquals(i, 1);
+
+		ResultSet rs = stmt.executeQuery("SELECT * FROM hello");
+		assertTrue(rs.next());
+		String msg = rs.getString(1);
+		assertEquals(msg, "Hello, world");
 		
-		stmt.executeQuery("SELECT * FROM hello");
-		
+		// Yeah yeah close() should be in finally() ... it's just a test.
+		rs.close();
 		stmt.close();
 		conn.close();
 	}

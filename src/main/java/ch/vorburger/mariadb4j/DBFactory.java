@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.vorburger.exec.ClasspathUnpacker;
+import ch.vorburger.exec.FileUtils2;
 import ch.vorburger.exec.Platform;
 import ch.vorburger.exec.UnknownPlatformException;
 
@@ -107,13 +108,11 @@ public abstract class DBFactory {
 		String packagePath = DB.class.getPackage().getName().replace('.', '/') + '/' + suffix;
 		File dir = new File(rootDir, suffix);
 		ClasspathUnpacker.extract(packagePath, dir);
-		chmodXs(dir);
+		// Now chmod +x all Linux scripts:
+		// This is only for things called indirectly,
+		// the ManagedProcess class already does this for executables
+		// TODO FileUtils2.forceExecutable(new File(dir, "/"));
 		return dir;
-	}
-
-	protected static void chmodXs(File dir) {
-		// TODO Implement chmod +x, with logging, à la what I have done in ManagedProcess...
-		
 	}
 
 	protected static File getTempDirectory() {

@@ -65,14 +65,9 @@ public class DB {
 		checkNonNull(datadir, "datadir");
 		this.datadir = datadir;
 		
-		mysqld = addCommonArgs(new ManagedProcessBuilder(cmd("mysqld"))).build();
-		mysql_install = addCommonArgs(new ManagedProcessBuilder(cmd("mysql_install_db"))).directory(basedir).build();
-	}
-
-	protected ManagedProcessBuilder addCommonArgs(ManagedProcessBuilder builder) throws IOException {
-		builder.addArgument("--datadir").addArgument(datadir);
-		builder.addArgument("--basedir").addArgument(basedir);
-		return builder;
+		mysqld = new ManagedProcessBuilder(cmd("mysqld")).addArgument("--basedir", basedir).addArgument("--datadir", datadir).build();
+		// TODO do we HAVE to have basedir for mysql_install_dbe? it's not available on Windows, only Linux, so would have to use an if...
+		mysql_install = new ManagedProcessBuilder(cmd("mysql_install_db")).addArgument("--datadir", datadir).directory(basedir).build();
 	}
 
 	public DB(String basedir, String datadir) throws IOException {
