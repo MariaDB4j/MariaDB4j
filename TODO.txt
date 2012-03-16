@@ -20,6 +20,8 @@ BEFORE RELEASING v1
 
 LATER, MAY BE
 
+- could use http://code.google.com/p/guava-libraries/wiki/ServiceExplained
+
 - could split project into multi-module, e.g. exec4j, mariaDB4j-core, mariaDB4j-db-win, mariaDB4j-db-linux (and still have a mariaDB4j:mariaDB4j which aggregates them all like initial version)
 
 - propose ch.vorburger.exec as "handy utilities" to commons-exec?
