@@ -132,16 +132,6 @@ public class ManagedProcess {
 		executor.execute(commandLine, resultHandler);
 		isAlive = true;
 		
-		// TODO Create Apache Commons Exec bug report! Then reference it here
-//		// This is because ExecuteWatchdog.checkException() has a wrong throws signature - it will always throw an ExecuteException
-//		try {
-//			watchDog.checkException();
-//		} catch (Exception e) {
-//			throw (ExecuteException) e;
-//		}
-
-		// TODO Create Apache Commons Exec bug report #2: DefaultExecutor line 372 swallows exception instead of propagating it
-		
 		// We must give the system a chance to run the background 
 		// thread now, otherwise the resultHandler in checkResult() won't work
 		try {
