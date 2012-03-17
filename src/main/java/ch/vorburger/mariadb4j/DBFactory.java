@@ -46,7 +46,7 @@ public abstract class DBFactory {
 
 	/**
 	 * You need to only give the path to your data directory here; this
-	 * automatically unpacks a MariaDB (or MySQL®) to a temporary basedir.
+	 * automatically unpacks a MariaDB (or MySQLÂ®) to a temporary basedir.
 	 */
 	public static DB newEmbeddedDB(File datadir) throws UnknownPlatformException, IOException {
 		return new DB(unpackEmbeddedDB(), datadir);
@@ -55,7 +55,7 @@ public abstract class DBFactory {
 	/**
 	 * You don't need to give the path to your data directory here, as it
 	 * automatically picks a temporary data directory (and it automatically
-	 * unpacks a MariaDB (or MySQL®) to a temporary basedir if needed).
+	 * unpacks a MariaDB (or MySQLÂ®) to a temporary basedir if needed).
 	 * 
 	 * On startup, a new temporary database is automatically created in the
 	 * temporary data directory.  On JVM Exit this data dir is automatically deleted.
