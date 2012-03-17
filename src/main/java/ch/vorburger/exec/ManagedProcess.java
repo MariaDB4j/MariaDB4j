@@ -125,7 +125,8 @@ public class ManagedProcess {
 		if (commandLine.isFile()) {
 			FileUtils2.forceExecutable(new File(commandLine.getExecutable()));
 		} else {
-			logger.warn(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which will be a problem on *NIX...)");
+			// If this WARN log ever bothers anybody, just decrease it to... debug
+			logger.warn(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which MAY be a problem on *NIX, but not for sure)");
 		}
 		
 		executor.execute(commandLine, resultHandler);
@@ -142,9 +143,10 @@ public class ManagedProcess {
 		// TODO Create Apache Commons Exec bug report #2: DefaultExecutor line 372 swallows exception instead of propagating it
 		
 		// We must give the system a chance to run the background 
-		// thread now, otherwise the resultHandler won't work
+		// thread now, otherwise the resultHandler in checkResult() won't work
 		try {
-			Thread.sleep(10);
+			// TODO This is not ideal, as it artificially slows down... but how to do better? Thread.yield() doesn't work.
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			throw handleInterruptedException(e);
 		}
@@ -244,7 +246,7 @@ public class ManagedProcess {
 //	 * Throws an IllegalStateException if the process was never started.
 	 * @return exit value
 	 */
-	public int waitFor() /*throws IllegalStateException*/ {
+	public int waitForAnyExit() /*throws IllegalStateException*/ {
 		try {
 			logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
 			resultHandler.waitFor();
@@ -254,12 +256,12 @@ public class ManagedProcess {
 		}
 	}
 
-	public void waitForSuccess() throws ExecuteException {
-		waitFor();
+	public void waitForSuccessExit() throws ExecuteException {
+		waitForAnyExit();
 		checkResult();
 	}
 	
-	public void waitFor(long maxWaitUntilReturning) /*throws IllegalStateException*/ {
+	public void waitForAnyExitMaxMs(long maxWaitUntilReturning) /*throws IllegalStateException*/ {
 		try {
 			logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilReturning, procLongName());
 			resultHandler.waitFor(maxWaitUntilReturning);
@@ -268,13 +270,13 @@ public class ManagedProcess {
 		}
 	}
 	
-	public void waitForSuccess(long maxWaitUntilDestroyTimeout) throws ExecuteException /*throws IllegalStateException*/ {
-		waitFor(maxWaitUntilDestroyTimeout);
+	public void waitForSuccessExitMaxMs(long maxWaitUntilDestroyTimeout) throws ExecuteException /*throws IllegalStateException*/ {
+		waitForAnyExitMaxMs(maxWaitUntilDestroyTimeout);
 		checkResult();
 	}
 	
-	public void waitForOrDestroy(long maxWaitUntilDestroyTimeout) /*throws IllegalStateException*/ {
-		waitFor(maxWaitUntilDestroyTimeout);
+	public void waitForAnyExitMaxMsOrDestroy(long maxWaitUntilDestroyTimeout) /*throws IllegalStateException*/ {
+		waitForAnyExitMaxMs(maxWaitUntilDestroyTimeout);
 		if (isAlive()) {
 			logger.info("Process didn't exit within max. {}ms, so going to destroy it now: {}", maxWaitUntilDestroyTimeout, procLongName());
 			destroy();
@@ -282,16 +284,34 @@ public class ManagedProcess {
 	}
 
 	public void waitForSuccessOrDestroy(long maxWaitUntilDestroyTimeout) throws ExecuteException /*throws IllegalStateException*/ {
-		waitForOrDestroy(maxWaitUntilDestroyTimeout);
+		waitForAnyExitMaxMsOrDestroy(maxWaitUntilDestroyTimeout);
 		checkResult();
 	}
 	
 	// TODO HIGH must throw exception if proc terminates with something else than expected message! else this may wait forever...
-	public void waitFor(String messageInConsole) /*throws IllegalStateException*/ {
+//	if (!mysqld.isAlive()) {
+//		throw new IOException(mysqld.getConsole() + "Starting DB failed; it already exited with: " + mysqld.exitValue());
+//	}
+
+	/**
+	 * Wait (block) until the process prints a certain message.
+	 * 
+	 * You have to be sure that the process either prints this message at some point, or otherwise exits on it's own, else this will block forever!
+	 *  
+	 * @param messageInConsole text to wait for in the STDOUT/STDERR of the external process
+	 * @throws IllegalStateException if the process already exited (without the message ever appearing in the Console)
+	 */
+	public void waitForConsoleMessage(String messageInConsole) throws IllegalStateException {
 		// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
 		if (getConsole().contains(messageInConsole)) {
-			logger.info("Asked to wait for \"{}\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
+			logger.info("Asked to wait for \"\"{}\"\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
 			return;
+		}
+		
+		// MUST do this, else will block forever too easily
+		String unexpectedExitMsg = "Asked to wait for \"" + messageInConsole + "\" from " + procLongName() + ", but it already exited! (without that message in console)";
+		if (!isAlive()) {
+			throw new IllegalStateException(unexpectedExitMsg);
 		}
 		
 		CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
@@ -299,8 +319,8 @@ public class ManagedProcess {
 		stderrs.addOutputStream(checkingConsoleOutputStream);
 		
 		final int SLEEP_TIME_MS = 50;
-		logger.info("Thread is now going to wait for \"{}\" to appear in Console output of process {}", messageInConsole, procLongName());
-        while (!checkingConsoleOutputStream.hasSeenIt()) {
+		logger.info("Thread is now going to wait for \"\"{}\"\" to appear in Console output of process {}", messageInConsole, procLongName());
+        while (!checkingConsoleOutputStream.hasSeenIt() && isAlive()) {
             try {
 				Thread.sleep(SLEEP_TIME_MS);
 			} catch (InterruptedException e) {
@@ -309,6 +329,11 @@ public class ManagedProcess {
         }
 		stdouts.removeOutputStream(checkingConsoleOutputStream);
 		stderrs.removeOutputStream(checkingConsoleOutputStream);
+
+		// If we got out of the while() loop due to !isAlive() instead of messageInConsole, then throw the same exception as above!
+		if (!checkingConsoleOutputStream.hasSeenIt()) {
+			throw new IllegalStateException(unexpectedExitMsg);
+		}
 	}
 
 	// ---

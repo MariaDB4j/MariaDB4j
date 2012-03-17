@@ -1,10 +1,12 @@
 BEFORE RELEASING v1
 
+- Automatic Port assignment (useful in general and crucial for newEmbeddedTemporaryDB)
+
 - TODOs
 
 - How to do 32 vs 64 bit?! How to detect? How to choose? (Is it even needed? Prio?)
 
-- my.cnf files
+- my.cnf files support?
 
 - mysqlcheck --auto-repair --all-databases -u root
 

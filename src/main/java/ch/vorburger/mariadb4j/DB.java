@@ -72,7 +72,12 @@ public class DB {
 	}
 
 	protected ManagedProcess mysqld(File basedir, File datadir) throws IOException {
-		return new ManagedProcessBuilder(cmd("mysqld")).addArgument("--basedir", basedir).addArgument("--datadir", datadir).build();
+		ManagedProcessBuilder mysqld_builder = new ManagedProcessBuilder(cmd("mysqld"));
+		// NOTE: Arguments order MATTERS here (ouch), e.g. --no-defaults has to be before --datadir
+		mysqld_builder.addArgument("--no-defaults");
+		mysqld_builder.addArgument("--console");
+		mysqld_builder.addArgument("--basedir", basedir).addArgument("--datadir", datadir);
+		return mysqld_builder.build();
 	}
 
 	protected ManagedProcess mysql_install_db(File basedir, File datadir) throws IOException {
@@ -105,7 +110,7 @@ public class DB {
 		FileUtils.forceMkdir(datadir);
 		
 		mysql_install.start();
-		mysql_install.waitForSuccess();
+		mysql_install.waitForSuccessExit();
 		return this;
 	}
 
@@ -122,24 +127,8 @@ public class DB {
 		
 		mysqld.start();
 		
-		// TODO What follows is typically for launching a "daemon" - refactor to re-use how?
-			
-		// TODO Wait for an "OK" message instead of waiting
-		// mysqld.waitFor("some-OK-message-to-determine");
-		// Just "give it a sec"...
-		try {
-			// 300ms is somewhat arbitrary
-			Thread.sleep(300);
-		} catch (InterruptedException e) {
-			// Ignore
-		}
-		// ... to see if we immediately terminated?
-		if (!mysqld.isAlive()) {
-			throw new IOException(mysqld.getConsole() + "Starting DB failed; it already exited with: " + mysqld.exitValue()); // TODO msg
-		}
+		mysqld.waitForConsoleMessage("mysqld: ready for connections.");
 
-		// TODO ping the port to make sure it's up?
-		
 		mysqld.setDestroyOnShutdown(autoShutdown);
 // destroyOnShutdow will just kill mysqld process; if there is a better way later, use our own shutdown hook  instead: (and mysqld.setDestroyOnShutdown(false)) 
 //		if (autoShutdown) {

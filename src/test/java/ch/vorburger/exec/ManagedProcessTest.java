@@ -88,38 +88,76 @@ public class ManagedProcessTest {
 	}
 	
 	@Test
-	public void testSelfTerminatingExec() throws Exception {
-		ManagedProcessBuilder pb;
-		switch (Platform.is()) {
-		case Windows:
-			pb = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir").addArgument("/X");
-			break;
-
-		case Mac:
-		case Linux:
-		case Solaris:
-			pb = new ManagedProcessBuilder("true").addArgument("--version");
-			break;
-
-		default:
-			throw new MariaDB4jException("Unexpected Platform, improve the test dude...");
-		}
-
-		ManagedProcess p = pb.build();
-		assertThat(p.isAlive(), is(false));
-		p.setConsoleBufferMaxLines(5);
+	public void testWaitForSeenMessageIfAlreadyTerminated() throws Exception {
+		SomeSelfTerminatingExec exec = someSelfTerminatingExec();
+		ManagedProcess p = exec.proc;
 		p.start();
-		assertThat(p.isAlive(), is(true));
-		p.waitFor("bytes free"); // just an illustration
-		p.waitForSuccess();
+		// for this test, do NOT use any wait*() anything here, just give it a moment...
+		Thread.sleep(1000);
+		// by now this process should have terminated itself
+		// but this should not cause this to hang, but must return silently:
+		p.waitForConsoleMessage(exec.msgToWaitFor);
+	}
+
+	@Test(expected=IllegalStateException.class)
+	public void testWaitForWrongMessageIfAlreadyTerminated() throws Exception {
+		ManagedProcess p = someSelfTerminatingExec().proc;
+		p.start();
+		// for this test, do NOT use any wait*() anything here, just give it a moment...
+		Thread.sleep(1000);
+		// by now this process should have terminated itself
+		// but this should not cause this to hang, but must throw an IllegalStateException
+		p.waitForConsoleMessage("some console message which will never appear");
+	}
+
+	@Test
+	public void testSelfTerminatingExec() throws Exception {
+		SomeSelfTerminatingExec exec = someSelfTerminatingExec();
+		ManagedProcess p = exec.proc;
+
+		assertThat(p.isAlive(), is(false));
+		p.setConsoleBufferMaxLines(25);
+		p.start();
+		// can't assertThat(p.isAlive(), is(true)); - if p finishes too fast, this fails - unreliable test :(
+		
+		p.waitForConsoleMessage(exec.msgToWaitFor);
+		
+		p.waitForSuccessExit();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		assertThat(p.isAlive(), is(false));
 		
 		String recentConsoleOutput = p.getConsole();
 		assertTrue(recentConsoleOutput.length() > 10);
 		assertTrue(recentConsoleOutput.contains("\n"));
-		System.out.println("Recent " + p.getConsoleBufferMaxLines() + " lines of console output:");
+		System.out.println("Recent max. " + p.getConsoleBufferMaxLines() + " lines of console output:");
 		System.out.println(recentConsoleOutput);
+	}
+
+	class SomeSelfTerminatingExec {
+		ManagedProcess proc;
+		String msgToWaitFor;
+	}
+	
+	protected SomeSelfTerminatingExec someSelfTerminatingExec() throws UnknownPlatformException, MariaDB4jException {
+		SomeSelfTerminatingExec r = new SomeSelfTerminatingExec();
+		switch (Platform.is()) {
+		case Windows:
+			r.proc = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir").addArgument("/X").build();
+			r.msgToWaitFor = "bytes free";
+			break;
+
+		case Mac:
+		case Linux:
+		case Solaris:
+			r.proc = new ManagedProcessBuilder("true").addArgument("--version").build();
+			r.msgToWaitFor = "true (GNU coreutils)";
+			break;
+
+		default:
+			throw new MariaDB4jException("Unexpected Platform, improve the test dude...");
+		}
+		
+		return r;
 	}
 
 	@Test
@@ -128,16 +166,17 @@ public class ManagedProcessTest {
 		if (Platform.is(Type.Windows)) {
 			pb = new ManagedProcessBuilder("notepad.exe");
 		} else {
-			pb = new ManagedProcessBuilder("vi"); // TODO ?
+			pb = new ManagedProcessBuilder("vi");
 		}
 		
 		ManagedProcess p = pb.build();
 		assertThat(p.isAlive(), is(false));
 		p.start();
 		assertThat(p.isAlive(), is(true));
-		p.waitForOrDestroy(200);
+		p.waitForAnyExitMaxMsOrDestroy(200);
 		assertThat(p.isAlive(), is(false));
 		// can not: p.exitValue();
 	}
+
 
 }
