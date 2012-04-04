@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.vorburger.exec.ClasspathUnpacker;
 import ch.vorburger.exec.FileUtils2;
+import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.exec.Platform;
 import ch.vorburger.exec.UnknownPlatformException;
 
@@ -73,11 +74,15 @@ public abstract class DBFactory {
 		Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
 			@Override
 		    public void run() {
-		    	db.stop();
+		    	try {
+					db.stop();
+				} catch (ManagedProcessException e) {
+					logger.error("Couldn't stop DB " + datadir, e);
+				}
 		    	try {
 					FileUtils.deleteDirectory(datadir);
 				} catch (IOException e) {
-					logger.error("Can't clean-up " + datadir, e);
+					logger.error("Couldn't clean-up " + datadir, e);
 				}
 		    }
 		});

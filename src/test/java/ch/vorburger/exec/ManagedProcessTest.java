@@ -23,8 +23,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -46,21 +44,22 @@ public class ManagedProcessTest {
 		try {
 			p.destroy();
 			Assert.fail("Should have thrown an IllegalStateException");
-		} catch (IllegalStateException e) {
+		} catch (ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.exitValue();
-			Assert.fail("Should have thrown an IllegalStateException");
-		} catch (IllegalStateException e) {
+			Assert.fail("Should have thrown an ManagedProcessException");
+		} catch (ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.start();	
-			Assert.fail("Should have thrown an IOException");
-		} catch (IOException e) {
+			Assert.fail("Should have thrown an ManagedProcessException");
+		} catch (ManagedProcessException e) {
 			// as expected
 		}
+// TODO Tests... !		
 //		try {
 //			p.waitFor();
 //			Assert.fail("Should have thrown an IllegalStateException");
@@ -99,7 +98,7 @@ public class ManagedProcessTest {
 		p.waitForConsoleMessage(exec.msgToWaitFor);
 	}
 
-	@Test(expected=IllegalStateException.class)
+	@Test(expected=ManagedProcessException.class)
 	public void testWaitForWrongMessageIfAlreadyTerminated() throws Exception {
 		ManagedProcess p = someSelfTerminatingExec().proc;
 		p.start();

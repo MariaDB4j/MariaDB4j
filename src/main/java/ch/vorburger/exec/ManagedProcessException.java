@@ -19,32 +19,22 @@
  */
 package ch.vorburger.exec;
 
-import java.io.File;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
 
 /**
- * File Utilities.
- * 
- * @see org.apache.commons.io.FileUtils
+ * Exception thrown when unexpected stuff happens in ManagedProcess.
  * 
  * @author Michael Vorburger
  */
-public class FileUtils2 {
-	private static final Logger logger = LoggerFactory.getLogger(FileUtils2.class);
+public class ManagedProcessException extends IOException {
+	private static final long serialVersionUID = -5945369742058979996L;
 
-	public static void forceExecutable(File executableFile) throws ManagedProcessException {
-		if (executableFile.exists() && !executableFile.canExecute()) {
-			boolean succeeded = executableFile.setExecutable(true);
-			if (succeeded) {
-				logger.info("chmod +x " + executableFile.toString() + " (using java.io.File.setExecutable)");
-			} else {
-				String msg = "Failed to do chmod +x " + executableFile.toString() + " using java.io.File.setExecutable, which will be a problem on *NIX...";
-				logger.error(msg);
-				throw new ManagedProcessException(msg);
-			}
-		}
+	public ManagedProcessException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public ManagedProcessException(String message) {
+		super(message);
 	}
 	
 }

@@ -93,12 +93,11 @@ public class ManagedProcess {
 	 * This method always immediately returns (i.e. launches the process asynchronously).
 	 * Use the different waitFor... methods if you want to "block" on the spawned process.
 	 * 
-	 * @throws IOException if it couldn't be started
-	 * @throws IllegalStateException if it's already started
+	 * @throws ManagedProcessException if the process could not be started 
 	 */
-	public void start() throws IOException, IllegalStateException {
+	public void start() throws ManagedProcessException {
 		if (isAlive) {
-			throw new IllegalStateException(procLongName() + " is still running, use another ManagedProcess instance to launch another one");
+			throw new ManagedProcessException(procLongName() + " is still running, use another ManagedProcess instance to launch another one");
 		}
 		if (logger.isInfoEnabled())
 			logger.info("Starting {}", procLongName());
@@ -129,7 +128,11 @@ public class ManagedProcess {
 			logger.warn(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which MAY be a problem on *NIX, but not for sure)");
 		}
 		
-		executor.execute(commandLine, resultHandler);
+		try {
+			executor.execute(commandLine, resultHandler);
+		} catch (IOException e) {
+			throw new ManagedProcessException("Launch failed: " + commandLine, e);
+		}
 		isAlive = true;
 		
 		// We must give the system a chance to run the background 
@@ -143,20 +146,22 @@ public class ManagedProcess {
 		checkResult();
 	}
 
-	protected RuntimeException handleInterruptedException(InterruptedException e) throws RuntimeException {
+	protected ManagedProcessException handleInterruptedException(InterruptedException e) throws ManagedProcessException {
 		// TODO Not sure how to best handle this... opinions welcome (see also below)
 		final String message = "Huh?! InterruptedException should normally never happen here..." + procLongName();
 		logger.error(message, e);
-		return new RuntimeException(message, e);
+		return new ManagedProcessException(message, e);
 	}
 
-	protected void checkResult() throws ExecuteException {
+	protected void checkResult() throws ManagedProcessException {
 		if (resultHandler.hasResult()) {
 			// We already terminated (or never started)
 			ExecuteException e = resultHandler.getException();
 			if (e != null) {
 				logger.error(procLongName() + " failed");
-				throw new ExecuteException(procLongName() + " failed, last " + getConsoleBufferMaxLines() + " lines of console:\n" + getConsole(), exitValue(), e);
+				throw new ManagedProcessException(procLongName() + " failed, exitValue="
+						+ exitValue() + ", last " + getConsoleBufferMaxLines()
+						+ " lines of console:\n" + getConsole(), e);
 			}
 		}
 	}
@@ -164,43 +169,35 @@ public class ManagedProcess {
 	/**
 	 * Kills the Process.
 	 * 
-	 * @throws IllegalStateException if the Process was already explicitly stopped (destroy() already called) 
+	 * @throws ManagedProcessException if the Process was already explicitly stopped (destroy() already called) 
 	 */
 // TODO Clarify/test/document behavior if proc terminated by itself
 //	 * If it has already exited by itself before, just returns it exit value.
 //	 * Callers might want to use isRunning() to distinguish.
 //	 * 
-// TODO There isn't really an exit value on destroy(), is there? (* @return the exit value of the process)
-	public void /*int*/ destroy() throws IllegalStateException {
+	public void destroy() throws ManagedProcessException {
 		// 
 		// if destroy() is ever giving any trouble, the org.openqa.selenium.os.ProcessUtils may be of interest
 		//
 		if (!isAlive) {
-			throw new IllegalStateException(procLongName() + " was already stopped (or never started)");
+			throw new ManagedProcessException(procLongName() + " was already stopped (or never started)");
 		}
 		if (logger.isDebugEnabled())
 			logger.debug("Going to destroy {}", procLongName());
 
 		watchDog.destroyProcess();
 		
-//		try {
-//			// NOTE: We MUST waitFor() after destroy() - on some platforms at least, such as Windows
-//			Process proc;
-//			int exitValue = proc.waitFor();
-//		} catch (InterruptedException e) {
-//			handleInterruptedException(e);
-//		}
+		try {
+			// Safer to waitFor() after destroy()
+			resultHandler.waitFor();
+		} catch (InterruptedException e) {
+			throw handleInterruptedException(e);
+		}
 
-		// TODO There isn't really an exit value on destroy(), is there? 
-//		int exitValue = exitValue();
 		if (logger.isInfoEnabled())
 			logger.info("Successfully destroyed {}", procLongName());
-//			logger.info("Successfully stopped {}, exit value = {}", procName(), exitValue);
 		
 		isAlive = false;
-//		return exitValue;
-		
-		// TODO checkResult(); here?
 	}
 
 
@@ -223,20 +220,25 @@ public class ManagedProcess {
      * @return  the exit value of the subprocess represented by this 
      *          <code>Process</code> object. by convention, the value 
      *          <code>0</code> indicates normal termination.
-     * @exception  IllegalStateException  if the subprocess represented 
+     * @exception  ManagedProcessException  if the subprocess represented 
      *             by this <code>ManagedProcess</code> object has not yet terminated.
      */
-	public int exitValue() throws IllegalStateException {
-		return resultHandler.getExitValue();
+	public int exitValue() throws ManagedProcessException {
+		try {
+			return resultHandler.getExitValue();
+		} catch (IllegalStateException e) {
+			throw new ManagedProcessException("Exit Value not (yet) available for " + procLongName(), e);
+		}
 	}
 
 	/**
 	 * Waits for the process to terminate.
 	 * Returns immediately if the process already stopped.
-//	 * Throws an IllegalStateException if the process was never started.
+//	 * TODO Throws an IllegalStateException if the process was never started.
 	 * @return exit value
+	 * @throws ManagedProcessException 
 	 */
-	public int waitForAnyExit() /*throws IllegalStateException*/ {
+	public int waitForAnyExit() throws ManagedProcessException {
 		try {
 			logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
 			resultHandler.waitFor();
@@ -246,12 +248,12 @@ public class ManagedProcess {
 		}
 	}
 
-	public void waitForSuccessExit() throws ExecuteException {
+	public void waitForSuccessExit() throws ManagedProcessException {
 		waitForAnyExit();
 		checkResult();
 	}
 	
-	public void waitForAnyExitMaxMs(long maxWaitUntilReturning) /*throws IllegalStateException*/ {
+	public void waitForAnyExitMaxMs(long maxWaitUntilReturning) throws ManagedProcessException {
 		try {
 			logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilReturning, procLongName());
 			resultHandler.waitFor(maxWaitUntilReturning);
@@ -260,12 +262,12 @@ public class ManagedProcess {
 		}
 	}
 	
-	public void waitForSuccessExitMaxMs(long maxWaitUntilDestroyTimeout) throws ExecuteException /*throws IllegalStateException*/ {
+	public void waitForSuccessExitMaxMs(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
 		waitForAnyExitMaxMs(maxWaitUntilDestroyTimeout);
 		checkResult();
 	}
 	
-	public void waitForAnyExitMaxMsOrDestroy(long maxWaitUntilDestroyTimeout) /*throws IllegalStateException*/ {
+	public void waitForAnyExitMaxMsOrDestroy(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
 		waitForAnyExitMaxMs(maxWaitUntilDestroyTimeout);
 		if (isAlive()) {
 			logger.info("Process didn't exit within max. {}ms, so going to destroy it now: {}", maxWaitUntilDestroyTimeout, procLongName());
@@ -273,7 +275,7 @@ public class ManagedProcess {
 		}
 	}
 
-	public void waitForSuccessOrDestroy(long maxWaitUntilDestroyTimeout) throws ExecuteException /*throws IllegalStateException*/ {
+	public void waitForSuccessOrDestroy(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
 		waitForAnyExitMaxMsOrDestroy(maxWaitUntilDestroyTimeout);
 		checkResult();
 	}
@@ -289,9 +291,9 @@ public class ManagedProcess {
 	 * You have to be sure that the process either prints this message at some point, or otherwise exits on it's own, else this will block forever!
 	 *  
 	 * @param messageInConsole text to wait for in the STDOUT/STDERR of the external process
-	 * @throws IllegalStateException if the process already exited (without the message ever appearing in the Console)
+	 * @throws ManagedProcessException for problems such as if the process already exited (without the message ever appearing in the Console) 
 	 */
-	public void waitForConsoleMessage(String messageInConsole) throws IllegalStateException {
+	public void waitForConsoleMessage(String messageInConsole) throws ManagedProcessException {
 		// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
 		if (getConsole().contains(messageInConsole)) {
 			logger.info("Asked to wait for \"\"{}\"\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
@@ -301,7 +303,7 @@ public class ManagedProcess {
 		// MUST do this, else will block forever too easily
 		String unexpectedExitMsg = "Asked to wait for \"" + messageInConsole + "\" from " + procLongName() + ", but it already exited! (without that message in console)";
 		if (!isAlive()) {
-			throw new IllegalStateException(unexpectedExitMsg);
+			throw new ManagedProcessException(unexpectedExitMsg);
 		}
 		
 		CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
@@ -322,7 +324,7 @@ public class ManagedProcess {
 
 		// If we got out of the while() loop due to !isAlive() instead of messageInConsole, then throw the same exception as above!
 		if (!checkingConsoleOutputStream.hasSeenIt()) {
-			throw new IllegalStateException(unexpectedExitMsg);
+			throw new ManagedProcessException(unexpectedExitMsg);
 		}
 	}
 

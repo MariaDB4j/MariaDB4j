@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
+import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.exec.Platform;
 import ch.vorburger.exec.Platform.Type;
 
@@ -104,8 +105,9 @@ public class DB {
 	 * mysql_install_db.
 	 * This DESTROYS the datadir, in case it exists already.
 	 * @return 
+	 * @throws ManagedProcessException 
 	 */
-	public DB installDB() throws IllegalStateException, IOException {
+	public DB installDB() throws IOException {
 		FileUtils.deleteDirectory(datadir);
 		FileUtils.forceMkdir(datadir);
 		
@@ -148,7 +150,7 @@ public class DB {
 //		stop();
 //	}
 	
-	public DB stop() {
+	public DB stop() throws ManagedProcessException {
 		// TODO Can (should?) we do better than just kill the mysqld process?! 
 		// There is probably something we can send through SQL, but then we need the driver...
 		// How do other folks send SIGTERM rather than the SIGKILL from Java?!?
@@ -164,7 +166,7 @@ public class DB {
 	// TODO Implement me as mysqlcheck --auto-repair --all-databases -u root
 	public DB check() {
 		throw new UnsupportedOperationException();
-		// TODO return this;
+		// return this;
 	}
 
 	// ----

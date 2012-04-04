@@ -31,8 +31,7 @@ import java.io.File;
  */
 public class RAMDisk {
 
-	// TODO post on
-	// http://stackoverflow.com/questions/4428217/can-a-java-ram-disk-be-created-to-be-used-with-the-java-io-api
+	// TODO post on http://stackoverflow.com/questions/4428217/can-a-java-ram-disk-be-created-to-be-used-with-the-java-io-api
 
 	private boolean stopOnExit = true;
 
