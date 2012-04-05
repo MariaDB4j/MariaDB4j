@@ -182,14 +182,16 @@ public class ManagedProcess {
 	}
 
 	/**
-	 * Kills the Process.
+	 * Kills the Process. If you expect that the process may not be running
+	 * anymore, use if ({@link #isAlive()}) around this. If you expect that the
+	 * process should still be running at this point, call as is - and it will
+	 * tell if it had nothing to destroy.
 	 * 
-	 * @throws ManagedProcessException if the Process was already explicitly stopped (destroy() already called) 
+	 * @throws ManagedProcessException
+	 *             if the Process is already stopped (either because destroy()
+	 *             already explicitly called, or it terminated by itself, or it
+	 *             was never started)
 	 */
-// TODO Clarify/test/document behavior if proc terminated by itself
-//	 * If it has already exited by itself before, just returns it exit value.
-//	 * Callers might want to use isRunning() to distinguish.
-//	 * 
 	public void destroy() throws ManagedProcessException {
 		// 
 		// if destroy() is ever giving any trouble, the org.openqa.selenium.os.ProcessUtils may be of interest

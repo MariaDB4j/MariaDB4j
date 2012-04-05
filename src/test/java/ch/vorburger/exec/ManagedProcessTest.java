@@ -43,7 +43,7 @@ public class ManagedProcessTest {
 		assertThat(p.isAlive(), is(false));
 		try {
 			p.destroy();
-			Assert.fail("Should have thrown an IllegalStateException");
+			Assert.fail("Should have thrown an ManagedProcessException");
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
@@ -124,6 +124,14 @@ public class ManagedProcessTest {
 		p.waitForSuccessExit();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		assertThat(p.isAlive(), is(false));
+		
+		// It's NOT OK to call destroy() on a process which already terminated
+		try {
+			p.destroy();
+			Assert.fail("Should have thrown an ManagedProcessException");
+		} catch (ManagedProcessException e) {
+			// as expected
+		}
 		
 		String recentConsoleOutput = p.getConsole();
 		assertTrue(recentConsoleOutput.length() > 10);
