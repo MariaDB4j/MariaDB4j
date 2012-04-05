@@ -59,31 +59,36 @@ public class ManagedProcessTest {
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
-// TODO Tests... !		
-//		try {
-//			p.waitFor();
-//			Assert.fail("Should have thrown an IllegalStateException");
-//		} catch (IllegalStateException e) {
-//			// as expected
-//		}
-//		try {
-//			p.waitFor(1234);
-//			Assert.fail("Should have thrown an IllegalStateException");
-//		} catch (IllegalStateException e) {
-//			// as expected
-//		}
-//		try {
-//			p.waitFor("Never say never...");
-//			Assert.fail("Should have thrown an IllegalStateException");
-//		} catch (IllegalStateException e) {
-//			// as expected
-//		}
-//		try {
-//			p.waitForAndDestroy(1234);
-//			Assert.fail("Should have thrown an IllegalStateException");
-//		} catch (IllegalStateException e) {
-//			// as expected
-//		}
+		try {
+			p.waitForExit();
+			Assert.fail("Should have thrown an ManagedProcessException");
+		} catch (ManagedProcessException e) {
+			// as expected
+		}
+		try {
+			p.waitForExitMaxMs(1234);
+			Assert.fail("Should have thrown an ManagedProcessException");
+		} catch (ManagedProcessException e) {
+			// as expected
+		}
+		try {
+			p.waitForConsoleMessage("Never say never...");
+			Assert.fail("Should have thrown an ManagedProcessException");
+		} catch (ManagedProcessException e) {
+			// as expected
+		}
+		try {
+			p.waitForExitMaxMsOrDestroy(1234);
+			Assert.fail("Should have thrown an ManagedProcessException");
+		} catch (ManagedProcessException e) {
+			// as expected
+		}
+	}
+	
+	@Test(expected=ManagedProcessException.class)
+	public void waitForMustFailIfNeverStarted() throws Exception {
+		ManagedProcess p = new ManagedProcessBuilder("someExec").build();
+		p.waitForExit();
 	}
 	
 	@Test
@@ -121,7 +126,7 @@ public class ManagedProcessTest {
 		
 		p.waitForConsoleMessage(exec.msgToWaitFor);
 		
-		p.waitForSuccessExit();
+		p.waitForExit();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
 		assertThat(p.isAlive(), is(false));
 		
@@ -180,15 +185,9 @@ public class ManagedProcessTest {
 		assertThat(p.isAlive(), is(false));
 		p.start();
 		assertThat(p.isAlive(), is(true));
-		p.waitForAnyExitMaxMsOrDestroy(200);
+		p.waitForExitMaxMsOrDestroy(200);
 		assertThat(p.isAlive(), is(false));
 		// can not: p.exitValue();
 	}
 
-	@Test(expected=ManagedProcessException.class)
-	public void waitForMustFailIfNeverStarted() throws Exception {
-		ManagedProcess p = new ManagedProcessBuilder("someExec").build();
-		p.waitForAnyExit();
-	}
-	
 }

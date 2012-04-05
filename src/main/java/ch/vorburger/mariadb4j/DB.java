@@ -119,7 +119,7 @@ public class DB {
 		FileUtils.forceMkdir(datadir);
 		
 		mysql_install.start();
-		mysql_install.waitForSuccessExit();
+		mysql_install.waitForExit();
 		return this;
 	}
 

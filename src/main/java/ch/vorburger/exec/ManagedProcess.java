@@ -71,6 +71,7 @@ public class ManagedProcess {
 	private MultiOutputStream stdouts;
 	private MultiOutputStream stderrs;
 
+	public static int INVALID_EXITVALUE = Executor.INVALID_EXITVALUE;
 	
 	/**
 	 * Package local constructor.
@@ -250,56 +251,72 @@ public class ManagedProcess {
 
 	/**
 	 * Waits for the process to terminate.
-	 * Returns immediately if the process already stopped.
-	 * @return exit value
-	 * @throws ManagedProcessException if {@link #start()} was never even called
+	 * 
+	 * Returns immediately if the process is already stopped (either because destroy()
+	 * was already explicitly called, or it terminated by itself).
+	 * 
+	 * Note that if the process was attempted to be started but that start failed (may be because
+	 * the executable could not be found, or some underlying OS error) then it throws a ManagedProcessException.
+	 * 
+	 * It also throws a ManagedProcessException if {@link #start()} was never even called.
+	 * 
+	 * @return exit value (or {@value #INVALID_EXITVALUE} if {@link #destroy()} was used)
+	 * @throws ManagedProcessException see above
 	 */
-	public int waitForAnyExit() throws ManagedProcessException {
-		if (!isAlive() && !resultHandler.hasResult()) {
-			throw new ManagedProcessException("Asked to waitFor " + procLongName() + ", but it was never even start()'ed!");
-		}
+	public int waitForExit() throws ManagedProcessException {
+		logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
+		return waitForExitMaxMsWithoutLog(-1);
+	}
 
+	/**
+	 * Like {@link #waitForExit()}, but waits max. maxWaitUntilReturning, then returns (even if still running, taking no action).
+	 * @param maxWaitUntilReturning Time to wait
+	 * @return exit value, or {@value #INVALID_EXITVALUE} if the timeout was reached, or if {@link #destroy()} was used
+	 */
+	public int waitForExitMaxMs(long maxWaitUntilReturning) throws ManagedProcessException {
+		logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilReturning, procLongName());
+		return waitForExitMaxMsWithoutLog(maxWaitUntilReturning);
+	}
+
+	protected int waitForExitMaxMsWithoutLog(long maxWaitUntilReturning) throws ManagedProcessException {
+		assertWaitForIsValid();
 		try {
-			logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
-			resultHandler.waitFor();
-			return exitValue();
+			if (maxWaitUntilReturning != -1) {
+				resultHandler.waitFor(maxWaitUntilReturning);
+				checkResult();
+				if (!isAlive())
+					return exitValue();
+				else
+					return INVALID_EXITVALUE;
+			} else {
+				resultHandler.waitFor();
+				checkResult();
+				return exitValue();
+			}
+						
 		} catch (InterruptedException e) {
 			throw handleInterruptedException(e);
 		}
 	}
-
-	public void waitForSuccessExit() throws ManagedProcessException {
-		waitForAnyExit();
-		checkResult();
-	}
 	
-	public void waitForAnyExitMaxMs(long maxWaitUntilReturning) throws ManagedProcessException {
-		try {
-			logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilReturning, procLongName());
-			resultHandler.waitFor(maxWaitUntilReturning);
-		} catch (InterruptedException e) {
-			throw handleInterruptedException(e);
-		}
-	}
-	
-	public void waitForSuccessExitMaxMs(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
-		waitForAnyExitMaxMs(maxWaitUntilDestroyTimeout);
-		checkResult();
-	}
-	
-	public void waitForAnyExitMaxMsOrDestroy(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
-		waitForAnyExitMaxMs(maxWaitUntilDestroyTimeout);
+	/**
+	 * Like {@link #waitForExit()}, but waits max. maxWaitUntilReturning, then destroys if still running, and returns.  
+	 * @param maxWaitUntilReturning Time to wait
+	 */
+	public void waitForExitMaxMsOrDestroy(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
+		waitForExitMaxMs(maxWaitUntilDestroyTimeout);
 		if (isAlive()) {
 			logger.info("Process didn't exit within max. {}ms, so going to destroy it now: {}", maxWaitUntilDestroyTimeout, procLongName());
 			destroy();
 		}
 	}
 
-	public void waitForSuccessOrDestroy(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
-		waitForAnyExitMaxMsOrDestroy(maxWaitUntilDestroyTimeout);
-		checkResult();
+	protected void assertWaitForIsValid() throws ManagedProcessException {
+		if (!isAlive() && !resultHandler.hasResult()) {
+			throw new ManagedProcessException("Asked to waitFor " + procLongName() + ", but it was never even start()'ed!");
+		}
 	}
-	
+
 	/**
 	 * Wait (block) until the process prints a certain message.
 	 * 
