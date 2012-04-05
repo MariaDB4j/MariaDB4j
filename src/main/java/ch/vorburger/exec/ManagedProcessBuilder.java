@@ -21,8 +21,10 @@ package ch.vorburger.exec;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.environment.EnvironmentUtils;
 
 /**
  * Builder for ManagedProcess.
@@ -40,18 +42,29 @@ import org.apache.commons.exec.CommandLine;
  */
 public class ManagedProcessBuilder {
 
-	private final CommandLine commonsExecCommandLine;
-	// private Map<String,String> environment = new HashMap<String, String>();
-	private File directory;
+	protected final CommandLine commonsExecCommandLine;
+	protected final Map<String,String> environment;
+	protected File directory;
 
-	public ManagedProcessBuilder(String executable) {
+	public ManagedProcessBuilder(String executable) throws ManagedProcessException {
 		commonsExecCommandLine = new CommandLine(executable);
+		this.environment = initialEnvironment();
 	}
 
-	public ManagedProcessBuilder(File executable) {
+	public ManagedProcessBuilder(File executable) throws ManagedProcessException {
 		commonsExecCommandLine = new CommandLine(executable);
+		this.environment = initialEnvironment();
 	}
 
+	@SuppressWarnings("unchecked")
+	protected Map<String,String> initialEnvironment() throws ManagedProcessException {
+		try {
+			return EnvironmentUtils.getProcEnvironment();
+		} catch (IOException e) {
+			throw new ManagedProcessException("Retrieving default environment variables failed", e);
+		}
+	}
+	
 	/**
 	 * Adds a File as a argument to the command.
 	 * This uses {@link File#getCanonicalPath()}, which is usually what you'll actually want when launching external processes.
@@ -74,11 +87,6 @@ public class ManagedProcessBuilder {
 		return this;
 	}
 
-	public ManagedProcessBuilder addArgument(String argName, File fileArg) throws IOException {
-		addArgument(argName + "=" + fileArg.getCanonicalPath());
-		return this;
-	}
-	
 	public String[] getArguments() {
 		return commonsExecCommandLine.getArguments();
 	}
@@ -86,7 +94,7 @@ public class ManagedProcessBuilder {
 	/**
 	 * @see ProcessBuilder#directory(File)
 	 */
-	public ManagedProcessBuilder directory(File directory) {
+	public ManagedProcessBuilder setWorkingDirectory(File directory) {
 		this.directory = directory;
 		return this;
 	}
@@ -94,37 +102,36 @@ public class ManagedProcessBuilder {
 	/**
 	 * @see ProcessBuilder#directory()
 	 */
-	public File directory() {
+	public File getWorkingDirectory() {
 		return this.directory;
 	}
 
-// Not needed yet - could certainly be implemented with Apache Commons Exec, am just too lazy right now
-//	/**
-//	 * @see ProcessBuilder#environment(File)
-//	 */
-//    public Map<String,String> environment() {
-//    	return environment;
-//    }
+	/**
+	 * @see ProcessBuilder#environment(File)
+	 */
+    public Map<String,String> getEnvironment() {
+    	return environment;
+    }
 
-	public String executable() {
+	public String getExecutable() {
 		return commonsExecCommandLine.getExecutable();
 	}
 
     // ----
     
 	public ManagedProcess build() {
-		return new ManagedProcess(getCommandLine(), directory/*, environment */);
+		return new ManagedProcess(getCommandLine(), directory, environment);
 	}
 
 	/* package-local... let's keep ch.vorburger.exec's API separate from Apache Commons Exec, so it COULD be replaced */  
 	CommandLine getCommandLine() {
-		if (directory() == null) {
+		if (getWorkingDirectory() == null) {
 			if (commonsExecCommandLine.isFile()) {
 				File exec = new File(commonsExecCommandLine.getExecutable());
 				File dir = exec.getParentFile();
 				if (dir == null)
 					throw new IllegalStateException("directory MUST be set (and could not be auto-determined from executable, although it was a File)");
-				this.directory(dir);
+				this.setWorkingDirectory(dir);
 // DO NOT   } else {
 //				throw new IllegalStateException("directory MUST be set (and could not be auto-determined from executable)");
 			}

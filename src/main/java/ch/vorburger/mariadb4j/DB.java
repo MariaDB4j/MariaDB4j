@@ -77,14 +77,16 @@ public class DB {
 		// NOTE: Arguments order MATTERS here (ouch), e.g. --no-defaults has to be before --datadir
 		mysqld_builder.addArgument("--no-defaults");
 		mysqld_builder.addArgument("--console");
-		mysqld_builder.addArgument("--basedir", basedir).addArgument("--datadir", datadir);
+		addFileArgument(mysqld_builder, "--basedir", basedir);
+		addFileArgument(mysqld_builder, "--datadir", datadir);
 		return mysqld_builder.build();
 	}
 
 	protected ManagedProcess mysql_install_db(File basedir, File datadir) throws IOException {
-		final ManagedProcessBuilder mysql_install_builder = new ManagedProcessBuilder(cmd("mysql_install_db")).addArgument("--datadir", datadir).directory(basedir);
+		final ManagedProcessBuilder mysql_install_builder = new ManagedProcessBuilder(cmd("mysql_install_db"));
+		addFileArgument(mysql_install_builder, "--datadir", datadir).setWorkingDirectory(basedir);
 		if (Platform.is(Type.Linux)) {
-			mysql_install_builder.addArgument("--basedir", basedir);
+			addFileArgument(mysql_install_builder, "--basedir", basedir);
 			
 			mysql_install_builder.addArgument("--no-defaults");
 			// TODO remove hard-coded my.cnf! Just for testing.. but still doesn't work! :-(
@@ -95,6 +97,11 @@ public class DB {
 			mysql_install_builder.addArgument("--verbose");
 		}
 		return mysql_install_builder.build();
+	}
+
+	private ManagedProcessBuilder addFileArgument(ManagedProcessBuilder builder, String arg, File file) throws IOException {
+		builder.addArgument(arg + "=" + file.getCanonicalPath());
+		return builder;
 	}
 
 	public DB(String basedir, String datadir) throws IOException {

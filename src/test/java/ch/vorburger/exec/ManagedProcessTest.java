@@ -137,7 +137,7 @@ public class ManagedProcessTest {
 		String msgToWaitFor;
 	}
 	
-	protected SomeSelfTerminatingExec someSelfTerminatingExec() throws UnknownPlatformException, MariaDB4jException {
+	protected SomeSelfTerminatingExec someSelfTerminatingExec() throws UnknownPlatformException, MariaDB4jException, ManagedProcessException {
 		SomeSelfTerminatingExec r = new SomeSelfTerminatingExec();
 		switch (Platform.is()) {
 		case Windows:

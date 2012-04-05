@@ -21,6 +21,7 @@ package ch.vorburger.exec;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -60,6 +61,7 @@ public class ManagedProcess {
 	private final DefaultExecuteResultHandler resultHandler = new LoggingExecuteResultHandler();
 	private final ExecuteWatchdog watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
 	private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
+	private final Map<String, String> environment;
 
 	private boolean isAlive = false;
 	private boolean destroyOnShutdown = true;
@@ -68,6 +70,7 @@ public class ManagedProcess {
 	private RollingLogOutputStream console;
 	private MultiOutputStream stdouts;
 	private MultiOutputStream stderrs;
+
 	
 	/**
 	 * Package local constructor.
@@ -78,9 +81,11 @@ public class ManagedProcess {
 	 * 
 	 * @param commandLine Apache Commons Exec CommandLine 
 	 * @param directory Working directory, or null
+	 * @param environment Environment Variable.
 	 */
-	ManagedProcess(CommandLine commandLine, File directory) {
+	ManagedProcess(CommandLine commandLine, File directory, Map<String, String> environment) {
 		this.commandLine = commandLine;
+		this.environment = environment;
 		if (directory != null) {
 			executor.setWorkingDirectory(directory);
 		}
@@ -96,7 +101,7 @@ public class ManagedProcess {
 	 * @throws ManagedProcessException if the process could not be started 
 	 */
 	public void start() throws ManagedProcessException {
-		if (isAlive) {
+		if (isAlive()) {
 			throw new ManagedProcessException(procLongName() + " is still running, use another ManagedProcess instance to launch another one");
 		}
 		if (logger.isInfoEnabled())
@@ -129,7 +134,7 @@ public class ManagedProcess {
 		}
 		
 		try {
-			executor.execute(commandLine, resultHandler);
+			executor.execute(commandLine, environment, resultHandler);
 		} catch (IOException e) {
 			throw new ManagedProcessException("Launch failed: " + commandLine, e);
 		}

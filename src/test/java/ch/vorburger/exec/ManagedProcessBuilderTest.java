@@ -47,14 +47,14 @@ public class ManagedProcessBuilderTest {
 		// needed to force auto-setting the directory
 		mbp.getCommandLine();
 		
-		File cwd = mbp.directory();
+		File cwd = mbp.getWorkingDirectory();
 		if (Platform.is(Type.Windows)) {
 			assertThat(cwd.getAbsolutePath(), is("C:\\somewhere\\absolute\\bin"));
 		} else {
 			assertThat(cwd.getAbsolutePath(), is("/somewhere/absolute/bin"));			
 		}
 		
-		String arg0 = mbp.executable();
+		String arg0 = mbp.getExecutable();
 		if (Platform.is(Type.Windows)) {
 			assertThat(arg0, is("C:\\somewhere\\absolute\\bin\\thing"));
 		} else {
