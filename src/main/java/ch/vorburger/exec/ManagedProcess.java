@@ -140,10 +140,20 @@ public class ManagedProcess {
 		}
 		isAlive = true;
 		
-		// We must give the system a chance to run the background 
-		// thread now, otherwise the resultHandler in checkResult() won't work
+		// We now must give the system a say 100ms chance to run the background 
+		// thread now, otherwise the resultHandler in checkResult() won't work.
+		// 
+		// This is admittedly not ideal, but to do better would require significant
+		// changes to DefaultExecutor, so that its execute() would "fail fast" and
+		// throw an Exception immediately if process start-up fails by doing the
+		// launch in the current thread, and then spawns a separate thread only
+		// for the waitFor().
+		//
+		// As DefaultExecutor doesn't seem to have been written with extensibility
+		// in mind, and rewriting it to start gain 100ms (at the start of every process..)
+		// doesn't seem to be worth it for now, I'll leave it like this, for now.
+		//
 		try {
-			// TODO This is not ideal, as it artificially slows down... but how to do better? Thread.yield() doesn't work.
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			throw handleInterruptedException(e);
