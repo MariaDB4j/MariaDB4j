@@ -300,11 +300,6 @@ public class ManagedProcess {
 		checkResult();
 	}
 	
-	// TODO HIGH must throw exception if proc terminates with something else than expected message! else this may wait forever...
-//	if (!mysqld.isAlive()) {
-//		throw new IOException(mysqld.getConsole() + "Starting DB failed; it already exited with: " + mysqld.exitValue());
-//	}
-
 	/**
 	 * Wait (block) until the process prints a certain message.
 	 * 

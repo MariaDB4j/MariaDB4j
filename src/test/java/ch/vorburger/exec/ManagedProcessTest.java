@@ -105,7 +105,7 @@ public class ManagedProcessTest {
 		// for this test, do NOT use any wait*() anything here, just give it a moment...
 		Thread.sleep(1000);
 		// by now this process should have terminated itself
-		// but this should not cause this to hang, but must throw an IllegalStateException
+		// but this should not cause this to hang, but must throw an ManagedProcessException
 		p.waitForConsoleMessage("some console message which will never appear");
 	}
 
