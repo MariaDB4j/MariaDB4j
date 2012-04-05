@@ -249,11 +249,14 @@ public class ManagedProcess {
 	/**
 	 * Waits for the process to terminate.
 	 * Returns immediately if the process already stopped.
-//	 * TODO Throws an IllegalStateException if the process was never started.
 	 * @return exit value
-	 * @throws ManagedProcessException 
+	 * @throws ManagedProcessException if {@link #start()} was never even called
 	 */
 	public int waitForAnyExit() throws ManagedProcessException {
+		if (!isAlive() && !resultHandler.hasResult()) {
+			throw new ManagedProcessException("Asked to waitFor " + procLongName() + ", but it was never even start()'ed!");
+		}
+
 		try {
 			logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
 			resultHandler.waitFor();

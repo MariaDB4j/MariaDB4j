@@ -177,5 +177,10 @@ public class ManagedProcessTest {
 		// can not: p.exitValue();
 	}
 
-
+	@Test(expected=ManagedProcessException.class)
+	public void waitForMustFailIfNeverStarted() throws Exception {
+		ManagedProcess p = new ManagedProcessBuilder("someExec").build();
+		p.waitForAnyExit();
+	}
+	
 }
