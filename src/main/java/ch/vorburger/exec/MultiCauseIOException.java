@@ -105,11 +105,6 @@ public class MultiCauseIOException extends IOException {
 	}
 
 	@Override
-	public synchronized Throwable fillInStackTrace() {
-		throw new UnsupportedOperationException(); 
-	}
-
-	@Override
 	public StackTraceElement[] getStackTrace() {
 		throw new UnsupportedOperationException(); 
 	}
