@@ -2,7 +2,7 @@ TODO: MarkDown (*.md) formatting
 
 What?
 
-MariaDB is "a backward compatible, drop-in replacement of the MySQL® Database Server" :
+MariaDB is "a backward compatible, drop-in replacement of the MySQLï¿½ Database Server" :
 	* Homepage: http://mariadb.org
 	* FAQ: http://kb.askmonty.org/en/mariadb-faq
 	* Wikipedia: http://en.wikipedia.org/wiki/MariaDB
@@ -37,10 +37,13 @@ set-up and up-and-running of an externally managed server.
 
 Java developers frequently use pure Java databases such as H2, hsqldb (HyperSQL), Derby / JavaDB for this purpose.
  
-This library brings the advantage of the installation-free DB approach, while maintaining MariaDB (and thus MySQL®) compatibility.
+This library brings the advantage of the installation-free DB approach, while maintaining MariaDB (and thus MySQLï¿½) compatibility.
 
 It was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see http://mifos.org.
 
+Build?
+
+[![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
 
 Who?
 
