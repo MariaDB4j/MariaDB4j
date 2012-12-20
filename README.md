@@ -14,18 +14,19 @@ How?
 
 MariaDB binaries are in the JAR and extracted to a temporary directory on the fly, then started by Java - with 1 line:
 
-		DB db = DBFactory.newEmbeddedTemporaryDB().start();
-
+```java
+DB db = DBFactory.newEmbeddedTemporaryDB().start();
+```
 or:
-
-		DB db = DBFactory.newEmbeddedDB(new File("myDB").start();
-		
+```java
+DB db = DBFactory.newEmbeddedDB(new File("myDB").start();
+```		
 Then get a JDBC Connection directly or via your favourite connection pool... business as usual.
-
-	<groupId>ch.vorburger.mariaDB4j</groupId>
-	<artifactId>mariaDB4j</artifactId>
-	<version>1.0.0</version>
-
+```xml
+<groupId>ch.vorburger.mariaDB4j</groupId>
+<artifactId>mariaDB4j</artifactId>
+<version>1.0.0</version>
+```
 
 Why?
 
