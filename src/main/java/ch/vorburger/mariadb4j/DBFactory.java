@@ -90,14 +90,6 @@ public abstract class DBFactory {
 		return db;
 	}
 
-// TODO RAMDisk stuff...
-//	/**
-//	 * This one tries to, if possible, place the temporary DB datadir on a RAM Disk.
-//	 */
-//	public static DB newEmbeddedTemporaryDB_onRamDisk() throws UnknownPlatformException, IOException {
-//		throw new UnsupportedOperationException();
-//	}
-	
 	// ---
 	
 	protected static File unpackEmbeddedDB() throws IOException, UnknownPlatformException {
