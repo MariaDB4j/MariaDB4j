@@ -286,13 +286,11 @@ public class ManagedProcess {
 				checkResult();
 				if (!isAlive())
 					return exitValue();
-				else
-					return INVALID_EXITVALUE;
-			} else {
-				resultHandler.waitFor();
-				checkResult();
-				return exitValue();
+				return INVALID_EXITVALUE;
 			}
+			resultHandler.waitFor();
+			checkResult();
+			return exitValue();
 						
 		} catch (InterruptedException e) {
 			throw handleInterruptedException(e);
