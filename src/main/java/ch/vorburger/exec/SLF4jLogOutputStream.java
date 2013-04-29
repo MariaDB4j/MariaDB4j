@@ -45,7 +45,7 @@ class SLF4jLogOutputStream extends LogOutputStream {
 	}
 	
 	@Override
-	protected void processLine(String line, int level) {
+	protected void processLine(String line, @SuppressWarnings("unused") int level) {
 		switch (type) {
 		case stdout:
 			logger.info("{}: {}", pid, line);

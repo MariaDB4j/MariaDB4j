@@ -100,7 +100,7 @@ public class MultiCauseIOException extends IOException {
 	}
 
 	@Override
-	public synchronized Throwable initCause(Throwable cause) {
+	public synchronized Throwable initCause(@SuppressWarnings("unused") Throwable cause) {
 		throw new UnsupportedOperationException(); 
 	}
 
@@ -110,7 +110,7 @@ public class MultiCauseIOException extends IOException {
 	}
 
 	@Override
-	public void setStackTrace(StackTraceElement[] stackTrace) {
+	public void setStackTrace(@SuppressWarnings("unused") StackTraceElement[] stackTrace) {
 		throw new UnsupportedOperationException(); 
 	}
 	

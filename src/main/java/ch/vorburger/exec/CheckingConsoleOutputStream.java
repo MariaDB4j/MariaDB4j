@@ -43,7 +43,7 @@ class CheckingConsoleOutputStream extends LogOutputStream {
 	}
 	
 	@Override
-	protected void processLine(String line, int level) {
+	protected void processLine(String line, @SuppressWarnings("unused") int level) {
 		if (line.contains(watchOutFor))
 			seenIt = true;
 	}
