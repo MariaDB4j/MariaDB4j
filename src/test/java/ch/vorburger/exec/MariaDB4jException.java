@@ -17,7 +17,7 @@
  * See also http://www.apache.org/licenses/LICENSE-2.0.html for an
  * explanation of the license and how it is applied.
  */
-package ch.vorburger.mariadb4j;
+package ch.vorburger.exec;
 
 /**
  * Exception occurred with MariaDB.

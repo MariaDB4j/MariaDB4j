@@ -28,7 +28,6 @@ import java.io.IOException;
 import org.junit.Test;
 
 import ch.vorburger.exec.Platform.Type;
-import ch.vorburger.mariadb4j.MariaDB4jException;
 
 /**
  * Tests {@link ManagedProcessBuilder}.

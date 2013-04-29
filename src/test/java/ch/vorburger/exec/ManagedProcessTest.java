@@ -22,13 +22,11 @@ package ch.vorburger.exec;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 import ch.vorburger.exec.Platform.Type;
-import ch.vorburger.mariadb4j.MariaDB4jException;
 
 /**
  * Tests ManagedProcess.
