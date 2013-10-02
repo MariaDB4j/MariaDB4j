@@ -19,9 +19,12 @@ http://kb.askmonty.org/en/mariadb-license
 Here is a link allowing you to download MariaDB's source code:
 http://kb.askmonty.org/en/getting-the-mariadb-source-code
 
-Note that you have to figure out yourself whether you can use the MySQL® JDBC driver (Connector/J) from Oracle in your application.
-The MySQL® JDBC driver (Connector/J) is GPL licensed, but due to the MySQL FLOSS License Exception,
+Note that you have to figure out yourself whether you can use the MySQLï¿½ JDBC driver (Connector/J) from Oracle in your application.
+The MySQLï¿½ JDBC driver (Connector/J) is GPL licensed, but due to the MySQL FLOSS License Exception,
 it "permits linking with other components that are licensed under OSI-approved open source licenses".
+
+The MariaDB JDBC driver, AKA "MariaDB Client Library for Java Applications"
+from <https://downloads.mariadb.org/client-java/> may be of interest to you in this context.
 
 http://kb.askmonty.org/en/mariadb-faq-is-there-any-java-connector-for-mariadb-than-the-one-from-mysql
 says that For most cases there is no license requirement for using the JDBC connector as the GPL for
