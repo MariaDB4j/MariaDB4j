@@ -49,18 +49,20 @@ public class MariaDB4jSampleTutorialTest {
 	public void testBadFixedPathMariaDB4j() throws Exception {
 		// No DB in bin/ here, should fail:
 		final String basedir = "src/main/resources/"; 
-		DB db = new DB(basedir, "target/db1");
+		DB db = new DB(basedir, "target/db1", new DBOptions());
 		db.start(); // will fail with an IOException
 	}
 
 	@Test
 	public void testEmbeddedMariaDB4j() throws Exception {
-		DB db = DBFactory.newEmbeddedTemporaryDB();
+		DBOptions options = new DBOptions();
+		options.addMysqldOption("port","3307");
+		DB db = DBFactory.newEmbeddedDB(options);
 		// Note we are automatically doing db.installDB() here
 		db.start();
 
 		// TODO Should DB have a getJdbcURL() ? UID? PWD?
-		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "");
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3307/test", "root", "");
 		Statement stmt = conn.createStatement();
 		
 //		stmt.execute("CREATE DATABASE test2;");

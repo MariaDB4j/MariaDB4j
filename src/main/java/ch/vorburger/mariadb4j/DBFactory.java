@@ -49,48 +49,42 @@ public abstract class DBFactory {
 	 * You need to only give the path to your data directory here; this
 	 * automatically unpacks a MariaDB (or MySQL®) to a temporary basedir.
 	 */
-	public static DB newEmbeddedDB(File datadir) throws UnknownPlatformException, IOException {
-		return new DB(unpackEmbeddedDB(), datadir);
-	}
-	
-	/**
-	 * You don't need to give the path to your data directory here, as it
-	 * automatically picks a temporary data directory (and it automatically
-	 * unpacks a MariaDB (or MySQL®) to a temporary basedir if needed).
-	 * 
-	 * On startup, a new temporary database is automatically created in the
-	 * temporary data directory.  On JVM Exit this data dir is automatically deleted.
-	 * 
-	 * This is useful e.g. for integration tests.
-	 */
-	public static DB newEmbeddedTemporaryDB() throws UnknownPlatformException, IOException {
-		final File datadir = new File(getTempDirectory(), "mariaDB4j/tempDBs/" + System.nanoTime());
+	public static DB newEmbeddedDB(DBOptions options) throws UnknownPlatformException, IOException {
+
+		// If a specific data directory is passed in, use this existing data directory
+		if (options.getDataDirectory() != null) {
+			File dataDir = new File(options.getDataDirectory());
+			return new DB(unpackEmbeddedDB(), dataDir, options);
+		}
+
+		// Otherwise, if no data directory is passed in, create temporary
+		// directory that will be deleted at the end of the process
+
+		final File dataDir = new File(getTempDirectory(), "mariaDB4j/tempDBs/" + System.nanoTime());
 		
-		final DB db = newEmbeddedDB(datadir);
+		final DB db = new DB(unpackEmbeddedDB(), dataDir, options);
 		db.setAutoInstallDB(true);
 		
 		// Simply datadir.deleteOnExit(); doesn't work, this seems to:
-		String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + datadir;
+		String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + dataDir;
 		Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
 			@Override
 		    public void run() {
 		    	try {
 					db.stop();
 				} catch (ManagedProcessException e) {
-					logger.error("Couldn't stop DB " + datadir, e);
+					logger.error("Couldn't stop DB " + dataDir, e);
 				}
 		    	try {
-					FileUtils.deleteDirectory(datadir);
+					FileUtils.deleteDirectory(dataDir);
 				} catch (IOException e) {
-					logger.error("Couldn't clean-up " + datadir, e);
+					logger.error("Couldn't clean-up " + dataDir, e);
 				}
 		    }
 		});
 		
 		return db;
 	}
-
-	// ---
 	
 	protected static File unpackEmbeddedDB() throws IOException, UnknownPlatformException {
 		return unpackEmbeddedDB(BUNDLED_DB);
@@ -125,7 +119,7 @@ public abstract class DBFactory {
 	}
 
 	protected static File getTempDirectory() {
-		return FileUtils.getTempDirectory();
+		return new File(System.getProperty("java.io.tmpdir"));
 	}
 
 

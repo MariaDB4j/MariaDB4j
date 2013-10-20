@@ -38,8 +38,6 @@ import ch.vorburger.exec.Platform.Type;
  * You need to give the path to a previously unpacked MariaDB (or MySQL�), as
  * well as your data directory, here.
  * 
- * @see EmbeddedDB
- * 
  * @author Michael Vorburger
  */
 public class DB {
@@ -49,6 +47,7 @@ public class DB {
 	protected final File basedir;
 	protected final File bindir;
 	protected final File datadir;
+	protected final DBOptions options;
 	
 	protected final ManagedProcess mysqld;
 	protected final ManagedProcess mysql_install;
@@ -58,8 +57,9 @@ public class DB {
 	protected boolean autoCheck = true;
 
 	// TOOD Use Builder or Factory instead of Constructor? Many more options to come... DBOptions object? 
-	public DB(File basedir, File datadir) throws IOException {
+	public DB(File basedir, File datadir, DBOptions options) throws IOException {
 		super();
+		this.options = options;
 		
 		checkExistingReadableDirectory(basedir, "basedir");
 		this.basedir = basedir;
@@ -79,6 +79,9 @@ public class DB {
 		mysqld_builder.addArgument("--console");
 		addFileArgument(mysqld_builder, "--basedir", basedir);
 		addFileArgument(mysqld_builder, "--datadir", datadir);
+		for (String argument : options.getMysqldOptions()) {
+			mysqld_builder.addArgument(argument);
+		}
 		return mysqld_builder.build();
 	}
 
@@ -104,8 +107,8 @@ public class DB {
 		return builder;
 	}
 
-	public DB(String basedir, String datadir) throws IOException {
-		this(new File(basedir), new File(datadir));
+	public DB(String basedir, String datadir, DBOptions options) throws IOException {
+		this(new File(basedir), new File(datadir), options);
 	}
 
 	/**

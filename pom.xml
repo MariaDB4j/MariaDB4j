@@ -4,7 +4,7 @@
 
 	<groupId>ch.vorburger.mariaDB4j</groupId>
 	<artifactId>mariaDB4j</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 
 	<name>MariaDB4j</name>
 	<description>Java wrapper / launcher for MariaDB</description>
@@ -101,6 +101,11 @@
 				to use it in src/main/java instead of only src/test/java, then let's use 
 				<scope>provided</scope> -->
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.3</version>
 		</dependency>
 
 		<dependency>
