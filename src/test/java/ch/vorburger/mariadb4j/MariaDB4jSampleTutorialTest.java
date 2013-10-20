@@ -19,43 +19,22 @@
  */
 package ch.vorburger.mariadb4j;
 
-import ch.vorburger.exec.ManagedProcessException;
-import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
+import junit.framework.Assert;
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.List;
 
 /**
+ * Tests the functioning of MariaDB4j
  * Sample / Tutorial illustrating how to use MariaDB4j.
- * 
- * Running as tests as well.
- * 
  * @author Michael Vorburger
+ * @author Michael Seaton
  */
 public class MariaDB4jSampleTutorialTest {
-
-	@BeforeClass
-	public static void beforeClass() throws IOException {
-		FileUtils.deleteDirectory(new File("/tmp/MariaDB4j"));
-	}
-	
-	@Test(expected=ManagedProcessException.class)
-	public void testBadFixedPathMariaDB4j() throws Exception {
-		Configuration config = new Configuration();
-		config.setBaseDir("src/main/resources/");
-		config.setDataDir("target/db1");
-		DB db = DB.newEmbeddedDB(config);
-		db.start(); // will fail with a ManagedProcessException
-	}
 
 	@Test
 	public void testEmbeddedMariaDB4j() throws Exception {
@@ -64,31 +43,25 @@ public class MariaDB4jSampleTutorialTest {
 		DB db = DB.newEmbeddedDB(options);
 		db.start();
 
-		// TODO Should DB have a getJdbcURL() ? UID? PWD?
-		Connection conn = db.getConnection();
-		Statement stmt = conn.createStatement();
-		
-//		stmt.execute("CREATE DATABASE test2;");
-//		stmt.execute("GRANT ALL on test2.* to 'testuser'@'localhost' identified by 'testpwd'");
-//		stmt.execute("FLUSH PRIVILEGES;");
-//		stmt.close();
-//		conn.close();
-//		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test2", "testuser", "testpwd");
-//		Statement stmt = conn.createStatement();
-		
-		stmt.execute("CREATE TABLE hello(world VARCHAR(100))");
-		int i = stmt.executeUpdate("INSERT INTO hello VALUES ('Hello, world')");
-		assertEquals(i, 1);
+		Connection conn = null;
+		try {
+			conn = db.getConnection();
+			QueryRunner qr = new QueryRunner();
 
-		ResultSet rs = stmt.executeQuery("SELECT * FROM hello");
-		assertTrue(rs.next());
-		String msg = rs.getString(1);
-		assertEquals(msg, "Hello, world");
-		
-		// Yeah yeah close() should be in finally() ... it's just a test.
-		rs.close();
-		stmt.close();
-		conn.close();
+			// Should be able to create a new table
+			qr.update(conn, "CREATE TABLE hello(world VARCHAR(100))");
+
+			// Should be able to insert into a table
+			qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
+
+			// Should be able to select from a table
+			List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
+			Assert.assertEquals(1, results.size());
+			Assert.assertEquals("Hello, world", results.get(0));
+		}
+		finally {
+			DbUtils.closeQuietly(conn);
+		}
 	}
 
 }

@@ -22,6 +22,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-core:3.1.1.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: commons-dbutils:commons-dbutils:1.5" level="project" />
   </component>
 </module>
 

@@ -44,6 +44,8 @@ public class DB {
 
 	protected final Configuration config;
 
+	private File baseDir;
+	private File dataDir;
 	private ManagedProcess mysqldProcess;
 
 	private DB(Configuration config) {
@@ -58,8 +60,8 @@ public class DB {
 	 */
 	public static DB newEmbeddedDB(Configuration config) {
 		DB db = new DB(config);
+		db.prepareDirectories();
 		db.unpackEmbeddedDb();
-		db.prepareDataDirectory();
 		db.install();
 		return db;
 	}
@@ -68,12 +70,12 @@ public class DB {
 	 * Installs the database to the location specified in the configuration
 	 */
 	protected void install() {
-		logger.info("Installing a new embedded database to: " + getBaseDir());
+		logger.info("Installing a new embedded database to: " + baseDir);
 		try {
-			ManagedProcessBuilder builder = new ManagedProcessBuilder(config.getBaseDir() + "/bin/mysql_install_db");
-			builder.addFileArgument("--datadir", getDataDir()).setWorkingDirectory(getBaseDir());
+			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysql_install_db");
+			builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
 			if (SystemUtils.IS_OS_LINUX) {
-				builder.addFileArgument("--basedir", getBaseDir());
+				builder.addFileArgument("--basedir", baseDir);
 				builder.addArgument("--no-defaults");
 				builder.addArgument("--force");
 				builder.addArgument("--skip-name-resolve");
@@ -95,11 +97,11 @@ public class DB {
 	public void start() {
 		logger.info("Starting up the database...");
 		try {
-			ManagedProcessBuilder builder = new ManagedProcessBuilder(config.getBaseDir() + "/bin/mysqld");
+			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
 			builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
 			builder.addArgument("--console");
-			builder.addFileArgument("--basedir", Util.getDirectory(config.getBaseDir()));
-			builder.addFileArgument("--datadir", Util.getDirectory(config.getDataDir()));
+			builder.addFileArgument("--basedir", baseDir);
+			builder.addFileArgument("--datadir", dataDir);
 			builder.addArgument("--port="+config.getPort());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
@@ -146,37 +148,41 @@ public class DB {
 		source.append("/").append(config.getDatabaseVersion()).append("/");
 		source.append(SystemUtils.IS_OS_WINDOWS ? "win32" : "linux");
 
-		File destination = Util.getDirectory(config.getBaseDir());
 		try {
-			Util.extractFromClasspathToFile(source.toString(), destination);
+			Util.extractFromClasspathToFile(source.toString(), baseDir);
 			if (SystemUtils.IS_OS_LINUX) {
-				Util.forceExecutable(new File(destination, "bin/my_print_defaults"));
-				Util.forceExecutable(new File(destination, "bin/mysql_install_db"));
-				Util.forceExecutable(new File(destination, "bin/mysqld"));
+				Util.forceExecutable(new File(baseDir, "bin/my_print_defaults"));
+				Util.forceExecutable(new File(baseDir, "bin/mysql_install_db"));
+				Util.forceExecutable(new File(baseDir, "bin/mysqld"));
 			}
 		}
 		catch (IOException e) {
 			throw new RuntimeException("Error unpacking embedded db", e);
 		}
-		logger.info("Database successfully unpacked to " + destination);
+		logger.info("Database successfully unpacked to " + baseDir.getAbsolutePath());
 	}
 
 	/**
 	 * If the data directory specified in the configuration is a temporary directory,
 	 * this deletes any previous version.  It also makes sure that the directory exists.
 	 */
-	protected void prepareDataDirectory() {
+	protected void prepareDirectories() {
+		logger.info("Preparing base directory...");
+		baseDir = Util.getDirectory(config.getBaseDir() + SystemUtils.FILE_SEPARATOR + config.getPort());
+		logger.info("Base directory prepared.");
+
 		logger.info("Preparing data directory...");
 		try {
-			if (Util.isTemporaryDirectory(config.getDataDir())) {
-				FileUtils.deleteDirectory(new File(config.getDataDir()));
+			String dataDirPath = config.getDataDir() + SystemUtils.FILE_SEPARATOR + config.getPort();
+			if (Util.isTemporaryDirectory(dataDirPath)) {
+				FileUtils.deleteDirectory(new File(dataDirPath));
 			}
-			getDataDir();
+			dataDir = Util.getDirectory(dataDirPath);
+			logger.info("Data directory prepared.");
 		}
 		catch (Exception e) {
 			throw new ManagedProcessException("An error occurred while preparing the data directory", e);
 		}
-		logger.info("Data directory prepared.");
 	}
 
 	/**
@@ -196,8 +202,8 @@ public class DB {
 					logger.info("An error occurred while stopping the database", e);
 				}
 				try {
-					if (Util.isTemporaryDirectory(config.getDataDir())) {
-						FileUtils.deleteDirectory(getDataDir());
+					if (Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
+						FileUtils.deleteDirectory(dataDir);
 					}
 				}
 				catch (IOException e) {
@@ -205,19 +211,5 @@ public class DB {
 				}
 			}
 		});
-	}
-
-	/**
-	 * @return convenience method to return the base directory of the database
-	 */
-	protected File getBaseDir() {
-		return Util.getDirectory(config.getBaseDir());
-	}
-
-	/**
-	 * @return convenience method to return the data directory of the database
-	 */
-	protected File getDataDir() {
-		return Util.getDirectory(config.getDataDir());
 	}
 }
