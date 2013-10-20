@@ -73,8 +73,11 @@ public class ManagedProcessBuilder {
 	 * @see ProcessBuilder
 	 */
 	public ManagedProcessBuilder addArgument(File arg) throws IOException {
-		commonsExecCommandLine.addArgument(arg.getCanonicalPath());
-		return this;
+		return addArgument(arg.getCanonicalPath());
+	}
+
+	public ManagedProcessBuilder addFileArgument(String arg, File file) throws IOException {
+		return addArgument(arg + "=" + file.getCanonicalPath());
 	}
 
 	/**

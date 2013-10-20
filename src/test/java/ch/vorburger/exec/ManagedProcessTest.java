@@ -19,14 +19,13 @@
  */
 package ch.vorburger.exec;
 
+import junit.framework.Assert;
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Test;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import junit.framework.Assert;
-
-import org.junit.Test;
-
-import ch.vorburger.exec.Platform.Type;
 
 /**
  * Tests ManagedProcess.
@@ -150,20 +149,15 @@ public class ManagedProcessTest {
 	
 	protected SomeSelfTerminatingExec someSelfTerminatingExec() throws UnknownPlatformException, MariaDB4jException, ManagedProcessException {
 		SomeSelfTerminatingExec r = new SomeSelfTerminatingExec();
-		switch (Platform.is()) {
-		case Windows:
+		if (SystemUtils.IS_OS_WINDOWS) {
 			r.proc = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir").addArgument("/X").build();
 			r.msgToWaitFor = "bytes free";
-			break;
-
-		case Mac:
-		case Linux:
-		case Solaris:
+		}
+		else if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_SOLARIS) {
 			r.proc = new ManagedProcessBuilder("true").addArgument("--version").build();
 			r.msgToWaitFor = "true (GNU coreutils)";
-			break;
-
-		default:
+		}
+		else {
 			throw new MariaDB4jException("Unexpected Platform, improve the test dude...");
 		}
 		
@@ -173,7 +167,7 @@ public class ManagedProcessTest {
 	@Test
 	public void testMustTerminateExec() throws Exception {
 		ManagedProcessBuilder pb;
-		if (Platform.is(Type.Windows)) {
+		if (SystemUtils.IS_OS_WINDOWS) {
 			pb = new ManagedProcessBuilder("notepad.exe");
 		} else {
 			pb = new ManagedProcessBuilder("vi");

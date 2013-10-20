@@ -22,6 +22,7 @@ package ch.vorburger.exec;
 import java.io.File;
 import java.io.IOException;
 
+import ch.vorburger.mariadb4j.Util;
 import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
@@ -39,7 +40,7 @@ public class ClasspathUnpackerTest {
 	public void testClasspathUnpackerFromUniqueClasspath() throws IOException {
 		File toDir = new File("target/testUnpack1");
 		FileUtils.deleteDirectory(toDir);
-		ClasspathUnpacker.extract("org/apache/commons/exec", toDir);
+		Util.extractFromClasspathToFile("org/apache/commons/exec", toDir);
 		Assert.assertTrue(new File(toDir, "CommandLine.class").exists());
 	}
 	
@@ -48,21 +49,21 @@ public class ClasspathUnpackerTest {
 	public void testClasspathUnpackerFromDuplicateClasspath() throws IOException {
 		File toDir = new File("target/testUnpack3");
 		FileUtils.deleteDirectory(toDir);
-		ClasspathUnpacker.extract("META-INF/maven", toDir);
+		Util.extractFromClasspathToFile("META-INF/maven", toDir);
 	}
 	
 	@Test
 	public void testClasspathUnpackerFromFilesystem() throws IOException {
 		File toDir = new File("target/testUnpack3");
 		FileUtils.deleteDirectory(toDir);
-		int c1 = ClasspathUnpacker.extract("test", toDir);
+		int c1 = Util.extractFromClasspathToFile("test", toDir);
 		Assert.assertEquals(3, c1);
 		Assert.assertTrue(new File(toDir, "a.txt").exists());
 		Assert.assertTrue(new File(toDir, "b.txt").exists());
 		Assert.assertTrue(new File(toDir, "subdir/c.txt").exists());
 		
 		// Now try again - it shouldn't copy anything anymore (optimization)
-		int c2 = ClasspathUnpacker.extract("test", toDir);
+		int c2 = Util.extractFromClasspathToFile("test", toDir);
 		Assert.assertEquals(0, c2);
 	}
 
@@ -70,14 +71,14 @@ public class ClasspathUnpackerTest {
 	public void testClasspathUnpackerPathDoesNotExist() throws IOException {
 		File toDir = new File("target/testUnpack4");
 		FileUtils.deleteDirectory(toDir);
-		ClasspathUnpacker.extract("does/not/exist", toDir);
+		Util.extractFromClasspathToFile("does/not/exist", toDir);
 	}
 
 	@Test(expected=IOException.class)
 	public void testClasspathUnpackerPackageExistsButIsEmpty() throws IOException {
 		File toDir = new File("target/testUnpack4");
 		FileUtils.deleteDirectory(toDir);
-		ClasspathUnpacker.extract("test/empty", toDir);
+		Util.extractFromClasspathToFile("test/empty", toDir);
 	}
 
 }

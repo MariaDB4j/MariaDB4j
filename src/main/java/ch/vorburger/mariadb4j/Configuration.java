@@ -19,40 +19,50 @@
  */
 package ch.vorburger.mariadb4j;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Enables passing in custom options when starting up the database server
  * This is the analog to my.cnf
  */
-public class DBOptions {
+public class Configuration {
 
-	private String dataDirectory; // If non null, loads a specific database.  Otherwise, creates new temp databas
-	private List<String> mysqldOptions; // Allows specifying command-line options to mysqld startup
+	private String databaseVersion = "mariadb-5.3.5";
+	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
+	private String dataDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
+	private int port = 3306;
 
-	public DBOptions() {}
+	public Configuration() {}
 
-	public String getDataDirectory() {
-		return dataDirectory;
+	public String getDatabaseVersion() {
+		return databaseVersion;
 	}
 
-	public void setDataDirectory(String dataDirectory) {
-		this.dataDirectory = dataDirectory;
+	public void setDatabaseVersion(String databaseVersion) {
+		this.databaseVersion = databaseVersion;
 	}
 
-	public void addMysqldOption(String optionName, String optionValue) {
-		getMysqldOptions().add("--" + optionName + "=" + optionValue);
+	public String getBaseDir() {
+		return baseDir;
 	}
 
-	public List<String> getMysqldOptions() {
-		if (mysqldOptions == null) {
-			mysqldOptions = new ArrayList<String>();
-		}
-		return mysqldOptions;
+	public void setBaseDir(String baseDir) {
+		this.baseDir = baseDir;
 	}
 
-	public void setMysqldOptions(List<String> mysqldOptions) {
-		this.mysqldOptions = mysqldOptions;
+	public String getDataDir() {
+		return dataDir;
+	}
+
+	public void setDataDir(String dataDir) {
+		this.dataDir = dataDir;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }

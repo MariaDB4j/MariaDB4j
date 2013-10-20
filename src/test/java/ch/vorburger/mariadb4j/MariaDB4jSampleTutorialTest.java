@@ -19,17 +19,19 @@
  */
 package ch.vorburger.mariadb4j;
 
-import static org.junit.Assert.*;
+import org.apache.commons.io.FileUtils;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Sample / Tutorial illustrating how to use MariaDB4j.
@@ -42,23 +44,23 @@ public class MariaDB4jSampleTutorialTest {
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
-		FileUtils.deleteDirectory(DBFactory.getTemporaryBaseDir());
+		FileUtils.deleteDirectory(new File("/tmp/MariaDB4j"));
 	}
 	
 	@Test(expected=IOException.class)
 	public void testBadFixedPathMariaDB4j() throws Exception {
-		// No DB in bin/ here, should fail:
-		final String basedir = "src/main/resources/"; 
-		DB db = new DB(basedir, "target/db1", new DBOptions());
+		Configuration config = new Configuration();
+		config.setBaseDir("src/main/resources/");
+		config.setDataDir("target/db1");
+		DB db = DB.newEmbeddedDB(config);
 		db.start(); // will fail with an IOException
 	}
 
 	@Test
 	public void testEmbeddedMariaDB4j() throws Exception {
-		DBOptions options = new DBOptions();
-		options.addMysqldOption("port","3307");
-		DB db = DBFactory.newEmbeddedDB(options);
-		// Note we are automatically doing db.installDB() here
+		Configuration options = new Configuration();
+		options.setPort(3307);
+		DB db = DB.newEmbeddedDB(options);
 		db.start();
 
 		// TODO Should DB have a getJdbcURL() ? UID? PWD?

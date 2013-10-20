@@ -19,15 +19,16 @@
  */
 package ch.vorburger.exec;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Test;
-
-import ch.vorburger.exec.Platform.Type;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link ManagedProcessBuilder}.
@@ -47,14 +48,14 @@ public class ManagedProcessBuilderTest {
 		mbp.getCommandLine();
 		
 		File cwd = mbp.getWorkingDirectory();
-		if (Platform.is(Type.Windows)) {
+		if (SystemUtils.IS_OS_WINDOWS) {
 			assertThat(cwd.getAbsolutePath(), is("C:\\somewhere\\absolute\\bin"));
 		} else {
 			assertThat(cwd.getAbsolutePath(), is("/somewhere/absolute/bin"));			
 		}
 		
 		String arg0 = mbp.getExecutable();
-		if (Platform.is(Type.Windows)) {
+		if (SystemUtils.IS_OS_WINDOWS) {
 			assertThat(arg0, is("C:\\somewhere\\absolute\\bin\\thing"));
 		} else {
 			assertThat(arg0, is("/somewhere/absolute/bin/thing"));			
