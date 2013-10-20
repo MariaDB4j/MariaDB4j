@@ -4,7 +4,7 @@
 
 	<groupId>ch.vorburger.mariaDB4j</groupId>
 	<artifactId>mariaDB4j</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>2.0-SNAPSHOT</version>
 
 	<name>MariaDB4j</name>
 	<description>Java wrapper / launcher for MariaDB</description>

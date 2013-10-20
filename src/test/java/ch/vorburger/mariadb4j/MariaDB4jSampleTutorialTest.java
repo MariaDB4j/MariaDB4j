@@ -19,6 +19,7 @@
  */
 package ch.vorburger.mariadb4j;
 
+import ch.vorburger.exec.ManagedProcessException;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,13 +48,13 @@ public class MariaDB4jSampleTutorialTest {
 		FileUtils.deleteDirectory(new File("/tmp/MariaDB4j"));
 	}
 	
-	@Test(expected=IOException.class)
+	@Test(expected=ManagedProcessException.class)
 	public void testBadFixedPathMariaDB4j() throws Exception {
 		Configuration config = new Configuration();
 		config.setBaseDir("src/main/resources/");
 		config.setDataDir("target/db1");
 		DB db = DB.newEmbeddedDB(config);
-		db.start(); // will fail with an IOException
+		db.start(); // will fail with a ManagedProcessException
 	}
 
 	@Test
@@ -64,7 +65,7 @@ public class MariaDB4jSampleTutorialTest {
 		db.start();
 
 		// TODO Should DB have a getJdbcURL() ? UID? PWD?
-		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3307/test", "root", "");
+		Connection conn = db.getConnection();
 		Statement stmt = conn.createStatement();
 		
 //		stmt.execute("CREATE DATABASE test2;");

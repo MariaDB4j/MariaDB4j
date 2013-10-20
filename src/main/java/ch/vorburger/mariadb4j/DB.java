@@ -29,9 +29,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
- * Main case that provides capability to install, start, and use an embedded database
+ * Provides capability to install, start, and use an embedded database
  * @author Michael Vorburger
  * @author Michael Seaton
  */
@@ -52,7 +55,6 @@ public class DB {
 	 * This method automatically installs the database and prepares it for use
 	 * @param config Configuration of the embedded instance
 	 * @return a new DB instance
-	 * @throws Exception
 	 */
 	public static DB newEmbeddedDB(Configuration config) {
 		DB db = new DB(config);
@@ -109,6 +111,14 @@ public class DB {
 			throw new ManagedProcessException("An error occurred while starting the database", e);
 		}
 		logger.info("Database startup complete.");
+	}
+
+	/**
+	 * @return a new Connection to this database
+	 * @throws SQLException if any errors occur getting the connection
+	 */
+	public Connection getConnection() throws SQLException {
+		return DriverManager.getConnection("jdbc:mysql://localhost:"+config.getPort() + "/test", "root", "");
 	}
 
 	/**
