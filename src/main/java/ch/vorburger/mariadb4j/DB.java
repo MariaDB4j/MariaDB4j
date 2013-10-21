@@ -115,6 +115,7 @@ public class DB {
 			builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
 			builder.addArgument("--console");
 			builder.addArgument("--skip-grant-tables");
+			builder.addArgument("--max_allowed_packet=64M");
 			builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
 			builder.addFileArgument("--datadir", dataDir);
 			builder.addArgument("--port="+config.getPort());
