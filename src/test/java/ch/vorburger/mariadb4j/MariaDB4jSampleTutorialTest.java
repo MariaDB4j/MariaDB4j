@@ -38,9 +38,7 @@ public class MariaDB4jSampleTutorialTest {
 
 	@Test
 	public void testEmbeddedMariaDB4j() throws Exception {
-		Configuration options = new Configuration();
-		options.setPort(3307);
-		DB db = DB.newEmbeddedDB(options);
+		DB db = DB.newEmbeddedDB(3307);
 		db.start();
 
 		Connection conn = null;

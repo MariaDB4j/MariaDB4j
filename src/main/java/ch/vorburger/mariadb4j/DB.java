@@ -67,6 +67,19 @@ public class DB {
 	}
 
 	/**
+	 * This factory method is the mechanism for constructing a new embedded database for use
+	 * This method automatically installs the database and prepares it for use with default configuration,
+	 * allowing only for specifying port
+	 * @param port the port to start the embedded database on
+	 * @return a new DB instance
+	 */
+	public static DB newEmbeddedDB(int port) {
+		Configuration config = new Configuration();
+		config.setPort(port);
+		return newEmbeddedDB(config);
+	}
+
+	/**
 	 * Installs the database to the location specified in the configuration
 	 */
 	protected void install() {
