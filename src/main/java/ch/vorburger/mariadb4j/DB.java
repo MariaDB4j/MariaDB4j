@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -113,7 +114,8 @@ public class DB {
 			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
 			builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
 			builder.addArgument("--console");
-			builder.addFileArgument("--basedir", baseDir);
+			builder.addArgument("--skip-grant-tables");
+			builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
 			builder.addFileArgument("--datadir", dataDir);
 			builder.addArgument("--port="+config.getPort());
 			mysqldProcess = builder.build();
@@ -134,6 +136,32 @@ public class DB {
 	 */
 	public Connection getConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:mysql://localhost:"+config.getPort() + "/test", "root", "");
+	}
+
+	/**
+	 * Takes in a string that represents a resource on the classpath and sources it via mysql
+	 * @param resource the resource to source
+	 */
+	public void source(String resource) {
+		logger.info("Sourcing a script located at: " + resource);
+		try {
+			String tempFile = "sql" + SystemUtils.FILE_SEPARATOR + System.currentTimeMillis() + ".sql";
+			URL from = getClass().getClassLoader().getResource(resource);
+			File to = new File(baseDir, tempFile);
+			FileUtils.copyURLToFile(from, to);
+
+			ManagedProcessBuilder builder = new ManagedProcessBuilder("bash");
+			builder.setWorkingDirectory(baseDir);
+			builder.addArgument("executeScript.sh");
+			builder.addArgument(to.getAbsolutePath());
+			ManagedProcess process = builder.build();
+			process.start();
+			process.waitForExit();
+		}
+		catch (Exception e) {
+			throw new ManagedProcessException("An error occurred while sourcing a file", e);
+		}
+		logger.info("File sourcing successful.");
 	}
 
 	/**
@@ -167,6 +195,7 @@ public class DB {
 				Util.forceExecutable(new File(baseDir, "bin/my_print_defaults"));
 				Util.forceExecutable(new File(baseDir, "bin/mysql_install_db"));
 				Util.forceExecutable(new File(baseDir, "bin/mysqld"));
+				Util.forceExecutable(new File(baseDir, "bin/mysql"));
 			}
 		}
 		catch (IOException e) {

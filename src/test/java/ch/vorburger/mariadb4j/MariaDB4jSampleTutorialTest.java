@@ -38,7 +38,7 @@ public class MariaDB4jSampleTutorialTest {
 
 	@Test
 	public void testEmbeddedMariaDB4j() throws Exception {
-		DB db = DB.newEmbeddedDB(3307);
+		DB db = DB.newEmbeddedDB(3308);
 		db.start();
 
 		Connection conn = null;
@@ -56,6 +56,14 @@ public class MariaDB4jSampleTutorialTest {
 			List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
 			Assert.assertEquals(1, results.size());
 			Assert.assertEquals("Hello, world", results.get(0));
+
+			// Should be able to source a SQL file
+			db.source("ch/vorburger/mariadb4j/testSourceFile.sql");
+			results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
+			Assert.assertEquals(3, results.size());
+			Assert.assertEquals("Hello, world", results.get(0));
+			Assert.assertEquals("Bonjour, monde", results.get(1));
+			Assert.assertEquals("Hola, mundo", results.get(2));
 		}
 		finally {
 			DbUtils.closeQuietly(conn);

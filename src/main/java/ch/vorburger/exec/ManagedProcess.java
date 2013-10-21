@@ -136,13 +136,13 @@ public class ManagedProcess {
 				throw new ManagedProcessException("Unable to make command executable", e);
 			}
 		} else {
-			// If this WARN log ever bothers anybody, just decrease it to... debug
-			logger.warn(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which MAY be a problem on *NIX, but not for sure)");
+			logger.debug(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which MAY be a problem on *NIX, but not for sure)");
 		}
 		
 		try {
 			executor.execute(commandLine, environment, resultHandler);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new ManagedProcessException("Launch failed: " + commandLine, e);
 		}
 		isAlive = true;

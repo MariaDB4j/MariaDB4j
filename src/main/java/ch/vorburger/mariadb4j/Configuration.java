@@ -27,7 +27,7 @@ import org.apache.commons.lang3.SystemUtils;
  */
 public class Configuration {
 
-	private String databaseVersion = "mariadb-5.3.5";
+	private String databaseVersion = "mariadb-5.5.33a";
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
 	private String dataDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 	private int port = 3306;
