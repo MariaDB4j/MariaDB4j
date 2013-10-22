@@ -88,7 +88,7 @@ public class DB {
 		try {
 			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysql_install_db");
 			builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
-			if (SystemUtils.IS_OS_LINUX) {
+			if (!SystemUtils.IS_OS_WINDOWS) {
 				builder.addFileArgument("--basedir", baseDir);
 				builder.addArgument("--no-defaults");
 				builder.addArgument("--force");
@@ -192,7 +192,7 @@ public class DB {
 
 		try {
 			Util.extractFromClasspathToFile(source.toString(), baseDir);
-			if (SystemUtils.IS_OS_LINUX) {
+			if (!SystemUtils.IS_OS_WINDOWS) {
 				Util.forceExecutable(new File(baseDir, "bin/my_print_defaults"));
 				Util.forceExecutable(new File(baseDir, "bin/mysql_install_db"));
 				Util.forceExecutable(new File(baseDir, "bin/mysqld"));
