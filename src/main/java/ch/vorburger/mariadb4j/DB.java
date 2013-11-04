@@ -119,6 +119,7 @@ public class DB {
 			builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
 			builder.addFileArgument("--datadir", dataDir);
 			builder.addArgument("--port="+config.getPort());
+            logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
 			mysqldProcess.waitForConsoleMessage("mysqld: ready for connections.");
@@ -126,6 +127,7 @@ public class DB {
 			cleanupOnExit();
 		}
 		catch (Exception e) {
+            logger.error("failed to start mysqld", e);
 			throw new ManagedProcessException("An error occurred while starting the database", e);
 		}
 		logger.info("Database startup complete.");
