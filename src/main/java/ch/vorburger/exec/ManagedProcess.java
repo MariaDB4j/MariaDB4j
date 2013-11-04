@@ -19,10 +19,8 @@
  */
 package ch.vorburger.exec;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
+import ch.vorburger.exec.SLF4jLogOutputStream.Type;
+import ch.vorburger.mariadb4j.Util;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
@@ -35,7 +33,9 @@ import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.vorburger.exec.SLF4jLogOutputStream.Type;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Managed OS Process (Executable, Program, Command).
@@ -48,7 +48,8 @@ import ch.vorburger.exec.SLF4jLogOutputStream.Type;
  * Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec), 
  * including logging the processes stdout & stderr, into SLF4J (not the System.out.Console). 
  *
- * @see Internally based on http://commons.apache.org/exec/ but intentionally not exposing this; could be switched later, if there is any need.
+ * @see Executor
+ * Internally based on http://commons.apache.org/exec/ but intentionally not exposing this; could be switched later, if there is any need.
  * 
  * @author Michael Vorburger
  */
@@ -128,15 +129,20 @@ public class ManagedProcess {
 		}
 		
 		if (commandLine.isFile()) {
-			FileUtils2.forceExecutable(new File(commandLine.getExecutable()));
+			try {
+				Util.forceExecutable(new File(commandLine.getExecutable()));
+			}
+			catch (Exception e) {
+				throw new ManagedProcessException("Unable to make command executable", e);
+			}
 		} else {
-			// If this WARN log ever bothers anybody, just decrease it to... debug
-			logger.warn(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which MAY be a problem on *NIX, but not for sure)");
+			logger.debug(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which MAY be a problem on *NIX, but not for sure)");
 		}
 		
 		try {
 			executor.execute(commandLine, environment, resultHandler);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new ManagedProcessException("Launch failed: " + commandLine, e);
 		}
 		isAlive = true;
@@ -299,7 +305,7 @@ public class ManagedProcess {
 	
 	/**
 	 * Like {@link #waitForExit()}, but waits max. maxWaitUntilReturning, then destroys if still running, and returns.  
-	 * @param maxWaitUntilReturning Time to wait
+	 * @param maxWaitUntilDestroyTimeout Time to wait
 	 */
 	public void waitForExitMaxMsOrDestroy(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
 		waitForExitMaxMs(maxWaitUntilDestroyTimeout);

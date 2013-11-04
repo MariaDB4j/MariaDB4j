@@ -26,7 +26,7 @@ import java.io.IOException;
  * 
  * @author Michael Vorburger
  */
-public class ManagedProcessException extends IOException {
+public class ManagedProcessException extends RuntimeException {
 	private static final long serialVersionUID = -5945369742058979996L;
 
 	public ManagedProcessException(String message, Throwable cause) {

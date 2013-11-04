@@ -19,229 +19,242 @@
  */
 package ch.vorburger.mariadb4j;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.exec.Platform;
-import ch.vorburger.exec.Platform.Type;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
- * MariaDB (or MySQL�) Controller.
- * 
- * You need to give the path to a previously unpacked MariaDB (or MySQL�), as
- * well as your data directory, here.
- * 
- * @see EmbeddedDB
- * 
+ * Provides capability to install, start, and use an embedded database
  * @author Michael Vorburger
+ * @author Michael Seaton
  */
 public class DB {
 
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
-	protected final File basedir;
-	protected final File bindir;
-	protected final File datadir;
-	
-	protected final ManagedProcess mysqld;
-	protected final ManagedProcess mysql_install;
+	protected final Configuration config;
 
-	protected boolean autoShutdown = true;
-	protected boolean autoInstallDB = false; // false by default here, but make it true by default in some subclasses
-	protected boolean autoCheck = true;
+	private File baseDir;
+	private File dataDir;
+	private ManagedProcess mysqldProcess;
 
-	// TOOD Use Builder or Factory instead of Constructor? Many more options to come... DBOptions object? 
-	public DB(File basedir, File datadir) throws IOException {
-		super();
-		
-		checkExistingReadableDirectory(basedir, "basedir");
-		this.basedir = basedir;
-		this.bindir = new File(basedir, "bin");
-		
-		checkNonNull(datadir, "datadir");
-		this.datadir = datadir;
-		
-		mysqld = mysqld(basedir, datadir);
-		mysql_install = mysql_install_db(basedir, datadir);
-	}
-
-	protected ManagedProcess mysqld(File basedir, File datadir) throws IOException {
-		ManagedProcessBuilder mysqld_builder = new ManagedProcessBuilder(cmd("mysqld"));
-		// NOTE: Arguments order MATTERS here (ouch), e.g. --no-defaults has to be before --datadir
-		mysqld_builder.addArgument("--no-defaults");
-		mysqld_builder.addArgument("--console");
-		addFileArgument(mysqld_builder, "--basedir", basedir);
-		addFileArgument(mysqld_builder, "--datadir", datadir);
-		return mysqld_builder.build();
-	}
-
-	protected ManagedProcess mysql_install_db(File basedir, File datadir) throws IOException {
-		final ManagedProcessBuilder mysql_install_builder = new ManagedProcessBuilder(cmd("mysql_install_db"));
-		addFileArgument(mysql_install_builder, "--datadir", datadir).setWorkingDirectory(basedir);
-		if (Platform.is(Type.Linux)) {
-			addFileArgument(mysql_install_builder, "--basedir", basedir);
-			
-			mysql_install_builder.addArgument("--no-defaults");
-			// TODO remove hard-coded my.cnf! Just for testing.. but still doesn't work! :-(
-			//mysql_install_builder.addArgument("--defaults-file", new File("./TEMP-my.cnf"));
-			
-			mysql_install_builder.addArgument("--force");
-			mysql_install_builder.addArgument("--skip-name-resolve");
-			mysql_install_builder.addArgument("--verbose");
-		}
-		return mysql_install_builder.build();
-	}
-
-	private ManagedProcessBuilder addFileArgument(ManagedProcessBuilder builder, String arg, File file) throws IOException {
-		builder.addArgument(arg + "=" + file.getCanonicalPath());
-		return builder;
-	}
-
-	public DB(String basedir, String datadir) throws IOException {
-		this(new File(basedir), new File(datadir));
+	private DB(Configuration config) {
+		this.config = config;
 	}
 
 	/**
-	 * mysql_install_db.
-	 * This DESTROYS the datadir, in case it exists already.
-	 * @return 
-	 * @throws ManagedProcessException 
+	 * This factory method is the mechanism for constructing a new embedded database for use
+	 * This method automatically installs the database and prepares it for use
+	 * @param config Configuration of the embedded instance
+	 * @return a new DB instance
 	 */
-	public DB installDB() throws IOException {
-		FileUtils.deleteDirectory(datadir);
-		FileUtils.forceMkdir(datadir);
-		
-		mysql_install.start();
-		mysql_install.waitForExit();
-		return this;
+	public static DB newEmbeddedDB(Configuration config) {
+		DB db = new DB(config);
+		db.prepareDirectories();
+		db.unpackEmbeddedDb();
+		db.install();
+		return db;
 	}
 
-	public DB start() throws IOException {
-		if (!datadir.exists()) {
-			if (autoInstallDB) {
-				logger.info("Starting DB and DataDir {} does not exist, so going to creating it as autoInstall is true", datadir);
-				installDB();
-			}
-			else {
-				logger.warn("Starting DB and DataDir {} does not exist, this isn't not going to end well... you might want to set autoInstall = true?", datadir);
-			}
-		}
-		
-		mysqld.start();
-		
-		mysqld.waitForConsoleMessage("mysqld: ready for connections.");
-
-		mysqld.setDestroyOnShutdown(autoShutdown);
-// destroyOnShutdow will just kill mysqld process; if there is a better way later, use our own shutdown hook  instead: (and mysqld.setDestroyOnShutdown(false)) 
-//		if (autoShutdown) {
-//			String threadName = "Shutdown Hook Thread for DB " + mysqld.toString();
-//			Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
-//				@Override
-//			    public void run() {
-//			    	stopOnShutdown();
-//			    }
-//			});
-//		}
-
-		return this;
-	}
-
-//	private void stopOnShutdown() {
-//		stop();
-//	}
-	
-	public DB stop() throws ManagedProcessException {
-		// TODO Can (should?) we do better than just kill the mysqld process?! 
-		// There is probably something we can send through SQL, but then we need the driver...
-		// How do other folks send SIGTERM rather than the SIGKILL from Java?!?
-		// Does it make any difference?
-		if (mysqld.isAlive()) {
-			mysqld.destroy();
-		} else {
-			logger.debug("DB is asked to stop(), but actually already isn't running anymore - suspicious or OK?"); 
-		}
-		return this;
-	}
-
-	// TODO Implement me as mysqlcheck --auto-repair --all-databases -u root
-	public DB check() {
-		throw new UnsupportedOperationException();
-		// return this;
-	}
-
-	// ----
-	// TODO document port, autoInstall & autoCheck etc. properly...
-	
 	/**
-	 * @throws IllegalStateException
-	 *             if not yet started and automatic port search is active
-	 * @return TCP/IP port
+	 * This factory method is the mechanism for constructing a new embedded database for use
+	 * This method automatically installs the database and prepares it for use with default configuration,
+	 * allowing only for specifying port
+	 * @param port the port to start the embedded database on
+	 * @return a new DB instance
 	 */
-	// TODO may be this should be part of a more general new DBOptions class instead?
-	public int getPort() throws IllegalStateException {
-		// TODO automatically search free TCP/IP port
-		throw new UnsupportedOperationException();
+	public static DB newEmbeddedDB(int port) {
+		Configuration config = new Configuration();
+		config.setPort(port);
+		return newEmbeddedDB(config);
 	}
 
-	// TODO may be this should be part of a more general new DBOptions class instead?
-	public DB setPort(int port) {
-		throw new UnsupportedOperationException();
-		//return this;
+	/**
+	 * Installs the database to the location specified in the configuration
+	 */
+	protected void install() {
+		logger.info("Installing a new embedded database to: " + baseDir);
+		try {
+			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysql_install_db");
+			builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
+			if (!SystemUtils.IS_OS_WINDOWS) {
+				builder.addFileArgument("--basedir", baseDir);
+				builder.addArgument("--no-defaults");
+				builder.addArgument("--force");
+				builder.addArgument("--skip-name-resolve");
+				builder.addArgument("--verbose");
+			}
+			ManagedProcess mysqlInstallProcess = builder.build();
+			mysqlInstallProcess.start();
+			mysqlInstallProcess.waitForExit();
+		}
+		catch (Exception e) {
+			throw new ManagedProcessException("An error occurred while installing the database", e);
+		}
+		logger.info("Installation complete.");
 	}
 
-	public boolean isAutoInstallDB() {
-		return autoInstallDB;
+	/**
+	 * Starts up the database, using the data directory and port specified in the configuration
+	 */
+	public void start() {
+		logger.info("Starting up the database...");
+		try {
+			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
+			builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
+			builder.addArgument("--console");
+			builder.addArgument("--skip-grant-tables");
+			builder.addArgument("--max_allowed_packet=64M");
+			builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
+			builder.addFileArgument("--datadir", dataDir);
+			builder.addArgument("--port="+config.getPort());
+            logger.info("mysqld executable: " + builder.getExecutable());
+			mysqldProcess = builder.build();
+			mysqldProcess.start();
+			mysqldProcess.waitForConsoleMessage("mysqld: ready for connections.");
+			mysqldProcess.setDestroyOnShutdown(true);
+			cleanupOnExit();
+		}
+		catch (Exception e) {
+            logger.error("failed to start mysqld", e);
+			throw new ManagedProcessException("An error occurred while starting the database", e);
+		}
+		logger.info("Database startup complete.");
 	}
 
-	public DB setAutoInstallDB(boolean autocreate) {
-		this.autoInstallDB = autocreate;
-		return this;
+	/**
+	 * @return a new Connection to this database
+	 * @throws SQLException if any errors occur getting the connection
+	 */
+	public Connection getConnection() throws SQLException {
+		return DriverManager.getConnection("jdbc:mysql://localhost:"+config.getPort() + "/test", "root", "");
 	}
 
-	public boolean isAutoCheck() {
-		return autoCheck;
+	/**
+	 * Takes in a string that represents a resource on the classpath and sources it via mysql
+	 * @param resource the resource to source
+	 */
+	public void source(String resource) {
+		logger.info("Sourcing a script located at: " + resource);
+		try {
+			String tempFile = "sql" + SystemUtils.FILE_SEPARATOR + System.currentTimeMillis() + ".sql";
+			URL from = getClass().getClassLoader().getResource(resource);
+			File to = new File(baseDir, tempFile);
+			FileUtils.copyURLToFile(from, to);
+
+			ManagedProcessBuilder builder = new ManagedProcessBuilder("bash");
+			builder.setWorkingDirectory(baseDir);
+			builder.addArgument("executeScript.sh");
+			builder.addArgument(to.getAbsolutePath());
+			ManagedProcess process = builder.build();
+			process.start();
+			process.waitForExit();
+		}
+		catch (Exception e) {
+			throw new ManagedProcessException("An error occurred while sourcing a file", e);
+		}
+		logger.info("File sourcing successful.");
 	}
 
-	public DB setAutoCheck(boolean autoCheck) {
-		this.autoCheck = autoCheck;
-		return this;
+	/**
+	 * Stops the database
+	 */
+	public void stop() {
+		logger.info("Stopping the database...");
+		if (mysqldProcess.isAlive()) {
+			mysqldProcess.destroy();
+			logger.info("Database stopped.");
+		}
+		else {
+			logger.info("Database was already stopped.");
+		}
 	}
 
-	public boolean isAutoShutdown() {
-		return autoShutdown;
+	/**
+	 * Based on the current OS, unpacks the appropriate version of MariaDB to the
+	 * file system based on the configuration
+	 */
+	protected void unpackEmbeddedDb() {
+		logger.info("Unpacking the embedded database...");
+		StringBuilder source = new StringBuilder();
+		source.append(getClass().getPackage().getName().replace(".", "/"));
+		source.append("/").append(config.getDatabaseVersion()).append("/");
+		source.append(SystemUtils.IS_OS_WINDOWS ? "win32" : "linux");
+
+		try {
+			Util.extractFromClasspathToFile(source.toString(), baseDir);
+			if (!SystemUtils.IS_OS_WINDOWS) {
+				Util.forceExecutable(new File(baseDir, "bin/my_print_defaults"));
+				Util.forceExecutable(new File(baseDir, "bin/mysql_install_db"));
+				Util.forceExecutable(new File(baseDir, "bin/mysqld"));
+				Util.forceExecutable(new File(baseDir, "bin/mysql"));
+			}
+		}
+		catch (IOException e) {
+			throw new RuntimeException("Error unpacking embedded db", e);
+		}
+		logger.info("Database successfully unpacked to " + baseDir.getAbsolutePath());
 	}
 
-	public DB setAutoShutdown(boolean autoShutdown) {
-		this.autoShutdown = autoShutdown;
-		return this;
+	/**
+	 * If the data directory specified in the configuration is a temporary directory,
+	 * this deletes any previous version.  It also makes sure that the directory exists.
+	 */
+	protected void prepareDirectories() {
+		logger.info("Preparing base directory...");
+		baseDir = Util.getDirectory(config.getBaseDir() + SystemUtils.FILE_SEPARATOR + config.getPort());
+		logger.info("Base directory prepared.");
+
+		logger.info("Preparing data directory...");
+		try {
+			String dataDirPath = config.getDataDir() + SystemUtils.FILE_SEPARATOR + config.getPort();
+			if (Util.isTemporaryDirectory(dataDirPath)) {
+				FileUtils.deleteDirectory(new File(dataDirPath));
+			}
+			dataDir = Util.getDirectory(dataDirPath);
+			logger.info("Data directory prepared.");
+		}
+		catch (Exception e) {
+			throw new ManagedProcessException("An error occurred while preparing the data directory", e);
+		}
 	}
 
-	// ---
-	
-	protected File cmd(String cmdName) {
-		return new File(bindir, cmdName);
+	/**
+	 * Adds a shutdown hook to ensure that when the JVM exits, the database is stopped, and any
+	 * temporary data directories are cleaned up.
+	 */
+	protected void cleanupOnExit() {
+		String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + config.getDataDir();
+		final DB db = this;
+		Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
+			@Override
+			public void run() {
+				try {
+					db.stop();
+				}
+				catch (ManagedProcessException e) {
+					logger.info("An error occurred while stopping the database", e);
+				}
+				try {
+					if (Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
+						FileUtils.deleteDirectory(dataDir);
+					}
+				}
+				catch (IOException e) {
+					logger.info("An error occurred while deleting the data directory", e);
+				}
+			}
+		});
 	}
-	
-	protected void checkExistingReadableDirectory(File dir, String name) {
-		checkNonNull(dir, name);
-		if (!dir.isDirectory())
-			throw new IllegalArgumentException(name + " is not a directory: " + dir.toString());
-		if (!dir.canRead())
-			throw new IllegalArgumentException(name + " can not be read: " + dir.toString());
-	}
-
-	protected void checkNonNull(File dir, String name) {
-		if (dir == null)
-			throw new IllegalArgumentException(name + " == null");
-		if (dir.getAbsolutePath().trim().length() == 0)
-			throw new IllegalArgumentException(name + " is empty");
-	}
-
 }
