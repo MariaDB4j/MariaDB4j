@@ -59,7 +59,7 @@ public class DB {
 	 * @param config Configuration of the embedded instance
 	 * @return a new DB instance
 	 */
-	public static DB newEmbeddedDB(Configuration config) {
+	public static DB newEmbeddedDB(Configuration config) throws ManagedProcessException {
 		DB db = new DB(config);
 		db.prepareDirectories();
 		db.unpackEmbeddedDb();
@@ -74,7 +74,7 @@ public class DB {
 	 * @param port the port to start the embedded database on
 	 * @return a new DB instance
 	 */
-	public static DB newEmbeddedDB(int port) {
+	public static DB newEmbeddedDB(int port) throws ManagedProcessException {
 		Configuration config = new Configuration();
 		config.setPort(port);
 		return newEmbeddedDB(config);
@@ -83,7 +83,7 @@ public class DB {
 	/**
 	 * Installs the database to the location specified in the configuration
 	 */
-	protected void install() {
+	protected void install() throws ManagedProcessException {
 		logger.info("Installing a new embedded database to: " + baseDir);
 		try {
 			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysql_install_db");
@@ -108,7 +108,7 @@ public class DB {
 	/**
 	 * Starts up the database, using the data directory and port specified in the configuration
 	 */
-	public void start() {
+	public void start() throws ManagedProcessException {
 		logger.info("Starting up the database...");
 		try {
 			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
@@ -145,7 +145,7 @@ public class DB {
 	 * Takes in a string that represents a resource on the classpath and sources it via mysql
 	 * @param resource the resource to source
 	 */
-	public void source(String resource) {
+	public void source(String resource) throws ManagedProcessException {
 		logger.info("Sourcing a script located at: " + resource);
 		try {
 			String tempFile = "sql" + SystemUtils.FILE_SEPARATOR + System.currentTimeMillis() + ".sql";
@@ -170,7 +170,7 @@ public class DB {
 	/**
 	 * Stops the database
 	 */
-	public void stop() {
+	public void stop() throws ManagedProcessException {
 		logger.info("Stopping the database...");
 		if (mysqldProcess.isAlive()) {
 			mysqldProcess.destroy();
@@ -211,7 +211,7 @@ public class DB {
 	 * If the data directory specified in the configuration is a temporary directory,
 	 * this deletes any previous version.  It also makes sure that the directory exists.
 	 */
-	protected void prepareDirectories() {
+	protected void prepareDirectories() throws ManagedProcessException {
 		logger.info("Preparing base directory...");
 		baseDir = Util.getDirectory(config.getBaseDir() + SystemUtils.FILE_SEPARATOR + config.getPort());
 		logger.info("Base directory prepared.");

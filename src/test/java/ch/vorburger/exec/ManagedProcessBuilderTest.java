@@ -19,16 +19,15 @@
  */
 package ch.vorburger.exec;
 
-import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Test;
 
 /**
  * Tests {@link ManagedProcessBuilder}.
@@ -38,7 +37,7 @@ import static org.junit.Assert.assertTrue;
 public class ManagedProcessBuilderTest {
 
 	@Test
-	public void testManagedProcessBuilder() throws IOException, MariaDB4jException {
+	public void testManagedProcessBuilder() throws Exception {
 		ManagedProcessBuilder mbp = new ManagedProcessBuilder(new File("/somewhere/absolute/bin/thing"));
 		
 		File arg = new File("relative/file");
