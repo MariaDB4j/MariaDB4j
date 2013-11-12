@@ -13,33 +13,28 @@ How?
 ----
 MariaDB binaries are in the MariaDB4j JAR and, by default, extracted to a temporary base directory on the fly, then started by Java:
 
-1. Install the database with a particular configuration
+1. Install the database with a particular configuration, using:
+
 ```java
 DB db = DB.newEmbeddedDB(3306);
 ```
-or:
-```java
-Configuration config = new Configuration();
-config.setPort(3306);
-...
-DB db = DB.newEmbeddedDB(config);
-```
 
-The data directory will, by default, be in a temporary directory too, and will automatically get scratched at every restart; this
+2. (Optional) The data directory will, by default, be in a temporary directory too, and will automatically get scratched at every restart; this
 is suitable for integration tests.  If you use MariaDB4j for something more permanent (maybe an all-in-one application package?),
 then you can simply specify a more durable location of your data directory in the Configuration, like so:
 ```java
 Configuration config = new Configuration();
+config.setPort(3306);
 config.setDataDir("/home/theapp/db"); // just an example
+DB db = DB.newEmbeddedDB(config);
 ```
 
-
-2. Start the database
+3. Start the database
 ```java
 db.start();
 ```
 
-3. Use the database
+4. Use the database
 ```java
 Connection conn = db.getConnection();
 ```
