@@ -84,3 +84,7 @@ Who?
 * _YourNameHere, if you jump on-board..._
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/vorburger/mariadb4j/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
