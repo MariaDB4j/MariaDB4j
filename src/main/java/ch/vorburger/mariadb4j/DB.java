@@ -190,7 +190,7 @@ public class DB {
 		StringBuilder source = new StringBuilder();
 		source.append(getClass().getPackage().getName().replace(".", "/"));
 		source.append("/").append(config.getDatabaseVersion()).append("/");
-		source.append(SystemUtils.IS_OS_WINDOWS ? "win32" : "linux");
+		source.append(SystemUtils.IS_OS_WINDOWS ? "win32" : SystemUtils.IS_OS_MAC ? "osx" : "linux");
 
 		try {
 			Util.extractFromClasspathToFile(source.toString(), baseDir);
