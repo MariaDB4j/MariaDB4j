@@ -21,6 +21,7 @@ package ch.vorburger.exec;
 
 import junit.framework.Assert;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -153,10 +154,14 @@ public class ManagedProcessTest {
 			r.proc = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir").addArgument("/X").build();
 			r.msgToWaitFor = "bytes free";
 		}
-		else if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_SOLARIS) {
+		else if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_SOLARIS) {
 			r.proc = new ManagedProcessBuilder("true").addArgument("--version").build();
 			r.msgToWaitFor = "true (GNU coreutils)";
 		}
+        else if (SystemUtils.IS_OS_MAC) {
+            r.proc = new ManagedProcessBuilder("man").addArgument("--version").build();
+            r.msgToWaitFor = "version";
+        }
 		else {
 			throw new MariaDB4jException("Unexpected Platform, improve the test dude...");
 		}
