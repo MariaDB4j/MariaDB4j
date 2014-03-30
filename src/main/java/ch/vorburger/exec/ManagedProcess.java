@@ -330,38 +330,42 @@ public class ManagedProcess {
 	 * @throws ManagedProcessException for problems such as if the process already exited (without the message ever appearing in the Console) 
 	 */
 	public void waitForConsoleMessage(String messageInConsole) throws ManagedProcessException {
-		// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
-		if (getConsole().contains(messageInConsole)) {
-			logger.info("Asked to wait for \"\"{}\"\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
-			return;
-		}
-		
-		// MUST do this, else will block forever too easily
-		String unexpectedExitMsg = "Asked to wait for \"" + messageInConsole + "\" from " + procLongName() + ", but it already exited! (without that message in console)";
-		if (!isAlive()) {
-			throw new ManagedProcessException(unexpectedExitMsg);
-		}
-		
 		CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
 		stdouts.addOutputStream(checkingConsoleOutputStream);
 		stderrs.addOutputStream(checkingConsoleOutputStream);
 		
-		final int SLEEP_TIME_MS = 50;
-		logger.info("Thread is now going to wait for \"\"{}\"\" to appear in Console output of process {}", messageInConsole, procLongName());
-        while (!checkingConsoleOutputStream.hasSeenIt() && isAlive()) {
-            try {
-				Thread.sleep(SLEEP_TIME_MS);
-			} catch (InterruptedException e) {
-				throw handleInterruptedException(e);
+		try {
+			// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
+			if (getConsole().contains(messageInConsole)) {
+				logger.info("Asked to wait for \"\"{}\"\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
+				return;
 			}
-        }
-		stdouts.removeOutputStream(checkingConsoleOutputStream);
-		stderrs.removeOutputStream(checkingConsoleOutputStream);
+			
+			// MUST do this, else will block forever too easily
+			String unexpectedExitMsg = "Asked to wait for \"" + messageInConsole + "\" from " + procLongName() + ", but it already exited! (without that message in console)";
+			if (!isAlive()) {
+				throw new ManagedProcessException(unexpectedExitMsg);
+			}
+			
+			final int SLEEP_TIME_MS = 50;
+			logger.info("Thread is now going to wait for \"\"{}\"\" to appear in Console output of process {}", messageInConsole, procLongName());
+	        while (!checkingConsoleOutputStream.hasSeenIt() && isAlive()) {
+	            try {
+					Thread.sleep(SLEEP_TIME_MS);
+				} catch (InterruptedException e) {
+					throw handleInterruptedException(e);
+				}
+	        }
 
-		// If we got out of the while() loop due to !isAlive() instead of messageInConsole, then throw the same exception as above!
-		if (!checkingConsoleOutputStream.hasSeenIt()) {
-			throw new ManagedProcessException(unexpectedExitMsg);
-		}
+	        // If we got out of the while() loop due to !isAlive() instead of messageInConsole, then throw the same exception as above!
+			if (!checkingConsoleOutputStream.hasSeenIt()) {
+				throw new ManagedProcessException(unexpectedExitMsg);
+			}
+		}        
+        finally {
+			stdouts.removeOutputStream(checkingConsoleOutputStream);
+			stderrs.removeOutputStream(checkingConsoleOutputStream);
+        }
 	}
 
 	// ---

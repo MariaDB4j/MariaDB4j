@@ -40,7 +40,7 @@ class RollingLogOutputStream extends LogOutputStream {
 	}
 	
 	@Override
-	protected void processLine(String line, @SuppressWarnings("unused") int level) {
+	protected synchronized void processLine(String line, int level) {
 		ringBuffer.add(line);
 	}
 
@@ -53,7 +53,7 @@ class RollingLogOutputStream extends LogOutputStream {
 	 * 
 	 * @return recent Console output
 	 */
-	public String getRecentLines() {
+	public synchronized String getRecentLines() {
 		StringBuilder sb = new StringBuilder();
 		for (String line : ringBuffer) {
 			if (sb.length() > 0)
