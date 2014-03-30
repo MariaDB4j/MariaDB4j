@@ -30,6 +30,8 @@ public class Configuration {
 	private String databaseVersion = SystemUtils.IS_OS_MAC ? "mariadb-5.5.34" : "mariadb-5.5.33a";
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
 	private String dataDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
+	private String socket = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/mysql.sock";
+
 	private int port = 3306;
 
 	public Configuration() {}
@@ -64,5 +66,13 @@ public class Configuration {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public String getSocket() {
+		return socket;
+	}
+
+	public void setSocket(String socket) {
+		this.socket = socket;
 	}
 }
