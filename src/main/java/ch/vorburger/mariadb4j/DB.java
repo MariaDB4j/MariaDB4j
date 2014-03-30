@@ -77,6 +77,7 @@ public class DB {
 	public static DB newEmbeddedDB(int port) throws ManagedProcessException {
 		Configuration config = new Configuration();
 		config.setPort(port);
+		config.setSocket(config.getBaseDir() + "/mysql" + port + ".sock");
 		return newEmbeddedDB(config);
 	}
 
@@ -118,7 +119,10 @@ public class DB {
 			builder.addArgument("--max_allowed_packet=64M");
 			builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
 			builder.addFileArgument("--datadir", dataDir);
-			builder.addArgument("--port="+config.getPort());
+			builder.addArgument("--port=" + config.getPort());
+			if (!SystemUtils.IS_OS_WINDOWS) {
+				builder.addArgument("--socket=" + config.getSocket());
+			}
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
@@ -157,6 +161,7 @@ public class DB {
 			builder.setWorkingDirectory(baseDir);
 			builder.addArgument("executeScript.sh");
 			builder.addArgument(to.getAbsolutePath());
+			builder.addArgument("--socket=" + config.getSocket());
 			ManagedProcess process = builder.build();
 			process.start();
 			process.waitForExit();
