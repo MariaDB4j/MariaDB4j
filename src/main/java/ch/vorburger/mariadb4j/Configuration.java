@@ -19,6 +19,9 @@
  */
 package ch.vorburger.mariadb4j;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 import org.apache.commons.lang3.SystemUtils;
 
 /**
@@ -26,6 +29,7 @@ import org.apache.commons.lang3.SystemUtils;
  * This is the analog to my.cnf
  */
 public class Configuration {
+	public static final String DB_PORT_PROPERTY = "mariadb4j.port";
 
 	private String databaseVersion = SystemUtils.IS_OS_MAC ? "mariadb-5.5.34" : "mariadb-5.5.33a";
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
@@ -34,7 +38,9 @@ public class Configuration {
 
 	private int port = 3306;
 
-	public Configuration() {}
+	public Configuration() {
+		System.setProperty(DB_PORT_PROPERTY, String.valueOf(port));
+	}
 
 	public String getDatabaseVersion() {
 		return databaseVersion;
@@ -65,7 +71,26 @@ public class Configuration {
 	}
 
 	public void setPort(int port) {
-		this.port = port;
+	    if (port == 0) {
+	    	detectFreePort();
+	    } else {
+	    	this.port = port;
+	    	String portStr = String.valueOf(port);
+	    	socket = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/mysql." + portStr + ".sock";
+	    	System.setProperty(DB_PORT_PROPERTY, portStr);
+	    }
+	}
+
+	public void detectFreePort() {
+		try {
+			ServerSocket ss = new ServerSocket(0);
+			setPort(ss.getLocalPort());
+			ss.setReuseAddress(true);
+			ss.close();
+		} catch (IOException e) {
+			// This should never happen
+			throw new RuntimeException(e);
+		}
 	}
 
 	public String getSocket() {

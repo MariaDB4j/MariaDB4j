@@ -22,6 +22,7 @@ package ch.vorburger.mariadb4j;
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -149,19 +151,21 @@ public class DB {
 	 * Takes in a string that represents a resource on the classpath and sources it via mysql
 	 * @param resource the resource to source
 	 */
-	public void source(String resource) throws ManagedProcessException {
+	public void source(String resource, String username, String password, String dbName) throws ManagedProcessException {
 		logger.info("Sourcing a script located at: " + resource);
 		try {
-			String tempFile = "sql" + SystemUtils.FILE_SEPARATOR + System.currentTimeMillis() + ".sql";
-			URL from = getClass().getClassLoader().getResource(resource);
-			File to = new File(baseDir, tempFile);
-			FileUtils.copyURLToFile(from, to);
+			InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
 
-			ManagedProcessBuilder builder = new ManagedProcessBuilder("bash");
+			ManagedProcessBuilder builder = new ManagedProcessBuilder(new File(baseDir, "bin/mysql"));
 			builder.setWorkingDirectory(baseDir);
-			builder.addArgument("executeScript.sh");
-			builder.addArgument(to.getAbsolutePath());
+			if (username != null)
+				builder.addArgument("-u" + username);
+			if (password != null)
+				builder.addArgument("-p" + password);
+			if (dbName != null)
+				builder.addArgument("-D" + dbName);
 			builder.addArgument("--socket=" + config.getSocket());
+			builder.setInputStream(from);
 			ManagedProcess process = builder.build();
 			process.start();
 			process.waitForExit();
@@ -254,6 +258,9 @@ public class DB {
 				try {
 					if (Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
 						FileUtils.deleteDirectory(dataDir);
+					}
+					if (Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
+						FileUtils.deleteDirectory(baseDir);
 					}
 				}
 				catch (IOException e) {
