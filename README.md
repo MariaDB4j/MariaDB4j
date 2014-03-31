@@ -81,6 +81,7 @@ Who?
 ----
 * Michael Vorburger, February/March 2012.
 * Michael Seaton, October 2013.
+* Juhani Simola, March 2014.
 * _YourNameHere, if you jump on-board..._
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
