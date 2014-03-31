@@ -36,12 +36,11 @@ import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
 
 /**
- * Provides capability to install, start, and use an embedded database
+ * Provides capability to install, start, and use an embedded database.
  * @author Michael Vorburger
  * @author Michael Seaton
  */
 public class DB {
-
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
 	protected final Configuration config;
@@ -50,7 +49,7 @@ public class DB {
 	private File dataDir;
 	private ManagedProcess mysqldProcess;
 
-	private DB(Configuration config) {
+	protected DB(Configuration config) {
 		this.config = config;
 	}
 
