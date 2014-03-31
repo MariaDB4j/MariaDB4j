@@ -19,8 +19,11 @@
  */
 package ch.vorburger.exec;
 
-import ch.vorburger.exec.SLF4jLogOutputStream.Type;
-import ch.vorburger.mariadb4j.Util;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -34,10 +37,8 @@ import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
+import ch.vorburger.exec.SLF4jLogOutputStream.Type;
+import ch.vorburger.mariadb4j.Util;
 
 /**
  * Managed OS Process (Executable, Program, Command).
@@ -91,11 +92,26 @@ public class ManagedProcess {
 	ManagedProcess(CommandLine commandLine, File directory, Map<String, String> environment, InputStream input) {
 		this.commandLine = commandLine;
 		this.environment = environment;
-		this.input = input;
+		if (input != null) {
+			this.input = buffer(input);
+		} else {
+			this.input = null; // this is safe/OK/expected; PumpStreamHandler constructor handles this as expected 
+		}
 		if (directory != null) {
 			executor.setWorkingDirectory(directory);
 		}
 		executor.setWatchdog(watchDog);
+	}
+	
+	// stolen from commons-io IOUtiles (@since v2.5)
+	protected BufferedInputStream buffer(final InputStream inputStream) {
+		// reject null early on rather than waiting for IO operation to fail
+		if (inputStream == null) { // not checked by BufferedInputStream
+			throw new NullPointerException("inputStream == null");
+		}
+		return inputStream instanceof BufferedInputStream 
+				? (BufferedInputStream) inputStream
+				: new BufferedInputStream(inputStream);
 	}
 
 	/**
