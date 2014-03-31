@@ -19,22 +19,21 @@
  */
 package ch.vorburger.mariadb4j;
 
-import ch.vorburger.exec.ManagedProcess;
-import ch.vorburger.exec.ManagedProcessBuilder;
-import ch.vorburger.exec.ManagedProcessException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import ch.vorburger.exec.ManagedProcess;
+import ch.vorburger.exec.ManagedProcessBuilder;
+import ch.vorburger.exec.ManagedProcessException;
 
 /**
  * Provides capability to install, start, and use an embedded database
@@ -147,6 +146,10 @@ public class DB {
 		return DriverManager.getConnection("jdbc:mysql://localhost:"+config.getPort() + "/test", "root", "");
 	}
 
+	public void source(String resource) throws ManagedProcessException {
+		source(resource, null, null, null);
+	}
+	
 	/**
 	 * Takes in a string that represents a resource on the classpath and sources it via mysql
 	 * @param resource the resource to source
