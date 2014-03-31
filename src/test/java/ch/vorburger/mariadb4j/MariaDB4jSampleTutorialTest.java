@@ -60,7 +60,7 @@ public class MariaDB4jSampleTutorialTest {
 			Assert.assertEquals("Hello, world", results.get(0));
 
 			// Should be able to source a SQL file
-			db.source("ch/vorburger/mariadb4j/testSourceFile.sql");
+			db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", null, "test");
 			results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
 			Assert.assertEquals(3, results.size());
 			Assert.assertEquals("Hello, world", results.get(0));

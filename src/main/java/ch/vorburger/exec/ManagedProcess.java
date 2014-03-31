@@ -21,6 +21,7 @@ package ch.vorburger.exec;
 
 import ch.vorburger.exec.SLF4jLogOutputStream.Type;
 import ch.vorburger.mariadb4j.Util;
+
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -63,6 +65,7 @@ public class ManagedProcess {
 	private final ExecuteWatchdog watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
 	private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
 	private final Map<String, String> environment;
+	private final InputStream input;
 
 	private boolean isAlive = false;
 	private boolean destroyOnShutdown = true;
@@ -85,9 +88,10 @@ public class ManagedProcess {
 	 * @param directory Working directory, or null
 	 * @param environment Environment Variable.
 	 */
-	ManagedProcess(CommandLine commandLine, File directory, Map<String, String> environment) {
+	ManagedProcess(CommandLine commandLine, File directory, Map<String, String> environment, InputStream input) {
 		this.commandLine = commandLine;
 		this.environment = environment;
+		this.input = input;
 		if (directory != null) {
 			executor.setWorkingDirectory(directory);
 		}
@@ -111,7 +115,7 @@ public class ManagedProcess {
 		
 		stdouts = new MultiOutputStream();
 		stderrs = new MultiOutputStream();
-		PumpStreamHandler outputHandler = new PumpStreamHandler(stdouts, stderrs);
+		PumpStreamHandler outputHandler = new PumpStreamHandler(stdouts, stderrs, input);
 		executor.setStreamHandler(outputHandler);
 		
 		String pid = procShortName();

@@ -21,6 +21,7 @@ package ch.vorburger.exec;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
@@ -45,6 +46,7 @@ public class ManagedProcessBuilder {
 	protected final CommandLine commonsExecCommandLine;
 	protected final Map<String,String> environment;
 	protected File directory;
+	private InputStream inputStream;
 
 	public ManagedProcessBuilder(String executable) throws ManagedProcessException {
 		commonsExecCommandLine = new CommandLine(executable);
@@ -123,7 +125,11 @@ public class ManagedProcessBuilder {
     // ----
     
 	public ManagedProcess build() {
-		return new ManagedProcess(getCommandLine(), directory, environment);
+		return new ManagedProcess(getCommandLine(), directory, environment, inputStream);
+	}
+
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
 	}
 
 	/* package-local... let's keep ch.vorburger.exec's API separate from Apache Commons Exec, so it COULD be replaced */  
