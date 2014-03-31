@@ -29,17 +29,16 @@ import org.apache.commons.lang3.SystemUtils;
  * This is the analog to my.cnf
  */
 public class Configuration {
-	public static final String DB_PORT_PROPERTY = "mariadb4j.port";
 
 	private String databaseVersion = SystemUtils.IS_OS_MAC ? "mariadb-5.5.34" : "mariadb-5.5.33a";
+	
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
 	private String dataDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 	private String socket = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/mysql.sock";
 
-	private int port = 3306;
+	private int port = 3306; // this is just the default port - can be changed
 
 	public Configuration() {
-		System.setProperty(DB_PORT_PROPERTY, String.valueOf(port));
 	}
 
 	public String getDatabaseVersion() {
@@ -70,14 +69,17 @@ public class Configuration {
 		return port;
 	}
 
+	/**
+	 * Sets the port number.
+	 * @param port port number, or 0 to use detectFreePort() 
+	 */
 	public void setPort(int port) {
 	    if (port == 0) {
 	    	detectFreePort();
 	    } else {
 	    	this.port = port;
 	    	String portStr = String.valueOf(port);
-	    	socket = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/mysql." + portStr + ".sock";
-	    	System.setProperty(DB_PORT_PROPERTY, portStr);
+	    	setSocket(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/mysql." + portStr + ".sock");
 	    }
 	}
 
