@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Michael Vorburger
+ * Copyright (c) 2012-2014 Michael Vorburger
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,13 +43,13 @@ import ch.vorburger.exec.ManagedProcessException;
 public class DB {
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
-	protected final Configuration config;
+	protected final DBConfiguration config;
 
 	private File baseDir;
 	private File dataDir;
 	private ManagedProcess mysqldProcess;
 
-	protected DB(Configuration config) {
+	protected DB(DBConfiguration config) {
 		this.config = config;
 	}
 
@@ -59,7 +59,7 @@ public class DB {
 	 * @param config Configuration of the embedded instance
 	 * @return a new DB instance
 	 */
-	public static DB newEmbeddedDB(Configuration config) throws ManagedProcessException {
+	public static DB newEmbeddedDB(DBConfiguration config) throws ManagedProcessException {
 		DB db = new DB(config);
 		db.prepareDirectories();
 		db.unpackEmbeddedDb();
@@ -75,10 +75,10 @@ public class DB {
 	 * @return a new DB instance
 	 */
 	public static DB newEmbeddedDB(int port) throws ManagedProcessException {
-		Configuration config = new Configuration();
+		DBConfigurationBuilder config = new DBConfigurationBuilder();
 		config.setPort(port);
 		config.setSocket(config.getBaseDir() + "/mysql" + port + ".sock");
-		return newEmbeddedDB(config);
+		return newEmbeddedDB(config.build());
 	}
 
 	/**
@@ -197,14 +197,14 @@ public class DB {
 	 * file system based on the configuration
 	 */
 	protected void unpackEmbeddedDb() {
+		if (config.getBinariesClassPathLocation() == null) {
+			logger.info("Not unpacking any embedded database (as BinariesClassPathLocation configuration is null)");
+			return;
+		}
+		
 		logger.info("Unpacking the embedded database...");
-		StringBuilder source = new StringBuilder();
-		source.append(getClass().getPackage().getName().replace(".", "/"));
-		source.append("/").append(config.getDatabaseVersion()).append("/");
-		source.append(SystemUtils.IS_OS_WINDOWS ? "win32" : SystemUtils.IS_OS_MAC ? "osx" : "linux");
-
 		try {
-			Util.extractFromClasspathToFile(source.toString(), baseDir);
+			Util.extractFromClasspathToFile(config.getBinariesClassPathLocation(), baseDir);
 			if (!SystemUtils.IS_OS_WINDOWS) {
 				Util.forceExecutable(new File(baseDir, "bin/my_print_defaults"));
 				Util.forceExecutable(new File(baseDir, "bin/mysql_install_db"));

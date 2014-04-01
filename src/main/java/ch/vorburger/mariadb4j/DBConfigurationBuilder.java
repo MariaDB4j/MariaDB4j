@@ -25,10 +25,10 @@ import java.net.ServerSocket;
 import org.apache.commons.lang3.SystemUtils;
 
 /**
- * Enables passing in custom options when starting up the database server
- * This is the analog to my.cnf
+ * Builder for DBConfiguration.
+ * Has lot's of sensible default conventions etc.
  */
-public class Configuration {
+public class DBConfigurationBuilder {
 
 	private String databaseVersion = SystemUtils.IS_OS_MAC ? "mariadb-5.5.34" : "mariadb-5.5.33a";
 	
@@ -38,15 +38,11 @@ public class Configuration {
 
 	private int port = 3306; // this is just the default port - can be changed
 
-	public Configuration() {
+	public static DBConfigurationBuilder newBuilder() {
+		return new DBConfigurationBuilder();
 	}
-
-	public String getDatabaseVersion() {
-		return databaseVersion;
-	}
-
-	public void setDatabaseVersion(String databaseVersion) {
-		this.databaseVersion = databaseVersion;
+	
+	protected DBConfigurationBuilder() {
 	}
 
 	public String getBaseDir() {
@@ -101,5 +97,17 @@ public class Configuration {
 
 	public void setSocket(String socket) {
 		this.socket = socket;
+	}
+	
+	public DBConfiguration build() {
+		return new DBConfiguration.Impl(port, socket, getBinariesClassPathLocation(), baseDir, dataDir);
+	}
+
+	protected String getBinariesClassPathLocation() {
+		StringBuilder binariesClassPathLocation = new StringBuilder();
+		binariesClassPathLocation.append(getClass().getPackage().getName().replace(".", "/"));
+		binariesClassPathLocation.append("/").append(databaseVersion).append("/");
+		binariesClassPathLocation.append(SystemUtils.IS_OS_WINDOWS ? "win32" : SystemUtils.IS_OS_MAC ? "osx" : "linux");
+		return binariesClassPathLocation.toString();
 	}
 }

@@ -46,7 +46,6 @@ import ch.vorburger.mariadb4j.Util;
  * 
  * Intended for controlling external "tools", often "daemons", which produce some text-based control output. 
  * In this form not yet suitable for programs returning binary data via stdout (but could be extended).
- * Currently it does not yet offer stdin support (but could if needed).
  *
  * Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec), 
  * including logging the processes stdout & stderr, into SLF4J (not the System.out.Console). 
