@@ -75,7 +75,10 @@ It was initially developed for use in Mifos, the "Open Source Technology that ac
 
 Build?
 ------
-[![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
+[![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/) <== Linux on Travis CI + 
+[Mac OS X CI courtesy of CloudBees](https://vorburger.ci.cloudbees.com/job/MariaDB4j.MacOSX/).
+
+_TBD: How-to get a free Jenkins-like CI on a Windows box somewhere?_
 
 Who?
 ----
