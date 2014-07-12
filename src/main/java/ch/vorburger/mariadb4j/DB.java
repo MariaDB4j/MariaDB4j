@@ -126,8 +126,8 @@ public class DB {
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
-			mysqldProcess.waitForConsoleMessage("mysqld: ready for connections.");
 			mysqldProcess.setDestroyOnShutdown(true);
+			mysqldProcess.waitForConsoleMessage("mysqld: ready for connections.");
 			cleanupOnExit();
 		}
 		catch (Exception e) {
