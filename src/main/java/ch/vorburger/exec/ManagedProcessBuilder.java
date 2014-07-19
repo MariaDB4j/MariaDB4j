@@ -47,6 +47,7 @@ public class ManagedProcessBuilder {
 	protected final Map<String,String> environment;
 	protected File directory;
 	private InputStream inputStream;
+	private boolean destroyOnShutdown = true;
 
 	public ManagedProcessBuilder(String executable) throws ManagedProcessException {
 		commonsExecCommandLine = new CommandLine(executable);
@@ -122,10 +123,20 @@ public class ManagedProcessBuilder {
 		return commonsExecCommandLine.getExecutable();
 	}
 
+	public boolean isDestroyOnShutdown() {
+		return destroyOnShutdown;
+	}
+	
+	public ManagedProcessBuilder setDestroyOnShutdown(boolean flag) {
+		this.destroyOnShutdown = flag;
+		return this;
+	}
+
     // ----
     
 	public ManagedProcess build() {
-		return new ManagedProcess(getCommandLine(), directory, environment, inputStream);
+		return new ManagedProcess(getCommandLine(), directory, environment,
+				inputStream, destroyOnShutdown);
 	}
 
 	public void setInputStream(InputStream inputStream) {

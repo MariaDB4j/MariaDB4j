@@ -56,7 +56,6 @@ import ch.vorburger.mariadb4j.Util;
  * @author Michael Vorburger
  */
 public class ManagedProcess {
-
 	private static final Logger logger = LoggerFactory.getLogger(ManagedProcess.class);
 
 	private final CommandLine commandLine;
@@ -66,9 +65,9 @@ public class ManagedProcess {
 	private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
 	private final Map<String, String> environment;
 	private final InputStream input;
+	private final boolean destroyOnShutdown;
 
 	private boolean isAlive = false;
-	private boolean destroyOnShutdown = true;
 	private String procShortName;
 	private int consoleBufferMaxLines = 50;
 	private RollingLogOutputStream console;
@@ -88,7 +87,10 @@ public class ManagedProcess {
 	 * @param directory Working directory, or null
 	 * @param environment Environment Variable.
 	 */
-	ManagedProcess(CommandLine commandLine, File directory, Map<String, String> environment, InputStream input) {
+	ManagedProcess(CommandLine commandLine, File directory,
+			Map<String, String> environment, InputStream input,
+			boolean destroyOnShutdown) 
+	{
 		this.commandLine = commandLine;
 		this.environment = environment;
 		if (input != null) {
@@ -100,6 +102,7 @@ public class ManagedProcess {
 			executor.setWorkingDirectory(directory);
 		}
 		executor.setWatchdog(watchDog);
+		this.destroyOnShutdown = destroyOnShutdown;
 	}
 	
 	// stolen from commons-io IOUtiles (@since v2.5)
@@ -389,15 +392,6 @@ public class ManagedProcess {
 
 	// ---
 	
-	public boolean isDestroyOnShutdown() {
-		return destroyOnShutdown;
-	}
-	
-	public ManagedProcess setDestroyOnShutdown(boolean flag) {
-		this.destroyOnShutdown = flag;
-		return this;
-	}
-
 	public void setConsoleBufferMaxLines(int consoleBufferMaxLines) {
 		this.consoleBufferMaxLines = consoleBufferMaxLines;
 	}
@@ -410,7 +404,6 @@ public class ManagedProcess {
 		return console.getRecentLines();
 	}
 	
-
 	// ---
 	
 	private String procShortName() {

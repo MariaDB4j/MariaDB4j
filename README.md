@@ -56,7 +56,7 @@ source. -- MariaDB4j's Maven coordinates are:
 ```xml
 <groupId>ch.vorburger.mariaDB4j</groupId>
 <artifactId>mariaDB4j</artifactId>
-<version>1.0.0</version>
+<version>2.0-SNAPSHOT</version>
 ```
 
 Why?

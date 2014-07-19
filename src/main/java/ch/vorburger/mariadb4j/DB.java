@@ -123,10 +123,10 @@ public class DB {
 			if (!SystemUtils.IS_OS_WINDOWS) {
 				builder.addArgument("--socket=" + config.getSocket());
 			}
+			builder.setDestroyOnShutdown(true); // just for clarity, even though it (currently..) is the default
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
-			mysqldProcess.setDestroyOnShutdown(true);
 			mysqldProcess.waitForConsoleMessage("mysqld: ready for connections.");
 			cleanupOnExit();
 		}
@@ -251,22 +251,28 @@ public class DB {
 		Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
 			@Override
 			public void run() {
+				// ManagedProcess DestroyOnShutdown ProcessDestroyer does
+				// something similar, but it shouldn't hurt to better be save
+				// than sorry and do it again ourselves here as well.
 				try {
+					logger.info("cleanupOnExit() ShutdownHook now stopping database");
 					db.stop();
 				}
 				catch (ManagedProcessException e) {
-					logger.info("An error occurred while stopping the database", e);
+					logger.info("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
 				}
 				try {
 					if (Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
+						logger.info("cleanupOnExit() ShutdownHook deleting temporary DB data directory: " + dataDir);
 						FileUtils.deleteDirectory(dataDir);
 					}
 					if (Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
+						logger.info("cleanupOnExit() ShutdownHook deleting temporary DB base directory: " + dataDir);
 						FileUtils.deleteDirectory(baseDir);
 					}
 				}
 				catch (IOException e) {
-					logger.info("An error occurred while deleting the data directory", e);
+					logger.warn("cleanupOnExit() ShutdownHook: An error occurred while deleting a directory", e);
 				}
 			}
 		});
