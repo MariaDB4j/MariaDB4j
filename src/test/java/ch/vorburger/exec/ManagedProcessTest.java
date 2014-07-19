@@ -21,7 +21,6 @@ package ch.vorburger.exec;
 
 import junit.framework.Assert;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
