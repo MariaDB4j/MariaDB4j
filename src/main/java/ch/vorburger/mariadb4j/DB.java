@@ -124,11 +124,11 @@ public class DB {
 				builder.addArgument("--socket=" + config.getSocket());
 			}
 			builder.setDestroyOnShutdown(true); // just for clarity, even though it (currently..) is the default
+			cleanupOnExit();
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
 			mysqldProcess.waitForConsoleMessage("mysqld: ready for connections.");
-			cleanupOnExit();
 		}
 		catch (Exception e) {
             logger.error("failed to start mysqld", e);
