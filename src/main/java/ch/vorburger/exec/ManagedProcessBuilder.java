@@ -46,8 +46,9 @@ public class ManagedProcessBuilder {
 	protected final CommandLine commonsExecCommandLine;
 	protected final Map<String,String> environment;
 	protected File directory;
-	private InputStream inputStream;
-	private boolean destroyOnShutdown = true;
+	protected InputStream inputStream;
+	protected boolean destroyOnShutdown = true;
+	protected int consoleBufferMaxLines = 50;
 
 	public ManagedProcessBuilder(String executable) throws ManagedProcessException {
 		commonsExecCommandLine = new CommandLine(executable);
@@ -132,11 +133,19 @@ public class ManagedProcessBuilder {
 		return this;
 	}
 
+	public void setConsoleBufferMaxLines(int consoleBufferMaxLines) {
+		this.consoleBufferMaxLines = consoleBufferMaxLines;
+	}
+
+	public int getConsoleBufferMaxLines() {
+		return consoleBufferMaxLines;
+	}
+
     // ----
     
 	public ManagedProcess build() {
 		return new ManagedProcess(getCommandLine(), directory, environment,
-				inputStream, destroyOnShutdown);
+				inputStream, destroyOnShutdown, consoleBufferMaxLines);
 	}
 
 	public void setInputStream(InputStream inputStream) {

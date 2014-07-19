@@ -66,10 +66,10 @@ public class ManagedProcess {
 	private final Map<String, String> environment;
 	private final InputStream input;
 	private final boolean destroyOnShutdown;
+	private final int consoleBufferMaxLines;
 
 	private boolean isAlive = false;
 	private String procShortName;
-	private int consoleBufferMaxLines = 50;
 	private RollingLogOutputStream console;
 	private MultiOutputStream stdouts;
 	private MultiOutputStream stderrs;
@@ -89,7 +89,7 @@ public class ManagedProcess {
 	 */
 	ManagedProcess(CommandLine commandLine, File directory,
 			Map<String, String> environment, InputStream input,
-			boolean destroyOnShutdown) 
+			boolean destroyOnShutdown, int consoleBufferMaxLines) 
 	{
 		this.commandLine = commandLine;
 		this.environment = environment;
@@ -103,6 +103,7 @@ public class ManagedProcess {
 		}
 		executor.setWatchdog(watchDog);
 		this.destroyOnShutdown = destroyOnShutdown;
+		this.consoleBufferMaxLines = consoleBufferMaxLines;
 	}
 	
 	// stolen from commons-io IOUtiles (@since v2.5)
@@ -204,7 +205,7 @@ public class ManagedProcess {
 			if (e != null) {
 				logger.error(procLongName() + " failed");
 				throw new ManagedProcessException(procLongName() + " failed, exitValue="
-						+ exitValue() + ", last " + getConsoleBufferMaxLines()
+						+ exitValue() + ", last " + consoleBufferMaxLines
 						+ " lines of console:\n" + getConsole(), e);
 			}
 		}
@@ -392,14 +393,6 @@ public class ManagedProcess {
 
 	// ---
 	
-	public void setConsoleBufferMaxLines(int consoleBufferMaxLines) {
-		this.consoleBufferMaxLines = consoleBufferMaxLines;
-	}
-
-	public int getConsoleBufferMaxLines() {
-		return consoleBufferMaxLines;
-	}
-
 	public String getConsole() {
 		return console.getRecentLines();
 	}

@@ -117,7 +117,6 @@ public class ManagedProcessTest {
 		ManagedProcess p = exec.proc;
 
 		assertThat(p.isAlive(), is(false));
-		p.setConsoleBufferMaxLines(25);
 		p.start();
 		// can't assertThat(p.isAlive(), is(true)); - if p finishes too fast, this fails - unreliable test :(
 		
@@ -138,7 +137,7 @@ public class ManagedProcessTest {
 		String recentConsoleOutput = p.getConsole();
 		assertTrue(recentConsoleOutput.length() > 10);
 		assertTrue(recentConsoleOutput.contains("\n"));
-		System.out.println("Recent max. " + p.getConsoleBufferMaxLines() + " lines of console output:");
+		System.out.println("Recent (default) 50 lines of console output:");
 		System.out.println(recentConsoleOutput);
 	}
 
