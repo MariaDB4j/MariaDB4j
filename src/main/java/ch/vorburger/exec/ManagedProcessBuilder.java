@@ -48,7 +48,7 @@ public class ManagedProcessBuilder {
 	protected File directory;
 	protected InputStream inputStream;
 	protected boolean destroyOnShutdown = true;
-	protected int consoleBufferMaxLines = 50;
+	protected int consoleBufferMaxLines = 100;
 
 	public ManagedProcessBuilder(String executable) throws ManagedProcessException {
 		commonsExecCommandLine = new CommandLine(executable);

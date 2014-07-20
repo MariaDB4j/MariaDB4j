@@ -125,7 +125,7 @@ public class ManagedProcess {
 	 * 
 	 * @throws ManagedProcessException if the process could not be started 
 	 */
-	public void start() throws ManagedProcessException {
+	public synchronized void start() throws ManagedProcessException {
 		if (isAlive()) {
 			throw new ManagedProcessException(procLongName() + " is still running, use another ManagedProcess instance to launch another one");
 		}
@@ -345,14 +345,27 @@ public class ManagedProcess {
 	}
 
 	/**
+	 * @deprecated please use waitForConsoleMessageMaxMs instead now!
+	 */
+	@Deprecated
+	public void waitForConsoleMessage(String messageInConsole) throws ManagedProcessException {
+		waitForConsoleMessageMaxMs(messageInConsole, 5000);
+	}
+	
+	/**
 	 * Wait (block) until the process prints a certain message.
 	 * 
-	 * You have to be sure that the process either prints this message at some point, or otherwise exits on it's own, else this will block forever!
-	 *  
+	 * You should be sure that the process either prints this message at some
+	 * point, or otherwise exits on it's own. This method will otherwise be
+	 * slow, but never block forever, as it will "give up" and always return
+	 * after max. maxWaitUntilReturning ms.
+	 * 
 	 * @param messageInConsole text to wait for in the STDOUT/STDERR of the external process
-	 * @throws ManagedProcessException for problems such as if the process already exited (without the message ever appearing in the Console) 
+	 * @param maxWaitUntilReturning maximum time to wait, in milliseconds, until returning, if message wasn't seen
+	 * @return true if message was seen in console; false if message didn't occur and we're returning due to max. wait timeout
+	 * @throws ManagedProcessException for problems such as if the process already exited (without the message ever appearing in the Console)
 	 */
-	public void waitForConsoleMessage(String messageInConsole) throws ManagedProcessException {
+	public boolean waitForConsoleMessageMaxMs(String messageInConsole, long maxWaitUntilReturning) throws ManagedProcessException {
 		CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
 		stdouts.addOutputStream(checkingConsoleOutputStream);
 		stderrs.addOutputStream(checkingConsoleOutputStream);
@@ -361,28 +374,36 @@ public class ManagedProcess {
 			// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
 			if (getConsole().contains(messageInConsole)) {
 				logger.info("Asked to wait for \"\"{}\"\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
-				return;
+				return true;
 			}
 			
 			// MUST do this, else will block forever too easily
-			String unexpectedExitMsg = "Asked to wait for \"" + messageInConsole + "\" from " + procLongName() + ", but it already exited! (without that message in console)";
+			final String unexpectedExitMsg = "Asked to wait for \"" + messageInConsole + "\" from " + procLongName() + ", but it already exited! (without that message in console)";
 			if (!isAlive()) {
 				throw new ManagedProcessException(unexpectedExitMsg);
 			}
 			
+			long timeAlreadyWaited = 0;
 			final int SLEEP_TIME_MS = 50;
-			logger.info("Thread is now going to wait for \"\"{}\"\" to appear in Console output of process {}", messageInConsole, procLongName());
+			logger.info("Thread is now going to wait for \"\"{}\"\" to appear in Console output of process {} for max. " + maxWaitUntilReturning + "ms", messageInConsole, procLongName());
 	        while (!checkingConsoleOutputStream.hasSeenIt() && isAlive()) {
 	            try {
 					Thread.sleep(SLEEP_TIME_MS);
 				} catch (InterruptedException e) {
 					throw handleInterruptedException(e);
 				}
+	            timeAlreadyWaited += SLEEP_TIME_MS;
+	            if (timeAlreadyWaited > maxWaitUntilReturning) {
+	            	logger.warn("Timed out waiting for \"\"{}\"\" after {}ms (returning false)", messageInConsole, maxWaitUntilReturning);
+	            	return false;
+	            }
 	        }
 
 	        // If we got out of the while() loop due to !isAlive() instead of messageInConsole, then throw the same exception as above!
 			if (!checkingConsoleOutputStream.hasSeenIt()) {
 				throw new ManagedProcessException(unexpectedExitMsg);
+			} else {
+				return true;
 			}
 		}        
         finally {

@@ -41,6 +41,8 @@ import ch.vorburger.exec.ManagedProcessException;
  * @author Michael Seaton
  */
 public class DB {
+	private static final String MYSQLD_READY_FOR_CONNECTIONS = "mysqld: ready for connections.";
+
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
 	protected final DBConfiguration config;
@@ -111,6 +113,7 @@ public class DB {
 	 */
 	public void start() throws ManagedProcessException {
 		logger.info("Starting up the database...");
+		boolean ready = false;
 		try {
 			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
 			builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
@@ -128,11 +131,14 @@ public class DB {
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
-			mysqldProcess.waitForConsoleMessage("mysqld: ready for connections.");
+			ready = mysqldProcess.waitForConsoleMessageMaxMs(MYSQLD_READY_FOR_CONNECTIONS, 10000);
 		}
 		catch (Exception e) {
             logger.error("failed to start mysqld", e);
 			throw new ManagedProcessException("An error occurred while starting the database", e);
+		}
+		if (!ready) {
+			throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen: " + MYSQLD_READY_FOR_CONNECTIONS);
 		}
 		logger.info("Database startup complete.");
 	}

@@ -33,7 +33,7 @@ import org.apache.commons.exec.LogOutputStream;
 class CheckingConsoleOutputStream extends LogOutputStream {
 
 	private final String watchOutFor;
-	private boolean seenIt;
+	private boolean seenIt = false;
 	
 	CheckingConsoleOutputStream(String watchOutFor) {
 		if (watchOutFor.contains("\n")) {
