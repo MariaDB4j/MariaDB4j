@@ -16,9 +16,6 @@ BEFORE RELEASING v1
 
 - LICENSE.txt & README must be included in JAR
 
-- pom.xml must have all required elements so that this doesn't complain: 
-  mvn clean verify source:jar javadoc:jar repository:bundle-create
-
 
 LATER, MAY BE
 
