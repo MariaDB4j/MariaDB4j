@@ -164,4 +164,12 @@
 		</repository>
 	</repositories>
 
+	<distributionManagement>
+		<repository>
+			<id>bintray-vorburger-maven-MariaDB4j</id>
+			<name>vorburger-maven-MariaDB4j</name>
+			<url>https://api.bintray.com/maven/vorburger/maven/MariaDB4j</url>
+		</repository>
+	</distributionManagement>
+
 </project>
