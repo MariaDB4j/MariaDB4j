@@ -113,9 +113,6 @@ public class ManagedProcessBuilder {
 		return this.directory;
 	}
 
-	/**
-	 * @see ProcessBuilder#environment(File)
-	 */
     public Map<String,String> getEnvironment() {
     	return environment;
     }

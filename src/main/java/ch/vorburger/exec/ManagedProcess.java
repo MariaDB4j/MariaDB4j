@@ -278,30 +278,37 @@ public class ManagedProcess {
 		}
 	}
 
-	/**
-	 * Waits for the process to terminate.
-	 * 
-	 * Returns immediately if the process is already stopped (either because destroy()
-	 * was already explicitly called, or it terminated by itself).
-	 * 
-	 * Note that if the process was attempted to be started but that start failed (may be because
-	 * the executable could not be found, or some underlying OS error) then it throws a ManagedProcessException.
-	 * 
-	 * It also throws a ManagedProcessException if {@link #start()} was never even called.
-	 * 
-	 * @return exit value (or {@value #INVALID_EXITVALUE} if {@link #destroy()} was used)
-	 * @throws ManagedProcessException see above
-	 */
+    /**
+     * Waits for the process to terminate.
+     * 
+     * Returns immediately if the process is already stopped (either because
+     * destroy() was already explicitly called, or it terminated by itself).
+     * 
+     * Note that if the process was attempted to be started but that start
+     * failed (may be because the executable could not be found, or some
+     * underlying OS error) then it throws a ManagedProcessException.
+     * 
+     * It also throws a ManagedProcessException if {@link #start()} was never
+     * even called.
+     * 
+     * @return exit value (or INVALID_EXITVALUE if {@link #destroy()} was used)
+     * @throws ManagedProcessException
+     *             see above
+     */
 	public int waitForExit() throws ManagedProcessException {
 		logger.info("Thread is now going to wait for this process to terminate itself: {}", procLongName());
 		return waitForExitMaxMsWithoutLog(-1);
 	}
 
-	/**
-	 * Like {@link #waitForExit()}, but waits max. maxWaitUntilReturning, then returns (even if still running, taking no action).
-	 * @param maxWaitUntilReturning Time to wait
-	 * @return exit value, or {@value #INVALID_EXITVALUE} if the timeout was reached, or if {@link #destroy()} was used
-	 */
+    /**
+     * Like {@link #waitForExit()}, but waits max. maxWaitUntilReturning, then
+     * returns (even if still running, taking no action).
+     * 
+     * @param maxWaitUntilReturning
+     *            Time to wait
+     * @return exit value, or INVALID_EXITVALUE if the timeout was reached, or
+     *         if {@link #destroy()} was used
+     */
 	public int waitForExitMaxMs(long maxWaitUntilReturning) throws ManagedProcessException {
 		logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilReturning, procLongName());
 		return waitForExitMaxMsWithoutLog(maxWaitUntilReturning);
