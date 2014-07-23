@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
-import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
@@ -59,7 +58,7 @@ public class ManagedProcess {
 	private static final Logger logger = LoggerFactory.getLogger(ManagedProcess.class);
 
 	private final CommandLine commandLine;
-	private final Executor executor = new DefaultExecutor();
+	private final Executor executor = new BetterExecutor();
 	private final DefaultExecuteResultHandler resultHandler = new LoggingExecuteResultHandler();
 	private final ExecuteWatchdog watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
 	private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
@@ -380,7 +379,7 @@ public class ManagedProcess {
 		try {
 			// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
 			if (getConsole().contains(messageInConsole)) {
-				logger.info("Asked to wait for \"\"{}\"\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
+				logger.info("Asked to wait for \"{}\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
 				return true;
 			}
 			
@@ -392,7 +391,7 @@ public class ManagedProcess {
 			
 			long timeAlreadyWaited = 0;
 			final int SLEEP_TIME_MS = 50;
-			logger.info("Thread is now going to wait for \"\"{}\"\" to appear in Console output of process {} for max. " + maxWaitUntilReturning + "ms", messageInConsole, procLongName());
+			logger.info("Thread is now going to wait for \"{}\" to appear in Console output of process {} for max. " + maxWaitUntilReturning + "ms", messageInConsole, procLongName());
 	        while (!checkingConsoleOutputStream.hasSeenIt() && isAlive()) {
 	            try {
 					Thread.sleep(SLEEP_TIME_MS);
