@@ -69,7 +69,7 @@ public class ManagedProcessTest {
 			// as expected
 		}
 		try {
-			p.waitForConsoleMessage("Never say never...");
+			p.waitForConsoleMessageMaxMs("Never say never...", 100);
 			Assert.fail("Should have thrown an ManagedProcessException");
 		} catch (ManagedProcessException e) {
 			// as expected
@@ -97,7 +97,7 @@ public class ManagedProcessTest {
 		Thread.sleep(1000);
 		// by now this process should have terminated itself
 		// but this should not cause this to hang, but must return silently:
-		p.waitForConsoleMessage(exec.msgToWaitFor);
+		p.waitForConsoleMessageMaxMs(exec.msgToWaitFor, 1000);
 	}
 
 	@Test(expected=ManagedProcessException.class)
@@ -108,7 +108,7 @@ public class ManagedProcessTest {
 		Thread.sleep(1000);
 		// by now this process should have terminated itself
 		// but this should not cause this to hang, but must throw an ManagedProcessException
-		p.waitForConsoleMessage("some console message which will never appear");
+		p.waitForConsoleMessageMaxMs("some console message which will never appear", 1000);
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class ManagedProcessTest {
 		p.start();
 		// can't assertThat(p.isAlive(), is(true)); - if p finishes too fast, this fails - unreliable test :(
 		
-		p.waitForConsoleMessage(exec.msgToWaitFor);
+		p.waitForConsoleMessageMaxMs(exec.msgToWaitFor, 1000);
 		
 		p.waitForExit();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.
