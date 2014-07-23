@@ -19,13 +19,13 @@
  */
 package ch.vorburger.exec;
 
-import junit.framework.Assert;
-import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import junit.framework.Assert;
+
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Test;
 
 /**
  * Tests ManagedProcess.
@@ -146,7 +146,7 @@ public class ManagedProcessTest {
 		String msgToWaitFor;
 	}
 	
-	protected SomeSelfTerminatingExec someSelfTerminatingExec() throws UnknownPlatformException, MariaDB4jException, ManagedProcessException {
+    protected SomeSelfTerminatingExec someSelfTerminatingExec() throws MariaDB4jException, ManagedProcessException {
 		SomeSelfTerminatingExec r = new SomeSelfTerminatingExec();
 		if (SystemUtils.IS_OS_WINDOWS) {
 			r.proc = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir").addArgument("/X").build();
