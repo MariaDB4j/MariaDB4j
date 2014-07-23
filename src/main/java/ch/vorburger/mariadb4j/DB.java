@@ -261,23 +261,30 @@ public class DB {
 				// something similar, but it shouldn't hurt to better be save
 				// than sorry and do it again ourselves here as well.
 				try {
-					logger.info("cleanupOnExit() ShutdownHook now stopping database");
-					db.stop();
+				        // Shut up and don't log if it was already stop() before
+				        if (mysqldProcess.isAlive()) {
+        					logger.info("cleanupOnExit() ShutdownHook now stopping database");
+        					db.stop();
+				        }
 				}
 				catch (ManagedProcessException e) {
-					logger.info("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
+					logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
 				}
 				try {
-					if (Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
+					if (dataDir.exists() && Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
 						logger.info("cleanupOnExit() ShutdownHook deleting temporary DB data directory: " + dataDir);
 						FileUtils.deleteDirectory(dataDir);
 					}
-					if (Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
+					if (baseDir.exists() && Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
 						logger.info("cleanupOnExit() ShutdownHook deleting temporary DB base directory: " + dataDir);
 						FileUtils.deleteDirectory(baseDir);
 					}
 				}
-				catch (IOException e) {
+				// Don't catch just IOException here, but a parent class
+				// because there isn't just one but N Shutdown Hook Threads
+				// one could have deleted files before another, and FileUtils
+				// would throw an IllegalArgumentException
+				catch (Throwable e) {
 					logger.warn("cleanupOnExit() ShutdownHook: An error occurred while deleting a directory", e);
 				}
 			}
