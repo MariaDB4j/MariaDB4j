@@ -80,6 +80,20 @@ Build?
 
 _TBD: How-to get a free Jenkins-like CI on a Windows box somewhere?_
 
+Release?
+--------
+
+Until http://jira.codehaus.org/browse/MJAVADOC-401, make sure the JavaDoc is clean by first running 'mvn -Dmaven.test.skip=true -Prelease package' and checking for any WARNING.
+
+mvn release:prepare
+mvn release:perform
+mvn release:clean
+
+Discard and go back to fix something and re-release (before Publishing in Bintray) e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote. (If ultimately not publishing, remove git tag as well.) Alternatively try BEFORE release:clean:
+
+mvn release:rollback
+
+
 Who?
 ----
 * Michael Vorburger, February/March 2012.
