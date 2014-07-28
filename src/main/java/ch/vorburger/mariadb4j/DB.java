@@ -41,6 +41,8 @@ import ch.vorburger.exec.ManagedProcessException;
  * @author Michael Seaton
  */
 public class DB {
+	private static final int DB_START_MAXWAITMS = 10000;
+
 	private static final String MYSQLD_READY_FOR_CONNECTIONS = "mysqld: ready for connections.";
 
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
@@ -131,14 +133,14 @@ public class DB {
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
-			ready = mysqldProcess.waitForConsoleMessageMaxMs(MYSQLD_READY_FOR_CONNECTIONS, 10000);
+			ready = mysqldProcess.waitForConsoleMessageMaxMs(MYSQLD_READY_FOR_CONNECTIONS, DB_START_MAXWAITMS);
 		}
 		catch (Exception e) {
             logger.error("failed to start mysqld", e);
 			throw new ManagedProcessException("An error occurred while starting the database", e);
 		}
 		if (!ready) {
-			throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen: " + MYSQLD_READY_FOR_CONNECTIONS);
+			throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in " + DB_START_MAXWAITMS + "ms: " + MYSQLD_READY_FOR_CONNECTIONS);
 		}
 		logger.info("Database startup complete.");
 	}
