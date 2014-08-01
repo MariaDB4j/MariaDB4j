@@ -146,7 +146,7 @@ public class ManagedProcessTest {
 		String msgToWaitFor;
 	}
 	
-    protected SomeSelfTerminatingExec someSelfTerminatingExec() throws MariaDB4jException, ManagedProcessException {
+    protected SomeSelfTerminatingExec someSelfTerminatingExec() throws ManagedProcessException {
 		SomeSelfTerminatingExec r = new SomeSelfTerminatingExec();
 		if (SystemUtils.IS_OS_WINDOWS) {
 			r.proc = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir").addArgument("/X").build();
@@ -161,7 +161,7 @@ public class ManagedProcessTest {
         	r.msgToWaitFor = "incidunt";
         }
 		else {
-			throw new MariaDB4jException("Unexpected Platform, improve the test dude...");
+			throw new ManagedProcessException("Unexpected Platform, improve the test dude...");
 		}
 		
 		return r;

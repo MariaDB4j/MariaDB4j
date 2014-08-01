@@ -83,11 +83,13 @@ _TBD: How-to get a free Jenkins-like CI on a Windows box somewhere?_
 Release?
 --------
 
-Until http://jira.codehaus.org/browse/MJAVADOC-401, make sure the JavaDoc is clean by first running 'mvn -Dmaven.test.skip=true -Prelease package' and checking for any WARNING.
+    mvn -Dmaven.test.skip=true -Prelease package
 
-mvn release:prepare
-mvn release:perform
-mvn release:clean
+Must be done first make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)).
+
+    mvn release:prepare
+    mvn release:perform
+    mvn release:clean
 
 Discard and go back to fix something and re-release (before Publishing in Bintray) e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove tag using 'git push ssh :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
 
