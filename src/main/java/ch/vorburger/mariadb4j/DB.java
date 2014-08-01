@@ -22,9 +22,6 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -112,7 +109,7 @@ public class DB {
 	/**
 	 * Starts up the database, using the data directory and port specified in the configuration
 	 */
-	public void start() throws ManagedProcessException {
+	public synchronized void start() throws ManagedProcessException {
 		logger.info("Starting up the database...");
 		boolean ready = false;
 		try {
@@ -127,8 +124,10 @@ public class DB {
 			if (!SystemUtils.IS_OS_WINDOWS) {
 				builder.addArgument("--socket=" + config.getSocket());
 			}
-			builder.setDestroyOnShutdown(true); // just for clarity, even though it (currently..) is the default
 			cleanupOnExit();
+			// because cleanupOnExit() just installed our (class DB) own
+			// Shutdown hook, we don't need the one from ManagedProcess:
+			builder.setDestroyOnShutdown(false);
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
@@ -142,14 +141,6 @@ public class DB {
 			throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in " + DB_START_MAXWAITMS + "ms: " + MYSQLD_READY_FOR_CONNECTIONS);
 		}
 		logger.info("Database startup complete.");
-	}
-
-	/**
-	 * @return a new Connection to this database
-	 * @throws SQLException if any errors occur getting the connection
-	 */
-	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:mysql://localhost:"+config.getPort() + "/test", "root", "");
 	}
 
 	public void source(String resource) throws ManagedProcessException {
@@ -188,14 +179,14 @@ public class DB {
 	/**
 	 * Stops the database
 	 */
-	public void stop() throws ManagedProcessException {
-		logger.info("Stopping the database...");
+	public synchronized void stop() throws ManagedProcessException {
 		if (mysqldProcess.isAlive()) {
+			logger.debug("Stopping the database...");
 			mysqldProcess.destroy();
 			logger.info("Database stopped.");
 		}
 		else {
-			logger.info("Database was already stopped.");
+			logger.debug("Database was already stopped.");
 		}
 	}
 
@@ -253,7 +244,7 @@ public class DB {
 	 * temporary data directories are cleaned up.
 	 */
 	protected void cleanupOnExit() {
-		String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + config.getDataDir();
+		String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + dataDir.toString();
 		final DB db = this;
 		Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
 			@Override
@@ -277,7 +268,7 @@ public class DB {
 						FileUtils.deleteDirectory(dataDir);
 					}
 					if (baseDir.exists() && Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
-						logger.info("cleanupOnExit() ShutdownHook deleting temporary DB base directory: " + dataDir);
+						logger.info("cleanupOnExit() ShutdownHook deleting temporary DB base directory: " + baseDir);
 						FileUtils.deleteDirectory(baseDir);
 					}
 				}

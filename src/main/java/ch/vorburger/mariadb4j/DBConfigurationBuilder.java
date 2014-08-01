@@ -117,4 +117,11 @@ public class DBConfigurationBuilder {
 		binariesClassPathLocation.append(SystemUtils.IS_OS_WINDOWS ? "win32" : SystemUtils.IS_OS_MAC ? "osx" : "linux");
 		return binariesClassPathLocation.toString();
 	}
+
+	public String getURL(String databaseName) {
+		return "jdbc:mysql://localhost:" + this.getPort() + "/" + databaseName;
+	}
+	
+	// getUID() + getPWD() ?
+	
 }

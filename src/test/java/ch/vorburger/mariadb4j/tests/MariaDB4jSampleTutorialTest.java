@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j.tests;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.List;
 
 import org.apache.commons.dbutils.DbUtils;
@@ -34,6 +35,7 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 /**
  * Tests the functioning of MariaDB4j
  * Sample / Tutorial illustrating how to use MariaDB4j.
+ * 
  * @author Michael Vorburger
  * @author Michael Seaton
  */
@@ -48,7 +50,7 @@ public class MariaDB4jSampleTutorialTest {
 
 		Connection conn = null;
 		try {
-			conn = db.getConnection();
+			conn = DriverManager.getConnection(config.getURL("test"), "root", "");
 			QueryRunner qr = new QueryRunner();
 
 			// Should be able to create a new table
