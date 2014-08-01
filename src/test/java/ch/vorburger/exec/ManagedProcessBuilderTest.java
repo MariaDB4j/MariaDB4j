@@ -19,7 +19,7 @@
  */
 package ch.vorburger.exec;
 
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -48,16 +48,16 @@ public class ManagedProcessBuilderTest {
 		
 		File cwd = mbp.getWorkingDirectory();
 		if (SystemUtils.IS_OS_WINDOWS) {
-			assertThat(cwd.getAbsolutePath(), is("C:\\somewhere\\absolute\\bin"));
+			assertThat(cwd.getAbsolutePath(), equalTo("C:\\somewhere\\absolute\\bin"));
 		} else {
-			assertThat(cwd.getAbsolutePath(), is("/somewhere/absolute/bin"));			
+			assertThat(cwd.getAbsolutePath(), equalTo("/somewhere/absolute/bin"));			
 		}
 		
 		String arg0 = mbp.getExecutable();
 		if (SystemUtils.IS_OS_WINDOWS) {
-			assertThat(arg0, is("C:\\somewhere\\absolute\\bin\\thing"));
+			assertThat(arg0, equalTo("C:\\somewhere\\absolute\\bin\\thing"));
 		} else {
-			assertThat(arg0, is("/somewhere/absolute/bin/thing"));			
+			assertThat(arg0, equalTo("/somewhere/absolute/bin/thing"));			
 		}
 		
 		String arg1 = mbp.getArguments()[0];

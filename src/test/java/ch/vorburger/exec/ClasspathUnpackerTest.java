@@ -22,12 +22,12 @@ package ch.vorburger.exec;
 import java.io.File;
 import java.io.IOException;
 
-import ch.vorburger.mariadb4j.Util;
-import junit.framework.Assert;
-
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import ch.vorburger.mariadb4j.Util;
 
 /**
  * Test for ClasspathUnpacker.

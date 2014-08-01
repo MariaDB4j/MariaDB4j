@@ -22,9 +22,9 @@ package ch.vorburger.exec;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import junit.framework.Assert;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
