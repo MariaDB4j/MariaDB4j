@@ -81,7 +81,6 @@ public class DB {
 	public static DB newEmbeddedDB(int port) throws ManagedProcessException {
 		DBConfigurationBuilder config = new DBConfigurationBuilder();
 		config.setPort(port);
-		config.setSocket(config.getBaseDir() + "/mysql" + port + ".sock");
 		return newEmbeddedDB(config.build());
 	}
 

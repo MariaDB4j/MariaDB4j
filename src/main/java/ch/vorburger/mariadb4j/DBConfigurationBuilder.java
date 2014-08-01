@@ -32,11 +32,11 @@ public class DBConfigurationBuilder {
 
 	private String databaseVersion = SystemUtils.IS_OS_MAC ? "mariadb-5.5.34" : "mariadb-5.5.33a";
 	
+	// all these are just some defaults - can be changed
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
 	private String dataDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
-	private String socket = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/mysql.sock";
-
-	private int port = 3306; // this is just the default port - can be changed
+	private String socket = null; // see _getSocket()
+	private int port = 3306;
 
 	public static DBConfigurationBuilder newBuilder() {
 		return new DBConfigurationBuilder();
@@ -74,8 +74,6 @@ public class DBConfigurationBuilder {
 	    	detectFreePort();
 	    } else {
 	    	this.port = port;
-	    	String portStr = String.valueOf(port);
-	    	setSocket(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/mysql." + portStr + ".sock");
 	    }
 	}
 
@@ -100,7 +98,16 @@ public class DBConfigurationBuilder {
 	}
 	
 	public DBConfiguration build() {
-		return new DBConfiguration.Impl(port, socket, getBinariesClassPathLocation(), baseDir, dataDir);
+		return new DBConfiguration.Impl(getPort(), _getSocket(), getBinariesClassPathLocation(), getBaseDir(), getDataDir());
+	}
+
+	protected String _getSocket() {
+		String socket = getSocket();
+		if (socket == null) {
+	    	String portStr = String.valueOf(getPort());
+	    	socket = getBaseDir() + "/mysql." + portStr + ".sock";
+		}
+		return socket;
 	}
 
 	protected String getBinariesClassPathLocation() {
