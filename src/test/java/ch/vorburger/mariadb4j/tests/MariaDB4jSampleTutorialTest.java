@@ -48,9 +48,16 @@ public class MariaDB4jSampleTutorialTest {
 		DB db = DB.newEmbeddedDB(config.build());
 		db.start();
 
+		String dbName = "mariaDB4jTest"; // or just "test"
+		if (!dbName.equals("test")) {
+			// mysqld out-of-the-box already has a DB named "test"
+			// in case we need another DB, here's how to create it first
+			db.createDB(dbName);
+		}
+		
 		Connection conn = null;
 		try {
-			conn = DriverManager.getConnection(config.getURL("test"), "root", "");
+			conn = DriverManager.getConnection(config.getURL(dbName), "root", "");
 			QueryRunner qr = new QueryRunner();
 
 			// Should be able to create a new table
@@ -65,7 +72,7 @@ public class MariaDB4jSampleTutorialTest {
 			Assert.assertEquals("Hello, world", results.get(0));
 
 			// Should be able to source a SQL file
-			db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", null, "test");
+			db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", null, dbName);
 			results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
 			Assert.assertEquals(3, results.size());
 			Assert.assertEquals("Hello, world", results.get(0));

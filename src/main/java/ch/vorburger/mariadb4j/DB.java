@@ -22,8 +22,10 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,10 +154,24 @@ public class DB {
 	 * @param resource the resource to source
 	 */
 	public void source(String resource, String username, String password, String dbName) throws ManagedProcessException {
-		logger.info("Sourcing a script located at: " + resource);
-		try {
-			InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
+		InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
+		if (from == null)
+			throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
+		run("script file sourced from the classpath at: " + resource, from, username, password, dbName);
+	}
 
+	public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
+		InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset());
+		run("command: " + command, from , username, password, dbName);
+	}
+
+	public void run(String command) throws ManagedProcessException {
+		run(command, null, null, null);
+	}
+
+	protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName) throws ManagedProcessException {
+		logger.info("Running a " + logInfoText);
+		try {
 			ManagedProcessBuilder builder = new ManagedProcessBuilder(new File(baseDir, "bin/mysql"));
 			builder.setWorkingDirectory(baseDir);
 			if (username != null)
@@ -165,17 +181,24 @@ public class DB {
 			if (dbName != null)
 				builder.addArgument("-D" + dbName);
 			builder.addArgument("--socket=" + config.getSocket());
-			builder.setInputStream(from);
+			if (fromIS != null)
+				builder.setInputStream(fromIS);
 			ManagedProcess process = builder.build();
 			process.start();
 			process.waitForExit();
 		}
 		catch (Exception e) {
-			throw new ManagedProcessException("An error occurred while sourcing a file", e);
+			throw new ManagedProcessException("An error occurred while running a " + logInfoText, e);
+		} finally {
+			IOUtils.closeQuietly(fromIS);
 		}
-		logger.info("File sourcing successful.");
+		logger.info("Successfully ran the " + logInfoText);
 	}
 
+	public void createDB(String dbName) throws ManagedProcessException {
+		this.run("create database `" + dbName + "`;");
+	}
+	
 	/**
 	 * Stops the database
 	 */
