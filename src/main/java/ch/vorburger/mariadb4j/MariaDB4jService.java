@@ -28,11 +28,12 @@ import javax.annotation.PreDestroy;
 import ch.vorburger.exec.ManagedProcessException;
 
 /**
- * MariaDB4j starter "Service".
+ * MariaDB4j starter "Service". This is just "sugar" - you can of course also
+ * use the DB class directly instead of this convenience utility.
  * 
- * Its main() could be used typically from an IDE (waits for CR to shutdown..),
- * or e.g. as a Spring / Guice bean from a withing @Configuration (Module).
- *  
+ * The main() could be used typically from an IDE (waits for CR to shutdown..),
+ * or e.g. as a Spring / Guice bean from a within @Configuration / Module.
+ * 
  * @author Michael Vorburger
  */
 // Do NOT @org.springframework.stereotype.Service this - we don't want it to be auto-started without explicit declaration
@@ -42,10 +43,14 @@ public class MariaDB4jService {
 	protected DBConfigurationBuilder configBuilder;
 	
 	public DB getDB() {
+		if (db == null)
+			throw new IllegalStateException("start() me up first!");
 		return db;
 	}
 	
 	public String getURL(String databaseName) {
+		if (configBuilder == null)
+			throw new IllegalStateException("start() me up first!");
 		return configBuilder.getURL(databaseName);
 	}
 	
@@ -60,6 +65,8 @@ public class MariaDB4jService {
 	@PreDestroy
 	protected void stop() throws ManagedProcessException {
 		db.stop();
+		db = null;
+		configBuilder = null;
 	}
 	
 	public static void main(String[] args) throws Exception {
