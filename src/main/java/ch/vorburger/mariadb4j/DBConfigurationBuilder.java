@@ -49,16 +49,18 @@ public class DBConfigurationBuilder {
 		return baseDir;
 	}
 
-	public void setBaseDir(String baseDir) {
+	public DBConfigurationBuilder setBaseDir(String baseDir) {
 		this.baseDir = baseDir;
+		return this;
 	}
 
 	public String getDataDir() {
 		return dataDir;
 	}
 
-	public void setDataDir(String dataDir) {
+	public DBConfigurationBuilder setDataDir(String dataDir) {
 		this.dataDir = dataDir;
+		return this;
 	}
 
 	public int getPort() {
@@ -69,12 +71,13 @@ public class DBConfigurationBuilder {
 	 * Sets the port number.
 	 * @param port port number, or 0 to use detectFreePort() 
 	 */
-	public void setPort(int port) {
+	public DBConfigurationBuilder setPort(int port) {
 	    if (port == 0) {
 	    	detectFreePort();
 	    } else {
 	    	this.port = port;
 	    }
+	    return this;
 	}
 
 	public void detectFreePort() {
@@ -93,8 +96,9 @@ public class DBConfigurationBuilder {
 		return socket;
 	}
 
-	public void setSocket(String socket) {
+	public DBConfigurationBuilder setSocket(String socket) {
 		this.socket = socket;
+		return this;
 	}
 	
 	public DBConfiguration build() {
