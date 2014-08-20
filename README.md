@@ -8,7 +8,7 @@ MariaDB is "a backward compatible, drop-in replacement of the MySQL(R) Database 
 
 MariaDB4j is a Java "launcher" for MariaDB, allowing to use it from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
 
-How?
+How? (Java)
 ----
 MariaDB binaries are in the MariaDB4j JAR and, by default, extracted to a temporary base directory on the fly, then started by Java:
 
@@ -46,6 +46,19 @@ Use your your favourite connection pool... business as usual.
 db.source("path/to/resource.sql");
 ```
 
+How (Spring)
+----
+MariaDB4j can be used in any Java environment, and is not dependent on dependency injection and the Spring Framework (the dependency the spring-core*.jar is for a utility, and is unrelated to DI).
+
+If the application in which you use MariaDB4j is anyway based on Spring already however, then the ready-made MariaDB4jSpringService could possibly be useful to you.
+
+How (CLI)
+----
+Because the MariaDB4j JAR is executable, you can also quickly fire up a database from a command line interface: 
+```
+java -jar -DmariaDB4j.port=3718 mariaDB4j*.jar
+```
+
 Where from?
 -----------
 
@@ -56,7 +69,7 @@ source. -- MariaDB4j's Maven coordinates are:
 ```xml
 <groupId>ch.vorburger.mariaDB4j</groupId>
 <artifactId>mariaDB4j</artifactId>
-<version>2.0-SNAPSHOT</version>
+<version>2.1.0-SNAPSHOT</version>
 ```
 
 Why?

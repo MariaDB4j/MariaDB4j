@@ -7,7 +7,7 @@
 	<version>2.1.0-SNAPSHOT</version>
 
 	<name>MariaDB4j</name>
-	<description>Java wrapper / launcher for MariaDB</description>
+	<description>Java wrapper / launcher for MariaDB (or MySQL)</description>
 	<url>https://github.com/vorburger/MariaDB4j</url>
 	<inceptionYear>2012</inceptionYear>
 
@@ -41,6 +41,8 @@
 
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		 <spring.version>4.0.6.RELEASE</spring.version>
+		 <springboot.version>1.1.5.RELEASE</springboot.version>
 	</properties>
 
 	<build>
@@ -83,6 +85,23 @@
 					<mavenExecutorId>forked-path</mavenExecutorId>
 				</configuration>
 			</plugin>
+			
+			<!-- This enables executable JAR: (It adds ca. 6 MB to JAR size.) -->
+	        <plugin>
+	            <groupId>org.springframework.boot</groupId>
+	            <artifactId>spring-boot-maven-plugin</artifactId>
+	            <version>${springboot.version}</version>
+	            <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                	<mainClass>ch.vorburger.mariadb4j.springframework.MariaDB4jApplication</mainClass>
+                </configuration>
+	        </plugin>
 		</plugins>
 	</build>
 
@@ -128,11 +147,23 @@
 		</profile>
 	</profiles>
 
+	<dependencyManagement>
+	     <dependencies>
+	        <dependency>
+	            <groupId>org.springframework.boot</groupId>
+	            <artifactId>spring-boot-dependencies</artifactId>
+	            <version>${springboot.version}</version>
+	            <type>pom</type>
+	            <scope>import</scope>
+	        </dependency>
+	    </dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version>
+			<version>5.1.31</version><!--$NO-MVN-MAN-VER$-->
 			<!-- For legal reasons (GPL with FOSS Exception story...), it's safest 
 				if projects using mariaDB4j decide this dependency themselves. If we have 
 				to use it in src/main/java instead of only src/test/java, then let's use 
@@ -143,19 +174,11 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.7</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -166,13 +189,29 @@
 			<!-- Just for its CircularFifoBuffer... -->
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2.1</version>
 		</dependency>
 		<dependency>
 			<!-- For ClasspathUnpacker -->
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>4.0.6.RELEASE</version>
+		</dependency>
+		<dependency>
+			<!-- For MariaDB4jSpringService -->
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<optional>true</optional> <!-- !!! -->
+		</dependency>
+		<dependency>
+			<!-- For MariaDB4jApplication -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<optional>true</optional> <!-- !!! -->
+		</dependency>
+		<dependency>
+			<!-- For MariaDB4jApplicationTest -->
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<!-- For ClasspathUnpacker -->

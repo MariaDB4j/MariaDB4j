@@ -32,12 +32,14 @@ public class DBConfigurationBuilder {
 
 	private String databaseVersion = SystemUtils.IS_OS_MAC ? "mariadb-5.5.34" : "mariadb-5.5.33a";
 	
-	// all these are just some defaults - can be changed
+	// all these are just some defaults
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
 	private String dataDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 	private String socket = null; // see _getSocket()
 	private int port = 3306;
 
+	private boolean frozen = false;
+	
 	public static DBConfigurationBuilder newBuilder() {
 		return new DBConfigurationBuilder();
 	}
@@ -45,11 +47,17 @@ public class DBConfigurationBuilder {
 	protected DBConfigurationBuilder() {
 	}
 
+	protected void checkIfFrozen(String setterName) {
+		if (frozen)
+			throw new IllegalStateException("cannot " + setterName + "() anymore after start()");
+	}
+	
 	public String getBaseDir() {
 		return baseDir;
 	}
 
 	public DBConfigurationBuilder setBaseDir(String baseDir) {
+		checkIfFrozen("setBaseDir");
 		this.baseDir = baseDir;
 		return this;
 	}
@@ -59,6 +67,7 @@ public class DBConfigurationBuilder {
 	}
 
 	public DBConfigurationBuilder setDataDir(String dataDir) {
+		checkIfFrozen("setDataDir");
 		this.dataDir = dataDir;
 		return this;
 	}
@@ -72,6 +81,7 @@ public class DBConfigurationBuilder {
 	 * @param port port number, or 0 to use detectFreePort() 
 	 */
 	public DBConfigurationBuilder setPort(int port) {
+		checkIfFrozen("setPort");
 	    if (port == 0) {
 	    	detectFreePort();
 	    } else {
@@ -97,11 +107,13 @@ public class DBConfigurationBuilder {
 	}
 
 	public DBConfigurationBuilder setSocket(String socket) {
+		checkIfFrozen("setSocket");
 		this.socket = socket;
 		return this;
 	}
 	
 	public DBConfiguration build() {
+		frozen = true;
 		return new DBConfiguration.Impl(getPort(), _getSocket(), getBinariesClassPathLocation(), getBaseDir(), getDataDir());
 	}
 
