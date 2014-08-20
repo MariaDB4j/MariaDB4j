@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import javax.annotation.PostConstruct;
@@ -80,15 +81,18 @@ public class MariaDB4jService {
 		MariaDB4jService service = new MariaDB4jService();
 		service.start();
 
-		// NOTE: In Eclipse, System.console() is not available.. so: (@see
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=122429)
-		System.out.println("\n\nHit Enter to quit...");
-		BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
-		d.readLine();
-
+		waitForKeyPressToCleanlyExit();
+		
 		// NOTE: In Eclipse, the MariaDB4j Shutdown Hook is not invoked on
 		// exit.. so: (@see https://bugs.eclipse.org/bugs/show_bug.cgi?id=38016)
 		service.stop();
 	}
 
+	public static void waitForKeyPressToCleanlyExit() throws IOException {
+		// NOTE: In Eclipse, System.console() is not available.. so: (@see
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=122429)
+		System.out.println("\n\nHit Enter to quit...");
+		BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
+		d.readLine();
+	}
 }

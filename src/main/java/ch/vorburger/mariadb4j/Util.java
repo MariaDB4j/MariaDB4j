@@ -19,6 +19,10 @@
  */
 package ch.vorburger.mariadb4j;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -26,10 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * File utilities
@@ -40,6 +40,9 @@ public class Util {
 
 	private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
+	private Util() {
+	}
+	
 	/**
 	 * Retrieve the directory located at the given path.
 	 * If this does not exist, create it
