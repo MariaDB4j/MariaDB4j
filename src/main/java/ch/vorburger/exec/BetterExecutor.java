@@ -24,8 +24,8 @@ import org.apache.commons.exec.DefaultExecutor;
 /**
  * DefaultExecutor with fix for bad EXEC-69 bug.
  * 
- * @see https://issues.apache.org/jira/browse/EXEC-69
- * @see https://github.com/vorburger/MariaDB4j/issues/12
+ * @see <a href="https://issues.apache.org/jira/browse/EXEC-69">EXEC-69</a>
+ * @see <a href="https://github.com/vorburger/MariaDB4j/issues/12">MariaDB4j issue #12</a>
  */
 public class BetterExecutor extends DefaultExecutor {
 
