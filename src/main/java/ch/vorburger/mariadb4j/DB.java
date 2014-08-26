@@ -96,7 +96,7 @@ public class DB {
 				builder.addArgument("--no-defaults");
 				builder.addArgument("--force");
 				builder.addArgument("--skip-name-resolve");
-				builder.addArgument("--verbose");
+				// builder.addArgument("--verbose");
 			}
 			ManagedProcess mysqlInstallProcess = builder.build();
 			mysqlInstallProcess.start();
