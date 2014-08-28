@@ -96,6 +96,7 @@ _TBD: How-to get a free Jenkins-like CI on a Windows box somewhere?_
 Release?
 --------
 
+    mvn license:update-file-header
     mvn -Dmaven.test.skip=true -Prelease package
 
 Must be done first make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)).

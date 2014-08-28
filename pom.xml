@@ -30,6 +30,11 @@
 		<url>https://github.com/vorburger/MariaDB4j</url>
 	</scm>
 
+    <organization>
+	    <name>Michael Vorburger</name>
+	    <url>http://www.vorburger.ch</url>
+    </organization>
+
 	<developers>
 		<developer>
 			<id>vorburger</id>
@@ -86,7 +91,7 @@
 				</configuration>
 			</plugin>
 			
-			<!-- This enables executable JAR: (It adds ca. 6 MB to JAR size.) -->
+			<!-- This enables executable JAR: (It adds ca. 6 MB to JAR size; if that's a prob. create two outputs later..) -->
 	        <plugin>
 	            <groupId>org.springframework.boot</groupId>
 	            <artifactId>spring-boot-maven-plugin</artifactId>
@@ -102,7 +107,69 @@
                 	<mainClass>ch.vorburger.mariadb4j.springframework.MariaDB4jApplication</mainClass>
                 </configuration>
 	        </plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.7</version>
+                <configuration>
+                    <licenseName>apache_v2</licenseName>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <failOnMissingHeader>true</failOnMissingHeader>
+                    <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
+                    <roots>
+                        <root>src/main/java</root>
+                        <root>src/test/java</root>
+                    </roots>
+                </configuration>
+				<executions>
+				    <execution>
+				        <phase>validate</phase>
+				        <goals>
+				            <goal>check-file-header</goal>
+				        </goals>
+				    </execution>
+				</executions>
+			</plugin>
 		</plugins>
+		
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											license-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.7,)
+										</versionRange>
+										<goals>
+											<goal>
+												check-file-header
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<profiles>
