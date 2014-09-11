@@ -1,12 +1,13 @@
 What?
 =====
 
-MariaDB is "a backward compatible, drop-in replacement of the MySQL(R) Database Server" :
+MariaDB4j is a Java "launcher" for MariaDB (=MySQL(R)), allowing to use it from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
+
+Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(R) Database Server" :
 * Homepage: http://mariadb.org
 * FAQ: http://kb.askmonty.org/en/mariadb-faq
 * Wikipedia: http://en.wikipedia.org/wiki/MariaDB
 
-MariaDB4j is a Java "launcher" for MariaDB, allowing to use it from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
 
 How? (Java)
 ----
@@ -23,8 +24,7 @@ is suitable for integration tests.  If you use MariaDB4j for something more perm
 then you can simply specify a more durable location of your data directory in the Configuration, like so:
 ```java
 Configuration config = new Configuration();
-config.setPort(3306);
-// OR: config.detectFreePort(); // == config.setPort(0);
+config.setPort(3306); // OR: setPort(0); => autom. detect free port
 config.setDataDir("/home/theapp/db"); // just an example
 DB db = DB.newEmbeddedDB(config);
 ```
@@ -48,7 +48,7 @@ db.source("path/to/resource.sql");
 
 How (Spring)
 ----
-MariaDB4j can be used in any Java environment, and is not dependent on dependency injection and the Spring Framework (the dependency the spring-core*.jar is for a utility, and is unrelated to DI).
+MariaDB4j can be used in any Java environment, and is not dependent on dependency injection and the Spring Framework (the dependency to the spring-core*.jar is for a utility, and is unrelated to DI).
 
 If the application in which you use MariaDB4j is anyway based on Spring already however, then the ready-made MariaDB4jSpringService could possibly be useful to you.
 
@@ -56,7 +56,7 @@ How (CLI)
 ----
 Because the MariaDB4j JAR is executable, you can also quickly fire up a database from a command line interface: 
 ```
-java -jar -DmariaDB4j.port=3718 mariaDB4j*.jar
+java -jar \[-DmariaDB4j.port=3718\] \[-DmariaDB4j.baseDir=/home/theapp/bin/mariadb4j\] \[-DmariaDB4j.dataDir=/home/theapp/db\] mariaDB4j*.jar
 ```
 
 Where from?
