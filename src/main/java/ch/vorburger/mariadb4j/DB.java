@@ -48,7 +48,7 @@ public class DB {
 	private File dataDir;
 	private ManagedProcess mysqldProcess;
 
-    protected int dbStartMaxWaitInMS = 20000;
+    protected int                   dbStartMaxWaitInMS     = 30000;
     protected String readyForConnectionsTag = "mysqld: ready for connections.";
 
 	protected DB(DBConfiguration config) {
@@ -139,6 +139,8 @@ public class DB {
 			throw new ManagedProcessException("An error occurred while starting the database", e);
 		}
 		if (!ready) {
+		    if (mysqldProcess.isAlive())
+		        mysqldProcess.destroy();
 		    throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
                 + dbStartMaxWaitInMS + "ms: " + readyForConnectionsTag + mysqldProcess.getLastConsoleLines());
 		}
