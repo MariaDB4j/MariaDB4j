@@ -210,7 +210,7 @@ public class DB {
 	}
 
 	public void createDB(String dbName) throws ManagedProcessException {
-		this.run("create database `" + dbName + "`;");
+        this.run("create database if not exists `" + dbName + "`;");
 	}
 	
 	/**
