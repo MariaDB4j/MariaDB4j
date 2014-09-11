@@ -36,7 +36,7 @@ public class DBConfigurationBuilder {
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
 	private String dataDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 	private String socket = null; // see _getSocket()
-	private int port = 3306;
+	private int port = 0;
 
 	private boolean frozen = false;
 	
@@ -82,20 +82,17 @@ public class DBConfigurationBuilder {
 	 */
 	public DBConfigurationBuilder setPort(int port) {
 		checkIfFrozen("setPort");
-	    if (port == 0) {
-	    	detectFreePort();
-	    } else {
-	    	this.port = port;
-	    }
+    	this.port = port;
 	    return this;
 	}
 
-	public void detectFreePort() {
+	protected int detectFreePort() {
 		try {
 			ServerSocket ss = new ServerSocket(0);
-			setPort(ss.getLocalPort());
+			port = ss.getLocalPort();
 			ss.setReuseAddress(true);
 			ss.close();
+			return port;
 		} catch (IOException e) {
 			// This should never happen
 			throw new RuntimeException(e);
@@ -114,14 +111,24 @@ public class DBConfigurationBuilder {
 	
 	public DBConfiguration build() {
 		frozen = true;
-		return new DBConfiguration.Impl(getPort(), _getSocket(), getBinariesClassPathLocation(), getBaseDir(), getDataDir());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), getBinariesClassPathLocation(), getBaseDir(), getDataDir());
 	}
+
+    protected int _getPort() {
+        int port = getPort();
+        if (port == 0) {
+            port = detectFreePort();
+        }
+        return port;
+    }
 
 	protected String _getSocket() {
 		String socket = getSocket();
 		if (socket == null) {
 	    	String portStr = String.valueOf(getPort());
-	    	socket = getBaseDir() + "/mysql." + portStr + ".sock";
+            // Use /tmp instead getBaseDir() here, else we too easily hit
+            // the "mysqld ERROR The socket file path is too long (> 107)" issue
+            socket = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j." + portStr + ".sock";
 		}
 		return socket;
 	}

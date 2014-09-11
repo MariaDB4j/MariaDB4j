@@ -37,7 +37,7 @@ public class StartManyTimes {
 
     public static void main(String[] args) throws ManagedProcessException {
         DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
-        configBuilder.detectFreePort();
+        configBuilder.setPort(0);
         DBConfiguration config = configBuilder.build();
 
         for (int i = 0; i < 100000; i++) {

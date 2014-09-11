@@ -27,6 +27,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.springframework.MariaDB4jApplication;
+import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 /**
  * MariaDB4j starter "Service". This is basically just "sugar" - you can of
@@ -38,6 +40,9 @@ import ch.vorburger.exec.ManagedProcessException;
  * Spring Boot, then have a look at the MariaDB4jApplication.
  * 
  * The main() could be used typically from an IDE (waits for CR to shutdown..).
+ * 
+ * @see MariaDB4jSpringService
+ * @see MariaDB4jApplication
  * 
  * @author Michael Vorburger
  */

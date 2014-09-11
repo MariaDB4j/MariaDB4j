@@ -44,7 +44,7 @@ public class MariaDB4jSampleTutorialTest {
 	@Test
 	public void testEmbeddedMariaDB4j() throws Exception {
 		DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-		config.detectFreePort();
+        config.setPort(0); // 0 => autom. detect free port
 		DB db = DB.newEmbeddedDB(config.build());
 		db.start();
 

@@ -203,24 +203,23 @@ public class ManagedProcess {
 			ExecuteException e = resultHandler.getException();
 			if (e != null) {
 				logger.error(procLongName() + " failed");
-				throw new ManagedProcessException(procLongName() + " failed, exitValue="
-						+ exitValue() + ", last " + consoleBufferMaxLines
-						+ " lines of console:\n" + getConsole(), e);
+                throw new ManagedProcessException(procLongName() + " failed, exitValue=" + exitValue() + getLastConsoleLines(), e);
 			}
 		}
 	}
 
-	/**
-	 * Kills the Process. If you expect that the process may not be running
-	 * anymore, use if ({@link #isAlive()}) around this. If you expect that the
-	 * process should still be running at this point, call as is - and it will
-	 * tell if it had nothing to destroy.
-	 * 
-	 * @throws ManagedProcessException
-	 *             if the Process is already stopped (either because destroy()
-	 *             already explicitly called, or it terminated by itself, or it
-	 *             was never started)
-	 */
+    protected String getLastConsoleLines() {
+        return ", last " + consoleBufferMaxLines + " lines of console:\n" + getConsole();
+    }
+
+    /**
+     * Kills the Process. If you expect that the process may not be running anymore, use if ({@link #isAlive()}) around this. If you expect
+     * that the process should still be running at this point, call as is - and it will tell if it had nothing to destroy.
+     * 
+     * @throws ManagedProcessException
+     *             if the Process is already stopped (either because destroy() already explicitly called, or it terminated by itself, or it
+     *             was never started)
+     */
 	public void destroy() throws ManagedProcessException {
 		// 
 		// if destroy() is ever giving any trouble, the org.openqa.selenium.os.ProcessUtils may be of interest
@@ -383,10 +382,8 @@ public class ManagedProcess {
 				return true;
 			}
 			
-			// MUST do this, else will block forever too easily
-			final String unexpectedExitMsg = "Asked to wait for \"" + messageInConsole + "\" from " + procLongName() + ", but it already exited! (without that message in console)";
-			if (!isAlive()) {
-				throw new ManagedProcessException(unexpectedExitMsg);
+            if (!isAlive()) { // MUST check for this, else will block forever too easily
+                throw new ManagedProcessException(getUnexpectedExitMsg(messageInConsole));
 			}
 			
 			long timeAlreadyWaited = 0;
@@ -407,7 +404,7 @@ public class ManagedProcess {
 
 	        // If we got out of the while() loop due to !isAlive() instead of messageInConsole, then throw the same exception as above!
 			if (!checkingConsoleOutputStream.hasSeenIt()) {
-				throw new ManagedProcessException(unexpectedExitMsg);
+                throw new ManagedProcessException(getUnexpectedExitMsg(messageInConsole));
 			} else {
 				return true;
 			}
@@ -418,7 +415,12 @@ public class ManagedProcess {
         }
 	}
 
-	// ---
+    protected String getUnexpectedExitMsg(String messageInConsole) {
+        return "Asked to wait for \"" + messageInConsole + "\" from " + procLongName()
+                + ", but it already exited! (without that message in console)" + getLastConsoleLines();
+    }
+
+    // ---
 	
 	public String getConsole() {
 		return console.getRecentLines();

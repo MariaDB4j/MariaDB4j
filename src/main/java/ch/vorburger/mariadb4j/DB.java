@@ -124,7 +124,7 @@ public class DB {
 			builder.addFileArgument("--datadir", dataDir);
 			builder.addArgument("--port=" + config.getPort());
 			if (!SystemUtils.IS_OS_WINDOWS) {
-				builder.addArgument("--socket=" + config.getSocket());
+                builder.addArgument("--socket=" + getAbsoluteSocketPath());
 			}
 			cleanupOnExit();
 			// because cleanupOnExit() just installed our (class DB) own
@@ -145,7 +145,19 @@ public class DB {
 		logger.info("Database startup complete.");
 	}
 
-	public void source(String resource) throws ManagedProcessException {
+    /**
+     * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder creates the socket in /tmp, but if a user
+     * uses setSocket() he may give a relative location, so we double check.
+     * 
+     * @return config.getSocket() as File getAbsolutePath()
+     */
+    protected String getAbsoluteSocketPath() {
+        String socket = config.getSocket();
+        File socketFile = new File(socket);
+        return socketFile.getAbsolutePath();
+    }
+
+    public void source(String resource) throws ManagedProcessException {
 		source(resource, null, null, null);
 	}
 	
@@ -180,7 +192,7 @@ public class DB {
 				builder.addArgument("-p" + password);
 			if (dbName != null)
 				builder.addArgument("-D" + dbName);
-			builder.addArgument("--socket=" + config.getSocket());
+            builder.addArgument("--socket=" + getAbsoluteSocketPath());
 			if (fromIS != null)
 				builder.setInputStream(fromIS);
 			ManagedProcess process = builder.build();

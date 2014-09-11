@@ -21,34 +21,54 @@ package ch.vorburger.mariadb4j.springframework;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.Lifecycle;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.MariaDB4jService;
 
-// Do NOT @org.springframework.stereotype.Service this - we don't want it to be auto-started without explicit declaration
+/**
+ * MariaDB4jService extension suitable for use in Spring Framework-based applications.
+ * 
+ * Other than implementing {@link Lifecycle} to get auto-started, this class allows applications using it to programmatically set a default
+ * port/socket/data- & base directory in their {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
+ * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot) main() command line arguments.
+ *
+ * This Service is intentionally NOT annotated as a {@link Service} {@link Component}, because we don't want it to be auto-started by
+ * component scan without explicit declaration in a @Configuration (or XML)
+ * 
+ * @author Michael Vorburger
+ */
 public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycle {
+
+    public final static String        PORT     = "mariaDB4j.port";
+    public final static String        SOCKET   = "mariaDB4j.socket";
+    public final static String        DATA_DIR = "mariaDB4j.dataDir";
+    public final static String        BASE_DIR = "mariaDB4j.baseDir";
 
 	protected ManagedProcessException lastException;
 
-	@Value("${mariaDB4j.port:3306}")
-	public void setPort(int port) {
-		getConfiguration().setPort(port);
+    @Value("${" + PORT + ":-1}")
+    public void setDefaultPort(int port) {
+	    if (port != -1)
+	        getConfiguration().setPort(port);
 	}
 	
-	@Value("${mariaDB4j.socket:NA}")
-	public void setSocket(String socket) {
+    @Value("${" + SOCKET + ":NA}")
+	public void setDefaultSocket(String socket) {
 		if (!"NA".equals(socket))
 			getConfiguration().setSocket(socket);
 	}
 	
-	@Value("${mariaDB4j.dataDir:NA}")
-	public void setDataDir(String dataDir) {
+    @Value("${" + DATA_DIR + ":NA}")
+	public void setDefaultDataDir(String dataDir) {
 		if (!"NA".equals(dataDir))
 			getConfiguration().setDataDir(dataDir);
 	}
 	
-	@Value("${mariaDB4j.baseDir:NA}") 
-	public void setBaseDir(String baseDir) {
+    @Value("${" + BASE_DIR + ":NA}")
+	public void setDefaultBaseDir(String baseDir) {
 		if (!"NA".equals(baseDir))
 			getConfiguration().setBaseDir(baseDir);
 	}

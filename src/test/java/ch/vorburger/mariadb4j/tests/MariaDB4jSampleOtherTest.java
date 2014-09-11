@@ -36,14 +36,14 @@ public class MariaDB4jSampleOtherTest {
 	@Test
 	public void startTwoMariaDB4j() throws Exception {
 		DB db1 = startNewDB();
-		DB db2= startNewDB();
+        DB db2 = startNewDB();
 		db1.stop();
 		db2.stop();
 	}
 
 	protected DB startNewDB() throws ManagedProcessException {
 		DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-		config.detectFreePort();
+		config.setPort(0);
 		DB db = DB.newEmbeddedDB(config.build());
 		db.start();
 		return db;

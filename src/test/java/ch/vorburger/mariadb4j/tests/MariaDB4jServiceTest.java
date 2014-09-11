@@ -28,7 +28,7 @@ public class MariaDB4jServiceTest {
 	@Test
 	public void testStartStop() throws Exception {
 		MariaDB4jService service = new MariaDB4jService();
-		service.getConfiguration().detectFreePort();
+		service.getConfiguration().setPort(0);
 		service.start();
 		service.stop();
 	}

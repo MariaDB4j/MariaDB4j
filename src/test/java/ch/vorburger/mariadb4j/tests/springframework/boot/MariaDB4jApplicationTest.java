@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariadb4j.tests;
+package ch.vorburger.mariadb4j.tests.springframework.boot;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

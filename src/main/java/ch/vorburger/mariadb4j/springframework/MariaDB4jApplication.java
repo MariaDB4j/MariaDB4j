@@ -32,7 +32,7 @@ import ch.vorburger.mariadb4j.MariaDB4jService;
 /**
  * Spring Boot based MariaDB4j main() "Application" launcher.
  * 
- * @see MariaDB4jService
+ * @see MariaDB4jSpringService
  * 
  * @author Michael Vorburger
  */
