@@ -40,10 +40,6 @@ import ch.vorburger.exec.ManagedProcessException;
  * @author Michael Seaton
  */
 public class DB {
-	private static final int DB_START_MAXWAITMS = 10000;
-
-	private static final String MYSQLD_READY_FOR_CONNECTIONS = "mysqld: ready for connections.";
-
 	private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
 	protected final DBConfiguration config;
@@ -51,6 +47,9 @@ public class DB {
 	private File baseDir;
 	private File dataDir;
 	private ManagedProcess mysqldProcess;
+
+    protected int dbStartMaxWaitInMS = 20000;
+    protected String readyForConnectionsTag = "mysqld: ready for connections.";
 
 	protected DB(DBConfiguration config) {
 		this.config = config;
@@ -133,14 +132,15 @@ public class DB {
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
 			mysqldProcess.start();
-			ready = mysqldProcess.waitForConsoleMessageMaxMs(MYSQLD_READY_FOR_CONNECTIONS, DB_START_MAXWAITMS);
+            ready = mysqldProcess.waitForConsoleMessageMaxMs(readyForConnectionsTag, dbStartMaxWaitInMS);
 		}
 		catch (Exception e) {
             logger.error("failed to start mysqld", e);
 			throw new ManagedProcessException("An error occurred while starting the database", e);
 		}
 		if (!ready) {
-			throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in " + DB_START_MAXWAITMS + "ms: " + MYSQLD_READY_FOR_CONNECTIONS);
+		    throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
+                + dbStartMaxWaitInMS + "ms: " + readyForConnectionsTag + mysqldProcess.getLastConsoleLines());
 		}
 		logger.info("Database startup complete.");
 	}
@@ -317,4 +317,5 @@ public class DB {
 			}
 		});
 	}
+
 }

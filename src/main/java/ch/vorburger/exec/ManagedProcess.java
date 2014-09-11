@@ -208,10 +208,6 @@ public class ManagedProcess {
 		}
 	}
 
-    protected String getLastConsoleLines() {
-        return ", last " + consoleBufferMaxLines + " lines of console:\n" + getConsole();
-    }
-
     /**
      * Kills the Process. If you expect that the process may not be running anymore, use if ({@link #isAlive()}) around this. If you expect
      * that the process should still be running at this point, call as is - and it will tell if it had nothing to destroy.
@@ -423,9 +419,16 @@ public class ManagedProcess {
     // ---
 	
 	public String getConsole() {
-		return console.getRecentLines();
+        if (console != null)
+            return console.getRecentLines();
+        else
+            return "";
 	}
 	
+    public String getLastConsoleLines() {
+        return ", last " + consoleBufferMaxLines + " lines of console:\n" + getConsole();
+    }
+
 	// ---
 	
 	private String procShortName() {
