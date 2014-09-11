@@ -230,7 +230,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version><!--$NO-MVN-MAN-VER$-->
+			<version>5.1.32</version><!--$NO-MVN-MAN-VER$-->
 			<!-- For legal reasons (GPL with FOSS Exception story...), it's safest 
 				if projects using mariaDB4j decide this dependency themselves. If we have 
 				to use it in src/main/java instead of only src/test/java, then let's use 
