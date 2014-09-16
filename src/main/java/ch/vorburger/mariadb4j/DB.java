@@ -194,7 +194,11 @@ public class DB {
 				builder.addArgument("-p" + password);
 			if (dbName != null)
 				builder.addArgument("-D" + dbName);
-            builder.addArgument("--socket=" + getAbsoluteSocketPath());
+            if (!SystemUtils.IS_OS_WINDOWS) {
+                builder.addArgument("--socket=" + getAbsoluteSocketPath());
+            } else {
+                builder.addArgument("--port=" + config.getPort());
+            }
 			if (fromIS != null)
 				builder.setInputStream(fromIS);
 			ManagedProcess process = builder.build();

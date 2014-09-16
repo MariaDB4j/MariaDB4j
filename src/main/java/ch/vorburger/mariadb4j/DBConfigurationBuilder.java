@@ -30,7 +30,7 @@ import org.apache.commons.lang3.SystemUtils;
  */
 public class DBConfigurationBuilder {
 
-	private String databaseVersion = SystemUtils.IS_OS_MAC ? "mariadb-5.5.34" : "mariadb-5.5.33a";
+    private String  databaseVersion = null;
 	
 	// all these are just some defaults
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
@@ -133,10 +133,33 @@ public class DBConfigurationBuilder {
 		return socket;
 	}
 
+    public String getDatabaseVersion() {
+        return databaseVersion;
+    }
+
+    public void setDatabaseVersion(String databaseVersion) {
+        this.databaseVersion = databaseVersion;
+    }
+
+    protected String _getDatabaseVersion() {
+        String databaseVersion = getDatabaseVersion();
+        if (databaseVersion == null) {
+            if (SystemUtils.IS_OS_MAC)
+                databaseVersion = "mariadb-5.5.34";
+            else if (SystemUtils.IS_OS_LINUX)
+                databaseVersion = "mariadb-5.5.33a";
+            else if (SystemUtils.IS_OS_WINDOWS)
+                databaseVersion = "mariadb-10.0.13";
+            else
+                throw new IllegalStateException("OS not directly supported, please use setDatabaseVersion() to set the name of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
+        }
+        return databaseVersion;
+	}
+
 	protected String getBinariesClassPathLocation() {
 		StringBuilder binariesClassPathLocation = new StringBuilder();
 		binariesClassPathLocation.append(getClass().getPackage().getName().replace(".", "/"));
-		binariesClassPathLocation.append("/").append(databaseVersion).append("/");
+        binariesClassPathLocation.append("/").append(_getDatabaseVersion()).append("/");
 		binariesClassPathLocation.append(SystemUtils.IS_OS_WINDOWS ? "win32" : SystemUtils.IS_OS_MAC ? "osx" : "linux");
 		return binariesClassPathLocation.toString();
 	}
