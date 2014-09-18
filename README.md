@@ -56,7 +56,7 @@ How (CLI)
 ----
 Because the MariaDB4j JAR is executable, you can also quickly fire up a database from a command line interface: 
 ```
-java -jar \[-DmariaDB4j.port=3718\] \[-DmariaDB4j.baseDir=/home/theapp/bin/mariadb4j\] \[-DmariaDB4j.dataDir=/home/theapp/db\] mariaDB4j*.jar
+java [-DmariaDB4j.port=3718] [-DmariaDB4j.baseDir=/home/theapp/bin/mariadb4j] [-DmariaDB4j.dataDir=/home/theapp/db] -jar mariaDB4j*.jar
 ```
 
 Where from?
