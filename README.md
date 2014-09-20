@@ -84,7 +84,7 @@ as the MariaDB4j API explicitly support this.
 Java developers frequently use pure Java databases such as H2, hsqldb (HyperSQL), Derby / JavaDB for this purpose.
 This library brings the advantage of the installation-free DB approach, while maintaining MariaDB (and thus MySQL) compatibility.
 
-It was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see http://mifos.org.
+MariaDB4j was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see http://mifos.org. Coincidentally, OpenMRS the "Open Source Medical Records System" (see http://openmrs.org), another Humanitarian Open Source (HFOSS) project, also uses MariaDB4j (see https://github.com/vorburger/MariaDB4j/pull/1).
 
 Anything else?
 --------------
@@ -102,7 +102,7 @@ Release?
 --------
 
     mvn license:update-file-header
-    mvn -Dmaven.test.skip=true -Prelease package
+    mvn -Dmaven.test.skip=true package
 
 Must be done first make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)).
 
