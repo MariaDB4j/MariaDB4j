@@ -48,7 +48,7 @@ public class DB {
 	private File dataDir;
 	private ManagedProcess mysqldProcess;
 
-    protected int                   dbStartMaxWaitInMS     = 30000;
+    protected int dbStartMaxWaitInMS = 30000;
     protected String readyForConnectionsTag = "mysqld: ready for connections.";
 
 	protected DB(DBConfiguration config) {
