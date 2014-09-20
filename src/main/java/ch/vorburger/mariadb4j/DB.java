@@ -272,7 +272,7 @@ public class DB {
 	protected void prepareDirectories() throws ManagedProcessException {
         baseDir = Util.getDirectory(config.getBaseDir());
 		try {
-			String dataDirPath = config.getDataDir() + SystemUtils.FILE_SEPARATOR + config.getPort();
+            String dataDirPath = config.getDataDir();
 			if (Util.isTemporaryDirectory(dataDirPath)) {
 				FileUtils.deleteDirectory(new File(dataDirPath));
 			}

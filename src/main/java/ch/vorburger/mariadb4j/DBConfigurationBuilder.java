@@ -30,11 +30,13 @@ import org.apache.commons.lang3.SystemUtils;
  */
 public class DBConfigurationBuilder {
 
+    private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
+
     private String  databaseVersion = null;
 	
 	// all these are just some defaults
 	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
-	private String dataDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
+	private String dataDir = DEFAULT_DATA_DIR;
 	private String socket = null; // see _getSocket()
 	private int port = 0;
 
@@ -49,7 +51,7 @@ public class DBConfigurationBuilder {
 
 	protected void checkIfFrozen(String setterName) {
 		if (frozen)
-			throw new IllegalStateException("cannot " + setterName + "() anymore after start()");
+			throw new IllegalStateException("cannot " + setterName + "() anymore after build()");
 	}
 	
 	public String getBaseDir() {
@@ -112,8 +114,15 @@ public class DBConfigurationBuilder {
 	
 	public DBConfiguration build() {
 		frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), getBinariesClassPathLocation(), getBaseDir(), getDataDir());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), getBinariesClassPathLocation(), getBaseDir(), _getDataDir());
 	}
+
+    protected String _getDataDir() {
+        if (getDataDir().equals(DEFAULT_DATA_DIR))
+            return getDataDir() + SystemUtils.FILE_SEPARATOR + getPort();
+        else
+            return getDataDir();
+    }
 
     protected int _getPort() {
         int port = getPort();
