@@ -27,8 +27,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.springframework.MariaDB4jApplication;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+import ch.vorburger.mariadb4j.springframework.boot.MariaDB4jApplication;
 
 /**
  * MariaDB4j starter "Service". This is basically just "sugar" - you can of

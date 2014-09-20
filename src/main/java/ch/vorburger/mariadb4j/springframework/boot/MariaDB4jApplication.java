@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariadb4j.springframework;
+package ch.vorburger.mariadb4j.springframework.boot;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ExitCodeGenerator;
@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import ch.vorburger.mariadb4j.MariaDB4jService;
+import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 /**
  * Spring Boot based MariaDB4j main() "Application" launcher.
@@ -61,7 +62,7 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
 
 	@Override
 	public int getExitCode() {
-		return dbService.lastException == null ? 0 : -1;
+        return dbService.getLastException() == null ? 0 : -1;
 	}
 	
 }

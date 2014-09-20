@@ -25,7 +25,7 @@ import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.vorburger.mariadb4j.springframework.MariaDB4jApplication;
+import ch.vorburger.mariadb4j.springframework.boot.MariaDB4jApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MariaDB4jApplication.class)

@@ -42,10 +42,10 @@ import ch.vorburger.mariadb4j.MariaDB4jService;
  */
 public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycle {
 
-    public final static String        PORT     = "mariaDB4j.port";
-    public final static String        SOCKET   = "mariaDB4j.socket";
-    public final static String        DATA_DIR = "mariaDB4j.dataDir";
-    public final static String        BASE_DIR = "mariaDB4j.baseDir";
+    public final static String PORT = "mariaDB4j.port";
+    public final static String SOCKET = "mariaDB4j.socket";
+    public final static String DATA_DIR = "mariaDB4j.dataDir";
+    public final static String BASE_DIR = "mariaDB4j.baseDir";
 
 	protected ManagedProcessException lastException;
 
@@ -92,5 +92,9 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
 			throw new IllegalStateException("MariaDB4jSpringService stop() failed", e);
 		}
 	}
+
+    public ManagedProcessException getLastException() {
+        return lastException;
+    }
 
 }
