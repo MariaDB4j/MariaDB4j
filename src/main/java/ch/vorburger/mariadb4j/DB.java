@@ -60,6 +60,7 @@ public class DB {
 	 * This method automatically installs the database and prepares it for use
 	 * @param config Configuration of the embedded instance
 	 * @return a new DB instance
+	 * @throws ManagedProcessException if something fatal went wrong
 	 */
 	public static DB newEmbeddedDB(DBConfiguration config) throws ManagedProcessException {
 		DB db = new DB(config);
@@ -75,6 +76,7 @@ public class DB {
 	 * allowing only for specifying port
 	 * @param port the port to start the embedded database on
 	 * @return a new DB instance
+     * @throws ManagedProcessException if something fatal went wrong
 	 */
 	public static DB newEmbeddedDB(int port) throws ManagedProcessException {
 		DBConfigurationBuilder config = new DBConfigurationBuilder();
@@ -84,6 +86,7 @@ public class DB {
 
 	/**
 	 * Installs the database to the location specified in the configuration
+     * @throws ManagedProcessException if something fatal went wrong
 	 */
 	protected void install() throws ManagedProcessException {
 		logger.info("Installing a new embedded database to: " + baseDir);
@@ -109,6 +112,7 @@ public class DB {
 
 	/**
 	 * Starts up the database, using the data directory and port specified in the configuration
+     * @throws ManagedProcessException if something fatal went wrong
 	 */
 	public synchronized void start() throws ManagedProcessException {
 		logger.info("Starting up the database...");
@@ -164,8 +168,12 @@ public class DB {
 	}
 	
 	/**
-	 * Takes in a string that represents a resource on the classpath and sources it via mysql
-	 * @param resource the resource to source
+	 * Takes in a string that represents a resource on the classpath and sources it via the mysql command line tool
+	 * @param resource the path to a resource on the classpath to source
+	 * @param username the username used to login to the database 
+     * @param password the password used to login to the database
+     * @param dbName the name of the database (schema) to source into 
+     * @throws ManagedProcessException if something fatal went wrong
 	 */
 	public void source(String resource, String username, String password, String dbName) throws ManagedProcessException {
 		InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
@@ -219,6 +227,7 @@ public class DB {
 	
 	/**
 	 * Stops the database
+     * @throws ManagedProcessException if something fatal went wrong
 	 */
 	public synchronized void stop() throws ManagedProcessException {
 		if (mysqldProcess.isAlive()) {
@@ -260,6 +269,7 @@ public class DB {
 	/**
 	 * If the data directory specified in the configuration is a temporary directory,
 	 * this deletes any previous version.  It also makes sure that the directory exists.
+     * @throws ManagedProcessException if something fatal went wrong
 	 */
 	protected void prepareDirectories() throws ManagedProcessException {
 		logger.info("Preparing base directory...");

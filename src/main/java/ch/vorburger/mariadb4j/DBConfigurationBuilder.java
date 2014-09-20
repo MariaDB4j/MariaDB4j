@@ -78,7 +78,8 @@ public class DBConfigurationBuilder {
 
 	/**
 	 * Sets the port number.
-	 * @param port port number, or 0 to use detectFreePort() 
+	 * @param port port number, or 0 to use detectFreePort()
+	 * @return this 
 	 */
 	public DBConfigurationBuilder setPort(int port) {
 		checkIfFrozen("setPort");

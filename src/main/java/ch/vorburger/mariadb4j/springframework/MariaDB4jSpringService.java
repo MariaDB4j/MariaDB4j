@@ -32,7 +32,7 @@ import ch.vorburger.mariadb4j.MariaDB4jService;
  * MariaDB4jService extension suitable for use in Spring Framework-based applications.
  * 
  * Other than implementing {@link Lifecycle} to get auto-started, this class allows applications using it to programmatically set a default
- * port/socket/data- & base directory in their {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
+ * port/socket/data- &amp; base directory in their {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
  * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot) main() command line arguments.
  *
  * This Service is intentionally NOT annotated as a {@link Service} {@link Component}, because we don't want it to be auto-started by

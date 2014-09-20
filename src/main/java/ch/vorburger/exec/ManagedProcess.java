@@ -47,7 +47,7 @@ import ch.vorburger.mariadb4j.Util;
  * In this form not yet suitable for programs returning binary data via stdout (but could be extended).
  *
  * Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec), 
- * including logging the processes stdout & stderr, into SLF4J (not the System.out.Console). 
+ * including logging the processes stdout &amp; stderr, into SLF4J (not the System.out.Console). 
  *
  * @see Executor
  * Internally based on http://commons.apache.org/exec/ but intentionally not exposing this; could be switched later, if there is any need.
@@ -302,6 +302,8 @@ public class ManagedProcess {
      *            Time to wait
      * @return exit value, or INVALID_EXITVALUE if the timeout was reached, or
      *         if {@link #destroy()} was used
+     * @throws ManagedProcessException
+     *             see above
      */
 	public int waitForExitMaxMs(long maxWaitUntilReturning) throws ManagedProcessException {
 		logger.info("Thread is now going to wait max. {}ms for process to terminate itself: {}", maxWaitUntilReturning, procLongName());
@@ -330,6 +332,8 @@ public class ManagedProcess {
 	/**
 	 * Like {@link #waitForExit()}, but waits max. maxWaitUntilReturning, then destroys if still running, and returns.  
 	 * @param maxWaitUntilDestroyTimeout Time to wait
+     * @throws ManagedProcessException
+     *             see above
 	 */
 	public void waitForExitMaxMsOrDestroy(long maxWaitUntilDestroyTimeout) throws ManagedProcessException {
 		waitForExitMaxMs(maxWaitUntilDestroyTimeout);

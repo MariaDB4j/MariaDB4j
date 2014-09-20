@@ -25,22 +25,23 @@ package ch.vorburger.mariadb4j;
  */
 public interface DBConfiguration {
 
-	/** TCP Port to start DB server on */
+    /** @return TCP Port to start DB server on */
 	int getPort();
 
-	/** UNIX Socket to start DB server on (ignored on Windows) */
+    /** @return UNIX Socket to start DB server on (ignored on Windows) */
 	String getSocket();
 
 	/**
-	 * Where from on the classpath should the binaries be extracted to the file system.
-	 * Return null (not empty) if nothing should be extracted.
-	 */
+     * Where from on the classpath should the binaries be extracted to the file system.
+     *
+     * @return null (not empty) if nothing should be extracted.
+     */
 	String getBinariesClassPathLocation();
 	
-	/** Base directory where DB binaries are expected to be found */
+    /** @return Base directory where DB binaries are expected to be found */
 	String getBaseDir();
 
-	/** Base directory for DB's actual data files */
+    /** @return Base directory for DB's actual data files */
 	String getDataDir();
 
 	static class Impl implements DBConfiguration {

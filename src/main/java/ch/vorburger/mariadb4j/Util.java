@@ -45,8 +45,10 @@ public class Util {
 	
 	/**
 	 * Retrieve the directory located at the given path.
-	 * If this does not exist, create it
-	 * If it is not a directory, or it is not readable, throw an Exception
+	 * If this does not exist, create it.
+	 * @param path directory(ies, can include parent directories) names, as forward slash ('/') separated String
+	 * @throws IllegalArgumentException If it is not a directory, or it is not readable
+	 * @return safe File object representing that path name
 	 */
 	public static File getDirectory(String path) {
 		File dir = new File(path);
@@ -71,7 +73,9 @@ public class Util {
 	}
 
 	/**
-	 * @return true if the passed directory is within the system temporary directory
+	 * Check for temporary directory name.
+     * @param directory directory name
+	 * @return true if the passed directory name starts with the system temporary directory name.
 	 */
 	public static boolean isTemporaryDirectory(String directory) {
 		return directory.startsWith(SystemUtils.JAVA_IO_TMPDIR);

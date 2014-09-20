@@ -30,7 +30,7 @@ import org.apache.commons.exec.environment.EnvironmentUtils;
 /**
  * Builder for ManagedProcess.
  * 
- * This is inspired by {@link java.lang.ProcessBuilder} & {@link org.apache.commons.exec.CommandLine}, and/but:
+ * This is inspired by {@link java.lang.ProcessBuilder} &amp; {@link org.apache.commons.exec.CommandLine}, and/but:
  * 
  * It offers to add java.io.File arguments, and makes sure that their absolute path is used.
  * 
@@ -73,8 +73,12 @@ public class ManagedProcessBuilder {
 	 * Adds a File as a argument to the command.
 	 * This uses {@link File#getCanonicalPath()}, which is usually what you'll actually want when launching external processes.
 	 * 
-	 * @throws IOException 
-	 * @see ProcessBuilder
+     * @param arg
+     *            the File to add
+     * @throws IOException
+     *             if File getCanonicalPath() fails
+     * @return this
+     * @see ProcessBuilder
 	 */
 	public ManagedProcessBuilder addArgument(File arg) throws IOException {
 		return addArgument(arg.getCanonicalPath());
@@ -84,11 +88,13 @@ public class ManagedProcessBuilder {
 		return addArgument(arg + "=" + file.getCanonicalPath());
 	}
 
-	/**
-	 * Adds an argument to the command.
-	 * The first argument is the name of an executable.
-	 * @see ProcessBuilder
-	 */
+    /**
+     * Adds an argument to the command. The first argument is the name of an executable.
+     * 
+     * @param arg the File to add
+     * @return this
+     * @see ProcessBuilder
+     */
 	public ManagedProcessBuilder addArgument(String arg) {
 		commonsExecCommandLine.addArgument(arg);
 		return this;
@@ -99,14 +105,17 @@ public class ManagedProcessBuilder {
 	}
 	
 	/**
-	 * @see ProcessBuilder#directory(File)
-	 */
+	 * @param directory working directory to use for process to be launched
+     * @return this
+     * @see ProcessBuilder#directory(File)
+     */
 	public ManagedProcessBuilder setWorkingDirectory(File directory) {
 		this.directory = directory;
 		return this;
 	}
 	
 	/**
+	 * @return working directory used for process to be launched
 	 * @see ProcessBuilder#directory()
 	 */
 	public File getWorkingDirectory() {
