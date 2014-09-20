@@ -131,6 +131,40 @@
 				    </execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+				  <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
+				  <excludeResources>true</excludeResources>
+				 <includePom>true</includePom>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+                      <version>2.9.1</version>
+                      <configuration>
+                          <quiet>true</quiet>
+                      </configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		
 		<pluginManagement>
@@ -171,48 +205,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>2.3</version>
-						<configuration>
-						  <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
-						  <excludeResources>true</excludeResources>
-						 <includePom>true</includePom>
-						</configuration>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
-                        <configuration>
-                            <quiet>true</quiet>
-                        </configuration>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 	<dependencyManagement>
 	     <dependencies>
