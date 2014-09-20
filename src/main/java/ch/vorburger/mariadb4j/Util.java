@@ -45,14 +45,17 @@ public class Util {
 	
 	/**
 	 * Retrieve the directory located at the given path.
-	 * If this does not exist, create it.
+	 * Checks that path indeed is a reabable directory.
+	 * If this does not exist, create it (and log having done so).
 	 * @param path directory(ies, can include parent directories) names, as forward slash ('/') separated String
 	 * @throws IllegalArgumentException If it is not a directory, or it is not readable
 	 * @return safe File object representing that path name
 	 */
 	public static File getDirectory(String path) {
+	    boolean log = false;
 		File dir = new File(path);
 		if (!dir.exists()) {
+		    log = true;
 			try {
 				FileUtils.forceMkdir(dir);
 			}
@@ -60,7 +63,8 @@ public class Util {
 				throw new IllegalArgumentException("Unable to create new directory at path: " + path, e);
 			}
 		}
-		if (dir.getAbsolutePath().trim().length() == 0) {
+		String absPath = dir.getAbsolutePath();
+		if (absPath.trim().length() == 0) {
 			throw new IllegalArgumentException(path + " is empty");
 		}
 		if (!dir.isDirectory()) {
@@ -69,6 +73,9 @@ public class Util {
 		if (!dir.canRead()) {
 			throw new IllegalArgumentException(path + " is not a readable directory");
 		}
+        if (log) {
+		    logger.info("Created directory: " + absPath);
+        }
 		return dir;
 	}
 
@@ -124,7 +131,9 @@ public class Util {
 				}
 			}
 		}
-		logger.info("Unpacked {} files from {} to {}", new Object[] { counter, locationPattern, toDir });
+        if (counter > 0) {
+            logger.info("Unpacked {} files from {} to {}", new Object[] { counter, locationPattern, toDir });
+        }
 		return counter;
 	}
 }

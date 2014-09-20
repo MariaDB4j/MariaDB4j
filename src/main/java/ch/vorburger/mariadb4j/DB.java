@@ -250,7 +250,6 @@ public class DB {
 			return;
 		}
 		
-		logger.info("Unpacking the embedded database...");
 		try {
 			Util.extractFromClasspathToFile(config.getBinariesClassPathLocation(), baseDir);
 			if (!SystemUtils.IS_OS_WINDOWS) {
@@ -261,9 +260,8 @@ public class DB {
 			}
 		}
 		catch (IOException e) {
-			throw new RuntimeException("Error unpacking embedded db", e);
+            throw new RuntimeException("Error unpacking embedded DB", e);
 		}
-		logger.info("Database successfully unpacked to " + baseDir.getAbsolutePath());
 	}
 
 	/**
@@ -272,18 +270,13 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
 	 */
 	protected void prepareDirectories() throws ManagedProcessException {
-		logger.info("Preparing base directory...");
 		baseDir = Util.getDirectory(config.getBaseDir() + SystemUtils.FILE_SEPARATOR + config.getPort());
-		logger.info("Base directory prepared.");
-
-		logger.info("Preparing data directory...");
 		try {
 			String dataDirPath = config.getDataDir() + SystemUtils.FILE_SEPARATOR + config.getPort();
 			if (Util.isTemporaryDirectory(dataDirPath)) {
 				FileUtils.deleteDirectory(new File(dataDirPath));
 			}
 			dataDir = Util.getDirectory(dataDirPath);
-			logger.info("Data directory prepared.");
 		}
 		catch (Exception e) {
 			throw new ManagedProcessException("An error occurred while preparing the data directory", e);
