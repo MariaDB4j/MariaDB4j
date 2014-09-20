@@ -270,7 +270,7 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
 	 */
 	protected void prepareDirectories() throws ManagedProcessException {
-		baseDir = Util.getDirectory(config.getBaseDir() + SystemUtils.FILE_SEPARATOR + config.getPort());
+        baseDir = Util.getDirectory(config.getBaseDir());
 		try {
 			String dataDirPath = config.getDataDir() + SystemUtils.FILE_SEPARATOR + config.getPort();
 			if (Util.isTemporaryDirectory(dataDirPath)) {
