@@ -348,14 +348,6 @@ public class ManagedProcess {
 			throw new ManagedProcessException("Asked to waitFor " + procLongName() + ", but it was never even start()'ed!");
 		}
 	}
-
-	/**
-	 * @deprecated please use waitForConsoleMessageMaxMs instead now!
-	 */
-	@Deprecated
-	public void waitForConsoleMessage(String messageInConsole) throws ManagedProcessException {
-		waitForConsoleMessageMaxMs(messageInConsole, 5000);
-	}
 	
 	/**
 	 * Wait (block) until the process prints a certain message.
