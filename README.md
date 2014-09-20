@@ -86,6 +86,11 @@ This library brings the advantage of the installation-free DB approach, while ma
 
 It was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see http://mifos.org.
 
+Anything else?
+--------------
+
+Per default, the MariaDB4j install() creates a new DB with a 'root' user without a password.
+
 Build?
 ------
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/) <== Linux on Travis CI + 
