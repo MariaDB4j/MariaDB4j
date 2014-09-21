@@ -14,10 +14,10 @@ this Java library never "links" to those binaries, but merely "launches"
 them a separate OS process (non shared address space).
 
 Here is a link to MariaDB's GPL license:
-http://kb.askmonty.org/en/mariadb-license
+https://mariadb.com/kb/en/mariadb/faq/questions-about-licensing-mariadb-plugins-etc/mariadb-license/
 
 Here is a link allowing you to download MariaDB's source code:
-http://kb.askmonty.org/en/getting-the-mariadb-source-code
+https://mariadb.com/kb/en/mariadb/documentation/getting-started/compiling-mariadb-from-source/source-getting-the-mariadb-source-code/
 
 Note that you have to figure out yourself whether you can use the MySQL(R) JDBC driver (Connector/J) from Oracle in your application.
 The MySQL(R) JDBC driver (Connector/J) is GPL licensed, but due to the MySQL FLOSS License Exception,
