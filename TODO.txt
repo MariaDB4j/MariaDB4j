@@ -1,4 +1,6 @@
-BEFORE RELEASING v1
+SOME DAY
+
+- uid & pwd on DBConfigurationBuilder etc.
 
 - How to do 32 vs 64 bit?! How to detect? How to choose? (Is it even needed? Prio?)
 
@@ -9,7 +11,7 @@ BEFORE RELEASING v1
 - LICENSE.txt & README must be included in JAR
 
 
-LATER, MAY BE
+LATER, MAY BE (or not)
 
 - could use http://code.google.com/p/guava-libraries/wiki/ServiceExplained
 
