@@ -62,14 +62,17 @@ java [-DmariaDB4j.port=3718] [-DmariaDB4j.baseDir=/home/theapp/bin/mariadb4j] [-
 Where from?
 -----------
 
-MariaDB4j is not in Maven central (yet; it could be if you asked for it...), 
-so for now you (or your build server) have to build it yourself from
-source. -- MariaDB4j's Maven coordinates are:
+MariaDB4j released versions are available on Bintray at https://bintray.com/vorburger/maven/MariaDB4j/view
+
+MariaDB4j is not in Maven central, yet; it could be if you asked for it... ;) 
+
+For bleeding edge SNAPSHOT versions, you (or your build server) can easily build it yourself from
+source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven then coordinates are:
 
 ```xml
 <groupId>ch.vorburger.mariaDB4j</groupId>
 <artifactId>mariaDB4j</artifactId>
-<version>2.1.0-SNAPSHOT</version>
+<version>2.1.*-SNAPSHOT</version>
 ```
 
 Why?
