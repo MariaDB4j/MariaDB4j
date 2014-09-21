@@ -4,15 +4,19 @@ SOME DAY
 
 - uid & pwd on DBConfigurationBuilder etc.
 
-- could split project into multi-module, e.g. mariaDB4j-core, mariaDB4j-app (shaded), mariaDB4j-db-win32, mariaDB4j-db-linux64, mariaDB4j-db-mac64 (and still have a mariaDB4j:mariaDB4j which aggregates them all like initial version)
+- split project into multi-module, e.g. mariaDB4j-core, mariaDB4j-app (shaded), mariaDB4j-db-win32, mariaDB4j-db-linux64, mariaDB4j-db-mac64 (and still have a mariaDB4j:mariaDB4j which aggregates them all like initial version)
 
 - LICENSE.txt & README must be included in JAR
+
+- Sync Bintray deploy to Maven Central
+  http://blog.bintray.com/2014/02/11/bintray-as-pain-free-gateway-to-maven-central/ or 
 
 
 LATER, MAY BE (or not)
 
 - propose ch.vorburger.exec as "handy utilities" to commons-exec?
-
+  https://issues.apache.org/jira/browse/EXEC-88 
+   
 - my.cnf files support?
 
 - mysqlcheck --auto-repair --all-databases -u root
