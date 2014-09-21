@@ -36,8 +36,8 @@ public class DBConfigurationBuilderTest {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
         String defaultDataDir = config.getDataDir();
-        int port = config.getPort();
         assertTrue(Util.isTemporaryDirectory(defaultDataDir));
+        int port = config.getPort();
         assertTrue(defaultDataDir.contains(Integer.toString(port)));
     }
 
@@ -61,4 +61,19 @@ public class DBConfigurationBuilderTest {
         assertFalse(Util.isTemporaryDirectory(defaultDataDir));
     }
 
+    @Test
+    public void resetDataDirToDefaultTemporary() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        builder.setDataDir("db/data");
+        assertEquals("db/data", builder.getDataDir());
+        builder.setDataDir(null);
+        assertEquals(null, builder.getDataDir());
+        builder.setDataDir("null");
+        assertEquals("null", builder.getDataDir());
+        DBConfiguration config = builder.build();
+        String defaultDataDir = config.getDataDir();
+        assertTrue(Util.isTemporaryDirectory(defaultDataDir));
+        int port = config.getPort();
+        assertTrue(defaultDataDir.contains(Integer.toString(port)));
+    }
 }

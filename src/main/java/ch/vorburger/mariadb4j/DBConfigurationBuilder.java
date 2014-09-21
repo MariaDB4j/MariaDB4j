@@ -118,10 +118,18 @@ public class DBConfigurationBuilder {
 	}
 
     protected String _getDataDir() {
-        if (getDataDir().equals(DEFAULT_DATA_DIR))
-            return getDataDir() + SystemUtils.FILE_SEPARATOR + getPort();
+        if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR))
+            return DEFAULT_DATA_DIR + SystemUtils.FILE_SEPARATOR + getPort();
         else
             return getDataDir();
+    }
+
+    protected boolean isNull(String string) {
+        if (string == null) return true;
+        String trim = string.trim();
+        if (trim.length() == 0) return true;
+        if (trim.equalsIgnoreCase("null")) return true;
+        return false;
     }
 
     protected int _getPort() {
