@@ -5,6 +5,7 @@ SOME DAY
 - uid & pwd on DBConfigurationBuilder etc.
 
 - split project into multi-module, e.g. mariaDB4j-core, mariaDB4j-app (shaded), mariaDB4j-db-win32, mariaDB4j-db-linux64, mariaDB4j-db-mac64 (and still have a mariaDB4j:mariaDB4j which aggregates them all like initial version)
+  https://github.com/vorburger/MariaDB4j/issues/9
 
 - LICENSE.txt & README must be included in JAR
 
