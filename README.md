@@ -92,7 +92,10 @@ MariaDB4j was initially developed for use in Mifos, the "Open Source Technology 
 Anything else?
 --------------
 
-Per default, the MariaDB4j install() creates a new DB with a 'root' user without a password.
+Security nota bene: Per default, the MariaDB4j install() creates a new DB with a 'root' user without a password.
+
+FAQ "Is MariaDB4j stable enough for production? I need the data to be safe, and performance." - A: Yeah it should be stable - try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - rememeber MariaDB4j is just a wrapper around MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
+
 
 Build?
 ------
