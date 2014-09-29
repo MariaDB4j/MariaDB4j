@@ -50,12 +50,13 @@ public class ManagedProcessTest {
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
-		try {
-			p.start();
-			Assert.fail("ManagedProcess.start() should have thrown a ManagedProcessException here");
-		} catch (ManagedProcessException e) {
-			// as expected
-		}
+// Commented out because this is a flaky not reliable test, because it's thread scheduling timing dependent :( see long comment inside start() impl. for why this is so
+//		try {
+//			p.start();
+//			Assert.fail("ManagedProcess.start() should have thrown a ManagedProcessException here");
+//		} catch (ManagedProcessException e) {
+//			// as expected
+//		}
 		try {
 			p.waitForExit();
 			Assert.fail("ManagedProcess.waitForExit() should have thrown a ManagedProcessException here");
