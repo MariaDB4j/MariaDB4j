@@ -40,43 +40,43 @@ public class ManagedProcessTest {
 		assertThat(p.isAlive(), is(false));
 		try {
 			p.destroy();
-			Assert.fail("Should have thrown an ManagedProcessException");
+			Assert.fail("ManagedProcess.destroy() should have thrown a ManagedProcessException here");
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.exitValue();
-			Assert.fail("Should have thrown an ManagedProcessException");
+			Assert.fail("ManagedProcess.exitValue() should have thrown a ManagedProcessException here");
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
 		try {
-			p.start();	
-			Assert.fail("Should have thrown an ManagedProcessException");
+			p.start();
+			Assert.fail("ManagedProcess.start() should have thrown a ManagedProcessException here");
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.waitForExit();
-			Assert.fail("Should have thrown an ManagedProcessException");
+			Assert.fail("ManagedProcess.waitForExit() should have thrown a ManagedProcessException here");
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.waitForExitMaxMs(1234);
-			Assert.fail("Should have thrown an ManagedProcessException");
+			Assert.fail("ManagedProcess.waitForExitMaxMs(1234) should have thrown a ManagedProcessException here");
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.waitForConsoleMessageMaxMs("Never say never...", 100);
-			Assert.fail("Should have thrown an ManagedProcessException");
+			Assert.fail("ManagedProcess.waitForConsoleMessageMaxMs('...', 100) should have thrown a ManagedProcessException here");
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.waitForExitMaxMsOrDestroy(1234);
-			Assert.fail("Should have thrown an ManagedProcessException");
+			Assert.fail("ManagedProcess.waitForExitMaxMsOrDestroy(1234) should have thrown a ManagedProcessException here");
 		} catch (ManagedProcessException e) {
 			// as expected
 		}
