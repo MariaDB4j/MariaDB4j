@@ -363,10 +363,11 @@ public class ManagedProcess {
 	 * @throws ManagedProcessException for problems such as if the process already exited (without the message ever appearing in the Console)
 	 */
 	public boolean waitForConsoleMessageMaxMs(String messageInConsole, long maxWaitUntilReturning) throws ManagedProcessException {
-		CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
-		stdouts.addOutputStream(checkingConsoleOutputStream);
-		stderrs.addOutputStream(checkingConsoleOutputStream);
-		
+        CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
+	    if (stdouts != null && stderrs != null) {
+    		stdouts.addOutputStream(checkingConsoleOutputStream);
+    		stderrs.addOutputStream(checkingConsoleOutputStream);
+	    }		
 		try {
 			// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
 			if (getConsole().contains(messageInConsole)) {
@@ -402,8 +403,10 @@ public class ManagedProcess {
 			}
 		}        
         finally {
-			stdouts.removeOutputStream(checkingConsoleOutputStream);
-			stderrs.removeOutputStream(checkingConsoleOutputStream);
+            if (stdouts != null && stderrs != null) {
+    			stdouts.removeOutputStream(checkingConsoleOutputStream);
+    			stderrs.removeOutputStream(checkingConsoleOutputStream);
+            }
         }
 	}
 
