@@ -2,6 +2,8 @@ SOME DAY
 
 - ze #1 bug
 
+- must close Ext. Proc. STDIN / STDOUT & STDERR, on destroy as well as if running in daemon mode?
+
 - uid & pwd on DBConfigurationBuilder etc.
 
 - split project into multi-module, e.g. mariaDB4j-core, mariaDB4j-app (shaded), mariaDB4j-db-win32, mariaDB4j-db-linux64, mariaDB4j-db-mac64 (and still have a mariaDB4j:mariaDB4j which aggregates them all like initial version)
