@@ -35,11 +35,12 @@ public class DBConfigurationBuilder {
     private String  databaseVersion = null;
 	
 	// all these are just some defaults
-	private String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
-	private String dataDir = DEFAULT_DATA_DIR;
-	private String socket = null; // see _getSocket()
-	private int port = 0;
-
+    protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
+	protected String dataDir = DEFAULT_DATA_DIR;
+	protected String socket = null; // see _getSocket()
+	protected int port = 0;
+	protected boolean isUnpackingFromClasspath = true;
+	
 	private boolean frozen = false;
 	
 	public static DBConfigurationBuilder newBuilder() {
@@ -114,7 +115,7 @@ public class DBConfigurationBuilder {
 	
 	public DBConfiguration build() {
 		frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), getBinariesClassPathLocation(), getBaseDir(), _getDataDir());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), _getDataDir());
 	}
 
     protected String _getDataDir() {
@@ -182,7 +183,25 @@ public class DBConfigurationBuilder {
 		return binariesClassPathLocation.toString();
 	}
 
-	public String getURL(String databaseName) {
+	protected String _getBinariesClassPathLocation() {
+	    if (isUnpackingFromClasspath)
+	        return getBinariesClassPathLocation();
+	    else
+	        return null; // see ch.vorburger.mariadb4j.DB.unpackEmbeddedDb()
+	}
+	
+    public boolean isUnpackingFromClasspath() {
+        return isUnpackingFromClasspath;
+    }
+
+    
+    public DBConfigurationBuilder setUnpackingFromClasspath(boolean isUnpackingFromClasspath) {
+        checkIfFrozen("setUnpackingFromClasspath");
+        this.isUnpackingFromClasspath = isUnpackingFromClasspath;
+        return this;
+    }
+
+    public String getURL(String databaseName) {
 		return "jdbc:mysql://localhost:" + this.getPort() + "/" + databaseName;
 	}
 	

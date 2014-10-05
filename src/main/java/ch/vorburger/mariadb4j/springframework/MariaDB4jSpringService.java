@@ -46,6 +46,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String SOCKET = "mariaDB4j.socket";
     public final static String DATA_DIR = "mariaDB4j.dataDir";
     public final static String BASE_DIR = "mariaDB4j.baseDir";
+    public final static String UNPACK = "mariaDB4j.unpack";
 
 	protected ManagedProcessException lastException;
 
@@ -73,6 +74,12 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
 			getConfiguration().setBaseDir(baseDir);
 	}
 	
+    @Value("${" + UNPACK + ":#{null}}")
+    public void setDefaultIsUnpackingFromClasspath(Boolean unpack) {
+        if (unpack != null)
+            getConfiguration().setUnpackingFromClasspath(unpack);
+    }
+    
 	@Override
 	public void start() { // no throws ManagedProcessException 
 		try {
