@@ -142,7 +142,7 @@ public class ManagedProcessTest {
 		System.out.println(recentConsoleOutput);
 	}
 
-	class SomeSelfTerminatingExec {
+	static class SomeSelfTerminatingExec {
 		ManagedProcess proc;
 		String msgToWaitFor;
 	}

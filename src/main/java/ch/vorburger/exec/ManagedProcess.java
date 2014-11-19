@@ -57,6 +57,7 @@ import ch.vorburger.mariadb4j.Util;
  */
 public class ManagedProcess {
 	private static final Logger logger = LoggerFactory.getLogger(ManagedProcess.class);
+    private static final int INVALID_EXITVALUE = Executor.INVALID_EXITVALUE;
 
 	private final CommandLine commandLine;
 	private final Executor executor = new DefaultExecutor();
@@ -73,8 +74,6 @@ public class ManagedProcess {
 	private RollingLogOutputStream console;
 	private MultiOutputStream stdouts;
 	private MultiOutputStream stderrs;
-
-	public static int INVALID_EXITVALUE = Executor.INVALID_EXITVALUE;
 	
 	/**
 	 * Package local constructor.
@@ -184,7 +183,7 @@ public class ManagedProcess {
 		// doesn't seem to be worth it for now, I'll leave it like this, for now.
 		//
 		try {
-			Thread.sleep(100);
+		    this.wait(100); // better than Thread.sleep(100);  -- thank you, FindBugs
 		} catch (InterruptedException e) {
 			throw handleInterruptedException(e);
 		}

@@ -44,7 +44,7 @@ public class StartManyTimes {
             DB db = DB.newEmbeddedDB(config);
             db.start();
             db.stop();
-            System.out.println(i);
+            System.out.println("## " + i);
         }
     }
 
