@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -321,11 +322,17 @@ public class DB {
 						FileUtils.deleteDirectory(baseDir);
 					}
 				}
-				// Don't catch just IOException here, but a parent class
-				// because there isn't just one but N Shutdown Hook Threads
-				// one could have deleted files before another, and FileUtils
-				// would throw an IllegalArgumentException
-				catch (Throwable e) {
+				catch (@SuppressWarnings("unused") IllegalArgumentException e) {
+				    // IGNORE, as this frequently happens, but isn't cause for any concern,
+				    // because  there isn't just one but N Shutdown Hook Threads, and if DB
+				    // was used several times for one and the same shared baseDir / dataDir,
+				    // then one Shutdown Hook Thread will have deleted files before another,
+				    // and FileUtils would throw an IllegalArgumentException; we can ignore.
+				}
+				catch (@SuppressWarnings("unused") FileNotFoundException e) {
+				    // dito, see above
+				}
+				catch (IOException e) {
 					logger.warn("cleanupOnExit() ShutdownHook: An error occurred while deleting a directory", e);
 				}
 			}
