@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
@@ -58,7 +59,7 @@ public class ManagedProcess {
 	private static final Logger logger = LoggerFactory.getLogger(ManagedProcess.class);
 
 	private final CommandLine commandLine;
-	private final Executor executor = new BetterExecutor();
+	private final Executor executor = new DefaultExecutor();
 	private final DefaultExecuteResultHandler resultHandler = new LoggingExecuteResultHandler();
 	private final ExecuteWatchdog watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
 	private final ProcessDestroyer shutdownHookProcessDestroyer = new LoggingShutdownHookProcessDestroyer();
