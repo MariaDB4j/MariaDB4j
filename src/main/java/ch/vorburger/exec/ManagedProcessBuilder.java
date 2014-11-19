@@ -60,7 +60,6 @@ public class ManagedProcessBuilder {
 		this.environment = initialEnvironment();
 	}
 
-	@SuppressWarnings("unchecked")
 	protected Map<String,String> initialEnvironment() throws ManagedProcessException {
 		try {
 			return EnvironmentUtils.getProcEnvironment();
