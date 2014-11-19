@@ -41,13 +41,13 @@ public class ManagedProcessTest {
 		try {
 			p.destroy();
 			Assert.fail("ManagedProcess.destroy() should have thrown a ManagedProcessException here");
-		} catch (ManagedProcessException e) {
+		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.exitValue();
 			Assert.fail("ManagedProcess.exitValue() should have thrown a ManagedProcessException here");
-		} catch (ManagedProcessException e) {
+		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
 			// as expected
 		}
 // Commented out because this is a flaky not reliable test, because it's thread scheduling timing dependent :( see long comment inside start() impl. for why this is so
@@ -60,25 +60,25 @@ public class ManagedProcessTest {
 		try {
 			p.waitForExit();
 			Assert.fail("ManagedProcess.waitForExit() should have thrown a ManagedProcessException here");
-		} catch (ManagedProcessException e) {
+		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.waitForExitMaxMs(1234);
 			Assert.fail("ManagedProcess.waitForExitMaxMs(1234) should have thrown a ManagedProcessException here");
-		} catch (ManagedProcessException e) {
+		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.waitForConsoleMessageMaxMs("Never say never...", 100);
 			Assert.fail("ManagedProcess.waitForConsoleMessageMaxMs('...', 100) should have thrown a ManagedProcessException here");
-		} catch (ManagedProcessException e) {
+		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
 			// as expected
 		}
 		try {
 			p.waitForExitMaxMsOrDestroy(1234);
 			Assert.fail("ManagedProcess.waitForExitMaxMsOrDestroy(1234) should have thrown a ManagedProcessException here");
-		} catch (ManagedProcessException e) {
+		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
 			// as expected
 		}
 	}
@@ -131,7 +131,7 @@ public class ManagedProcessTest {
 		try {
 			p.destroy();
 			Assert.fail("Should have thrown an ManagedProcessException");
-		} catch (ManagedProcessException e) {
+		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
 			// as expected
 		}
 		
