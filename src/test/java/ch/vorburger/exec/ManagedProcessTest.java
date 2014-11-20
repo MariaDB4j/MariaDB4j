@@ -70,12 +70,6 @@ public class ManagedProcessTest {
 			// as expected
 		}
 		try {
-			p.waitForConsoleMessageMaxMs("Never say never...", 100);
-			Assert.fail("ManagedProcess.waitForConsoleMessageMaxMs('...', 100) should have thrown a ManagedProcessException here");
-		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
-			// as expected
-		}
-		try {
 			p.waitForExitMaxMsOrDestroy(1234);
 			Assert.fail("ManagedProcess.waitForExitMaxMsOrDestroy(1234) should have thrown a ManagedProcessException here");
 		} catch (@SuppressWarnings("unused") ManagedProcessException e) {
@@ -93,23 +87,17 @@ public class ManagedProcessTest {
 	public void testWaitForSeenMessageIfAlreadyTerminated() throws Exception {
 		SomeSelfTerminatingExec exec = someSelfTerminatingExec();
 		ManagedProcess p = exec.proc;
-		p.start();
-		// for this test, do NOT use any wait*() anything here, just give it a moment...
-		Thread.sleep(1000);
-		// by now this process should have terminated itself
+		// this process should have terminated itself faster than in 1s (1000ms),
 		// but this should not cause this to hang, but must return silently:
-		p.waitForConsoleMessageMaxMs(exec.msgToWaitFor, 1000);
+		p.startAndWaitForConsoleMessageMaxMs(exec.msgToWaitFor, 1000);
 	}
 
 	@Test(expected=ManagedProcessException.class)
 	public void testWaitForWrongMessageIfAlreadyTerminated() throws Exception {
 		ManagedProcess p = someSelfTerminatingExec().proc;
-		p.start();
-		// for this test, do NOT use any wait*() anything here, just give it a moment...
-		Thread.sleep(1000);
-		// by now this process should have terminated itself
+		// this process should have terminated itself faster than in 1s (1000ms),
 		// but this should not cause this to hang, but must throw an ManagedProcessException
-		p.waitForConsoleMessageMaxMs("some console message which will never appear", 1000);
+		p.startAndWaitForConsoleMessageMaxMs("some console message which will never appear", 1000);
 	}
 
 	@Test
@@ -118,10 +106,8 @@ public class ManagedProcessTest {
 		ManagedProcess p = exec.proc;
 
 		assertThat(p.isAlive(), is(false));
-		p.start();
+		p.startAndWaitForConsoleMessageMaxMs(exec.msgToWaitFor, 1000);
 		// can't assertThat(p.isAlive(), is(true)); - if p finishes too fast, this fails - unreliable test :(
-		
-		p.waitForConsoleMessageMaxMs(exec.msgToWaitFor, 1000);
 		
 		p.waitForExit();
 		p.exitValue(); // just making sure it works, don't check, as Win/NIX diff.

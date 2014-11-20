@@ -141,8 +141,7 @@ public class DB {
 			builder.setDestroyOnShutdown(false);
             logger.info("mysqld executable: " + builder.getExecutable());
 			mysqldProcess = builder.build();
-			mysqldProcess.start();
-            ready = mysqldProcess.waitForConsoleMessageMaxMs(readyForConnectionsTag, dbStartMaxWaitInMS);
+			ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(readyForConnectionsTag, dbStartMaxWaitInMS);
 		}
 		catch (Exception e) {
             logger.error("failed to start mysqld", e);

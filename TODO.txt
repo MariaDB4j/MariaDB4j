@@ -1,7 +1,5 @@
 SOME DAY
 
-- ze #1 bug
-
 - must close Ext. Proc. STDIN / STDOUT & STDERR, on destroy as well as if running in daemon mode?
 
 - uid & pwd on DBConfigurationBuilder etc.
@@ -13,7 +11,9 @@ SOME DAY
 
 - Sync Bintray deploy to Maven Central
   http://blog.bintray.com/2014/02/11/bintray-as-pain-free-gateway-to-maven-central/ or 
+  https://github.com/jirutka/maven-badges, or https://github.com/jirutka/maven-badges
 
+- make ch.vorburger.exec a separate GitHub project, sobmodule it in, and blog about / publicize it..
 
 LATER, MAY BE (or not)
 

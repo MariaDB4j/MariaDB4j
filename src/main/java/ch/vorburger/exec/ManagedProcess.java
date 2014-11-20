@@ -125,7 +125,12 @@ public class ManagedProcess {
 	 * @throws ManagedProcessException if the process could not be started 
 	 */
 	public synchronized void start() throws ManagedProcessException {
-		if (isAlive()) {
+		startPreparation();
+		startExecute();
+	}
+
+    protected synchronized void startPreparation() throws ManagedProcessException {
+        if (isAlive()) {
 			throw new ManagedProcessException(procLongName() + " is still running, use another ManagedProcess instance to launch another one");
 		}
 		if (logger.isInfoEnabled())
@@ -160,35 +165,99 @@ public class ManagedProcess {
 		} else {
 			logger.debug(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which MAY be a problem on *NIX, but not for sure)");
 		}
-		
-		try {
-			executor.execute(commandLine, environment, resultHandler);
-		}
-		catch (IOException e) {
-			throw new ManagedProcessException("Launch failed: " + commandLine, e);
-		}
-		isAlive = true;
-		
-		// We now must give the system a say 100ms chance to run the background 
-		// thread now, otherwise the resultHandler in checkResult() won't work.
-		// 
-		// This is admittedly not ideal, but to do better would require significant
-		// changes to DefaultExecutor, so that its execute() would "fail fast" and
-		// throw an Exception immediately if process start-up fails by doing the
-		// launch in the current thread, and then spawns a separate thread only
-		// for the waitFor().
-		//
-		// As DefaultExecutor doesn't seem to have been written with extensibility
-		// in mind, and rewriting it to start gain 100ms (at the start of every process..)
-		// doesn't seem to be worth it for now, I'll leave it like this, for now.
-		//
-		try {
-		    this.wait(100); // better than Thread.sleep(100);  -- thank you, FindBugs
-		} catch (InterruptedException e) {
-			throw handleInterruptedException(e);
-		}
-		checkResult();
-	}
+    }
+
+    protected synchronized void startExecute() throws ManagedProcessException {
+        try {
+            executor.execute(commandLine, environment, resultHandler);
+        }
+        catch (IOException e) {
+            throw new ManagedProcessException("Launch failed: " + commandLine, e);
+        }
+        isAlive = true;
+        
+        // We now must give the system a say 100ms chance to run the background 
+        // thread now, otherwise the resultHandler in checkResult() won't work.
+        // 
+        // This is admittedly not ideal, but to do better would require significant
+        // changes to DefaultExecutor, so that its execute() would "fail fast" and
+        // throw an Exception immediately if process start-up fails by doing the
+        // launch in the current thread, and then spawns a separate thread only
+        // for the waitFor().
+        //
+        // As DefaultExecutor doesn't seem to have been written with extensibility
+        // in mind, and rewriting it to start gain 100ms (at the start of every process..)
+        // doesn't seem to be worth it for now, I'll leave it like this, for now.
+        //
+        try {
+            this.wait(100); // better than Thread.sleep(100);  -- thank you, FindBugs
+        } catch (InterruptedException e) {
+            throw handleInterruptedException(e);
+        }
+        checkResult();
+    }
+
+    /**
+     * Starts the Process and waits (blocks) until the process prints a certain message.
+     * 
+     * You should be sure that the process either prints this message at some
+     * point, or otherwise exits on it's own. This method will otherwise be
+     * slow, but never block forever, as it will "give up" and always return
+     * after max. maxWaitUntilReturning ms.
+     * 
+     * @param messageInConsole text to wait for in the STDOUT/STDERR of the external process
+     * @param maxWaitUntilReturning maximum time to wait, in milliseconds, until returning, if message wasn't seen
+     * @return true if message was seen in console; false if message didn't occur and we're returning due to max. wait timeout
+     * @throws ManagedProcessException for problems such as if the process already exited (without the message ever appearing in the Console)
+     */
+    public boolean startAndWaitForConsoleMessageMaxMs(String messageInConsole, long maxWaitUntilReturning) throws ManagedProcessException {
+        startPreparation();
+
+        CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
+        if (stdouts != null && stderrs != null) {
+            stdouts.addOutputStream(checkingConsoleOutputStream);
+            stderrs.addOutputStream(checkingConsoleOutputStream);
+        }
+       
+        long timeAlreadyWaited = 0;
+        final int SLEEP_TIME_MS = 50;
+        logger.info("Thread will wait for \"{}\" to appear in Console output of process {} for max. " + maxWaitUntilReturning + "ms", messageInConsole, procLongName());
+
+        startExecute();
+        
+        try {
+            while (!checkingConsoleOutputStream.hasSeenIt() && isAlive()) {
+                try {
+                    Thread.sleep(SLEEP_TIME_MS);
+                } catch (InterruptedException e) {
+                    throw handleInterruptedException(e);
+                }
+                timeAlreadyWaited += SLEEP_TIME_MS;
+                if (timeAlreadyWaited > maxWaitUntilReturning) {
+                    logger.warn("Timed out waiting for \"\"{}\"\" after {}ms (returning false)", messageInConsole, maxWaitUntilReturning);
+                    return false;
+                }
+            }
+
+            // If we got out of the while() loop due to !isAlive() instead of messageInConsole, then throw the same exception as above!
+            if (!checkingConsoleOutputStream.hasSeenIt()) {
+                throw new ManagedProcessException(getUnexpectedExitMsg(messageInConsole));
+            } else {
+                return true;
+            }
+        }        
+        finally {
+            if (stdouts != null && stderrs != null) {
+                stdouts.removeOutputStream(checkingConsoleOutputStream);
+                stderrs.removeOutputStream(checkingConsoleOutputStream);
+            }
+        }
+    }
+
+    protected String getUnexpectedExitMsg(String messageInConsole) {
+        return "Asked to wait for \"" + messageInConsole + "\" from " + procLongName()
+                + ", but it already exited! (without that message in console)" + getLastConsoleLines();
+    }
 
 	protected ManagedProcessException handleInterruptedException(InterruptedException e) throws ManagedProcessException {
 		// TODO Not sure how to best handle this... opinions welcome (see also below)
@@ -348,72 +417,6 @@ public class ManagedProcess {
 			throw new ManagedProcessException("Asked to waitFor " + procLongName() + ", but it was never even start()'ed!");
 		}
 	}
-	
-	/**
-	 * Wait (block) until the process prints a certain message.
-	 * 
-	 * You should be sure that the process either prints this message at some
-	 * point, or otherwise exits on it's own. This method will otherwise be
-	 * slow, but never block forever, as it will "give up" and always return
-	 * after max. maxWaitUntilReturning ms.
-	 * 
-	 * @param messageInConsole text to wait for in the STDOUT/STDERR of the external process
-	 * @param maxWaitUntilReturning maximum time to wait, in milliseconds, until returning, if message wasn't seen
-	 * @return true if message was seen in console; false if message didn't occur and we're returning due to max. wait timeout
-	 * @throws ManagedProcessException for problems such as if the process already exited (without the message ever appearing in the Console)
-	 */
-	public boolean waitForConsoleMessageMaxMs(String messageInConsole, long maxWaitUntilReturning) throws ManagedProcessException {
-        CheckingConsoleOutputStream checkingConsoleOutputStream = new CheckingConsoleOutputStream(messageInConsole);
-	    if (stdouts != null && stderrs != null) {
-    		stdouts.addOutputStream(checkingConsoleOutputStream);
-    		stderrs.addOutputStream(checkingConsoleOutputStream);
-	    }		
-		try {
-			// Code review comments most welcome; I'm not 100% sure the thread concurrency time is right; is there a chance a console message may be "missed" here, and we block forever?
-			if (getConsole().contains(messageInConsole)) {
-				logger.info("Asked to wait for \"{}\" from {}, but already seen it recently in Console, so returning immediately", messageInConsole, procLongName());
-				return true;
-			}
-			
-            if (!isAlive()) { // MUST check for this, else will block forever too easily
-                throw new ManagedProcessException(getUnexpectedExitMsg(messageInConsole));
-			}
-			
-			long timeAlreadyWaited = 0;
-			final int SLEEP_TIME_MS = 50;
-			logger.info("Thread is now going to wait for \"{}\" to appear in Console output of process {} for max. " + maxWaitUntilReturning + "ms", messageInConsole, procLongName());
-	        while (!checkingConsoleOutputStream.hasSeenIt() && isAlive()) {
-	            try {
-					Thread.sleep(SLEEP_TIME_MS);
-				} catch (InterruptedException e) {
-					throw handleInterruptedException(e);
-				}
-	            timeAlreadyWaited += SLEEP_TIME_MS;
-	            if (timeAlreadyWaited > maxWaitUntilReturning) {
-	            	logger.warn("Timed out waiting for \"\"{}\"\" after {}ms (returning false)", messageInConsole, maxWaitUntilReturning);
-	            	return false;
-	            }
-	        }
-
-	        // If we got out of the while() loop due to !isAlive() instead of messageInConsole, then throw the same exception as above!
-			if (!checkingConsoleOutputStream.hasSeenIt()) {
-                throw new ManagedProcessException(getUnexpectedExitMsg(messageInConsole));
-			} else {
-				return true;
-			}
-		}        
-        finally {
-            if (stdouts != null && stderrs != null) {
-    			stdouts.removeOutputStream(checkingConsoleOutputStream);
-    			stderrs.removeOutputStream(checkingConsoleOutputStream);
-            }
-        }
-	}
-
-    protected String getUnexpectedExitMsg(String messageInConsole) {
-        return "Asked to wait for \"" + messageInConsole + "\" from " + procLongName()
-                + ", but it already exited! (without that message in console)" + getLastConsoleLines();
-    }
 
     // ---
 	
