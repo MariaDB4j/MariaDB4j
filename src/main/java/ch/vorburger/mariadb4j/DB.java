@@ -126,15 +126,18 @@ public class DB {
 		try {
 			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
 			builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
-			builder.addArgument("--console");
 			builder.addArgument("--skip-grant-tables");
 			builder.addArgument("--max_allowed_packet=64M");
+            builder.addArgument("--character-set-server=utf8");
+            builder.addArgument("--collation-server=utf8_general_ci");
 			builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
 			builder.addFileArgument("--datadir", dataDir);
 			builder.addArgument("--port=" + config.getPort());
 			if (!SystemUtils.IS_OS_WINDOWS) {
                 builder.addArgument("--socket=" + getAbsoluteSocketPath());
-			}
+			} else {
+                builder.addArgument("--console");//Windows Only Parameter
+            }
 			cleanupOnExit();
 			// because cleanupOnExit() just installed our (class DB) own
 			// Shutdown hook, we don't need the one from ManagedProcess:
