@@ -85,13 +85,8 @@ public class DB {
 		return newEmbeddedDB(config.build());
 	}
 
-	/**
-	 * Installs the database to the location specified in the configuration
-     * @throws ManagedProcessException if something fatal went wrong
-	 */
-	protected void install() throws ManagedProcessException {
+	ManagedProcess installPreparation() throws ManagedProcessException, IOException {
 		logger.info("Installing a new embedded database to: " + baseDir);
-		try {
 			File installDbCmdFile = new File(baseDir.getAbsolutePath() + "/bin/mysql_install_db");
 			if (!installDbCmdFile.exists())
 			    installDbCmdFile = new File(baseDir.getAbsolutePath() + "/scripts/mysql_install_db");
@@ -107,15 +102,25 @@ public class DB {
 				// builder.addArgument("--verbose");
 			}
 			ManagedProcess mysqlInstallProcess = builder.build();
-			mysqlInstallProcess.start();
-			mysqlInstallProcess.waitForExit();
-		}
-		catch (Exception e) {
-			throw new ManagedProcessException("An error occurred while installing the database", e);
-		}
-		logger.info("Installation complete.");
+			return mysqlInstallProcess;
 	}
 
+    /**
+     * Installs the database to the location specified in the configuration
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+	protected void install() throws ManagedProcessException {
+        try {
+    	    ManagedProcess mysqlInstallProcess = installPreparation();
+            mysqlInstallProcess.start();
+            mysqlInstallProcess.waitForExit();
+        }
+        catch (Exception e) {
+            throw new ManagedProcessException("An error occurred while installing the database", e);
+        }
+        logger.info("Installation complete.");
+	}
+	
 	/**
 	 * Starts up the database, using the data directory and port specified in the configuration
      * @throws ManagedProcessException if something fatal went wrong
@@ -124,23 +129,7 @@ public class DB {
 		logger.info("Starting up the database...");
 		boolean ready = false;
 		try {
-			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
-			builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
-			builder.addArgument("--console");
-			builder.addArgument("--skip-grant-tables");
-			builder.addArgument("--max_allowed_packet=64M");
-			builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
-			builder.addFileArgument("--datadir", dataDir);
-			builder.addArgument("--port=" + config.getPort());
-			if (!SystemUtils.IS_OS_WINDOWS) {
-                builder.addArgument("--socket=" + getAbsoluteSocketPath());
-			}
-			cleanupOnExit();
-			// because cleanupOnExit() just installed our (class DB) own
-			// Shutdown hook, we don't need the one from ManagedProcess:
-			builder.setDestroyOnShutdown(false);
-            logger.info("mysqld executable: " + builder.getExecutable());
-			mysqldProcess = builder.build();
+		    mysqldProcess = startPreparation();
 			ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(readyForConnectionsTag, dbStartMaxWaitInMS);
 		}
 		catch (Exception e) {
@@ -155,6 +144,26 @@ public class DB {
 		}
 		logger.info("Database startup complete.");
 	}
+
+	synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
+        builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
+        builder.addArgument("--console");
+        builder.addArgument("--skip-grant-tables");
+        builder.addArgument("--max_allowed_packet=64M");
+        builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
+        builder.addFileArgument("--datadir", dataDir);
+        builder.addArgument("--port=" + config.getPort());
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            builder.addArgument("--socket=" + getAbsoluteSocketPath());
+        }
+        cleanupOnExit();
+        // because cleanupOnExit() just installed our (class DB) own
+        // Shutdown hook, we don't need the one from ManagedProcess:
+        builder.setDestroyOnShutdown(false);
+        logger.info("mysqld executable: " + builder.getExecutable());
+        return builder.build();
+    }
 
     /**
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder creates the socket in /tmp, but if a user
@@ -303,7 +312,7 @@ public class DB {
 				// than sorry and do it again ourselves here as well.
 				try {
 				        // Shut up and don't log if it was already stop() before
-				        if (mysqldProcess.isAlive()) {
+				        if (mysqldProcess != null && mysqldProcess.isAlive()) {
         					logger.info("cleanupOnExit() ShutdownHook now stopping database");
         					db.stop();
 				        }
