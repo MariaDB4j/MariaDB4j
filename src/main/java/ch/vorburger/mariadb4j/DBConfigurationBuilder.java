@@ -120,7 +120,7 @@ public class DBConfigurationBuilder {
 	
 	public DBConfiguration build() {
 		frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), _getDataDir());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), _getDataDir(), WIN32.equals(getOS()) );
 	}
 
     protected String _getDataDir() {

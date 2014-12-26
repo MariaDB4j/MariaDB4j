@@ -44,20 +44,26 @@ public interface DBConfiguration {
     /** @return Base directory for DB's actual data files */
 	String getDataDir();
 
+	/** @return Whether running on Windows (some start-up parameters are different) */
+    boolean isWindows();
+
+	
 	static class Impl implements DBConfiguration {
 		private final int port;
 		private final String socket;
 		private final String binariesClassPathLocation;
 		private final String baseDir;
 		private final String dataDir;
+        private final boolean isWindows;
 		
-		public Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String dataDir) {
+		Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String dataDir, boolean isWindows) {
 			super();
 			this.port = port;
 			this.socket = socket;
 			this.binariesClassPathLocation = binariesClassPathLocation;
 			this.baseDir = baseDir;
 			this.dataDir = dataDir;
+			this.isWindows = isWindows;
 		}
 
 		@Override
@@ -85,6 +91,9 @@ public interface DBConfiguration {
 			return dataDir;
 		}
 		
+		@Override public boolean isWindows() {
+		    return isWindows;
+		}
 	}
 	
 }

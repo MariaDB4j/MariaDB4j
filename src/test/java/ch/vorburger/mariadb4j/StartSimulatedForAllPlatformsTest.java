@@ -75,7 +75,7 @@ public class StartSimulatedForAllPlatformsTest {
 
     void checkManagedProcessExists(ManagedProcess proc) {
         File installProcFile = proc.getExecutableFile();
-        assertTrue(installProcFile.exists());
-        assertTrue(installProcFile.isFile());
+        assertTrue("Does not exist: " + installProcFile.toString(), installProcFile.exists());
+        assertTrue("Is not a File: " + installProcFile.toString(), installProcFile.isFile());
     }
 }
