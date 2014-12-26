@@ -87,22 +87,22 @@ public class DB {
 
 	ManagedProcess installPreparation() throws ManagedProcessException, IOException {
 		logger.info("Installing a new embedded database to: " + baseDir);
-			File installDbCmdFile = new File(baseDir.getAbsolutePath() + "/bin/mysql_install_db");
-			if (!installDbCmdFile.exists())
-			    installDbCmdFile = new File(baseDir.getAbsolutePath() + "/scripts/mysql_install_db");
-            if (!installDbCmdFile.exists())
-                throw new ManagedProcessException("mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
-            ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
-			builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
-			if (!SystemUtils.IS_OS_WINDOWS) {
-				builder.addFileArgument("--basedir", baseDir);
-				builder.addArgument("--no-defaults");
-				builder.addArgument("--force");
-				builder.addArgument("--skip-name-resolve");
-				// builder.addArgument("--verbose");
-			}
-			ManagedProcess mysqlInstallProcess = builder.build();
-			return mysqlInstallProcess;
+		File installDbCmdFile = new File(baseDir.getAbsolutePath() + "/bin/mysql_install_db");
+		if (!installDbCmdFile.exists())
+		    installDbCmdFile = new File(baseDir.getAbsolutePath() + "/scripts/mysql_install_db");
+        if (!installDbCmdFile.exists())
+            throw new ManagedProcessException("mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
+		builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
+		if (!SystemUtils.IS_OS_WINDOWS) {
+			builder.addFileArgument("--basedir", baseDir);
+			builder.addArgument("--no-defaults");
+			builder.addArgument("--force");
+			builder.addArgument("--skip-name-resolve");
+			// builder.addArgument("--verbose");
+		}
+		ManagedProcess mysqlInstallProcess = builder.build();
+		return mysqlInstallProcess;
 	}
 
     /**
