@@ -6,7 +6,7 @@ v2.1.3 @ 2014-12-27
 
 * FIXED Windows package, now tested; it was completely broken in 2.1.1 (but worked in the original 2.1.0)
 
-v2.1.1 @ 2014-11-03
+v2.1.1 @ 2014-12-03
 ----
 
 * FIXED bad concurrency bug https://github.com/vorburger/MariaDB4j/issues/10
