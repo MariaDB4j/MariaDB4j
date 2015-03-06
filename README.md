@@ -65,9 +65,10 @@ java [-DmariaDB4j.port=3718] [-DmariaDB4j.baseDir=/home/theapp/bin/mariadb4j] [-
 Where from?
 -----------
 
-MariaDB4j released versions are available on Bintray at https://bintray.com/vorburger/maven/MariaDB4j/view
+MariaDB4j released versions are available on Bintray at https://bintray.com/vorburger/maven/MariaDB4j/view.
+Its also part of Bintray's jCenter, meaning that you can get it if you [add the jCenter repository to your Maven's conf/settings.xml](https://github.com/bintray/bintray-examples/blob/master/maven-example/settings.xml).
 
-MariaDB4j is not in Maven central, yet; it could be if you asked for it... ;) 
+MariaDB4j is not in Maven central, yet; it could be if you asked for it... ;) Watch [Issue 21](https://github.com/vorburger/MariaDB4j/issues/21).
 
 For bleeding edge SNAPSHOT versions, you (or your build server) can easily build it yourself from
 source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven then coordinates are:
