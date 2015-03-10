@@ -11,7 +11,7 @@ Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(
 
 How? (Java)
 ----
-MariaDB binaries are in the MariaDB4j JAR and, by default, extracted to a temporary base directory on the fly, then started by Java:
+The MariaDB native binaries are in the MariaDB4j-DB-win*/linux*/mac*.JARs on which the main MariaDB4j JAR depends on by Maven transitive dependencies and, by default, are extracted from the classpath to a temporary base directory on the fly, then started by Java:
 
 1. Install the database with a particular configuration, using short-cut:
 
@@ -59,8 +59,10 @@ How (CLI)
 ----
 Because the MariaDB4j JAR is executable, you can also quickly fire up a database from a command line interface: 
 ```
-java [-DmariaDB4j.port=3718] [-DmariaDB4j.baseDir=/home/theapp/bin/mariadb4j] [-DmariaDB4j.dataDir=/home/theapp/db] -jar mariaDB4j*.jar
+java [-DmariaDB4j.port=3718] [-DmariaDB4j.baseDir=/home/theapp/bin/mariadb4j] [-DmariaDB4j.dataDir=/home/theapp/db] -jar mariaDB4j-app*.jar
 ```
+
+Note the use of the special mariaDB4j-app*.jar for this use-case, its a fat/shaded/über-JAR, based on a Spring Boot launcher.
 
 Where from?
 -----------
@@ -75,8 +77,13 @@ source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven
 ```xml
 <groupId>ch.vorburger.mariaDB4j</groupId>
 <artifactId>mariaDB4j</artifactId>
-<version>2.1.*-SNAPSHOT</version>
+<version>2.2.*-SNAPSHOT</version>
 ```
+
+If you use your own packaged versions of MariaDB native binaries, then the mariaDB4j-core artifact JAR,
+which contains only the launcher Java code but no embedded native binaries, will be more suitable for you.  
+Similarly, you could also exclude one of artifacts of the currently 3 packaged OS platform.
+
 
 Why?
 ----

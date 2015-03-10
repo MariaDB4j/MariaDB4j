@@ -1,11 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<groupId>ch.vorburger.mariaDB4j</groupId>
-	<artifactId>mariaDB4j</artifactId>
+	<artifactId>mariaDB4j-pom</artifactId>
 	<version>2.2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-	<name>MariaDB4j</name>
+	<modules>
+		<module>mariaDB4j-core</module>
+
+		<module>mariaDB4j-db-win32</module>
+		<module>mariaDB4j-db-linux64</module>
+		<module>mariaDB4j-db-mac64</module>
+
+		<module>mariaDB4j</module>
+
+		<module>mariaDB4j-app</module>
+	</modules>
+
 	<description>Java wrapper / launcher for MariaDB (or MySQL)</description>
 	<url>https://github.com/vorburger/MariaDB4j</url>
 	<inceptionYear>2012</inceptionYear>
@@ -28,7 +41,7 @@
 		<developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
 		<url>https://github.com/vorburger/MariaDB4j</url>
 	  <tag>HEAD</tag>
-  </scm>
+	</scm>
 
     <organization>
 	    <name>Michael Vorburger</name>
@@ -91,24 +104,7 @@
 				</configuration>
 			</plugin>
 			
-			<!-- This enables executable JAR: (It adds ca. 6 MB to JAR size; if that's a prob. create two outputs later..) -->
-	        <plugin>
-	            <groupId>org.springframework.boot</groupId>
-	            <artifactId>spring-boot-maven-plugin</artifactId>
-	            <version>${springboot.version}</version>
-	            <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                	<mainClass>ch.vorburger.mariadb4j.springframework.boot.MariaDB4jApplication</mainClass>
-                </configuration>
-	        </plugin>
-
-			<plugin>
+						<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<version>1.7</version>
@@ -165,6 +161,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 		</plugins>
 		
 		<pluginManagement>
@@ -204,7 +201,8 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-	</build>
+		
+	</build>			
 
 	<dependencyManagement>
 	     <dependencies>
@@ -215,88 +213,15 @@
 	            <type>pom</type>
 	            <scope>import</scope>
 	        </dependency>
+	        <dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>1.7.7</version>
+	            <scope>test</scope>
+			</dependency>
 	    </dependencies>
 	</dependencyManagement>
 
-	<dependencies>
-        <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>1.1.7</version>
-            <scope>test</scope>
-        </dependency>
-<!--   <dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.34</version>
-			<! - - For legal reasons (GPL with FOSS Exception story...), it's safest 
-				if projects using mariaDB4j decide this dependency themselves. If we have 
-				to use it in src/main/java instead of only src/test/java, then let's use 
-				<scope>provided</scope> - - >
-			<scope>test</scope>
-		</dependency> -->
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-exec</artifactId>
-			<version>1.3</version>
-		</dependency>
-		<dependency>
-			<!-- Just for its CircularFifoBuffer... -->
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-		</dependency>
-		<dependency>
-			<!-- For ClasspathUnpacker -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-		</dependency>
-		<dependency>
-			<!-- For MariaDB4jSpringService -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<optional>true</optional> <!-- !!! -->
-		</dependency>
-		<dependency>
-			<!-- For MariaDB4jApplication -->
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-			<optional>true</optional> <!-- !!! -->
-		</dependency>
-		<dependency>
-			<!-- For MariaDB4jApplicationTest -->
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<!-- For ClasspathUnpacker -->
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbutils</groupId>
-			<artifactId>commons-dbutils</artifactId>
-			<version>1.6</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
- 
 	<distributionManagement>
 		<repository>
 			<id>bintray-vorburger-maven-MariaDB4j</id>

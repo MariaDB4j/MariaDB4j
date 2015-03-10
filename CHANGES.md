@@ -1,6 +1,12 @@
 MariaDB4j Release Notes
 =======================
 
+v2.2.0 @ TODO
+---
+
+* MAJOR Distribution and project org. split up formerly monolithic MariaDB4j into separate core, exec and binaries artifacts
+
+
 v2.1.1 @ 2014-11-03
 ----
 
