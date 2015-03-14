@@ -6,8 +6,12 @@ v2.2.0 @ TODO
 
 * MAJOR Distribution and project org. split up formerly monolithic MariaDB4j into separate core, exec and binaries artifacts
 
+v2.1.3 @ 2014-12-27
+----
 
-v2.1.1 @ 2014-11-03
+* FIXED Windows package, now tested; it was completely broken in 2.1.1 (but worked in the original 2.1.0)
+
+v2.1.1 @ 2014-12-03
 ----
 
 * FIXED bad concurrency bug https://github.com/vorburger/MariaDB4j/issues/10

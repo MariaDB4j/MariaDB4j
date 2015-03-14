@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +49,6 @@ public class DB {
 	private ManagedProcess mysqldProcess;
 
     protected int dbStartMaxWaitInMS = 30000;
-    protected String readyForConnectionsTag = "mysqld: ready for connections.";
 
 	protected DB(DBConfiguration config) {
 		this.config = config;
@@ -85,38 +83,47 @@ public class DB {
 		return newEmbeddedDB(config.build());
 	}
 
-	/**
-	 * Installs the database to the location specified in the configuration
-     * @throws ManagedProcessException if something fatal went wrong
-	 */
-	protected void install() throws ManagedProcessException {
+	ManagedProcess installPreparation() throws ManagedProcessException, IOException {
 		logger.info("Installing a new embedded database to: " + baseDir);
-		try {
-			File installDbCmdFile = new File(baseDir.getAbsolutePath() + "/bin/mysql_install_db");
-			if (!installDbCmdFile.exists())
-			    installDbCmdFile = new File(baseDir.getAbsolutePath() + "/scripts/mysql_install_db");
-            if (!installDbCmdFile.exists())
-                throw new ManagedProcessException("mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
-            ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
-			builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
-			if (!SystemUtils.IS_OS_WINDOWS) {
-				builder.addFileArgument("--basedir", baseDir);
-				builder.addArgument("--no-defaults");
-				builder.addArgument("--force");
-				builder.addArgument("--skip-name-resolve");
-				// builder.addArgument("--verbose");
-			}
-			ManagedProcess mysqlInstallProcess = builder.build();
-			mysqlInstallProcess.start();
-			mysqlInstallProcess.waitForExit();
+		File installDbCmdFile = newExecutableFile("bin", "mysql_install_db");
+		if (!installDbCmdFile.exists())
+		    installDbCmdFile = newExecutableFile("scripts", "mysql_install_db");
+        if (!installDbCmdFile.exists())
+            throw new ManagedProcessException("mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
+		builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
+		if (!config.isWindows()) {
+			builder.addFileArgument("--basedir", baseDir);
+			builder.addArgument("--no-defaults");
+			builder.addArgument("--force");
+			builder.addArgument("--skip-name-resolve");
+			// builder.addArgument("--verbose");
 		}
-		catch (Exception e) {
-			throw new ManagedProcessException("An error occurred while installing the database", e);
-		}
-		logger.info("Installation complete.");
+		ManagedProcess mysqlInstallProcess = builder.build();
+		return mysqlInstallProcess;
 	}
 
-	/**
+    /**
+     * Installs the database to the location specified in the configuration
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+	protected void install() throws ManagedProcessException {
+        try {
+    	    ManagedProcess mysqlInstallProcess = installPreparation();
+            mysqlInstallProcess.start();
+            mysqlInstallProcess.waitForExit();
+        }
+        catch (Exception e) {
+            throw new ManagedProcessException("An error occurred while installing the database", e);
+        }
+        logger.info("Installation complete.");
+	}
+	
+	protected String getWinExeExt() {
+	    return config.isWindows() ? ".exe" : "";
+    }
+
+    /**
 	 * Starts up the database, using the data directory and port specified in the configuration
      * @throws ManagedProcessException if something fatal went wrong
 	 */
@@ -124,24 +131,8 @@ public class DB {
 		logger.info("Starting up the database...");
 		boolean ready = false;
 		try {
-			ManagedProcessBuilder builder = new ManagedProcessBuilder(baseDir.getAbsolutePath() + "/bin/mysqld");
-			builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
-			builder.addArgument("--console");
-			builder.addArgument("--skip-grant-tables");
-			builder.addArgument("--max_allowed_packet=64M");
-			builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
-			builder.addFileArgument("--datadir", dataDir);
-			builder.addArgument("--port=" + config.getPort());
-			if (!SystemUtils.IS_OS_WINDOWS) {
-                builder.addArgument("--socket=" + getAbsoluteSocketPath());
-			}
-			cleanupOnExit();
-			// because cleanupOnExit() just installed our (class DB) own
-			// Shutdown hook, we don't need the one from ManagedProcess:
-			builder.setDestroyOnShutdown(false);
-            logger.info("mysqld executable: " + builder.getExecutable());
-			mysqldProcess = builder.build();
-			ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(readyForConnectionsTag, dbStartMaxWaitInMS);
+		    mysqldProcess = startPreparation();
+			ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(), dbStartMaxWaitInMS);
 		}
 		catch (Exception e) {
             logger.error("failed to start mysqld", e);
@@ -151,10 +142,38 @@ public class DB {
 		    if (mysqldProcess.isAlive())
 		        mysqldProcess.destroy();
 		    throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
-                + dbStartMaxWaitInMS + "ms: " + readyForConnectionsTag + mysqldProcess.getLastConsoleLines());
+                + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
 		}
 		logger.info("Database startup complete.");
 	}
+
+	protected String getReadyForConnectionsTag() {
+        return "mysqld" + getWinExeExt() + ": ready for connections.";
+    }
+
+    synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
+        builder.addArgument("--no-defaults");  // *** THIS MUST COME FIRST ***
+        builder.addArgument("--console");
+        builder.addArgument("--skip-grant-tables");
+        builder.addArgument("--max_allowed_packet=64M");
+        builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
+        builder.addFileArgument("--datadir", dataDir);
+        builder.addArgument("--port=" + config.getPort());
+        if (!config.isWindows()) {
+            builder.addArgument("--socket=" + getAbsoluteSocketPath());
+        }
+        cleanupOnExit();
+        // because cleanupOnExit() just installed our (class DB) own
+        // Shutdown hook, we don't need the one from ManagedProcess:
+        builder.setDestroyOnShutdown(false);
+        logger.info("mysqld executable: " + builder.getExecutable());
+        return builder.build();
+    }
+
+    protected File newExecutableFile(String dir, String exec) {
+        return new File(baseDir, dir + "/" + exec + getWinExeExt());
+    }
 
     /**
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder creates the socket in /tmp, but if a user
@@ -199,7 +218,7 @@ public class DB {
 	protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName) throws ManagedProcessException {
 		logger.info("Running a " + logInfoText);
 		try {
-			ManagedProcessBuilder builder = new ManagedProcessBuilder(new File(baseDir, "bin/mysql"));
+			ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysql"));
 			builder.setWorkingDirectory(baseDir);
 			if (username != null)
 				builder.addArgument("-u" + username);
@@ -207,7 +226,7 @@ public class DB {
 				builder.addArgument("-p" + password);
 			if (dbName != null)
 				builder.addArgument("-D" + dbName);
-            if (!SystemUtils.IS_OS_WINDOWS) {
+            if (!config.isWindows()) {
                 builder.addArgument("--socket=" + getAbsoluteSocketPath());
             } else {
                 builder.addArgument("--port=" + config.getPort());
@@ -257,11 +276,11 @@ public class DB {
 		
 		try {
 			Util.extractFromClasspathToFile(config.getBinariesClassPathLocation(), baseDir);
-			if (!SystemUtils.IS_OS_WINDOWS) {
-				Util.forceExecutable(new File(baseDir, "bin/my_print_defaults"));
-				Util.forceExecutable(new File(baseDir, "bin/mysql_install_db"));
-				Util.forceExecutable(new File(baseDir, "bin/mysqld"));
-				Util.forceExecutable(new File(baseDir, "bin/mysql"));
+			if (!config.isWindows()) {
+				Util.forceExecutable(newExecutableFile("bin", "my_print_defaults"));
+				Util.forceExecutable(newExecutableFile("bin", "mysql_install_db"));
+				Util.forceExecutable(newExecutableFile("bin", "mysqld"));
+				Util.forceExecutable(newExecutableFile("bin", "mysql"));
 			}
 		}
 		catch (IOException e) {
@@ -303,7 +322,7 @@ public class DB {
 				// than sorry and do it again ourselves here as well.
 				try {
 				        // Shut up and don't log if it was already stop() before
-				        if (mysqldProcess.isAlive()) {
+				        if (mysqldProcess != null && mysqldProcess.isAlive()) {
         					logger.info("cleanupOnExit() ShutdownHook now stopping database");
         					db.stop();
 				        }

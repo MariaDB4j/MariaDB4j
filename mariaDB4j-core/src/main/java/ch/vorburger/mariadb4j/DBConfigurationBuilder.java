@@ -30,11 +30,16 @@ import org.apache.commons.lang3.SystemUtils;
  */
 public class DBConfigurationBuilder {
 
+    protected static final String WIN32 = "win32";
+    protected static final String LINUX = "linux";
+    protected static final String OSX = "osx";
+
     private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 
     private String  databaseVersion = null;
 	
 	// all these are just some defaults
+    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32 : SystemUtils.IS_OS_MAC ? OSX : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
 	protected String dataDir = DEFAULT_DATA_DIR;
 	protected String socket = null; // see _getSocket()
@@ -115,7 +120,7 @@ public class DBConfigurationBuilder {
 	
 	public DBConfiguration build() {
 		frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), _getDataDir());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), _getDataDir(), WIN32.equals(getOS()) );
 	}
 
     protected String _getDataDir() {
@@ -163,11 +168,11 @@ public class DBConfigurationBuilder {
     protected String _getDatabaseVersion() {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
-            if (SystemUtils.IS_OS_MAC)
+            if (OSX.equals(getOS()))
                 databaseVersion = "mariadb-5.5.34";
-            else if (SystemUtils.IS_OS_LINUX)
+            else if (LINUX.equals(getOS()))
                 databaseVersion = "mariadb-5.5.33a";
-            else if (SystemUtils.IS_OS_WINDOWS)
+            else if (WIN32.equals(getOS()))
                 databaseVersion = "mariadb-10.0.13";
             else
                 throw new IllegalStateException("OS not directly supported, please use setDatabaseVersion() to set the name of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
@@ -179,10 +184,18 @@ public class DBConfigurationBuilder {
 		StringBuilder binariesClassPathLocation = new StringBuilder();
 		binariesClassPathLocation.append(getClass().getPackage().getName().replace(".", "/"));
         binariesClassPathLocation.append("/").append(_getDatabaseVersion()).append("/");
-		binariesClassPathLocation.append(SystemUtils.IS_OS_WINDOWS ? "win32" : SystemUtils.IS_OS_MAC ? "osx" : "linux");
+		binariesClassPathLocation.append(getOS());
 		return binariesClassPathLocation.toString();
 	}
 
+	public void setOS(String osDirectoryName) {
+	    this.osDirectoryName  = osDirectoryName;
+	}
+	
+    public String getOS() {
+        return osDirectoryName;
+    }
+    
 	protected String _getBinariesClassPathLocation() {
 	    if (isUnpackingFromClasspath)
 	        return getBinariesClassPathLocation();

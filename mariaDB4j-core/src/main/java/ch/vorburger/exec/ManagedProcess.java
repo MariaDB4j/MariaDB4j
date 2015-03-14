@@ -157,7 +157,7 @@ public class ManagedProcess {
 		
 		if (commandLine.isFile()) {
 			try {
-				Util.forceExecutable(new File(commandLine.getExecutable()));
+				Util.forceExecutable(getExecutableFile());
 			}
 			catch (Exception e) {
 				throw new ManagedProcessException("Unable to make command executable", e);
@@ -165,6 +165,10 @@ public class ManagedProcess {
 		} else {
 			logger.debug(commandLine.getExecutable() + " is not a java.io.File, so it won't be made executable (which MAY be a problem on *NIX, but not for sure)");
 		}
+    }
+
+    public File getExecutableFile() {
+        return new File(commandLine.getExecutable());
     }
 
     protected synchronized void startExecute() throws ManagedProcessException {
@@ -436,7 +440,7 @@ public class ManagedProcess {
 	private String procShortName() {
 		// could later be extended to some sort of fake numeric PID, e.g. "mysqld-1", from a static Map<String execName, Integer id)
 		if (procShortName == null) {
-			File exec = new File(commandLine.getExecutable());
+			File exec = getExecutableFile();
 			procShortName = exec.getName();
 		}
 		return procShortName;
