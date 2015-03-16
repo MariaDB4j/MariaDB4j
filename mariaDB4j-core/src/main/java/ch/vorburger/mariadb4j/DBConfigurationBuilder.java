@@ -21,6 +21,8 @@ package ch.vorburger.mariadb4j;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
 
@@ -41,10 +43,12 @@ public class DBConfigurationBuilder {
     protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32
             : SystemUtils.IS_OS_MAC ? OSX : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
+
     protected String dataDir = DEFAULT_DATA_DIR;
     protected String socket = null; // see _getSocket()
     protected int port = 0;
     protected boolean isUnpackingFromClasspath = true;
+    protected List<String> mysqldArgs = new ArrayList<String>();
 
     private boolean frozen = false;
 
@@ -121,7 +125,13 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(),
-                getBaseDir(), _getDataDir(), WIN32.equals(getOS()));
+                getBaseDir(), _getDataDir(), WIN32.equals(getOS()), _getMysqldArgs());
+    }
+
+    public DBConfigurationBuilder addMysqldArg(String arg) {
+        checkIfFrozen("addMysqldArg");
+        mysqldArgs.add(arg);
+        return this;
     }
 
     protected String _getDataDir() {
@@ -222,6 +232,10 @@ public class DBConfigurationBuilder {
 
     public String getURL(String databaseName) {
         return "jdbc:mysql://localhost:" + this.getPort() + "/" + databaseName;
+    }
+
+    public List<String> _getMysqldArgs() {
+        return mysqldArgs;
     }
 
     // getUID() + getPWD() ?
