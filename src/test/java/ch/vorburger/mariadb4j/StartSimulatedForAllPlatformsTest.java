@@ -17,6 +17,14 @@
  * limitations under the License.
  * #L%
  */
+
+/*
+ * MariaDB4j
+ * %%
+ * Adam Brousseau 2015
+ * %%
+ * Added WIN64 Test
+ */
 package ch.vorburger.mariadb4j;
 
 import static org.junit.Assert.assertTrue;
@@ -37,9 +45,16 @@ import ch.vorburger.exec.ManagedProcessException;
  * This detects the recurring issue of some mariaDB startup script not being where it's expected to be and breaking a platform when upgrading the binaries or making code changes.
  * 
  * @author Michael Vorburger
+ * 
+ * Added an additional test to test for WIN64
+ * @author Adam Brousseau
  */
 public class StartSimulatedForAllPlatformsTest {
 
+    @Test public void simulatedStartWin64() throws Exception {
+        checkPlatformStart(DBConfigurationBuilder.WIN64); 
+    }
+    
     @Test public void simulatedStartWin32() throws Exception {
         checkPlatformStart(DBConfigurationBuilder.WIN32); 
     }
