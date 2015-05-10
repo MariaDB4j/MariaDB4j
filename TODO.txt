@@ -6,7 +6,7 @@ SOME DAY
 
 - LICENSE.txt & README must be included in all *-db JARs
 
-- Sync Bintray deploy to Maven Central
+- Sync Bintray deploy to Maven Central https://github.com/vorburger/MariaDB4j/issues/21
   http://blog.bintray.com/2014/02/11/bintray-as-pain-free-gateway-to-maven-central/ or 
   https://github.com/jirutka/maven-badges, or https://github.com/jirutka/maven-badges
 
