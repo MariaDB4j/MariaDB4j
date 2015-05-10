@@ -30,18 +30,16 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 @Configuration
 public class MariaDB4jSpringServiceTestSpringConfiguration {
 
-    @Bean
-    public MariaDB4jSpringService MariaDB4jSpringService() {
+    @Bean public MariaDB4jSpringService mariaDB4jSpringService() {
         MariaDB4jSpringService mariaDB4jSpringService = new MariaDB4jSpringService();
         configureMariaDB4jSpringService(mariaDB4jSpringService);
         return mariaDB4jSpringService;
     }
 
-    protected void configureMariaDB4jSpringService(@SuppressWarnings("unused") MariaDB4jSpringService mariaDB4jSpringService) {
-    }
+    protected void configureMariaDB4jSpringService(
+            @SuppressWarnings("unused") MariaDB4jSpringService mariaDB4jSpringService) {}
 
-    @Bean
-    PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
+    @Bean PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
         PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
         Properties properties = new Properties();
         configureProperties(properties);
@@ -49,7 +47,6 @@ public class MariaDB4jSpringServiceTestSpringConfiguration {
         return ppc;
     }
 
-    protected void configureProperties(@SuppressWarnings("unused") Properties properties) {
-    }
+    protected void configureProperties(@SuppressWarnings("unused") Properties properties) {}
 
 }

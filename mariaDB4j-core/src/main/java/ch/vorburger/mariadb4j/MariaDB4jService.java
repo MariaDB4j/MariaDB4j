@@ -30,13 +30,12 @@ import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 /**
- * MariaDB4j starter "Service". This is basically just "sugar" - you can of
- * course also use the DB class directly instead of this convenience utility.
+ * MariaDB4j starter "Service". This is basically just "sugar" - you can of course also use the DB
+ * class directly instead of this convenience utility.
  * 
- * This class does not depend on Spring, and is intended for direct "JavaBean"
- * like usage, and may be useful for DI containers such as Guice. When using
- * Spring, then the MariaDB4jSpringService may be of interest. If you're using
- * Spring Boot, then have a look at the MariaDB4jApplication.
+ * This class does not depend on Spring, and is intended for direct "JavaBean" like usage, and may
+ * be useful for DI containers such as Guice. When using Spring, then the MariaDB4jSpringService may
+ * be of interest. If you're using Spring Boot, then have a look at the MariaDB4jApplication.
  * 
  * The main() could be used typically from an IDE (waits for CR to shutdown..).
  * 
@@ -46,56 +45,58 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
  */
 public class MariaDB4jService {
 
-	protected DB db;
-	protected DBConfigurationBuilder configBuilder;
+    protected DB db;
+    protected DBConfigurationBuilder configBuilder;
 
-	public DB getDB() {
-		if (db == null)
-			throw new IllegalStateException("start() me up first!");
-		return db;
-	}
+    public DB getDB() {
+        if (db == null)
+            throw new IllegalStateException("start() me up first!");
+        return db;
+    }
 
-	public DBConfigurationBuilder getConfiguration() {
-		if (configBuilder == null)
-			configBuilder = DBConfigurationBuilder.newBuilder();
-		return configBuilder;
-	}
-	
-	@PostConstruct // note this is from javax.annotation, not a Spring Framework dependency
-	public void start() throws ManagedProcessException {
-		db = DB.newEmbeddedDB(getConfiguration().build());
-		db.start();
-	}
+    public DBConfigurationBuilder getConfiguration() {
+        if (configBuilder == null)
+            configBuilder = DBConfigurationBuilder.newBuilder();
+        return configBuilder;
+    }
 
-	@PreDestroy // note this is from javax.annotation, not a Spring Framework dependency
-	public void stop() throws ManagedProcessException {
-		if (!isRunning())
-			return;
-		db.stop();
-		db = null;
-		configBuilder = null;
-	}
+    @PostConstruct
+    // note this is from javax.annotation, not a Spring Framework dependency
+    public void start() throws ManagedProcessException {
+        db = DB.newEmbeddedDB(getConfiguration().build());
+        db.start();
+    }
 
-	public boolean isRunning() {
-		return db != null;
-	}
+    @PreDestroy
+    // note this is from javax.annotation, not a Spring Framework dependency
+    public void stop() throws ManagedProcessException {
+        if (!isRunning())
+            return;
+        db.stop();
+        db = null;
+        configBuilder = null;
+    }
 
-	public static void main(String[] args) throws Exception {
-		MariaDB4jService service = new MariaDB4jService();
-		service.start();
+    public boolean isRunning() {
+        return db != null;
+    }
 
-		waitForKeyPressToCleanlyExit();
-		
-		// NOTE: In Eclipse, the MariaDB4j Shutdown Hook is not invoked on
-		// exit.. so: (@see https://bugs.eclipse.org/bugs/show_bug.cgi?id=38016)
-		service.stop();
-	}
+    public static void main(String[] args) throws Exception {
+        MariaDB4jService service = new MariaDB4jService();
+        service.start();
 
-	public static void waitForKeyPressToCleanlyExit() throws IOException {
-		// NOTE: In Eclipse, System.console() is not available.. so: (@see
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=122429)
-		System.out.println("\n\nHit Enter to quit...");
-		BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
-		d.readLine();
-	}
+        waitForKeyPressToCleanlyExit();
+
+        // NOTE: In Eclipse, the MariaDB4j Shutdown Hook is not invoked on
+        // exit.. so: (@see https://bugs.eclipse.org/bugs/show_bug.cgi?id=38016)
+        service.stop();
+    }
+
+    public static void waitForKeyPressToCleanlyExit() throws IOException {
+        // NOTE: In Eclipse, System.console() is not available.. so: (@see
+        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=122429)
+        System.out.println("\n\nHit Enter to quit...");
+        BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
+        d.readLine();
+    }
 }

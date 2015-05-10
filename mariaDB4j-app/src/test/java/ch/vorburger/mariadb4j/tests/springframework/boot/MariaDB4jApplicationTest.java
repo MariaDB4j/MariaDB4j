@@ -32,9 +32,9 @@ import ch.vorburger.mariadb4j.springframework.boot.MariaDB4jApplication;
 @IntegrationTest({ "mariaDB4j.port=0" })
 public class MariaDB4jApplicationTest {
 
-	@Test
-	public void testMariaDB4jApplication() {
-		// We don't actually have to write anything here
-	}
+    @Test
+    public void testMariaDB4jApplication() {
+        // We don't actually have to write anything here
+    }
 
 }

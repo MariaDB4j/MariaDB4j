@@ -25,36 +25,44 @@ import org.slf4j.Logger;
 /**
  * OutputStream which logs to SLF4j.
  * 
- * With many thanks to http://stackoverflow.com/questions/5499042/writing-output-error-to-log-files-using-pumpstreamhandler
+ * <p>
+ * With many thanks to
+ * http://stackoverflow.com/questions/5499042/writing-output-error-to-log-files-using
+ * -pumpstreamhandler
  * 
  * @author Michael Vorburger
  */
 // intentionally package local
 class SLF4jLogOutputStream extends LogOutputStream {
 
-	enum Type { stdout, stderr }
-	
-	private final Logger logger;
-	private final Type type;
-	private final String pid;
-	
-	SLF4jLogOutputStream(Logger logger, String pid, Type type) {
-		this.logger = logger;
-		this.type = type;
-		this.pid = pid;
-	}
-	
-	@Override
-	protected void processLine(String line, @SuppressWarnings("unused") int level) {
-		switch (type) {
-		case stdout:
-			logger.info("{}: {}", pid, line);
-			break;
+    enum Type {
+        stdout, stderr
+    }
 
-		case stderr:
-			logger.error("{}: {}", pid, line);
-			break;
-		}
-	}
+    private final Logger logger;
+    private final Type type;
+    private final String pid;
+
+    SLF4jLogOutputStream(Logger logger, String pid, Type type) {
+        this.logger = logger;
+        this.type = type;
+        this.pid = pid;
+    }
+
+    @Override
+    protected void processLine(String line, @SuppressWarnings("unused") int level) {
+        switch (type) {
+            case stdout:
+                logger.info("{}: {}", pid, line);
+                break;
+
+            case stderr:
+                logger.error("{}: {}", pid, line);
+                break;
+
+            default:
+                // That's impossible, shut up Checkstyle.
+        }
+    }
 
 }

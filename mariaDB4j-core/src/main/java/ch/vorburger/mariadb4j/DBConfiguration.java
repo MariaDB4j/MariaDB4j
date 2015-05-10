@@ -20,80 +20,82 @@
 package ch.vorburger.mariadb4j;
 
 /**
- * Enables passing in custom options when starting up the database server
- * This is the analog to my.cnf
+ * Enables passing in custom options when starting up the database server This is the analog to
+ * my.cnf
  */
 public interface DBConfiguration {
 
-    /** @return TCP Port to start DB server on */
-	int getPort();
+    /** TCP Port to start DB server on. */
+    int getPort();
 
-    /** @return UNIX Socket to start DB server on (ignored on Windows) */
-	String getSocket();
+    /** UNIX Socket to start DB server on (ignored on Windows). */
+    String getSocket();
 
-	/**
+    /**
      * Where from on the classpath should the binaries be extracted to the file system.
      *
      * @return null (not empty) if nothing should be extracted.
      */
-	String getBinariesClassPathLocation();
-	
-    /** @return Base directory where DB binaries are expected to be found */
-	String getBaseDir();
+    String getBinariesClassPathLocation();
 
-    /** @return Base directory for DB's actual data files */
-	String getDataDir();
+    /** Base directory where DB binaries are expected to be found. */
+    String getBaseDir();
 
-	/** @return Whether running on Windows (some start-up parameters are different) */
+    /** Base directory for DB's actual data files. */
+    String getDataDir();
+
+    /** Whether running on Windows (some start-up parameters are different). */
     boolean isWindows();
 
-	
-	static class Impl implements DBConfiguration {
-		private final int port;
-		private final String socket;
-		private final String binariesClassPathLocation;
-		private final String baseDir;
-		private final String dataDir;
+    static class Impl implements DBConfiguration {
+
+        private final int port;
+        private final String socket;
+        private final String binariesClassPathLocation;
+        private final String baseDir;
+        private final String dataDir;
         private final boolean isWindows;
-		
-		Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String dataDir, boolean isWindows) {
-			super();
-			this.port = port;
-			this.socket = socket;
-			this.binariesClassPathLocation = binariesClassPathLocation;
-			this.baseDir = baseDir;
-			this.dataDir = dataDir;
-			this.isWindows = isWindows;
-		}
 
-		@Override
-		public int getPort() {
-			return port;
-		}
+        Impl(int port, String socket, String binariesClassPathLocation, String baseDir,
+                String dataDir, boolean isWindows) {
+            super();
+            this.port = port;
+            this.socket = socket;
+            this.binariesClassPathLocation = binariesClassPathLocation;
+            this.baseDir = baseDir;
+            this.dataDir = dataDir;
+            this.isWindows = isWindows;
+        }
 
-		@Override
-		public String getSocket() {
-			return socket;
-		}
+        @Override
+        public int getPort() {
+            return port;
+        }
 
-		@Override
-		public String getBinariesClassPathLocation() {
-			return binariesClassPathLocation;
-		}
+        @Override
+        public String getSocket() {
+            return socket;
+        }
 
-		@Override
-		public String getBaseDir() {
-			return baseDir;
-		}
+        @Override
+        public String getBinariesClassPathLocation() {
+            return binariesClassPathLocation;
+        }
 
-		@Override
-		public String getDataDir() {
-			return dataDir;
-		}
-		
-		@Override public boolean isWindows() {
-		    return isWindows;
-		}
-	}
-	
+        @Override
+        public String getBaseDir() {
+            return baseDir;
+        }
+
+        @Override
+        public String getDataDir() {
+            return dataDir;
+        }
+
+        @Override
+        public boolean isWindows() {
+            return isWindows;
+        }
+    }
+
 }

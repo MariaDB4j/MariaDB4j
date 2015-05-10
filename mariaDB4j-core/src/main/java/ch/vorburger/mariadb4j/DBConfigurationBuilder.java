@@ -25,8 +25,7 @@ import java.net.ServerSocket;
 import org.apache.commons.lang3.SystemUtils;
 
 /**
- * Builder for DBConfiguration.
- * Has lot's of sensible default conventions etc.
+ * Builder for DBConfiguration. Has lot's of sensible default conventions etc.
  */
 public class DBConfigurationBuilder {
 
@@ -36,92 +35,94 @@ public class DBConfigurationBuilder {
 
     private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 
-    private String  databaseVersion = null;
-	
-	// all these are just some defaults
-    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32 : SystemUtils.IS_OS_MAC ? OSX : LINUX;
+    private String databaseVersion = null;
+
+    // all these are just some defaults
+    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32
+            : SystemUtils.IS_OS_MAC ? OSX : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
-	protected String dataDir = DEFAULT_DATA_DIR;
-	protected String socket = null; // see _getSocket()
-	protected int port = 0;
-	protected boolean isUnpackingFromClasspath = true;
-	
-	private boolean frozen = false;
-	
-	public static DBConfigurationBuilder newBuilder() {
-		return new DBConfigurationBuilder();
-	}
-	
-	protected DBConfigurationBuilder() {
-	}
+    protected String dataDir = DEFAULT_DATA_DIR;
+    protected String socket = null; // see _getSocket()
+    protected int port = 0;
+    protected boolean isUnpackingFromClasspath = true;
 
-	protected void checkIfFrozen(String setterName) {
-		if (frozen)
-			throw new IllegalStateException("cannot " + setterName + "() anymore after build()");
-	}
-	
-	public String getBaseDir() {
-		return baseDir;
-	}
+    private boolean frozen = false;
 
-	public DBConfigurationBuilder setBaseDir(String baseDir) {
-		checkIfFrozen("setBaseDir");
-		this.baseDir = baseDir;
-		return this;
-	}
+    public static DBConfigurationBuilder newBuilder() {
+        return new DBConfigurationBuilder();
+    }
 
-	public String getDataDir() {
-		return dataDir;
-	}
+    protected DBConfigurationBuilder() {}
 
-	public DBConfigurationBuilder setDataDir(String dataDir) {
-		checkIfFrozen("setDataDir");
-		this.dataDir = dataDir;
-		return this;
-	}
+    protected void checkIfFrozen(String setterName) {
+        if (frozen)
+            throw new IllegalStateException("cannot " + setterName + "() anymore after build()");
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public String getBaseDir() {
+        return baseDir;
+    }
 
-	/**
-	 * Sets the port number.
-	 * @param port port number, or 0 to use detectFreePort()
-	 * @return this 
-	 */
-	public DBConfigurationBuilder setPort(int port) {
-		checkIfFrozen("setPort");
-    	this.port = port;
-	    return this;
-	}
+    public DBConfigurationBuilder setBaseDir(String baseDir) {
+        checkIfFrozen("setBaseDir");
+        this.baseDir = baseDir;
+        return this;
+    }
 
-	protected int detectFreePort() {
-		try {
-			ServerSocket ss = new ServerSocket(0);
-			port = ss.getLocalPort();
-			ss.setReuseAddress(true);
-			ss.close();
-			return port;
-		} catch (IOException e) {
-			// This should never happen
-			throw new RuntimeException(e);
-		}
-	}
+    public String getDataDir() {
+        return dataDir;
+    }
 
-	public String getSocket() {
-		return socket;
-	}
+    public DBConfigurationBuilder setDataDir(String dataDir) {
+        checkIfFrozen("setDataDir");
+        this.dataDir = dataDir;
+        return this;
+    }
 
-	public DBConfigurationBuilder setSocket(String socket) {
-		checkIfFrozen("setSocket");
-		this.socket = socket;
-		return this;
-	}
-	
-	public DBConfiguration build() {
-		frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), _getDataDir(), WIN32.equals(getOS()) );
-	}
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * Sets the port number.
+     * 
+     * @param port port number, or 0 to use detectFreePort()
+     * @return this
+     */
+    public DBConfigurationBuilder setPort(int port) {
+        checkIfFrozen("setPort");
+        this.port = port;
+        return this;
+    }
+
+    protected int detectFreePort() {
+        try {
+            ServerSocket ss = new ServerSocket(0);
+            port = ss.getLocalPort();
+            ss.setReuseAddress(true);
+            ss.close();
+            return port;
+        } catch (IOException e) {
+            // This should never happen
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getSocket() {
+        return socket;
+    }
+
+    public DBConfigurationBuilder setSocket(String socket) {
+        checkIfFrozen("setSocket");
+        this.socket = socket;
+        return this;
+    }
+
+    public DBConfiguration build() {
+        frozen = true;
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(),
+                getBaseDir(), _getDataDir(), WIN32.equals(getOS()));
+    }
 
     protected String _getDataDir() {
         if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR))
@@ -131,10 +132,13 @@ public class DBConfigurationBuilder {
     }
 
     protected boolean isNull(String string) {
-        if (string == null) return true;
+        if (string == null)
+            return true;
         String trim = string.trim();
-        if (trim.length() == 0) return true;
-        if (trim.equalsIgnoreCase("null")) return true;
+        if (trim.length() == 0)
+            return true;
+        if (trim.equalsIgnoreCase("null"))
+            return true;
         return false;
     }
 
@@ -146,16 +150,16 @@ public class DBConfigurationBuilder {
         return port;
     }
 
-	protected String _getSocket() {
-		String socket = getSocket();
-		if (socket == null) {
-	    	String portStr = String.valueOf(getPort());
+    protected String _getSocket() {
+        String socket = getSocket();
+        if (socket == null) {
+            String portStr = String.valueOf(getPort());
             // Use /tmp instead getBaseDir() here, else we too easily hit
             // the "mysqld ERROR The socket file path is too long (> 107)" issue
             socket = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j." + portStr + ".sock";
-		}
-		return socket;
-	}
+        }
+        return socket;
+    }
 
     public String getDatabaseVersion() {
         return databaseVersion;
@@ -175,39 +179,41 @@ public class DBConfigurationBuilder {
             else if (WIN32.equals(getOS()))
                 databaseVersion = "mariadb-10.0.13";
             else
-                throw new IllegalStateException("OS not directly supported, please use setDatabaseVersion() to set the name of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
+                throw new IllegalStateException(
+                        "OS not directly supported, please use setDatabaseVersion() to set the name "
+                                + "of the package that the binaries are in, for: "
+                                + SystemUtils.OS_VERSION);
         }
         return databaseVersion;
-	}
+    }
 
-	protected String getBinariesClassPathLocation() {
-		StringBuilder binariesClassPathLocation = new StringBuilder();
-		binariesClassPathLocation.append(getClass().getPackage().getName().replace(".", "/"));
+    protected String getBinariesClassPathLocation() {
+        StringBuilder binariesClassPathLocation = new StringBuilder();
+        binariesClassPathLocation.append(getClass().getPackage().getName().replace(".", "/"));
         binariesClassPathLocation.append("/").append(_getDatabaseVersion()).append("/");
-		binariesClassPathLocation.append(getOS());
-		return binariesClassPathLocation.toString();
-	}
+        binariesClassPathLocation.append(getOS());
+        return binariesClassPathLocation.toString();
+    }
 
-	public void setOS(String osDirectoryName) {
-	    this.osDirectoryName  = osDirectoryName;
-	}
-	
+    public void setOS(String osDirectoryName) {
+        this.osDirectoryName = osDirectoryName;
+    }
+
     public String getOS() {
         return osDirectoryName;
     }
-    
-	protected String _getBinariesClassPathLocation() {
-	    if (isUnpackingFromClasspath)
-	        return getBinariesClassPathLocation();
-	    else
-	        return null; // see ch.vorburger.mariadb4j.DB.unpackEmbeddedDb()
-	}
-	
+
+    protected String _getBinariesClassPathLocation() {
+        if (isUnpackingFromClasspath)
+            return getBinariesClassPathLocation();
+        else
+            return null; // see ch.vorburger.mariadb4j.DB.unpackEmbeddedDb()
+    }
+
     public boolean isUnpackingFromClasspath() {
         return isUnpackingFromClasspath;
     }
 
-    
     public DBConfigurationBuilder setUnpackingFromClasspath(boolean isUnpackingFromClasspath) {
         checkIfFrozen("setUnpackingFromClasspath");
         this.isUnpackingFromClasspath = isUnpackingFromClasspath;
@@ -215,9 +221,9 @@ public class DBConfigurationBuilder {
     }
 
     public String getURL(String databaseName) {
-		return "jdbc:mysql://localhost:" + this.getPort() + "/" + databaseName;
-	}
-	
-	// getUID() + getPWD() ?
-	
+        return "jdbc:mysql://localhost:" + this.getPort() + "/" + databaseName;
+    }
+
+    // getUID() + getPWD() ?
+
 }

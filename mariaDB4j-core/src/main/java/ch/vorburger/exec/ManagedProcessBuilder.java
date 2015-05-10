@@ -30,62 +30,63 @@ import org.apache.commons.exec.environment.EnvironmentUtils;
 /**
  * Builder for ManagedProcess.
  * 
- * This is inspired by {@link java.lang.ProcessBuilder} &amp; {@link org.apache.commons.exec.CommandLine}, and/but:
+ * <p>
+ * This is inspired by {@link java.lang.ProcessBuilder} &amp;
+ * {@link org.apache.commons.exec.CommandLine}, and/but:
  * 
+ * <p>
  * It offers to add java.io.File arguments, and makes sure that their absolute path is used.
  * 
- * If no directory is set, it automatically sets the initial working directory using the directory of executable if it was a File,
- * and thus makes sure an initial working directory is always passed to the process.
+ * <p>
+ * If no directory is set, it automatically sets the initial working directory using the directory
+ * of executable if it was a File, and thus makes sure an initial working directory is always passed
+ * to the process.
  * 
- * It intentionally doesn't offer "parsing" space delimited command "lines", but forces you to set an executable and add arguments.
+ * <p>
+ * It intentionally doesn't offer "parsing" space delimited command "lines", but forces you to set
+ * an executable and add arguments.
  * 
  * @author Michael Vorburger
  */
 public class ManagedProcessBuilder {
 
-	protected final CommandLine commonsExecCommandLine;
-	protected final Map<String,String> environment;
-	protected File directory;
-	protected InputStream inputStream;
-	protected boolean destroyOnShutdown = true;
-	protected int consoleBufferMaxLines = 100;
+    protected final CommandLine commonsExecCommandLine;
+    protected final Map<String, String> environment;
+    protected File directory;
+    protected InputStream inputStream;
+    protected boolean destroyOnShutdown = true;
+    protected int consoleBufferMaxLines = 100;
 
-	public ManagedProcessBuilder(String executable) throws ManagedProcessException {
-		commonsExecCommandLine = new CommandLine(executable);
-		this.environment = initialEnvironment();
-	}
+    public ManagedProcessBuilder(String executable) throws ManagedProcessException {
+        commonsExecCommandLine = new CommandLine(executable);
+        this.environment = initialEnvironment();
+    }
 
-	public ManagedProcessBuilder(File executable) throws ManagedProcessException {
-		commonsExecCommandLine = new CommandLine(executable);
-		this.environment = initialEnvironment();
-	}
+    public ManagedProcessBuilder(File executable) throws ManagedProcessException {
+        commonsExecCommandLine = new CommandLine(executable);
+        this.environment = initialEnvironment();
+    }
 
-	protected Map<String,String> initialEnvironment() throws ManagedProcessException {
-		try {
-			return EnvironmentUtils.getProcEnvironment();
-		} catch (IOException e) {
-			throw new ManagedProcessException("Retrieving default environment variables failed", e);
-		}
-	}
-	
-	/**
-	 * Adds a File as a argument to the command.
-	 * This uses {@link File#getCanonicalPath()}, which is usually what you'll actually want when launching external processes.
-	 * 
-     * @param arg
-     *            the File to add
-     * @throws IOException
-     *             if File getCanonicalPath() fails
+    protected Map<String, String> initialEnvironment() throws ManagedProcessException {
+        try {
+            return EnvironmentUtils.getProcEnvironment();
+        } catch (IOException e) {
+            throw new ManagedProcessException("Retrieving default environment variables failed", e);
+        }
+    }
+
+    /**
+     * Adds a File as a argument to the command. This uses {@link File#getCanonicalPath()}, which is
+     * usually what you'll actually want when launching external processes.
+     * 
+     * @param arg the File to add
      * @return this
+     * @throws IOException if File getCanonicalPath() fails
      * @see ProcessBuilder
-	 */
-	public ManagedProcessBuilder addArgument(File arg) throws IOException {
-		return addArgument(arg.getCanonicalPath());
-	}
-
-	public ManagedProcessBuilder addFileArgument(String arg, File file) throws IOException {
-		return addArgument(arg + "=" + file.getCanonicalPath());
-	}
+     */
+    public ManagedProcessBuilder addArgument(File arg) throws IOException {
+        return addArgument(arg.getCanonicalPath());
+    }
 
     /**
      * Adds an argument to the command. The first argument is the name of an executable.
@@ -94,91 +95,101 @@ public class ManagedProcessBuilder {
      * @return this
      * @see ProcessBuilder
      */
-	public ManagedProcessBuilder addArgument(String arg) {
-		commonsExecCommandLine.addArgument(arg);
-		return this;
-	}
+    public ManagedProcessBuilder addArgument(String arg) {
+        commonsExecCommandLine.addArgument(arg);
+        return this;
+    }
 
-	public String[] getArguments() {
-		return commonsExecCommandLine.getArguments();
-	}
-	
-	/**
-	 * @param directory working directory to use for process to be launched
+    public ManagedProcessBuilder addFileArgument(String arg, File file) throws IOException {
+        return addArgument(arg + "=" + file.getCanonicalPath());
+    }
+
+    public String[] getArguments() {
+        return commonsExecCommandLine.getArguments();
+    }
+
+    /**
+     * Sets working directory.
+     * 
+     * @param directory working directory to use for process to be launched
      * @return this
      * @see ProcessBuilder#directory(File)
      */
-	public ManagedProcessBuilder setWorkingDirectory(File directory) {
-		this.directory = directory;
-		return this;
-	}
-	
-	/**
-	 * @return working directory used for process to be launched
-	 * @see ProcessBuilder#directory()
-	 */
-	public File getWorkingDirectory() {
-		return this.directory;
-	}
-
-    public Map<String,String> getEnvironment() {
-    	return environment;
+    public ManagedProcessBuilder setWorkingDirectory(File directory) {
+        this.directory = directory;
+        return this;
     }
 
-	public String getExecutable() {
-		return commonsExecCommandLine.getExecutable();
-	}
+    /**
+     * Get working directory used for process to be launched.
+     * 
+     * @see ProcessBuilder#directory()
+     */
+    public File getWorkingDirectory() {
+        return this.directory;
+    }
 
-	public boolean isDestroyOnShutdown() {
-		return destroyOnShutdown;
-	}
-	
-	public ManagedProcessBuilder setDestroyOnShutdown(boolean flag) {
-		this.destroyOnShutdown = flag;
-		return this;
-	}
+    public Map<String, String> getEnvironment() {
+        return environment;
+    }
 
-	public void setConsoleBufferMaxLines(int consoleBufferMaxLines) {
-		this.consoleBufferMaxLines = consoleBufferMaxLines;
-	}
+    public String getExecutable() {
+        return commonsExecCommandLine.getExecutable();
+    }
 
-	public int getConsoleBufferMaxLines() {
-		return consoleBufferMaxLines;
-	}
+    public boolean isDestroyOnShutdown() {
+        return destroyOnShutdown;
+    }
+
+    public ManagedProcessBuilder setDestroyOnShutdown(boolean flag) {
+        this.destroyOnShutdown = flag;
+        return this;
+    }
+
+    public void setConsoleBufferMaxLines(int consoleBufferMaxLines) {
+        this.consoleBufferMaxLines = consoleBufferMaxLines;
+    }
+
+    public int getConsoleBufferMaxLines() {
+        return consoleBufferMaxLines;
+    }
 
     // ----
-    
-	public ManagedProcess build() {
-		return new ManagedProcess(getCommandLine(), directory, environment,
-				inputStream, destroyOnShutdown, consoleBufferMaxLines);
-	}
 
-	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
-	}
+    public ManagedProcess build() {
+        return new ManagedProcess(getCommandLine(), directory, environment, inputStream,
+                destroyOnShutdown, consoleBufferMaxLines);
+    }
 
-	/* package-local... let's keep ch.vorburger.exec's API separate from Apache Commons Exec, so it COULD be replaced */  
-	CommandLine getCommandLine() {
-		if (getWorkingDirectory() == null) {
-			if (commonsExecCommandLine.isFile()) {
-				File exec = new File(commonsExecCommandLine.getExecutable());
-				File dir = exec.getParentFile();
-				if (dir == null)
-					throw new IllegalStateException("directory MUST be set (and could not be auto-determined from executable, although it was a File)");
-				this.setWorkingDirectory(dir);
-// DO NOT   } else {
-//				throw new IllegalStateException("directory MUST be set (and could not be auto-determined from executable)");
-			}
-		}
-		return commonsExecCommandLine;
-	}
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
 
-	/**
-	 * Intended for debugging / logging, only.
-	 */
-	@Override
-	public String toString() {
-		return commonsExecCommandLine.toString();
-	}
-	
+    /* package-local... let's keep ch.vorburger.exec's API separate from Apache Commons Exec, so it
+     * COULD be replaced */
+    CommandLine getCommandLine() {
+        if (getWorkingDirectory() == null) {
+            if (commonsExecCommandLine.isFile()) {
+                File exec = new File(commonsExecCommandLine.getExecutable());
+                File dir = exec.getParentFile();
+                if (dir == null)
+                    throw new IllegalStateException(
+                            "directory MUST be set (and could not be auto-determined from executable, although it was a File)");
+                this.setWorkingDirectory(dir);
+                // DO NOT } else {
+                // throw new
+                // IllegalStateException("directory MUST be set (and could not be auto-determined from executable)");
+            }
+        }
+        return commonsExecCommandLine;
+    }
+
+    /**
+     * Intended for debugging / logging, only.
+     */
+    @Override
+    public String toString() {
+        return commonsExecCommandLine.toString();
+    }
+
 }

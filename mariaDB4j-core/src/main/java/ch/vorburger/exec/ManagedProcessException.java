@@ -25,14 +25,15 @@ package ch.vorburger.exec;
  * @author Michael Vorburger
  */
 public class ManagedProcessException extends Exception {
-	private static final long serialVersionUID = -5945369742058979996L;
 
-	public ManagedProcessException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    private static final long serialVersionUID = -5945369742058979996L;
 
-	public ManagedProcessException(String message) {
-		super(message);
-	}
-	
+    public ManagedProcessException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ManagedProcessException(String message) {
+        super(message);
+    }
+
 }

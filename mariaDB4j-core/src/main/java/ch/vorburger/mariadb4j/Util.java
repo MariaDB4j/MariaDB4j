@@ -32,108 +32,114 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 /**
- * File utilities
+ * File utilities.
+ * 
  * @author Michael Vorburger
  * @author Michael Seaton
  */
 public class Util {
 
-	private static final Logger logger = LoggerFactory.getLogger(Util.class);
+    private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
-	private Util() {
-	}
-	
-	/**
-	 * Retrieve the directory located at the given path.
-	 * Checks that path indeed is a reabable directory.
-	 * If this does not exist, create it (and log having done so).
-	 * @param path directory(ies, can include parent directories) names, as forward slash ('/') separated String
-	 * @throws IllegalArgumentException If it is not a directory, or it is not readable
-	 * @return safe File object representing that path name
-	 */
-	public static File getDirectory(String path) {
-	    boolean log = false;
-		File dir = new File(path);
-		if (!dir.exists()) {
-		    log = true;
-			try {
-				FileUtils.forceMkdir(dir);
-			}
-			catch (IOException e) {
-				throw new IllegalArgumentException("Unable to create new directory at path: " + path, e);
-			}
-		}
-		String absPath = dir.getAbsolutePath();
-		if (absPath.trim().length() == 0) {
-			throw new IllegalArgumentException(path + " is empty");
-		}
-		if (!dir.isDirectory()) {
-			throw new IllegalArgumentException(path + " is not a directory");
-		}
-		if (!dir.canRead()) {
-			throw new IllegalArgumentException(path + " is not a readable directory");
-		}
+    private Util() {}
+
+    /**
+     * Retrieve the directory located at the given path. Checks that path indeed is a reabable
+     * directory. If this does not exist, create it (and log having done so).
+     * 
+     * @param path directory(ies, can include parent directories) names, as forward slash ('/')
+     *            separated String
+     * @return safe File object representing that path name
+     * @throws IllegalArgumentException If it is not a directory, or it is not readable
+     */
+    public static File getDirectory(String path) {
+        boolean log = false;
+        File dir = new File(path);
+        if (!dir.exists()) {
+            log = true;
+            try {
+                FileUtils.forceMkdir(dir);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Unable to create new directory at path: "
+                        + path, e);
+            }
+        }
+        String absPath = dir.getAbsolutePath();
+        if (absPath.trim().length() == 0) {
+            throw new IllegalArgumentException(path + " is empty");
+        }
+        if (!dir.isDirectory()) {
+            throw new IllegalArgumentException(path + " is not a directory");
+        }
+        if (!dir.canRead()) {
+            throw new IllegalArgumentException(path + " is not a readable directory");
+        }
         if (log) {
-		    logger.info("Created directory: " + absPath);
+            logger.info("Created directory: " + absPath);
         }
-		return dir;
-	}
+        return dir;
+    }
 
-	/**
-	 * Check for temporary directory name.
+    /**
+     * Check for temporary directory name.
+     * 
      * @param directory directory name
-	 * @return true if the passed directory name starts with the system temporary directory name.
-	 */
-	public static boolean isTemporaryDirectory(String directory) {
-		return directory.startsWith(SystemUtils.JAVA_IO_TMPDIR);
-	}
+     * @return true if the passed directory name starts with the system temporary directory name.
+     */
+    public static boolean isTemporaryDirectory(String directory) {
+        return directory.startsWith(SystemUtils.JAVA_IO_TMPDIR);
+    }
 
-	public static void forceExecutable(File executableFile) throws IOException {
-		if (executableFile.exists() && !executableFile.canExecute()) {
-			boolean succeeded = executableFile.setExecutable(true);
-			if (succeeded) {
-				logger.info("chmod +x " + executableFile.toString() + " (using java.io.File.setExecutable)");
-			}
-			else {
-				throw new IOException("Failed to do chmod +x " + executableFile.toString() + " using java.io.File.setExecutable, which will be a problem on *NIX...");
-			}
-		}
-	}
-
-	/**
-	 * Extract files from a package on the classpath into a directory.
-	 * @param packagePath e.g. "com/stuff" (always forward slash not backslash, never dot)
-	 * @param toDir directory to extract to
-	 * @return int the number of files copied
-	 * @throws java.io.IOException if something goes wrong, including if nothing was found on classpath
-	 */
-	public static int extractFromClasspathToFile(String packagePath, File toDir) throws IOException {
-		String locationPattern = "classpath*:" + packagePath + "/**";
-		ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-		Resource[] resources = resourcePatternResolver.getResources(locationPattern);
-		if (resources.length == 0) {
-			throw new IOException("Nothing found at " + locationPattern);
-		}
-		int counter = 0;
-		for (Resource resource : resources) {
-			if (resource.isReadable()) { // Skip hidden or system files
-				URL url = resource.getURL();
-				String path = url.toString();
-				if (!path.endsWith("/")) { // Skip directories
-					int p = path.lastIndexOf(packagePath) + packagePath.length();
-					path = path.substring(p);
-					File targetFile = new File(toDir, path);
-					long len = resource.contentLength();
-					if (!targetFile.exists() || targetFile.length() != len) { // Only copy new files
-						FileUtils.copyURLToFile(url, targetFile);
-						counter++;
-					}
-				}
-			}
-		}
-        if (counter > 0) {
-            logger.info("Unpacked {} files from {} to {}", new Object[] { counter, locationPattern, toDir });
+    public static void forceExecutable(File executableFile) throws IOException {
+        if (executableFile.exists() && !executableFile.canExecute()) {
+            boolean succeeded = executableFile.setExecutable(true);
+            if (succeeded) {
+                logger.info("chmod +x " + executableFile.toString()
+                        + " (using java.io.File.setExecutable)");
+            } else {
+                throw new IOException("Failed to do chmod +x " + executableFile.toString()
+                        + " using java.io.File.setExecutable, which will be a problem on *NIX...");
+            }
         }
-		return counter;
-	}
+    }
+
+    /**
+     * Extract files from a package on the classpath into a directory.
+     * 
+     * @param packagePath e.g. "com/stuff" (always forward slash not backslash, never dot)
+     * @param toDir directory to extract to
+     * @return int the number of files copied
+     * @throws java.io.IOException if something goes wrong, including if nothing was found on
+     *             classpath
+     */
+    public static int extractFromClasspathToFile(String packagePath, File toDir) throws IOException {
+        String locationPattern = "classpath*:" + packagePath + "/**";
+        ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = resourcePatternResolver.getResources(locationPattern);
+        if (resources.length == 0) {
+            throw new IOException("Nothing found at " + locationPattern);
+        }
+        int counter = 0;
+        for (Resource resource : resources) {
+            if (resource.isReadable()) { // Skip hidden or system files
+                URL url = resource.getURL();
+                String path = url.toString();
+                if (!path.endsWith("/")) { // Skip directories
+                    int p = path.lastIndexOf(packagePath) + packagePath.length();
+                    path = path.substring(p);
+                    File targetFile = new File(toDir, path);
+                    long len = resource.contentLength();
+                    if (!targetFile.exists() || targetFile.length() != len) { // Only copy new files
+                        FileUtils.copyURLToFile(url, targetFile);
+                        counter++;
+                    }
+                }
+            }
+        }
+        if (counter > 0) {
+            Object[] info = new Object[] { counter, locationPattern, toDir };
+            logger.info("Unpacked {} files from {} to {}", info);
+        }
+        return counter;
+    }
 }

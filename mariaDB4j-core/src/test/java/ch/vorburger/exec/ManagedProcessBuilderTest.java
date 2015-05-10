@@ -37,34 +37,52 @@ import org.junit.Test;
  */
 public class ManagedProcessBuilderTest {
 
-	@Test
-	public void testManagedProcessBuilder() throws Exception {
-		ManagedProcessBuilder mbp = new ManagedProcessBuilder(new File("/somewhere/absolute/bin/thing"));
-		
-		File arg = new File("relative/file");
-		mbp.addArgument(arg);
-		
-		// needed to force auto-setting the directory
-		mbp.getCommandLine();
-		
-		File cwd = mbp.getWorkingDirectory();
-		if (SystemUtils.IS_OS_WINDOWS) {
-			assertThat(cwd.getAbsolutePath(), endsWith("somewhere\\absolute\\bin")); // NOT equalTo("C:\\somewhere\\absolute\\bin") because that makes the Test specific to running on a C: drive, which it may not  
-		} else {
-			assertThat(cwd.getAbsolutePath(), equalTo("/somewhere/absolute/bin"));			
-		}
-		
-		String arg0 = mbp.getExecutable();
-		if (SystemUtils.IS_OS_WINDOWS) {
-			assertThat(arg0, endsWith("somewhere\\absolute\\bin\\thing")); // NOT equalTo("C:\\somewhere\\absolute\\bin") because that makes the Test specific to running on a C: drive, which it may not  
-		} else {
-			assertThat(arg0, equalTo("/somewhere/absolute/bin/thing"));			
-		}
-		
-		String arg1 = mbp.getArguments()[0];
-		assertNotSame(arg1, "relative/file");
-		assertTrue(arg1.contains("relative"));
-		//System.out.println(arg1);
-	}
+    @Test
+    public void testManagedProcessBuilder() throws Exception {
+        ManagedProcessBuilder mbp = new ManagedProcessBuilder(new File(
+                "/somewhere/absolute/bin/thing"));
+
+        File arg = new File("relative/file");
+        mbp.addArgument(arg);
+
+        // needed to force auto-setting the directory
+        mbp.getCommandLine();
+
+        File cwd = mbp.getWorkingDirectory();
+        if (SystemUtils.IS_OS_WINDOWS) {
+            assertThat(cwd.getAbsolutePath(), endsWith("somewhere\\absolute\\bin")); // NOT
+                                                                                     // equalTo("C:\\somewhere\\absolute\\bin")
+                                                                                     // because that
+                                                                                     // makes
+                                                                                     // the Test
+                                                                                     // specific
+                                                                                     // to running
+                                                                                     // on a C:
+                                                                                     // drive, which
+                                                                                     // it
+                                                                                     // may not
+        } else {
+            assertThat(cwd.getAbsolutePath(), equalTo("/somewhere/absolute/bin"));
+        }
+
+        String arg0 = mbp.getExecutable();
+        if (SystemUtils.IS_OS_WINDOWS) {
+            assertThat(arg0, endsWith("somewhere\\absolute\\bin\\thing")); // NOT
+                                                                           // equalTo("C:\\somewhere\\absolute\\bin")
+                                                                           // because that makes the
+                                                                           // Test
+                                                                           // specific to running on
+                                                                           // a C:
+                                                                           // drive, which it may
+                                                                           // not
+        } else {
+            assertThat(arg0, equalTo("/somewhere/absolute/bin/thing"));
+        }
+
+        String arg1 = mbp.getArguments()[0];
+        assertNotSame(arg1, "relative/file");
+        assertTrue(arg1.contains("relative"));
+        // System.out.println(arg1);
+    }
 
 }

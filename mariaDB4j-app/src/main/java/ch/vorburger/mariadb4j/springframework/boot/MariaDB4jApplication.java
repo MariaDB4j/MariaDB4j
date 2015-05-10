@@ -46,23 +46,23 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
         MariaDB4jSpringService bean = new MariaDB4jSpringService();
         return bean;
     }
-	
-	protected @Autowired MariaDB4jSpringService dbService;
-	
-	public static void main(String[] args) throws Exception {
+
+    protected @Autowired MariaDB4jSpringService dbService;
+
+    public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(MariaDB4jApplication.class);
         app.setShowBanner(false);
         ConfigurableApplicationContext ctx = app.run(args);
-        
+
         MariaDB4jService.waitForKeyPressToCleanlyExit();
-        
+
         ctx.stop();
         ctx.close();
-	}
+    }
 
-	@Override
-	public int getExitCode() {
+    @Override
+    public int getExitCode() {
         return dbService.getLastException() == null ? 0 : -1;
-	}
-	
+    }
+
 }

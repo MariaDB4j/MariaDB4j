@@ -21,35 +21,37 @@ package ch.vorburger.exec;
 
 import org.apache.commons.exec.LogOutputStream;
 
-
 /**
  * OutputStream which watches out for the occurrence of a keyword (String).
  * 
- * Used to watch check the console output of a daemon ManagedProcess for some "started up OK" kind of message.
+ * <p>
+ * Used to watch check the console output of a daemon ManagedProcess for some "started up OK" kind
+ * of message.
  * 
  * @author Michael Vorburger
  */
 // intentionally package local for now
 class CheckingConsoleOutputStream extends LogOutputStream {
 
-	private final String watchOutFor;
-	private boolean seenIt = false;
-	
-	CheckingConsoleOutputStream(String watchOutFor) {
-		if (watchOutFor.contains("\n")) {
-			throw new IllegalArgumentException("Cannot handle newlines (CR) ...");
-		}
-		this.watchOutFor = watchOutFor;
-	}
-	
-	@Override
-	protected void processLine(String line, @SuppressWarnings("unused") int level) {
-		if (line.contains(watchOutFor))
-			seenIt = true;
-	}
+    private final String watchOutFor;
+    private boolean seenIt = false;
 
-	public boolean hasSeenIt() {
-		return seenIt;
-	}
+    CheckingConsoleOutputStream(String watchOutFor) {
+        if (watchOutFor.contains("\n")) {
+            throw new IllegalArgumentException("Cannot handle newlines (CR) ...");
+        }
+        this.watchOutFor = watchOutFor;
+    }
+
+    @Override
+    protected void processLine(String line, @SuppressWarnings("unused") int level) {
+        if (line.contains(watchOutFor)) {
+            seenIt = true;
+        }
+    }
+
+    public boolean hasSeenIt() {
+        return seenIt;
+    }
 
 }

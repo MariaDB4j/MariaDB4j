@@ -29,28 +29,28 @@ import org.junit.Test;
 
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.DBConfigurationBuilder;
-
 
 /**
  * Simulating starting MariaDB4j on all supported platforms.
  * 
- * This detects the recurring issue of some mariaDB startup script not being where it's expected to be and breaking a platform when upgrading the binaries or making code changes.
+ * <p>
+ * This detects the recurring issue of some mariaDB startup script not being where it's expected to
+ * be and breaking a platform when upgrading the binaries or making code changes.
  * 
  * @author Michael Vorburger
  */
 public class StartSimulatedForAllPlatformsTest {
 
     @Test public void simulatedStartWin32() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.WIN32); 
+        checkPlatformStart(DBConfigurationBuilder.WIN32);
     }
 
     @Test public void simulatedStartLinux() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.LINUX); 
+        checkPlatformStart(DBConfigurationBuilder.LINUX);
     }
 
     @Test public void simulatedStartOSX() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.OSX); 
+        checkPlatformStart(DBConfigurationBuilder.OSX);
     }
 
     void checkPlatformStart(String platform) throws ManagedProcessException, IOException {
@@ -61,10 +61,10 @@ public class StartSimulatedForAllPlatformsTest {
         DB db = new DB(config);
         db.prepareDirectories();
         db.unpackEmbeddedDb();
-        
+
         ManagedProcess installProc = db.installPreparation();
-        checkManagedProcessExists(installProc); 
-        
+        checkManagedProcessExists(installProc);
+
         ManagedProcess startProc = db.startPreparation();
         checkManagedProcessExists(startProc);
 

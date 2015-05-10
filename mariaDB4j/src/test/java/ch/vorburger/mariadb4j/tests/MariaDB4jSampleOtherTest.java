@@ -30,23 +30,24 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
  */
 public class MariaDB4jSampleOtherTest {
 
-	/**
-	 * This test ensure that there is no conflict between sockets if two MariaDB4j run on the same port.
-	 */
-	@Test
-	public void startTwoMariaDB4j() throws Exception {
-		DB db1 = startNewDB();
+    /**
+     * This test ensure that there is no conflict between sockets if two MariaDB4j run on the same
+     * port.
+     */
+    @Test
+    public void startTwoMariaDB4j() throws Exception {
+        DB db1 = startNewDB();
         DB db2 = startNewDB();
-		db1.stop();
-		db2.stop();
-	}
+        db1.stop();
+        db2.stop();
+    }
 
-	protected DB startNewDB() throws ManagedProcessException {
-		DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-		config.setPort(0);
-		DB db = DB.newEmbeddedDB(config.build());
-		db.start();
-		return db;
-	}
-	
+    protected DB startNewDB() throws ManagedProcessException {
+        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+        config.setPort(0);
+        DB db = DB.newEmbeddedDB(config.build());
+        db.start();
+        return db;
+    }
+
 }

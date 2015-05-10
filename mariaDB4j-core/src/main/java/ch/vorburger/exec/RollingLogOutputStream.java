@@ -32,35 +32,34 @@ import org.apache.commons.exec.LogOutputStream;
 // intentionally package local for now
 class RollingLogOutputStream extends LogOutputStream {
 
-	private final Collection<String> ringBuffer;
-	
-	@SuppressWarnings("unchecked")
-	RollingLogOutputStream(int maxLines) {
-		ringBuffer = new CircularFifoBuffer(maxLines);
-	}
-	
-	@Override
-	protected synchronized void processLine(String line, @SuppressWarnings("unused") int level) {
-		ringBuffer.add(line);
-	}
+    private final Collection<String> ringBuffer;
 
-	/**
-	 * Returns recent lines (up to maxLines from constructor).
-	 * 
-	 * The implementation is relatively expensive here;
-	 * the design is intended for many processLine() calls
-	 * and few getRecentLines().
-	 * 
-	 * @return recent Console output
-	 */
-	public synchronized String getRecentLines() {
-		StringBuilder sb = new StringBuilder();
-		for (String line : ringBuffer) {
-			if (sb.length() > 0)
-				sb.append('\n');
-			sb.append(line);
-		}
-		return sb.toString();
-	}
-	
+    @SuppressWarnings("unchecked")
+    RollingLogOutputStream(int maxLines) {
+        ringBuffer = new CircularFifoBuffer(maxLines);
+    }
+
+    @Override
+    protected synchronized void processLine(String line, @SuppressWarnings("unused") int level) {
+        ringBuffer.add(line);
+    }
+
+    /**
+     * Returns recent lines (up to maxLines from constructor).
+     * 
+     * The implementation is relatively expensive here; the design is intended for many
+     * processLine() calls and few getRecentLines().
+     * 
+     * @return recent Console output
+     */
+    public synchronized String getRecentLines() {
+        StringBuilder sb = new StringBuilder();
+        for (String line : ringBuffer) {
+            if (sb.length() > 0)
+                sb.append('\n');
+            sb.append(line);
+        }
+        return sb.toString();
+    }
+
 }

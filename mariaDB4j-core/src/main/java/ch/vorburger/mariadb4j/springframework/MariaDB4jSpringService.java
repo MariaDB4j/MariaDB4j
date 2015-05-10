@@ -31,12 +31,15 @@ import ch.vorburger.mariadb4j.MariaDB4jService;
 /**
  * MariaDB4jService extension suitable for use in Spring Framework-based applications.
  * 
- * Other than implementing {@link Lifecycle} to get auto-started, this class allows applications using it to programmatically set a default
- * port/socket/data- &amp; base directory in their {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
- * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot) main() command line arguments.
+ * Other than implementing {@link Lifecycle} to get auto-started, this class allows applications
+ * using it to programmatically set a default port/socket/data- &amp; base directory in their
+ * {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
+ * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot)
+ * main() command line arguments.
  *
- * This Service is intentionally NOT annotated as a {@link Service} {@link Component}, because we don't want it to be auto-started by
- * component scan without explicit declaration in a @Configuration (or XML)
+ * This Service is intentionally NOT annotated as a {@link Service} {@link Component}, because we
+ * don't want it to be auto-started by component scan without explicit declaration in a @Configuration
+ * (or XML)
  * 
  * @author Michael Vorburger
  */
@@ -48,57 +51,57 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String BASE_DIR = "mariaDB4j.baseDir";
     public final static String UNPACK = "mariaDB4j.unpack";
 
-	protected ManagedProcessException lastException;
+    protected ManagedProcessException lastException;
 
     @Value("${" + PORT + ":-1}")
     public void setDefaultPort(int port) {
-	    if (port != -1)
-	        getConfiguration().setPort(port);
-	}
-	
+        if (port != -1)
+            getConfiguration().setPort(port);
+    }
+
     @Value("${" + SOCKET + ":NA}")
-	public void setDefaultSocket(String socket) {
-		if (!"NA".equals(socket))
-			getConfiguration().setSocket(socket);
-	}
-	
+    public void setDefaultSocket(String socket) {
+        if (!"NA".equals(socket))
+            getConfiguration().setSocket(socket);
+    }
+
     @Value("${" + DATA_DIR + ":NA}")
-	public void setDefaultDataDir(String dataDir) {
-		if (!"NA".equals(dataDir))
-			getConfiguration().setDataDir(dataDir);
-	}
-	
+    public void setDefaultDataDir(String dataDir) {
+        if (!"NA".equals(dataDir))
+            getConfiguration().setDataDir(dataDir);
+    }
+
     @Value("${" + BASE_DIR + ":NA}")
-	public void setDefaultBaseDir(String baseDir) {
-		if (!"NA".equals(baseDir))
-			getConfiguration().setBaseDir(baseDir);
-	}
-	
+    public void setDefaultBaseDir(String baseDir) {
+        if (!"NA".equals(baseDir))
+            getConfiguration().setBaseDir(baseDir);
+    }
+
     @Value("${" + UNPACK + ":#{null}}")
     public void setDefaultIsUnpackingFromClasspath(Boolean unpack) {
         if (unpack != null)
             getConfiguration().setUnpackingFromClasspath(unpack);
     }
-    
-	@Override
-	public void start() { // no throws ManagedProcessException 
-		try {
-			super.start();
-		} catch (ManagedProcessException e) {
-			lastException = e;
-			throw new IllegalStateException("MariaDB4jSpringService start() failed", e);
-		}
-	}
-	
-	@Override
-	public void stop() { // no throws ManagedProcessException 
-		try {
-			super.stop();
-		} catch (ManagedProcessException e) {
-			lastException = e;
-			throw new IllegalStateException("MariaDB4jSpringService stop() failed", e);
-		}
-	}
+
+    @Override
+    public void start() { // no throws ManagedProcessException
+        try {
+            super.start();
+        } catch (ManagedProcessException e) {
+            lastException = e;
+            throw new IllegalStateException("MariaDB4jSpringService start() failed", e);
+        }
+    }
+
+    @Override
+    public void stop() { // no throws ManagedProcessException
+        try {
+            super.stop();
+        } catch (ManagedProcessException e) {
+            lastException = e;
+            throw new IllegalStateException("MariaDB4jSpringService stop() failed", e);
+        }
+    }
 
     public ManagedProcessException getLastException() {
         return lastException;

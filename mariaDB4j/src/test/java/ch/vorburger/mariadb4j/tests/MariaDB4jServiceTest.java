@@ -25,12 +25,12 @@ import ch.vorburger.mariadb4j.MariaDB4jService;
 
 public class MariaDB4jServiceTest {
 
-	@Test
-	public void testStartStop() throws Exception {
-		MariaDB4jService service = new MariaDB4jService();
-		service.getConfiguration().setPort(0);
-		service.start();
-		service.stop();
-	}
+    @Test
+    public void testStartStop() throws Exception {
+        MariaDB4jService service = new MariaDB4jService();
+        service.getConfiguration().setPort(0);
+        service.start();
+        service.stop();
+    }
 
 }

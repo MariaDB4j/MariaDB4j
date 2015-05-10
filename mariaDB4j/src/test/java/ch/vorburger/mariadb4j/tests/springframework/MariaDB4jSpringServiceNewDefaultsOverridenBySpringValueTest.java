@@ -33,7 +33,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 /**
- * Tests overriding the default configuration of a MariaDB4jSpringService set in a {@link Configuration} via Spring Value properties.
+ * Tests overriding the default configuration of a MariaDB4jSpringService set in a
+ * {@link Configuration} via Spring Value properties.
  * 
  * @author Michael Vorburger
  */
@@ -43,22 +44,19 @@ public class MariaDB4jSpringServiceNewDefaultsOverridenBySpringValueTest {
 
     @Configuration
     public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
-        @Override
-        protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
+
+        @Override protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
             s.setDefaultPort(1234);
         }
 
-        @Override
-        protected void configureProperties(Properties properties) {
+        @Override protected void configureProperties(Properties properties) {
             properties.setProperty(MariaDB4jSpringService.PORT, "5678");
         }
     }
 
-    @Autowired
-    MariaDB4jSpringService s;
+    @Autowired MariaDB4jSpringService s;
 
-    @Test
-    public void testNewDefaults() {
+    @Test public void testNewDefaults() {
         assertEquals(5678, s.getConfiguration().getPort());
     }
 
