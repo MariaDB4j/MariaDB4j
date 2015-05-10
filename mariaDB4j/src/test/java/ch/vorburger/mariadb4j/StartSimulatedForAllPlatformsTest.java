@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
 
 /**
