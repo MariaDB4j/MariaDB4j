@@ -85,6 +85,7 @@ If you use your own packaged versions of MariaDB native binaries, then the maria
 which contains only the launcher Java code but no embedded native binaries, will be more suitable for you.  
 Similarly, you could also exclude one of artifacts of the currently 3 packaged OS platform.
 
+[Release Notes are in CHANGES.md](CHANGES.md).
 
 Why?
 ----
@@ -105,7 +106,10 @@ Anything else?
 
 Security nota bene: Per default, the MariaDB4j install() creates a new DB with a 'root' user without a password.
 
-FAQ "Is MariaDB4j stable enough for production? I need the data to be safe, and performance." - A: Yeah it should be stable - try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - rememeber MariaDB4j is just a wrapper around MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
+FAQ
+---
+Q: Is MariaDB4j stable enough for production? I need the data to be safe, and performant.
+A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
 
 
 Build?
