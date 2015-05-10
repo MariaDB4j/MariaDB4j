@@ -163,6 +163,9 @@ public class DB {
         if (!config.isWindows()) {
             builder.addArgument("--socket=" + getAbsoluteSocketPath());
         }
+        for (String arg : config.getMysqldArgs()) {
+            builder.addArgument(arg);
+        }
         cleanupOnExit();
         // because cleanupOnExit() just installed our (class DB) own
         // Shutdown hook, we don't need the one from ManagedProcess:

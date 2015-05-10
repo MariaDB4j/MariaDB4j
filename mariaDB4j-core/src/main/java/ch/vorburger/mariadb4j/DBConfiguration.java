@@ -19,6 +19,8 @@
  */
 package ch.vorburger.mariadb4j;
 
+import java.util.List;
+
 /**
  * Enables passing in custom options when starting up the database server
  * This is the analog to my.cnf
@@ -47,16 +49,19 @@ public interface DBConfiguration {
 	/** @return Whether running on Windows (some start-up parameters are different) */
     boolean isWindows();
 
-	
-	static class Impl implements DBConfiguration {
+    List<String> getMysqldArgs();
+
+
+    static class Impl implements DBConfiguration {
 		private final int port;
 		private final String socket;
 		private final String binariesClassPathLocation;
 		private final String baseDir;
 		private final String dataDir;
         private final boolean isWindows;
-		
-		Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String dataDir, boolean isWindows) {
+        private final List<String> mysqldArgs;
+
+        Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String dataDir, boolean isWindows, List<String> mysqldArgs) {
 			super();
 			this.port = port;
 			this.socket = socket;
@@ -64,7 +69,8 @@ public interface DBConfiguration {
 			this.baseDir = baseDir;
 			this.dataDir = dataDir;
 			this.isWindows = isWindows;
-		}
+            this.mysqldArgs = mysqldArgs;
+        }
 
 		@Override
 		public int getPort() {
@@ -94,6 +100,11 @@ public interface DBConfiguration {
 		@Override public boolean isWindows() {
 		    return isWindows;
 		}
-	}
+
+        @Override
+        public List<String> getMysqldArgs() {
+            return mysqldArgs;
+        }
+    }
 	
 }
