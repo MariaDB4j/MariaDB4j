@@ -49,7 +49,7 @@ public interface DBConfiguration {
     /** Whether running on Windows (some start-up parameters are different). */
     boolean isWindows();
 
-    List<String> getMysqldArgs();
+    List<String> getArgs();
 
     static class Impl implements DBConfiguration {
 
@@ -59,10 +59,10 @@ public interface DBConfiguration {
         private final String baseDir;
         private final String dataDir;
         private final boolean isWindows;
-        private final List<String> mysqldArgs;
+        private final List<String> args;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir,
-                String dataDir, boolean isWindows, List<String> mysqldArgs) {
+                String dataDir, boolean isWindows, List<String> args) {
             super();
             this.port = port;
             this.socket = socket;
@@ -70,7 +70,7 @@ public interface DBConfiguration {
             this.baseDir = baseDir;
             this.dataDir = dataDir;
             this.isWindows = isWindows;
-            this.mysqldArgs = mysqldArgs;
+            this.args = args;
         }
 
         @Override
@@ -104,8 +104,8 @@ public interface DBConfiguration {
         }
 
         @Override
-        public List<String> getMysqldArgs() {
-            return mysqldArgs;
+        public List<String> getArgs() {
+            return args;
         }
     }
 

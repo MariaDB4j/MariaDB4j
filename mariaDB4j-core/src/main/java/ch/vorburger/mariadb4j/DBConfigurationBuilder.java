@@ -48,7 +48,7 @@ public class DBConfigurationBuilder {
     protected String socket = null; // see _getSocket()
     protected int port = 0;
     protected boolean isUnpackingFromClasspath = true;
-    protected List<String> mysqldArgs = new ArrayList<String>();
+    protected List<String> args = new ArrayList<String>();
 
     private boolean frozen = false;
 
@@ -125,12 +125,12 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(),
-                getBaseDir(), _getDataDir(), WIN32.equals(getOS()), _getMysqldArgs());
+                getBaseDir(), _getDataDir(), WIN32.equals(getOS()), _getArgs());
     }
 
-    public DBConfigurationBuilder addMysqldArg(String arg) {
-        checkIfFrozen("addMysqldArg");
-        mysqldArgs.add(arg);
+    public DBConfigurationBuilder addArg(String arg) {
+        checkIfFrozen("addArg");
+        args.add(arg);
         return this;
     }
 
@@ -234,8 +234,8 @@ public class DBConfigurationBuilder {
         return "jdbc:mysql://localhost:" + this.getPort() + "/" + databaseName;
     }
 
-    public List<String> _getMysqldArgs() {
-        return mysqldArgs;
+    public List<String> _getArgs() {
+        return args;
     }
 
     // getUID() + getPWD() ?

@@ -173,7 +173,7 @@ public class DB {
         if (!config.isWindows()) {
             builder.addArgument("--socket=" + getAbsoluteSocketPath());
         }
-        for (String arg : config.getMysqldArgs()) {
+        for (String arg : config.getArgs()) {
             builder.addArgument(arg);
         }
         cleanupOnExit();

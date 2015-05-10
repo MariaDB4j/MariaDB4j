@@ -5,6 +5,8 @@ v2.2.0 @ TODO
 ---
 
 * MAJOR Distribution and project org. split up formerly monolithic MariaDB4j into separate core, exec and binaries artifacts
+* @CedricGatay: NEW addArg() method in DBConfigurationBuilder to pass additional flags when spawning a new MariaDB/Mysql process (e.g. like lower_case_table_names, in a mixed OS environment)
+* Src: Tabs to Spaces, and enforced by Checkstyle running in Build
 
 v2.1.3 @ 2014-12-27
 ----
