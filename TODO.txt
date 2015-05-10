@@ -1,5 +1,8 @@
 SOME DAY
 
+- add https://github.com/brsanthu/google-analytics-java to see how many people actually use this? ;-)
+  (Must be able to disable via some -DmariaDB4j.dnt=true kind of switch)
+
 - must close Ext. Proc. STDIN / STDOUT & STDERR, on destroy as well as if running in daemon mode?
 
 - uid & pwd on DBConfigurationBuilder etc.
@@ -10,13 +13,9 @@ SOME DAY
   http://blog.bintray.com/2014/02/11/bintray-as-pain-free-gateway-to-maven-central/ or 
   https://github.com/jirutka/maven-badges, or https://github.com/jirutka/maven-badges
 
-- make ch.vorburger.exec a separate GitHub project, sobmodule it in, and blog about / publicize it..
 
 LATER, MAY BE (or not)
 
-- propose ch.vorburger.exec as "handy utilities" to commons-exec?
-  https://issues.apache.org/jira/browse/EXEC-88 
-   
 - my.cnf files support?
 
 - mysqlcheck --auto-repair --all-databases -u root
