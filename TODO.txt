@@ -1,5 +1,7 @@
 SOME DAY
 
+- Oomph Setup Model, incl. Checkstyle and m2e-checkstyle plug-ins, and its configuration
+
 - add https://github.com/brsanthu/google-analytics-java to see how many people actually use this? ;-)
   (Must be able to disable via some -DmariaDB4j.dnt=true kind of switch)
 
