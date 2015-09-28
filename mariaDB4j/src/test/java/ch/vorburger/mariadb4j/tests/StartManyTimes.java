@@ -33,8 +33,6 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
  */
 public class StartManyTimes {
 
-    // TODO Fix this problem (and remove this)
-
     public static void main(String[] args) throws ManagedProcessException {
         DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
         configBuilder.setPort(0);

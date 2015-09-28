@@ -21,12 +21,12 @@ DB db = DB.newEmbeddedDB(3306);
 
 2. (Optional) The data directory will, by default, be in a temporary directory too, and will automatically get scratched at every restart; this
 is suitable for integration tests.  If you use MariaDB4j for something more permanent (maybe an all-in-one application package?),
-then you can simply specify a more durable location of your data directory in the Configuration, like so:
+then you can simply specify a more durable location of your data directory in the DBConfiguration, like so:
 ```java
-Configuration config = new Configuration();
-config.setPort(3306); // OR: setPort(0); => autom. detect free port
-config.setDataDir("/home/theapp/db"); // just an example
-DB db = DB.newEmbeddedDB(config);
+DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
+configBuilder.setPort(3306); // OR, default: setPort(0); => autom. detect free port
+configBuilder.setDataDir("/home/theapp/db"); // just an example
+DB db = DB.newEmbeddedDB(configBuilder.build());
 ```
 
 3. Start the database
