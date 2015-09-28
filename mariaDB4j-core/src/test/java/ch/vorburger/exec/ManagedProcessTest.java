@@ -140,17 +140,14 @@ public class ManagedProcessTest {
     protected SomeSelfTerminatingExec someSelfTerminatingExec() throws ManagedProcessException {
         SomeSelfTerminatingExec r = new SomeSelfTerminatingExec();
         if (SystemUtils.IS_OS_WINDOWS) {
-            r.proc = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir")
-                    .addArgument("/X").build();
+            r.proc = new ManagedProcessBuilder("cmd.exe").addArgument("/C").addArgument("dir").addArgument("/X").build();
             r.msgToWaitFor = "bytes free";
         } else if (SystemUtils.IS_OS_SOLARIS) {
             r.proc = new ManagedProcessBuilder("true").addArgument("--version").build();
             r.msgToWaitFor = "true (GNU coreutils)";
         } else if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC) {
-            r.proc = new ManagedProcessBuilder("echo").addArgument(
-                    "Lorem ipsum dolor sit amet, consectetur adipisci elit, "
-                            + " sed eiusmod tempor incidunt ut \nlabore et dolore magna aliqua.")
-                    .build();
+            r.proc = new ManagedProcessBuilder("echo").addArgument("\"Lorem ipsum dolor sit amet, consectetur adipisci elit, "
+                    + " sed eiusmod tempor incidunt ut \nlabore et dolore magna aliqua.\"").build();
             r.msgToWaitFor = "incidunt";
         } else {
             throw new ManagedProcessException("Unexpected Platform, improve the test dude...");

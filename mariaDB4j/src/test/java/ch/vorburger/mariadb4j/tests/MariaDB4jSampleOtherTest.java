@@ -19,6 +19,7 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 
 import ch.vorburger.exec.ManagedProcessException;
@@ -31,11 +32,9 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 public class MariaDB4jSampleOtherTest {
 
     /**
-     * This test ensure that there is no conflict between sockets if two MariaDB4j run on the same
-     * port.
+     * This test ensure that there is no conflict between sockets if two MariaDB4j run on the same port.
      */
-    @Test
-    public void startTwoMariaDB4j() throws Exception {
+    @Test public void startTwoMariaDB4j() throws Exception {
         DB db1 = startNewDB();
         DB db2 = startNewDB();
         db1.stop();
@@ -48,6 +47,20 @@ public class MariaDB4jSampleOtherTest {
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
         return db;
+    }
+
+    /**
+     * Reproduces issue #30 re. Exception if there are spaces in the data directory path #30.
+     * 
+     * @see <a href="https://github.com/vorburger/MariaDB4j/issues/30">MariaDB4j issue #30</a>
+     */
+    @Test public void dataDirWithSpace() throws Exception {
+        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+        // Note that this dataDir intentionally contains a space before its last word
+        config.setDataDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/" + MariaDB4jSampleOtherTest.class.getName() + " dataDirWithSpace");
+        DB db = DB.newEmbeddedDB(config.build());
+        db.start();
+        db.stop();
     }
 
 }

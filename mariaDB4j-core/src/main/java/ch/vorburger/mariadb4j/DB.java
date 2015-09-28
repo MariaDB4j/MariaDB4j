@@ -94,8 +94,7 @@ public class DB {
             installDbCmdFile = newExecutableFile("scripts", "mysql_install_db");
         if (!installDbCmdFile.exists())
             throw new ManagedProcessException(
-                    "mysql_install_db was not found, neither in bin/ nor in scripts/ under "
-                            + baseDir.getAbsolutePath());
+                    "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
         builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
         if (!config.isWindows()) {
@@ -139,8 +138,7 @@ public class DB {
         boolean ready = false;
         try {
             mysqldProcess = startPreparation();
-            ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(),
-                    dbStartMaxWaitInMS);
+            ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(), dbStartMaxWaitInMS);
         } catch (Exception e) {
             logger.error("failed to start mysqld", e);
             throw new ManagedProcessException("An error occurred while starting the database", e);
@@ -148,10 +146,8 @@ public class DB {
         if (!ready) {
             if (mysqldProcess.isAlive())
                 mysqldProcess.destroy();
-            throw new ManagedProcessException(
-                    "Database does not seem to have started up correctly? Magic string not seen in "
-                            + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag()
-                            + mysqldProcess.getLastConsoleLines());
+            throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
+                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
         }
         logger.info("Database startup complete.");
     }
@@ -161,18 +157,14 @@ public class DB {
     }
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(
-                newExecutableFile("bin", "mysqld"));
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
         builder.addArgument("--skip-grant-tables");
         builder.addArgument("--max_allowed_packet=64M");
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
         builder.addFileArgument("--datadir", dataDir);
-        builder.addArgument("--port=" + config.getPort());
-        if (!config.isWindows()) {
-            builder.addArgument("--socket=" + getAbsoluteSocketPath());
-        }
+        addPortAndMaybeSocketArguments(builder);
         for (String arg : config.getArgs()) {
             builder.addArgument(arg);
         }
@@ -188,6 +180,21 @@ public class DB {
         return new File(baseDir, dir + "/" + exec + getWinExeExt());
     }
 
+    protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder) throws IOException {
+        builder.addArgument("--port=" + config.getPort());
+        if (!config.isWindows()) {
+            builder.addFileArgument("--socket", getAbsoluteSocketFile());
+        }
+    }
+
+    protected void addSocketOrPortArgument(ManagedProcessBuilder builder) throws IOException {
+        if (!config.isWindows()) {
+            builder.addFileArgument("--socket", getAbsoluteSocketFile());
+        } else {
+            builder.addArgument("--port=" + config.getPort());
+        }
+    }
+
     /**
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
      * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
@@ -195,10 +202,10 @@ public class DB {
      * 
      * @return config.getSocket() as File getAbsolutePath()
      */
-    protected String getAbsoluteSocketPath() {
+    protected File getAbsoluteSocketFile() {
         String socket = config.getSocket();
         File socketFile = new File(socket);
-        return socketFile.getAbsolutePath();
+        return socketFile.getAbsoluteFile();
     }
 
     public void source(String resource) throws ManagedProcessException {
@@ -215,18 +222,14 @@ public class DB {
      * @param dbName the name of the database (schema) to source into
      * @throws ManagedProcessException if something fatal went wrong
      */
-    public void source(String resource, String username, String password, String dbName)
-            throws ManagedProcessException {
+    public void source(String resource, String username, String password, String dbName) throws ManagedProcessException {
         InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
         if (from == null)
-            throw new IllegalArgumentException("Could not find script file on the classpath at: "
-                    + resource);
-        run("script file sourced from the classpath at: " + resource, from, username, password,
-                dbName);
+            throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
+        run("script file sourced from the classpath at: " + resource, from, username, password, dbName);
     }
 
-    public void run(String command, String username, String password, String dbName)
-            throws ManagedProcessException {
+    public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
         InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset());
         run("command: " + command, from, username, password, dbName);
     }
@@ -235,24 +238,19 @@ public class DB {
         run(command, null, null, null);
     }
 
-    protected void run(String logInfoText, InputStream fromIS, String username, String password,
-            String dbName) throws ManagedProcessException {
+    protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName)
+            throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
         try {
-            ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin",
-                    "mysql"));
+            ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysql"));
             builder.setWorkingDirectory(baseDir);
             if (username != null)
-                builder.addArgument("-u" + username);
+                builder.addArgument("-u", username);
             if (password != null)
-                builder.addArgument("-p" + password);
+                builder.addArgument("-p", password);
             if (dbName != null)
-                builder.addArgument("-D" + dbName);
-            if (!config.isWindows()) {
-                builder.addArgument("--socket=" + getAbsoluteSocketPath());
-            } else {
-                builder.addArgument("--port=" + config.getPort());
-            }
+                builder.addArgument("-D", dbName);
+            addSocketOrPortArgument(builder);
             if (fromIS != null)
                 builder.setInputStream(fromIS);
             ManagedProcess process = builder.build();
@@ -323,8 +321,7 @@ public class DB {
             }
             dataDir = Util.getDirectory(dataDirPath);
         } catch (Exception e) {
-            throw new ManagedProcessException(
-                    "An error occurred while preparing the data directory", e);
+            throw new ManagedProcessException("An error occurred while preparing the data directory", e);
         }
     }
 
@@ -349,19 +346,15 @@ public class DB {
                         db.stop();
                     }
                 } catch (ManagedProcessException e) {
-                    logger.warn(
-                            "cleanupOnExit() ShutdownHook: An error occurred while stopping the database",
-                            e);
+                    logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
                 }
                 try {
                     if (dataDir.exists() && Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
-                        logger.info("cleanupOnExit() ShutdownHook deleting temporary DB data directory: "
-                                + dataDir);
+                        logger.info("cleanupOnExit() ShutdownHook deleting temporary DB data directory: " + dataDir);
                         FileUtils.deleteDirectory(dataDir);
                     }
                     if (baseDir.exists() && Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
-                        logger.info("cleanupOnExit() ShutdownHook deleting temporary DB base directory: "
-                                + baseDir);
+                        logger.info("cleanupOnExit() ShutdownHook deleting temporary DB base directory: " + baseDir);
                         FileUtils.deleteDirectory(baseDir);
                     }
                 } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
@@ -373,9 +366,7 @@ public class DB {
                 } catch (@SuppressWarnings("unused") FileNotFoundException e) {
                     // dito, see above
                 } catch (IOException e) {
-                    logger.warn(
-                            "cleanupOnExit() ShutdownHook: An error occurred while deleting a directory",
-                            e);
+                    logger.warn("cleanupOnExit() ShutdownHook: An error occurred while deleting a directory", e);
                 }
             }
         });
