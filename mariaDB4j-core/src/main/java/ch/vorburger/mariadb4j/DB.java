@@ -47,6 +47,7 @@ public class DB {
     protected final DBConfiguration config;
 
     private File baseDir;
+    private File libDir;
     private File dataDir;
     private ManagedProcess mysqldProcess;
 
@@ -96,6 +97,7 @@ public class DB {
             throw new ManagedProcessException(
                     "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
+        builder.getEnvironment().put(config.getOsLibraryEnvironmentVar(), libDir.getAbsolutePath());
         builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
         if (!config.isWindows()) {
             builder.addFileArgument("--basedir", baseDir);
@@ -158,6 +160,7 @@ public class DB {
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
         ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
+        builder.getEnvironment().put(config.getOsLibraryEnvironmentVar(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
         builder.addArgument("--skip-grant-tables");
@@ -314,6 +317,7 @@ public class DB {
      */
     protected void prepareDirectories() throws ManagedProcessException {
         baseDir = Util.getDirectory(config.getBaseDir());
+        libDir = Util.getDirectory(config.getLibDir());
         try {
             String dataDirPath = config.getDataDir();
             if (Util.isTemporaryDirectory(dataDirPath)) {

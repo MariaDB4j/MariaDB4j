@@ -43,6 +43,8 @@ public interface DBConfiguration {
     /** Base directory where DB binaries are expected to be found. */
     String getBaseDir();
 
+    String getLibDir();
+
     /** Base directory for DB's actual data files. */
     String getDataDir();
 
@@ -51,26 +53,32 @@ public interface DBConfiguration {
 
     List<String> getArgs();
 
+    String getOsLibraryEnvironmentVar();
+
     static class Impl implements DBConfiguration {
 
         private final int port;
         private final String socket;
         private final String binariesClassPathLocation;
         private final String baseDir;
+        private final String libDir;
         private final String dataDir;
         private final boolean isWindows;
         private final List<String> args;
+        private final String osLibraryEnvironmentVar;
 
-        Impl(int port, String socket, String binariesClassPathLocation, String baseDir,
-                String dataDir, boolean isWindows, List<String> args) {
+        Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
+                boolean isWindows, List<String> args, String osLibraryEnvironmentVar) {
             super();
             this.port = port;
             this.socket = socket;
             this.binariesClassPathLocation = binariesClassPathLocation;
             this.baseDir = baseDir;
+            this.libDir = libDir;
             this.dataDir = dataDir;
             this.isWindows = isWindows;
             this.args = args;
+            this.osLibraryEnvironmentVar = osLibraryEnvironmentVar;
         }
 
         @Override
@@ -94,6 +102,11 @@ public interface DBConfiguration {
         }
 
         @Override
+        public String getLibDir() {
+            return libDir;
+        }
+
+        @Override
         public String getDataDir() {
             return dataDir;
         }
@@ -107,6 +120,12 @@ public interface DBConfiguration {
         public List<String> getArgs() {
             return args;
         }
+
+        @Override
+        public String getOsLibraryEnvironmentVar() {
+            return osLibraryEnvironmentVar;
+        }
+
     }
 
 }
