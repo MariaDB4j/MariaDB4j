@@ -3,6 +3,7 @@ org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
 org.eclipse.jdt.core.compiler.compliance=1.6
 org.eclipse.jdt.core.compiler.problem.forbiddenReference=warning
 org.eclipse.jdt.core.compiler.source=1.6
+org.eclipse.jdt.core.formatter.align_fields_grouping_blank_lines=99
 org.eclipse.jdt.core.formatter.align_type_members_on_columns=false
 org.eclipse.jdt.core.formatter.alignment_for_arguments_in_allocation_expression=16
 org.eclipse.jdt.core.formatter.alignment_for_arguments_in_annotation=0
