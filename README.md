@@ -136,6 +136,9 @@ Discard and go back to fix something and re-release (before Publishing in Bintra
 
 Who?
 ----
+
+Here are some of the early contributors, latest/current also on https://github.com/vorburger/MariaDB4j/graphs/contributors:
+
 * Michael Vorburger, February/March 2012.
 * Michael Seaton, October 2013.
 * Juhani Simola, March 2014.
