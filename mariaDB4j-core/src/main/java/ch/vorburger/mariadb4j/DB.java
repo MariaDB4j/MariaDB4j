@@ -113,7 +113,7 @@ public class DB {
      * 
      * @throws ManagedProcessException if something fatal went wrong
      */
-    protected void install() throws ManagedProcessException {
+    synchronized protected void install() throws ManagedProcessException {
         try {
             ManagedProcess mysqlInstallProcess = installPreparation();
             mysqlInstallProcess.start();
