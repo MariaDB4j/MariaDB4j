@@ -10,4 +10,5 @@
 	</parent>
 
 	<artifactId>mariaDB4j-db-win32</artifactId>
+	<version>10.0.13</version>
 </project>
