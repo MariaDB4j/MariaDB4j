@@ -8,6 +8,8 @@ Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(
 * FAQ: http://kb.askmonty.org/en/mariadb-faq
 * Wikipedia: http://en.wikipedia.org/wiki/MariaDB
 
+[![](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
+
 
 How? (Java)
 ----
@@ -67,10 +69,12 @@ Note the use of the special mariaDB4j-app*.jar for this use-case, its a fat/shad
 Where from?
 -----------
 
-MariaDB4j released versions are available on Bintray at https://bintray.com/vorburger/maven/MariaDB4j/view.
-Its also part of Bintray's jCenter, meaning that you can get it if you [add the jCenter repository to your Maven's conf/settings.xml](https://github.com/bintray/bintray-examples/blob/master/maven-example/settings.xml).
+MariaDB4j JAR binaries are available from:
 
-MariaDB4j is not in Maven central, yet; it could be if you asked for it... ;) Watch [Issue 21](https://github.com/vorburger/MariaDB4j/issues/21).
+1. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j)
+2. Bintray at https://bintray.com/vorburger/maven/MariaDB4j/view.
+3. Bintray's jCenter, meaning that you can get it if you [add the jCenter repository to your Maven's conf/settings.xml](https://github.com/bintray/bintray-examples/blob/master/maven-example/settings.xml).
+4. MariaDB4j is not in Maven central, yet; it could be if you asked for it... ;) Watch [Issue 21](https://github.com/vorburger/MariaDB4j/issues/21).
 
 For bleeding edge SNAPSHOT versions, you (or your build server) can easily build it yourself from
 source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven then coordinates are:
