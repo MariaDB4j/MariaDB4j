@@ -9,7 +9,7 @@ Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(
 * Wikipedia: http://en.wikipedia.org/wiki/MariaDB
 
 [![](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
-
+[![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
 
 How? (Java)
 ----
@@ -115,13 +115,6 @@ FAQ
 Q: Is MariaDB4j stable enough for production? I need the data to be safe, and performant.
 A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
 
-
-Build?
-------
-[![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/) <== Linux on Travis CI + 
-[Mac OS X CI courtesy of CloudBees](https://vorburger.ci.cloudbees.com/job/MariaDB4j.MacOSX/).
-
-_TBD: How-to get a free Jenkins-like CI on a Windows box somewhere?_
 
 Release?
 --------
