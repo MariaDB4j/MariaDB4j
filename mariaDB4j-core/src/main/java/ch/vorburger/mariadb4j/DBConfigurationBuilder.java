@@ -135,8 +135,8 @@ public class DBConfigurationBuilder {
 
     public DBConfiguration build() {
         frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(),
-                _getDataDir(), WIN32.equals(getOS()), _getArgs(), getOSLibraryEnvironmentVar());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
+                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName());
     }
 
     public DBConfigurationBuilder addArg(String arg) {
@@ -224,7 +224,7 @@ public class DBConfigurationBuilder {
         return osDirectoryName;
     }
 
-    public String getOSLibraryEnvironmentVar() {
+    protected String _getOSLibraryEnvironmentVarName() {
         return SystemUtils.IS_OS_WINDOWS ? "PATH"
                 : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH "
                         : "LD_LIBRARY_PATH";

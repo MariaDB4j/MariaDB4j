@@ -53,7 +53,7 @@ public interface DBConfiguration {
 
     List<String> getArgs();
 
-    String getOsLibraryEnvironmentVar();
+    String getOSLibraryEnvironmentVarName();
 
     static class Impl implements DBConfiguration {
 
@@ -65,10 +65,10 @@ public interface DBConfiguration {
         private final String dataDir;
         private final boolean isWindows;
         private final List<String> args;
-        private final String osLibraryEnvironmentVar;
+        private final String osLibraryEnvironmentVarName;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
-                boolean isWindows, List<String> args, String osLibraryEnvironmentVar) {
+                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName) {
             super();
             this.port = port;
             this.socket = socket;
@@ -78,7 +78,7 @@ public interface DBConfiguration {
             this.dataDir = dataDir;
             this.isWindows = isWindows;
             this.args = args;
-            this.osLibraryEnvironmentVar = osLibraryEnvironmentVar;
+            this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
         }
 
         @Override
@@ -122,8 +122,8 @@ public interface DBConfiguration {
         }
 
         @Override
-        public String getOsLibraryEnvironmentVar() {
-            return osLibraryEnvironmentVar;
+        public String getOSLibraryEnvironmentVarName() {
+            return osLibraryEnvironmentVarName;
         }
 
     }
