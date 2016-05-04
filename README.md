@@ -1,15 +1,18 @@
 What?
 =====
 
-MariaDB4j is a Java "launcher" for MariaDB (=MySQL(R)), allowing to use it from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
+MariaDB4j is a Java "launcher" for MariaDB (=MySQL(R)), allowing to use it from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j! -- If you like/use this project, a Star / Watch / Follow me on GitHub is appreciated.
 
 Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(R) Database Server" :
 * Homepage: http://mariadb.org
 * FAQ: http://kb.askmonty.org/en/mariadb-faq
 * Wikipedia: http://en.wikipedia.org/wiki/MariaDB
 
-[![](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
+[ ![Bintray](https://api.bintray.com/packages/vorburger/maven/MariaDB4j/images/download.svg) ](https://bintray.com/vorburger/maven/MariaDB4j/_latestVersion)
+[![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
+[![Dependency Status](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.1.3/badge?style=flat)](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.1.3)
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
+
 
 How? (Java)
 ----
@@ -103,7 +106,14 @@ as the MariaDB4j API explicitly support this.
 Java developers frequently use pure Java databases such as H2, hsqldb (HyperSQL), Derby / JavaDB for this purpose.
 This library brings the advantage of the installation-free DB approach, while maintaining MariaDB (and thus MySQL) compatibility.
 
+Who's using it?
+---------------
+
 MariaDB4j was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see http://mifos.org. Coincidentally, OpenMRS the "Open Source Medical Records System" (see http://openmrs.org), another Humanitarian Open Source (HFOSS) project, also uses MariaDB4j (see https://github.com/vorburger/MariaDB4j/pull/1).
+
+_Please feel free to send a PR linking to your-own-cool-project-using-MariaDB4j_.
+
+As of May 2016, a [Git Hub Code search shows about 300 hits for MariaDB4j usages](https://github.com/search?p=3&q=MariaDB4j&type=Code&utf8=%E2%9C%93).
 
 Anything else?
 --------------
