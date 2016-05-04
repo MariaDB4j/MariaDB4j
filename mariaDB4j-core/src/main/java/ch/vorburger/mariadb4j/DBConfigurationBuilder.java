@@ -43,6 +43,7 @@ public class DBConfigurationBuilder {
     protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32
             : SystemUtils.IS_OS_MAC ? OSX : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
+    protected String libDir = baseDir + "/libs";
 
     protected String dataDir = DEFAULT_DATA_DIR;
     protected String socket = null; // see _getSocket()
@@ -70,6 +71,16 @@ public class DBConfigurationBuilder {
     public DBConfigurationBuilder setBaseDir(String baseDir) {
         checkIfFrozen("setBaseDir");
         this.baseDir = baseDir;
+        return this;
+    }
+
+    public String getLibDir() {
+        return libDir;
+    }
+
+    public DBConfigurationBuilder setLibDir(String libDir) {
+        checkIfFrozen("setLibDir");
+        this.libDir = libDir;
         return this;
     }
 
@@ -124,8 +135,8 @@ public class DBConfigurationBuilder {
 
     public DBConfiguration build() {
         frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(),
-                getBaseDir(), _getDataDir(), WIN32.equals(getOS()), _getArgs());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(),
+                _getDataDir(), WIN32.equals(getOS()), _getArgs(), getOSLibraryEnvironmentVar());
     }
 
     public DBConfigurationBuilder addArg(String arg) {
@@ -185,7 +196,7 @@ public class DBConfigurationBuilder {
             if (OSX.equals(getOS()))
                 databaseVersion = "mariadb-5.5.34";
             else if (LINUX.equals(getOS()))
-                databaseVersion = "mariadb-5.5.33a";
+                databaseVersion = "mariadb-10.1.8";
             else if (WIN32.equals(getOS()))
                 databaseVersion = "mariadb-10.0.13";
             else
@@ -211,6 +222,12 @@ public class DBConfigurationBuilder {
 
     public String getOS() {
         return osDirectoryName;
+    }
+
+    public String getOSLibraryEnvironmentVar() {
+        return SystemUtils.IS_OS_WINDOWS ? "PATH"
+                : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH "
+                        : "LD_LIBRARY_PATH";
     }
 
     protected String _getBinariesClassPathLocation() {

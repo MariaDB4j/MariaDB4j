@@ -47,6 +47,7 @@ public class MariaDB4jSpringServiceOverrideBySpringValueTest {
         protected void configureProperties(Properties properties) {
             properties.setProperty(MariaDB4jSpringService.PORT, "5679");
             properties.setProperty(MariaDB4jSpringService.BASE_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir");
+            properties.setProperty(MariaDB4jSpringService.LIB_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs");
             properties.setProperty(MariaDB4jSpringService.DATA_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir");
         }
     }
@@ -58,6 +59,7 @@ public class MariaDB4jSpringServiceOverrideBySpringValueTest {
     public void testOverrideBySpringValue() {
         assertEquals(5679, s.getConfiguration().getPort());
         assertEquals("target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir", s.getConfiguration().getBaseDir());
+        assertEquals("target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs", s.getConfiguration().getLibDir());
         assertEquals("target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir", s.getConfiguration().getDataDir());
     }
 
