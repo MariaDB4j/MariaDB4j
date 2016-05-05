@@ -10,9 +10,9 @@
 	<modules>
 		<module>mariaDB4j-core</module>
 
-		<module>mariaDB4j-db-win32</module>
-		<module>mariaDB4j-db-linux64</module>
-		<module>mariaDB4j-db-mac64</module>
+		<module>DBs/mariaDB4j-db-win32-10.0.13</module>
+		<module>DBs/mariaDB4j-db-linux64-10.1.8</module>
+		<module>DBs/mariaDB4j-db-mac64-5.5.34</module>
 
 		<module>mariaDB4j</module>
 
