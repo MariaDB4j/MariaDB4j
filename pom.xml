@@ -19,6 +19,7 @@
 		<module>mariaDB4j-app</module>
 	</modules>
 
+    <name>MariaDB4j</name>
 	<description>Java wrapper / launcher for MariaDB (or MySQL)</description>
 	<url>https://github.com/vorburger/MariaDB4j</url>
 	<inceptionYear>2012</inceptionYear>
