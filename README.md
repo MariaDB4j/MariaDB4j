@@ -134,7 +134,7 @@ Release?
 
 Must be done first make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)).
 
-    mvn release:prepare
+    mvn release:prepare (-Dresume=false)
     mvn release:perform
     mvn release:clean
 

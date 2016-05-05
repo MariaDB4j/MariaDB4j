@@ -102,6 +102,8 @@
 					<!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven 
 						http://jira.codehaus.org/browse/MGPG-9 & http://jira.codehaus.org/browse/MRELEASE-263 -->
 					<mavenExecutorId>forked-path</mavenExecutorId>
+					<!-- Following is required because artifactId is (now) mariaDB4j-pom, but we want mariaDB4j -->
+					<tagNameFormat>mariaDB4j-@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
 			
