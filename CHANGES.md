@@ -1,12 +1,18 @@
 MariaDB4j Release Notes
 =======================
 
-v2.2.0 @ TODO
+v2.2.0 @ 2016-05-05
 ---
 
-* MAJOR Distribution and project org. split up formerly monolithic MariaDB4j into separate core, exec and binaries artifacts
+* MAJOR Distribution and project org. split up formerly monolithic MariaDB4j into separate core, exec and binaries artifacts; separately versioned
 * @CedricGatay: NEW addArg() method in DBConfigurationBuilder to pass additional flags when spawning a new MariaDB/Mysql process (e.g. like lower_case_table_names, in a mixed OS environment)
+* @jahewson: Security related fixed Exception if there are spaces in the data directory path https://github.com/vorburger/MariaDB4j/issues/30
+* @timorohwedder: API extended for setting OS dependent library path to optional binary libraries 
+* @timorohwedder: Bumped (upgraded) bundled MariaDB Linux version
+* Kevin McLaughlin: Synchronize DB install to try to fix some intermittent test failures when running parallel tests in maven that depend on MariaDB4j
+* Bumped (upgraded) versions of some 3rd-party Java libraries; thanks https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/
 * Src: Tabs to Spaces, and enforced by Checkstyle running in Build
+
 
 v2.1.3 @ 2014-12-27
 ----
