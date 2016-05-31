@@ -1,1 +1,5 @@
 language: java
+# We need Java 7, even though the source code is still Java 6, because Checkstyle during build is Java 7+ only
+jdk: 
+  - oraclejdk7
+
