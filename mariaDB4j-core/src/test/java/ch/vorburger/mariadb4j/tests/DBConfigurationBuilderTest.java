@@ -29,6 +29,10 @@ import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.Util;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class DBConfigurationBuilderTest {
 
     @Test
@@ -75,5 +79,39 @@ public class DBConfigurationBuilderTest {
         assertTrue(Util.isTemporaryDirectory(defaultDataDir));
         int port = config.getPort();
         assertTrue(defaultDataDir.contains(Integer.toString(port)));
+    }
+
+    @Test
+    public void defaultLibDirIsRelativeToBaseDir() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration config = builder.build();
+        String defaultBaseDir = config.getBaseDir();
+        assertTrue(Util.isTemporaryDirectory(defaultBaseDir));
+        String defaultLibDir = config.getLibDir();
+        assertEquals(defaultLibDir, defaultBaseDir+ "/libs");
+    }
+
+    @Test
+    public void defaultLibDirIsRelativeToUpdatedBaseDir() throws IOException {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        Path baseDir = Files.createTempDirectory("mariadb");
+        builder.setBaseDir(baseDir.toAbsolutePath().toString());
+        DBConfiguration config = builder.build();
+
+        String defaultLibDir = config.getLibDir();
+        assertEquals(defaultLibDir, baseDir + "/libs");
+    }
+
+    @Test
+    public void modifiedLibDir() throws IOException {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        Path libDir = Files.createTempDirectory("libsdir");
+        builder.setLibDir(libDir.toAbsolutePath().toString());
+        Path baseDir = Files.createTempDirectory("mariadb");
+        builder.setBaseDir(baseDir.toAbsolutePath().toString());
+        DBConfiguration config = builder.build();
+
+        String updatedLibDir = config.getLibDir();
+        assertEquals(updatedLibDir, libDir.toAbsolutePath().toString());
     }
 }

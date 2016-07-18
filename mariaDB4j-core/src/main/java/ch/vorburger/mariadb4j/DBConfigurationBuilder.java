@@ -43,7 +43,7 @@ public class DBConfigurationBuilder {
     protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32
             : SystemUtils.IS_OS_MAC ? OSX : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
-    protected String libDir = baseDir + "/libs";
+    protected String libDir = null;
 
     protected String dataDir = DEFAULT_DATA_DIR;
     protected String socket = null; // see _getSocket()
@@ -75,7 +75,10 @@ public class DBConfigurationBuilder {
     }
 
     public String getLibDir() {
-        return libDir;
+        if (libDir == null)
+            return baseDir + "/libs";
+        else
+            return libDir;
     }
 
     public DBConfigurationBuilder setLibDir(String libDir) {
