@@ -74,22 +74,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-<!-- 				
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
- -->			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -185,6 +170,18 @@
 				</executions>
 			</plugin>
 			
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            
 		</plugins>
 		
 		<pluginManagement>
@@ -227,6 +224,30 @@
 		
 	</build>			
 
+    <profiles>
+        <profile>
+            <id>gpg</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 	<dependencyManagement>
 	     <dependencies>
 	        <dependency>
@@ -246,11 +267,13 @@
 	</dependencyManagement>
 
 	<distributionManagement>
-		<repository>
-			<id>bintray-vorburger-maven-MariaDB4j</id>
-			<name>vorburger-maven-MariaDB4j</name>
-			<url>https://api.bintray.com/maven/vorburger/maven/MariaDB4j</url>
-		</repository>
+        <!-- http://central.sonatype.org/pages/apache-maven.html -->
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <!-- <repository> isn't needed with nexus-staging-maven-plugin, it somehow
+             has this hard-coded or automatically find sit somehow, IFF <version> is non-SNAPSHOT -->
 	</distributionManagement>
 
 </project>
