@@ -60,8 +60,7 @@ public class Util {
             try {
                 FileUtils.forceMkdir(dir);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Unable to create new directory at path: "
-                        + path, e);
+                throw new IllegalArgumentException("Unable to create new directory at path: " + path, e);
             }
         }
         String absPath = dir.getAbsolutePath();
@@ -94,8 +93,7 @@ public class Util {
         if (executableFile.exists() && !executableFile.canExecute()) {
             boolean succeeded = executableFile.setExecutable(true);
             if (succeeded) {
-                logger.info("chmod +x " + executableFile.toString()
-                        + " (using java.io.File.setExecutable)");
+                logger.info("chmod +x " + executableFile.toString() + " (using java.io.File.setExecutable)");
             } else {
                 throw new IOException("Failed to do chmod +x " + executableFile.toString()
                         + " using java.io.File.setExecutable, which will be a problem on *NIX...");
@@ -122,15 +120,21 @@ public class Util {
         int counter = 0;
         for (Resource resource : resources) {
             if (resource.isReadable()) { // Skip hidden or system files
-                URL url = resource.getURL();
+                final URL url = resource.getURL();
                 String path = url.toString();
                 if (!path.endsWith("/")) { // Skip directories
                     int p = path.lastIndexOf(packagePath) + packagePath.length();
                     path = path.substring(p);
-                    File targetFile = new File(toDir, path);
+                    final File targetFile = new File(toDir, path);
                     long len = resource.contentLength();
                     if (!targetFile.exists() || targetFile.length() != len) { // Only copy new files
-                        FileUtils.copyURLToFile(url, targetFile);
+                        tryN(5, 500, new Procedure<IOException>() {
+
+                            @Override
+                            public void apply() throws IOException {
+                                FileUtils.copyURLToFile(url, targetFile);
+                            }
+                        });
                         counter++;
                     }
                 }
@@ -141,5 +145,31 @@ public class Util {
             logger.info("Unpacked {} files from {} to {}", info);
         }
         return counter;
+    }
+
+    @SuppressWarnings("null")
+    private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
+        IOException lastIOException = null;
+        int attemps = 0;
+        while (attemps++ < n) {
+            try {
+                procedure.apply();
+            } catch (IOException e) {
+                logger.warn("Failure " + attemps + " of " + n + ", retrying again in " + msToWait + "ms", e);
+                try {
+                    Thread.sleep(msToWait);
+                } catch (InterruptedException interruptedException) {
+                    // Ignore
+                }
+            }
+        }
+        if (attemps == 3) {
+            throw lastIOException;
+        }
+    }
+
+    private static interface Procedure<E extends Throwable> {
+
+        void apply() throws E;
     }
 }
