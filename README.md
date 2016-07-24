@@ -10,7 +10,7 @@ Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(
 
 [ ![Bintray](https://api.bintray.com/packages/vorburger/maven/MariaDB4j/images/download.svg) ](https://bintray.com/vorburger/maven/MariaDB4j/_latestVersion)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
-[![Dependency Status](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1/badge?style=flat)](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.0)
+[![Dependency Status](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1/badge?style=flat)](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1)
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
 
 
@@ -130,6 +130,8 @@ A: This could happen e.g. on Fedora 24 (if you have not previous installed any o
 
 Release?
 --------
+
+When doing a release, update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available by [having a look at the VersionEye page](https://www.versioneye.com/user/projects/5368ed4914c158e279000020). 
 
     mvn license:update-file-header
     mvn -Dmaven.test.skip=true package
