@@ -1,7 +1,7 @@
 What?
 =====
 
-MariaDB4j is a Java "launcher" for MariaDB (=MySQL(R)), allowing to use it from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j! -- If you like/use this project, a Star / Watch / Follow me on GitHub is appreciated.
+MariaDB4j is a Java "launcher" for MariaDB (=MySQL(R)), allowing to use it from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j! -- If you like/use this project, a Star / Watch / Follow me on GitHub is appreciated. Also, unless you're working on the-next-super-secret-thing, it would be cool if you sent a PR adding your name/project to the [USERS.md](USERS.md) file to show your appreciation for this free project!
 
 Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(R) Database Server" :
 * Homepage: http://mariadb.org
@@ -111,9 +111,8 @@ Who's using it?
 
 MariaDB4j was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see http://mifos.org. Coincidentally, OpenMRS the "Open Source Medical Records System" (see http://openmrs.org), another Humanitarian Open Source (HFOSS) project, also uses MariaDB4j (see https://github.com/vorburger/MariaDB4j/pull/1).
 
-_Please feel free to send a PR linking to your-own-cool-project-using-MariaDB4j_.
+See the [USERS.md](USERS.md) file (also included in each built JAR!) for a list of known users, and please send a PR adding your name to it to show your appreciation for this free project!
 
-As of May 2016, a [Git Hub Code search shows about 300 hits for MariaDB4j usages](https://github.com/search?p=3&q=MariaDB4j&type=Code&utf8=%E2%9C%93).
 
 Anything else?
 --------------
@@ -147,12 +146,8 @@ Discard and go back to fix something and re-release (before Publishing in Bintra
 Who?
 ----
 
-Here are some of the early contributors, latest/current also on https://github.com/vorburger/MariaDB4j/graphs/contributors:
+See the [CONTRIBUTORS.md](CONTRIBUTORS.md) file (also included in each built JAR!) for a list of contributors.
 
-* Michael Vorburger, February/March 2012.
-* Michael Seaton, October 2013.
-* Juhani Simola, March 2014.
-* Cedric Gatay, March 2015.
-* _YourNameHere, if you jump on-board..._
+Latest/current also on https://github.com/vorburger/MariaDB4j/graphs/contributors:
 
-Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
+Contributions, patches, forks more than welcome - hack it, and add your name! ;-)

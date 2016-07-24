@@ -1,0 +1,13 @@
+MariaDB4j USERS
+
+As of July 2016, a [Git Hub Code search shows almost 400 usages of for MariaDB4j](https://github.com/search?p=3&q=MariaDB4j&type=Code&utf8=%E2%9C%93).
+
+If you use the project too, please show your support for the project by adding your name in this list:
+
+- http://mifos.org project
+- http://openmrs.org project
+- Kris Bloe @chrisbloe; for https://en.wikipedia.org/wiki/Costcutter
+- Florian Léger @fleger; for http://crystalrec.com by http://www.enovea.net
+- nyo @lc-nyovchev; at http://relay42.com  
+
+also see https://github.com/vorburger/MariaDB4j/issues/21.
