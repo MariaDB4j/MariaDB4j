@@ -131,16 +131,28 @@ A: This could happen e.g. on Fedora 24 (if you have not previous installed any o
 Release?
 --------
 
-When doing a release, update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available by [having a look at the VersionEye page](https://www.versioneye.com/user/projects/5368ed4914c158e279000020). 
+When doing a release, here are a few things to do every time:
+
+1. update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available by [having a look at the VersionEye page](https://www.versioneye.com/user/projects/5368ed4914c158e279000020). 
+
+2. Make sure the project builds, without pulling anything which should be part of this build from outside: 
+
+   mvn clean package; rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j; mvn -o clean package
+
+3. Make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)):
 
     mvn license:update-file-header
     mvn -Dmaven.test.skip=true package
 
-Must be done first make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)).
+4. Prepare the release:
 
     mvn release:prepare (-Dresume=false)
     mvn release:perform
     mvn release:clean
+
+5. Deploy to Maven central:
+
+   mvn deploy -Pgpg
 
 Discard and go back to fix something and re-release (before Publishing in Bintray) e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push ssh :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
 
