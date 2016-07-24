@@ -90,7 +90,10 @@ source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven
 
 If you use your own packaged versions of MariaDB native binaries, then the mariaDB4j-core artifact JAR,
 which contains only the launcher Java code but no embedded native binaries, will be more suitable for you.  
-Similarly, you could also exclude one of artifacts of the currently 3 packaged OS platform.
+
+Similarly, you could also exclude one of artifacts of the currently 3 packaged OS platform to save download if your project / community is mono-platform.
+
+You could also override the version(s) of the respective (transitive) mariaDB4j-db dependency to downgrade it, and should so be able to use the latest mariaDB4j-core & app artifact JARs even with older versions of the JAR archives containing the native mariaDB executables etc. if your project for some reason is stuck on a fixed DB version, but wants to get the latest MariaDB4j.
 
 [Release Notes are in CHANGES.md](CHANGES.md).
 
@@ -119,13 +122,32 @@ Anything else?
 
 Security nota bene: Per default, the MariaDB4j install() creates a new DB with a 'root' user without a password.
 
+More generally, note that if you are using the provided mariadb database artifacts, then you are pulling platform specific native binaries which will be executed on your system from a remote repository, not just regular Java JARs with classes running in the JVM, through this project.  If you are completely security paranoid, this may worry you (or someone else in your organization).  If that is the case, note that you could still use only the mariadb4j-core artifact from this project, but use a JAR file containing the binaries which you have created and deployed to your organization's Maven repository yourself.
+
+
+MariaDB database JARs, and version upgrades
+-------------------------------------------
+
+The original creator and current maintainer of this library (@vorburger) will gladly merge any pull request contributions with updates to the MariaDB native binaries.  If you raise a change with new versions, you will be giving back to other users of the community, in exchange for being able to use this free project - that's how open-source works.  
+
+Any issues raised in the GitHub bug tracker about requesting new versions of MariaDB native binaries will be tagged with the "helpwanted" label, asking for contributions from YOU or others - ideally from the person raising the issue, but perhaps from someone else, some.. other time, later.  (But if you are reading this, YOU should contribute through a Pull Request!)
+
+Note that the Maven <version> number of the core/app/pom artifacts versus the db artifacts, while originally the same, or now intentionally decoupled for this reason.  So your new DBs/mariaDB4j-db-(linux/mac/win)(64/32)-VERSION/pom.xml should have its Maven <version> matching the new mariadb binary you are contributing (probably like 10.1.x or so), and not the MariaDB4j launcher (which is like 2.x.y).
+
+In addition to the new directory, you then need to correspondingly increase: 1. the <version> of the <dependency> in the mariaDB4j/pom.xml (non-root);  2. the <module> in the (root) pom.xml;  3. the databaseVersion in the DBConfigurationBuilder class.  Please have a look for contributions made by others in the git log if in doubt.   Please TEST your pull request on your platform!  @vorburger will only only run the build on Linux, not Windows and Mac OS X.
+
+So when you contribute new MariaDB native binaries versions, place them in a new directory named mariaDB4j-db-PLATFORM-VERSION under the DBs/ directory - next to the existing ones.  This is better than renaming an existing one and replacing files, because (in theory) if someone wanted to they could then easily still depend on earlier released database binary versions just by changing the <dependency> of the mariaDB4j-db* artifactId in their own project's pom.xml, even with using later version of MariaDB4j Java classes (mariadb4j core & app).  
+
+Of course, even if we would replace existing version with new binaries (like it used to originally be done in the project), then the ones already deployed to Bintray & Maven central would remain there.  However it is just much easier to see which version are available, and to locally build JARs for older versions, if all are simply kept in the head master branch (even if not actively re-built anymore, other than the latest version).  The size of the git repository will gradually grow through this, and slightly more than if we would replace existing binaries (because git uses delta diffs, for both text and binary files).  We just accept that in this project - for clarity & convenience. 
+
+
 FAQ
 ---
 Q: Is MariaDB4j stable enough for production? I need the data to be safe, and performant.
 A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
 
 Q: ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory 
-A: This could happen e.g. on Fedora 24 (if you have not previous installed any other software package which requires libncurses), and can be finding the package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then installed that via `sudo dnf install ncurses-compat-libs`.
+A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`.
 
 
 Release?
