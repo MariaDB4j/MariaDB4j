@@ -8,9 +8,10 @@ v2.2.1 @ 2016-07-24
 * Maven central release [issue #21](https://github.com/vorburger/MariaDB4j/issues/21): Finally, as requested for too long by too many... ;-) FYI @nicmon @metawave @krm1312 @alexpanov @jinahya @kedgecomb @lc-nyovchev @tbenedetti-lendico @fleger @chrisbloe @fleger @lc-nyovchev @ollemuhr @laurent-dol
 * @anverus fixed [issue #39](https://github.com/vorburger/MariaDB4j/issues/39): If baseDir is set libedir has to be repointed too to make use of bundled native libs
 * @ghiron for @honestica contributed upgrade of mariadb linux version from 10.1.8 to 10.1.13 
-* README updated with new section re. DB upgrade contributions 
+* README updated with new section re. DB upgrade contributions
+* Upgrade version of Spring Framework, Spring Boot, and some Maven plugins
 * API extension: class DB has a handy getConfiguration() method to get its original DBConfiguration back
-* JARs built include README, CHANGES, LEGAL, CONTRIBUTORS, LICENSE, CONTRIBUTING, NOTICE  
+* JARs built include README, CHANGES, LEGAL, LICENSE; and (new!) CONTRIBUTORS, CONTRIBUTING, NOTICE  
 * NOTICE file https://github.com/vorburger/MariaDB4j/issues/14
 * Fedora 24 related build test failure and README doc update
 
