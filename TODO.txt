@@ -1,6 +1,6 @@
 SOME DAY
 
-- Oomph Setup Model, incl. Checkstyle and m2e-checkstyle plug-ins, and its configuration
+- MariaDB4j.setup to test and register: Oomph Setup Model, incl. Checkstyle and m2e-checkstyle plug-ins, and its configuration
 
 - add https://github.com/brsanthu/google-analytics-java to see how many people actually use this? ;-)
   (Must be able to disable via some -DmariaDB4j.dnt=true kind of switch)
@@ -8,12 +8,6 @@ SOME DAY
 - must close Ext. Proc. STDIN / STDOUT & STDERR, on destroy as well as if running in daemon mode?
 
 - uid & pwd on DBConfigurationBuilder etc.
-
-- LICENSE.txt & README must be included in all *-db JARs
-
-- Sync Bintray deploy to Maven Central https://github.com/vorburger/MariaDB4j/issues/21
-  http://blog.bintray.com/2014/02/11/bintray-as-pain-free-gateway-to-maven-central/ or 
-  https://github.com/jirutka/maven-badges, or https://github.com/jirutka/maven-badges
 
 
 LATER, MAY BE (or not)
