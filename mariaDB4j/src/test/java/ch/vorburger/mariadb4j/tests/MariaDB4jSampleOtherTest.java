@@ -19,6 +19,9 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 
@@ -39,6 +42,9 @@ public class MariaDB4jSampleOtherTest {
         DB db2 = startNewDB();
         db1.stop();
         db2.stop();
+        // see below in customBaseDir() why we need this here
+        FileUtils.deleteQuietly(new File(db1.getConfiguration().getBaseDir()));
+
     }
 
     protected DB startNewDB() throws ManagedProcessException {
@@ -58,6 +64,26 @@ public class MariaDB4jSampleOtherTest {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         // Note that this dataDir intentionally contains a space before its last word
         config.setDataDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/" + MariaDB4jSampleOtherTest.class.getName() + " dataDirWithSpace");
+        DB db = DB.newEmbeddedDB(config.build());
+        db.start();
+        db.stop();
+        // see below in customBaseDir() why we need this here
+        FileUtils.deleteQuietly(new File(db.getConfiguration().getBaseDir()));
+    }
+
+    /**
+     * Reproduces issue #39 re. libDir having to be correctly sate "late" and not on DBConfigurationBuilder constructor in case of a
+     * non-default baseDir.
+     * 
+     * <p>This test passes even without the bug fix if another test "left over" a base dir with a libs/ directory in JAVA_IO_TMPDIR. The two
+     * tests above does clean up after themselves directly. The default behaviour is for the class DB to do this only in a Shutdown hook,
+     * which is too late for what this test wants to ensure.
+     * 
+     * @see <a href="https://github.com/vorburger/MariaDB4j/issues/39">MariaDB4j issue #39</a>
+     */
+    @Test public void customBaseDir() throws Exception {
+        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+        config.setBaseDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/" + MariaDB4jSampleOtherTest.class.getName() + "customBaseDir");
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
         db.stop();

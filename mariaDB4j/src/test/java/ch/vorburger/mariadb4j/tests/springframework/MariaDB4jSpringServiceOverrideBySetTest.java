@@ -41,20 +41,18 @@ public class MariaDB4jSpringServiceOverrideBySetTest {
 
     @Configuration
     public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
-        @Override
-        protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
+
+        @Override protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
             s.setDefaultPort(5677);
             s.setDefaultBaseDir("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir");
-            s.setDefaultLibDir("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir/libs");
+            // do NOT s.setDefaultLibDir() - it will (should) default to "baseDir/libs"; see issue #39
             s.setDefaultDataDir("target/MariaDB4jSpringServiceOverrideBySetTest/dataDir");
         }
     }
 
-    @Autowired
-    MariaDB4jSpringService s;
+    @Autowired MariaDB4jSpringService s;
 
-    @Test
-    public void testOverrideBySet() {
+    @Test public void testOverrideBySet() {
         assertEquals(5677, s.getConfiguration().getPort());
         assertEquals("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir", s.getConfiguration().getBaseDir());
         assertEquals("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir/libs", s.getConfiguration().getLibDir());

@@ -8,6 +8,7 @@ MariaDB4j CONTRIBUTORS
 - Timö @timorohwedder
 - Juhani Simola @osimola; March 2014
 - Cedric Gatay; March 2015
+- anverus @anverus; July 2017
 
 also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
