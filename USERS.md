@@ -10,4 +10,6 @@ If you too use MariaDB4j, please show your support for the project by adding you
 - Florian Léger @fleger; for http://crystalrec.com by http://www.enovea.net
 - nyo @lc-nyovchev; at http://relay42.com  
 
+Also see the [CONTRIBUTORS.md](CONTRIBUTORS.md) file for a list of contributors. 
+
 also see https://github.com/vorburger/MariaDB4j/issues/21 for how this list started.

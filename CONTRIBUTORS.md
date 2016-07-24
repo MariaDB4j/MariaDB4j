@@ -11,6 +11,7 @@ MariaDB4j CONTRIBUTORS
 - Kevin McLaughlin <Kevin.McLaughlin@ipsoft.com> (http://ipsoft.com)
 - John Hewson @jahewson <john@jahewson.com> (http://jahewson.com)
 - Anver Sotnikov @anverus <asotnikov@tripadvisor.com> (http://tripadvisor.com); July 2016
+- Guillaume Hiron @ghiron (http://www.honestica.com)
 
 also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
