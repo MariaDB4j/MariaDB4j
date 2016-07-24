@@ -56,6 +56,11 @@
 			<url>http://www.vorburger.ch</url>
 		</developer>
 	</developers>
+    <contributors>
+        <contributor>
+            <name>Please consult the CONTRIBUTORS file which should be included with this JAR</name>
+        </contributor>
+    </contributors>
 
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
