@@ -1,66 +1,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-	<groupId>ch.vorburger.mariaDB4j</groupId>
+    <parent>
+        <groupId>ch.vorburger.mariaDB4j</groupId>
+        <artifactId>mariaDB4j-pom-lite</artifactId>
+        <!-- Do NOT depend on a SNAPSHOT here! -->
+        <version>2.2.1</version>
+        <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>      
+    </parent>
+    
 	<artifactId>mariaDB4j-pom</artifactId>
 	<version>2.2.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
+        <!-- We do NOT include <module> for the mariaDB4j-pom-lite, nor for the DBs/mariaDB4j-db-* here!
+        
+             This is because those are NOT version'd the same way as this artifact and the ones below.
+             Therefore the mvn release:* and mvn depoy is done separately for this (below)
+             and the mariaDB4j-pom-lite and DBs/mariaDB4j-db-*.
+         -->
 		<module>mariaDB4j-core</module>
-
-		<module>DBs/mariaDB4j-db-win32-10.0.13</module>
-		<module>DBs/mariaDB4j-db-linux64-10.1.13</module>
-		<module>DBs/mariaDB4j-db-mac64-5.5.34</module>
-
 		<module>mariaDB4j</module>
-
 		<module>mariaDB4j-app</module>
 	</modules>
-
-    <name>MariaDB4j</name>
-	<description>Java wrapper / launcher for MariaDB (or MySQL)</description>
-	<url>https://github.com/vorburger/MariaDB4j</url>
-	<inceptionYear>2012</inceptionYear>
-
-	<licenses>
-		<license>
-			<name>Apache 2</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-		<license>
-			<name>Eclipse Public License v1.0</name>
-			<url>http://www.eclipse.org/legal/epl-v10.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<scm>
-		<connection>https://github.com/vorburger/MariaDB4j.git</connection>
-		<developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
-		<url>https://github.com/vorburger/MariaDB4j</url>
-		<tag>HEAD</tag>
-	</scm>
-
-    <organization>
-	    <name>Michael Vorburger</name>
-	    <url>http://www.vorburger.ch</url>
-    </organization>
-
-	<developers>
-		<developer>
-			<id>vorburger</id>
-			<name>Michael Vorburger</name>
-			<email>mike@vorburger.ch</email>
-			<url>http://www.vorburger.ch</url>
-		</developer>
-	</developers>
-    <contributors>
-        <contributor>
-            <name>Please consult the CONTRIBUTORS file which should be included with this JAR</name>
-        </contributor>
-    </contributors>
 
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -141,51 +104,6 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
-				<configuration>
-				  <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
-				  <excludeResources>true</excludeResources>
-				 <includePom>true</includePom>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-                      <version>2.10.4</version>
-                      <configuration>
-                          <quiet>true</quiet>
-                      </configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
 <!--            
             <plugin>
                 <groupId>com.versioneye</groupId>
@@ -198,129 +116,10 @@
             </plugin>
   -->
 
-            <plugin>
-                <groupId>com.alexecollins.maven.plugin</groupId>
-                <artifactId>script-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <executions>
-                   <execution>
-                     <phase>prepare-package</phase>
-                     <goals>
-                       <goal>execute</goal>
-                     </goals>
-                     <configuration>
-                       <script>
-                         // BeanShell is 2005-ish and thus doesn't support generics, varargs, try-with-resources or lambdas, so:
-                         // (If we do this kind of inline code in pom.xml more often, we shold have a new simple module in
-                         //  odl-parent, which has *.java that we compile, and then just depend on it here and call one-line
-                         //  static class methods only - it will be MUCH easier to write!)
-                         void copy(File root, String glob, File target) {
-                             java.nio.file.DirectoryStream dirStream = java.nio.file.Files.newDirectoryStream(root.toPath(), glob);
-                             Iterator dirStreamIterator = dirStream.iterator();
-                             while (dirStreamIterator.hasNext()) {
-                                 java.nio.file.Path path = dirStreamIterator.next();
-                                 java.nio.file.Files.copy(path, new File(target, path.toFile().getName()).toPath(),
-                                     new java.nio.file.CopyOption[] {
-                                         java.nio.file.StandardCopyOption.REPLACE_EXISTING,
-                                         java.nio.file.StandardCopyOption.COPY_ATTRIBUTES
-                                     }
-                                 );
-                             }
-                             dirStream.close();
-                         }
-        
-                         File gitRepoRootDir = project.basedir;
-                         while (!new File(gitRepoRootDir, ".git").exists() &amp;&amp; gitRepoRootDir.getParentFile() != null) {
-                             gitRepoRootDir = gitRepoRootDir.getParentFile();
-                         }
-        
-                         File target = new File(project.build.outputDirectory);
-                         target.mkdirs();
-                         copy(gitRepoRootDir, "README*", target);
-                         copy(gitRepoRootDir, "CONTRIBUTING*", target);
-                         copy(gitRepoRootDir, "CHANGES*", target);
-                         copy(gitRepoRootDir, "LEGAL*", target);
-                         copy(gitRepoRootDir, "CONTRIBUTORS*", target);
-                         copy(gitRepoRootDir, "LICENSE*", target);
-                         copy(gitRepoRootDir, "NOTICE*", target);
-                       </script>
-                     </configuration>
-                   </execution>
-                 </executions>
-                 <dependencies>
-                   <dependency>
-                     <groupId>org.apache-extras.beanshell</groupId>
-                     <artifactId>bsh</artifactId>
-                     <version>2.0b6</version>
-                   </dependency>
-                 </dependencies>
-              </plugin>
-
 		</plugins>
 		
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo
-										</groupId>
-										<artifactId>
-											license-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.7,)
-										</versionRange>
-										<goals>
-											<goal>
-												check-file-header
-											</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		
 	</build>			
-
-    <profiles>
-        <profile>
-            <id>gpg</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 	<dependencyManagement>
 	     <dependencies>
@@ -339,15 +138,5 @@
 			</dependency>
 	    </dependencies>
 	</dependencyManagement>
-
-	<distributionManagement>
-        <!-- http://central.sonatype.org/pages/apache-maven.html -->
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <!-- <repository> isn't needed with nexus-staging-maven-plugin, it somehow
-             has this hard-coded or automatically find sit somehow, IFF <version> is non-SNAPSHOT -->
-	</distributionManagement>
 
 </project>
