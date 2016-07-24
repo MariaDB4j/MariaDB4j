@@ -7,8 +7,10 @@ MariaDB4j CONTRIBUTORS
 - Stephane Zermatten @szermatt
 - Timö @timorohwedder
 - Juhani Simola @osimola; March 2014
-- Cedric Gatay; March 2015
-- anverus @anverus; July 2017
+- Cedric Gatay @CedricGatay; March 2015
+- Kevin McLaughlin <Kevin.McLaughlin@ipsoft.com> (http://ipsoft.com)
+- John Hewson @jahewson <john@jahewson.com> (http://jahewson.com)
+- Anver Sotnikov @anverus <asotnikov@tripadvisor.com> (http://tripadvisor.com); July 2016
 
 also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
