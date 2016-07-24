@@ -125,6 +125,9 @@ FAQ
 Q: Is MariaDB4j stable enough for production? I need the data to be safe, and performant.
 A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
 
+Q: ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory 
+A: This could happen e.g. on Fedora 24 (if you have not previous installed any other software package which requires libncurses), and can be finding the package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then installed that via `sudo dnf install ncurses-compat-libs`.
+
 
 Release?
 --------
