@@ -43,7 +43,7 @@ public class DB {
 
     private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
-    protected final DBConfiguration config;
+    protected final DBConfiguration configuration;
 
     private File baseDir;
     private File libDir;
@@ -53,7 +53,11 @@ public class DB {
     protected int dbStartMaxWaitInMS = 30000;
 
     protected DB(DBConfiguration config) {
-        this.config = config;
+        this.configuration = config;
+    }
+
+    public DBConfiguration getConfiguration() {
+        return configuration;
     }
 
     /**
@@ -96,9 +100,9 @@ public class DB {
             throw new ManagedProcessException(
                     "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
-        builder.getEnvironment().put(config.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
+        builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
-        if (!config.isWindows()) {
+        if (!configuration.isWindows()) {
             builder.addFileArgument("--basedir", baseDir);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
@@ -126,7 +130,7 @@ public class DB {
     }
 
     protected String getWinExeExt() {
-        return config.isWindows() ? ".exe" : "";
+        return configuration.isWindows() ? ".exe" : "";
     }
 
     /**
@@ -159,7 +163,7 @@ public class DB {
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
         ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
-        builder.getEnvironment().put(config.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
+        builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
         builder.addArgument("--skip-grant-tables");
@@ -167,7 +171,7 @@ public class DB {
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
         builder.addFileArgument("--datadir", dataDir);
         addPortAndMaybeSocketArguments(builder);
-        for (String arg : config.getArgs()) {
+        for (String arg : configuration.getArgs()) {
             builder.addArgument(arg);
         }
         cleanupOnExit();
@@ -183,17 +187,17 @@ public class DB {
     }
 
     protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder) throws IOException {
-        builder.addArgument("--port=" + config.getPort());
-        if (!config.isWindows()) {
+        builder.addArgument("--port=" + configuration.getPort());
+        if (!configuration.isWindows()) {
             builder.addFileArgument("--socket", getAbsoluteSocketFile());
         }
     }
 
     protected void addSocketOrPortArgument(ManagedProcessBuilder builder) throws IOException {
-        if (!config.isWindows()) {
+        if (!configuration.isWindows()) {
             builder.addFileArgument("--socket", getAbsoluteSocketFile());
         } else {
-            builder.addArgument("--port=" + config.getPort());
+            builder.addArgument("--port=" + configuration.getPort());
         }
     }
 
@@ -205,7 +209,7 @@ public class DB {
      * @return config.getSocket() as File getAbsolutePath()
      */
     protected File getAbsoluteSocketFile() {
-        String socket = config.getSocket();
+        String socket = configuration.getSocket();
         File socketFile = new File(socket);
         return socketFile.getAbsoluteFile();
     }
@@ -290,14 +294,14 @@ public class DB {
      * on the configuration.
      */
     protected void unpackEmbeddedDb() {
-        if (config.getBinariesClassPathLocation() == null) {
+        if (configuration.getBinariesClassPathLocation() == null) {
             logger.info("Not unpacking any embedded database (as BinariesClassPathLocation configuration is null)");
             return;
         }
 
         try {
-            Util.extractFromClasspathToFile(config.getBinariesClassPathLocation(), baseDir);
-            if (!config.isWindows()) {
+            Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
+            if (!configuration.isWindows()) {
                 Util.forceExecutable(newExecutableFile("bin", "my_print_defaults"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql_install_db"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqld"));
@@ -315,10 +319,10 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     protected void prepareDirectories() throws ManagedProcessException {
-        baseDir = Util.getDirectory(config.getBaseDir());
-        libDir = Util.getDirectory(config.getLibDir());
+        baseDir = Util.getDirectory(configuration.getBaseDir());
+        libDir = Util.getDirectory(configuration.getLibDir());
         try {
-            String dataDirPath = config.getDataDir();
+            String dataDirPath = configuration.getDataDir();
             if (Util.isTemporaryDirectory(dataDirPath)) {
                 FileUtils.deleteDirectory(new File(dataDirPath));
             }

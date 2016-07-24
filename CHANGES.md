@@ -6,6 +6,7 @@ v2.2.1 @ 2016-07-24
 ---
 
 * @nicmon @metawave @krm1312 @alexpanov @jinahya @kedgecomb @lc-nyovchev @tbenedetti-lendico @fleger @chrisbloe @fleger @lc-nyovchev @ollemuhr @laurent-dol Maven central release; finally, as requested for too long by too many... ;-) https://github.com/vorburger/MariaDB4j/issues/21
+* API extension: class DB now has a handy getConfiguration() method to get its original DBConfiguration back
 * JARs built include README, CHANGES, LEGAL, CONTRIBUTORS, LICENSE, CONTRIBUTING, NOTICE  
 * NOTICE file https://github.com/vorburger/MariaDB4j/issues/14
 * Fedora 24 related build test failure and README doc update
