@@ -9,6 +9,7 @@
 	</parent>
 
 	<artifactId>mariaDB4j</artifactId>
+    <name>mariaDB4j (all-in-one artifact)</name>
 
 	<dependencies>
 		<dependency>

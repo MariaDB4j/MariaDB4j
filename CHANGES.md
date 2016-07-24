@@ -1,6 +1,14 @@
 MariaDB4j Release Notes
 =======================
 
+
+v2.2.1 @ TBD
+---
+
+* @nicmon @metawave @krm1312 @alexpanov @jinahya @kedgecomb @lc-nyovchev @tbenedetti-lendico @fleger @chrisbloe @fleger @lc-nyovchev @ollemuhr @laurent-dol Maven central release; finally, as requested for too long by too many... ;-) https://github.com/vorburger/MariaDB4j/issues/21
+* Fedora 24 related build test failure and README doc update
+
+
 v2.2.0 @ 2016-05-05
 ---
 
