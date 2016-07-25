@@ -4,7 +4,8 @@
     <parent>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
-        <!-- Do NOT depend on a SNAPSHOT here! -->
+        <!-- Do NOT depend on a SNAPSHOT here!
+             Note that this parent version and the version below are, intentionally, completely unrelated. -->
         <version>2.2.1</version>
         <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>      
     </parent>
@@ -12,6 +13,16 @@
 	<artifactId>mariaDB4j-pom</artifactId>
 	<version>2.2.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
+    <scm>
+        <!-- The <connection> and <url> are specified in the <parent> but the 
+             <developerConnection> and the <tag> must be here, for the maven-release-plugin
+             to work correctly, if the <parent> is not a SNAPSHOT;
+             see https://github.com/vorburger/MariaDB4j/issues/43.
+         -->
+        <developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
 	<modules>
         <!-- We do NOT include <module> for the mariaDB4j-pom-lite, nor for the DBs/mariaDB4j-db-* here!
