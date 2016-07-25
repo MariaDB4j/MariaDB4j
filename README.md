@@ -153,7 +153,7 @@ A: This could happen e.g. on Fedora 24 if you have not previous installed any ot
 Release?
 --------
 
-Remember that mariaDB4j-pom-lite & DBs/mariaDB4j-db-* are now versioned non SNAPSHOT, always fixed; VS the rest that continues to be a 2.2.x-SNAPSHOT (as before).  All the steps below except the last one only apply at the root pom.xml (=mariaDB4j-pom) with is mariaDB4j-core, mariaDB4j & mariaDB4j-app <modules>.  The mariaDB4j-pom-lite & DBs/mariaDB4j-db-* with their manually maintained fixed <version> however are simply deployed manually with an mvn deploy as shown in the last step.
+Remember that mariaDB4j-pom-lite & DBs/mariaDB4j-db-* are now versioned non SNAPSHOT, always fixed; VS the rest that continues to be a 2.2.x-SNAPSHOT (as before).  All the steps below except the last one only apply at the root pom.xml (=mariaDB4j-pom) with is mariaDB4j-core, mariaDB4j & mariaDB4j-app <modules>.  The mariaDB4j-pom-lite & DBs/mariaDB4j-db-* with their manually maintained fixed <version> however are simply deployed manually with a direct mvn deploy as shown in the last step.
 
 When doing a release, here are a few things to do every time:
 
@@ -168,17 +168,17 @@ When doing a release, here are a few things to do every time:
     mvn license:update-file-header
     mvn -Dmaven.test.skip=true package
 
-4. Prepare the release:
+4. Preparing & performing the release (this INCLUDES an mvn deploy):
 
     mvn release:prepare (-Dresume=false)
-    mvn release:perform
+    mvn release:perform -Pgpg
     mvn release:clean
 
-5. Deploy to Maven central:
+5. Deploy to Maven central, only for the mariaDB4j-pom-lite & DBs/mariaDB4j-db projects:
 
    mvn clean deploy -Pgpg
 
-Discard and go back to fix something and re-release (before Publishing in Bintray) e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push ssh :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
+Discard and go back to fix something and re-release (before Publishing in Bintray) e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
 
 
 Who?
