@@ -197,7 +197,7 @@ public class DBConfigurationBuilder {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
             if (OSX.equals(getOS()))
-                databaseVersion = "mariadb-5.5.34";
+                databaseVersion = "mariadb-10.1.9";
             else if (LINUX.equals(getOS()))
                 databaseVersion = "mariadb-10.1.13";
             else if (WIN32.equals(getOS()))
