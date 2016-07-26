@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-mac64</artifactId>
-			<version>5.5.34</version>
+			<version>10.1.9</version>
 		</dependency>
 		
 		<dependency>
