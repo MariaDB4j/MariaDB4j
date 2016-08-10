@@ -74,7 +74,7 @@ Where from?
 
 MariaDB4j JAR binaries are available from:
 
-1. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j)
+1. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
 2. Bintray at https://bintray.com/vorburger/maven/MariaDB4j/view.
 3. Bintray's jCenter, meaning that you can get it if you [add the jCenter repository to your Maven's conf/settings.xml](https://github.com/bintray/bintray-examples/blob/master/maven-example/settings.xml).
 4. MariaDB4j is not in Maven central, yet; it could be if you asked for it... ;) Watch [Issue 21](https://github.com/vorburger/MariaDB4j/issues/21).
