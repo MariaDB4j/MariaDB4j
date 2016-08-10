@@ -34,15 +34,11 @@ import org.slf4j.Logger;
 // intentionally package local
 class SLF4jLogOutputStream extends LogOutputStream {
 
-    enum Type {
-        stdout, stderr
-    }
-
     private final Logger logger;
-    private final Type type;
+    private final OutputStreamType type;
     private final String pid;
 
-    SLF4jLogOutputStream(Logger logger, String pid, Type type) {
+    protected SLF4jLogOutputStream(Logger logger, String pid, OutputStreamType type) {
         this.logger = logger;
         this.type = type;
         this.pid = pid;
@@ -51,11 +47,11 @@ class SLF4jLogOutputStream extends LogOutputStream {
     @Override
     protected void processLine(String line, @SuppressWarnings("unused") int level) {
         switch (type) {
-            case stdout:
+            case STDOUT:
                 logger.info("{}: {}", pid, line);
                 break;
 
-            case stderr:
+            case STDERR:
                 logger.error("{}: {}", pid, line);
                 break;
 

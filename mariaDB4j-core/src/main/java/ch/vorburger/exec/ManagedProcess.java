@@ -19,6 +19,9 @@
  */
 package ch.vorburger.exec;
 
+import static ch.vorburger.exec.OutputStreamType.STDERR;
+import static ch.vorburger.exec.OutputStreamType.STDOUT;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +40,6 @@ import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.vorburger.exec.SLF4jLogOutputStream.Type;
 import ch.vorburger.mariadb4j.Util;
 
 /**
@@ -145,8 +147,8 @@ public class ManagedProcess {
         executor.setStreamHandler(outputHandler);
 
         String pid = procShortName();
-        stdouts.addOutputStream(new SLF4jLogOutputStream(logger, pid, Type.stdout));
-        stderrs.addOutputStream(new SLF4jLogOutputStream(logger, pid, Type.stderr));
+        stdouts.addOutputStream(new SLF4jLogOutputStream(logger, pid, STDOUT));
+        stderrs.addOutputStream(new SLF4jLogOutputStream(logger, pid, STDERR));
 
         if (consoleBufferMaxLines > 0) {
             console = new RollingLogOutputStream(consoleBufferMaxLines);
