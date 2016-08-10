@@ -44,11 +44,11 @@ import ch.vorburger.mariadb4j.Util;
  * Managed OS Process (Executable, Program, Command). Created by
  * {@link ManagedProcessBuilder#build()}.
  * 
- * Intended for controlling external "tools", often "daemons", which produce some text-based control
+ * <p>Intended for controlling external "tools", often "daemons", which produce some text-based control
  * output. In this form not yet suitable for programs returning binary data via stdout (but could be
  * extended).
  *
- * Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec),
+ * <p>Does reasonably extensive logging about what it's doing (contrary to Apache Commons Exec),
  * including logging the processes stdout &amp; stderr, into SLF4J (not the System.out.Console).
  *
  * @see Executor Internally based on http://commons.apache.org/exec/ but intentionally not exposing
@@ -80,7 +80,7 @@ public class ManagedProcess {
     /**
      * Package local constructor.
      * 
-     * Keep ch.vorburger.exec's API separate from Apache Commons Exec, so it COULD be replaced.
+     * <p>Keep ch.vorburger.exec's API separate from Apache Commons Exec, so it COULD be replaced.
      * 
      * @see ManagedProcessBuilder#build()
      * 
@@ -120,7 +120,7 @@ public class ManagedProcess {
     /**
      * Starts the Process.
      * 
-     * This method always immediately returns (i.e. launches the process asynchronously). Use the
+     * <p>This method always immediately returns (i.e. launches the process asynchronously). Use the
      * different waitFor... methods if you want to "block" on the spawned process.
      * 
      * @throws ManagedProcessException if the process could not be started
@@ -206,7 +206,7 @@ public class ManagedProcess {
     /**
      * Starts the Process and waits (blocks) until the process prints a certain message.
      * 
-     * You should be sure that the process either prints this message at some point, or otherwise
+     * <p>You should be sure that the process either prints this message at some point, or otherwise
      * exits on it's own. This method will otherwise be slow, but never block forever, as it will
      * "give up" and always return after max. maxWaitUntilReturning ms.
      * 
@@ -363,14 +363,14 @@ public class ManagedProcess {
     /**
      * Waits for the process to terminate.
      * 
-     * Returns immediately if the process is already stopped (either because destroy() was already
+     * <p>Returns immediately if the process is already stopped (either because destroy() was already
      * explicitly called, or it terminated by itself).
      * 
-     * Note that if the process was attempted to be started but that start failed (may be because
+     * <p>Note that if the process was attempted to be started but that start failed (may be because
      * the executable could not be found, or some underlying OS error) then it throws a
      * ManagedProcessException.
      * 
-     * It also throws a ManagedProcessException if {@link #start()} was never even called.
+     * <p>It also throws a ManagedProcessException if {@link #start()} was never even called.
      * 
      * @return exit value (or INVALID_EXITVALUE if {@link #destroy()} was used)
      * @throws ManagedProcessException see above

@@ -31,20 +31,16 @@ import org.apache.commons.exec.util.StringUtils;
 /**
  * Builder for ManagedProcess.
  * 
- * <p>
- * This is inspired by {@link java.lang.ProcessBuilder} &amp;
+ * <p>This is inspired by {@link java.lang.ProcessBuilder} &amp;
  * {@link org.apache.commons.exec.CommandLine}, and/but:
  * 
- * <p>
- * It offers to add java.io.File arguments, and makes sure that their absolute path is used.
+ * <p>It offers to add java.io.File arguments, and makes sure that their absolute path is used.
  * 
- * <p>
- * If no directory is set, it automatically sets the initial working directory using the directory
+ * <p>If no directory is set, it automatically sets the initial working directory using the directory
  * of executable if it was a File, and thus makes sure an initial working directory is always passed
  * to the process.
  * 
- * <p>
- * It intentionally doesn't offer "parsing" space delimited command "lines", but forces you to set
+ * <p>It intentionally doesn't offer "parsing" space delimited command "lines", but forces you to set
  * an executable and add arguments.
  * 
  * @author Michael Vorburger

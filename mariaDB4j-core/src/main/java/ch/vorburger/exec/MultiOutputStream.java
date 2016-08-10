@@ -27,11 +27,11 @@ import java.util.List;
 /**
  * OutputStream "Multiplexer" which delegates to a list of other registered OutputStreams.
  * 
- * It's kinda like UNIX "tee". Forwarding is in the order the delegates are added. The
+ * <p>It's kinda like UNIX "tee". Forwarding is in the order the delegates are added. The
  * implementation is synchronous, so the added OutputStreams should be "fast" in order not to block
  * each other.
  * 
- * Exceptions thrown by added OutputStreams are handled gracefully: they at first do not prevent
+ * <p>Exceptions thrown by added OutputStreams are handled gracefully: they at first do not prevent
  * delegating to the other registered OutputStreams, but then are rethrown after we've pushed to
  * delegates (possibly containing multiple causes).
  * 

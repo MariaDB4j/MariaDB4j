@@ -33,8 +33,7 @@ import ch.vorburger.exec.ManagedProcessException;
 /**
  * Simulating starting MariaDB4j on all supported platforms.
  * 
- * <p>
- * This detects the recurring issue of some mariaDB startup script not being where it's expected to
+ * <p>This detects the recurring issue of some mariaDB startup script not being where it's expected to
  * be and breaking a platform when upgrading the binaries or making code changes.
  * 
  * @author Michael Vorburger

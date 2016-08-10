@@ -23,15 +23,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.junit.Test;
 
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.Util;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class DBConfigurationBuilderTest {
 
@@ -88,7 +88,7 @@ public class DBConfigurationBuilderTest {
         String defaultBaseDir = config.getBaseDir();
         assertTrue(Util.isTemporaryDirectory(defaultBaseDir));
         String defaultLibDir = config.getLibDir();
-        assertEquals(defaultLibDir, defaultBaseDir+ "/libs");
+        assertEquals(defaultLibDir, defaultBaseDir + "/libs");
     }
 
     @Test

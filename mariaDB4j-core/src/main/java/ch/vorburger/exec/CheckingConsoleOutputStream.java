@@ -24,8 +24,7 @@ import org.apache.commons.exec.LogOutputStream;
 /**
  * OutputStream which watches out for the occurrence of a keyword (String).
  * 
- * <p>
- * Used to watch check the console output of a daemon ManagedProcess for some "started up OK" kind
+ * <p>Used to watch check the console output of a daemon ManagedProcess for some "started up OK" kind
  * of message.
  * 
  * @author Michael Vorburger

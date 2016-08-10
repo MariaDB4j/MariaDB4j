@@ -47,7 +47,7 @@ class RollingLogOutputStream extends LogOutputStream {
     /**
      * Returns recent lines (up to maxLines from constructor).
      * 
-     * The implementation is relatively expensive here; the design is intended for many
+     * <p>The implementation is relatively expensive here; the design is intended for many
      * processLine() calls and few getRecentLines().
      * 
      * @return recent Console output

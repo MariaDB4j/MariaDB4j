@@ -25,8 +25,7 @@ import org.slf4j.Logger;
 /**
  * OutputStream which logs to SLF4j.
  * 
- * <p>
- * With many thanks to
+ * <p>With many thanks to
  * http://stackoverflow.com/questions/5499042/writing-output-error-to-log-files-using
  * -pumpstreamhandler
  * 

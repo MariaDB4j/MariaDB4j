@@ -33,11 +33,11 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
  * MariaDB4j starter "Service". This is basically just "sugar" - you can of course also use the DB
  * class directly instead of this convenience utility.
  * 
- * This class does not depend on Spring, and is intended for direct "JavaBean" like usage, and may
+ * <p>This class does not depend on Spring, and is intended for direct "JavaBean" like usage, and may
  * be useful for DI containers such as Guice. When using Spring, then the MariaDB4jSpringService may
  * be of interest. If you're using Spring Boot, then have a look at the MariaDB4jApplication.
  * 
- * The main() could be used typically from an IDE (waits for CR to shutdown..).
+ * <p>The main() could be used typically from an IDE (waits for CR to shutdown..).
  * 
  * @see MariaDB4jSpringService
  * 
