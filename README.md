@@ -8,7 +8,8 @@ Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(
 * FAQ: http://kb.askmonty.org/en/mariadb-faq
 * Wikipedia: http://en.wikipedia.org/wiki/MariaDB
 
-[ ![Bintray](https://api.bintray.com/packages/vorburger/maven/MariaDB4j/images/download.svg) ](https://bintray.com/vorburger/maven/MariaDB4j/_latestVersion)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j)
+[![Bintray](https://api.bintray.com/packages/vorburger/maven/MariaDB4j/images/download.svg) ](https://bintray.com/vorburger/maven/MariaDB4j/_latestVersion)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
 [![Dependency Status](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1/badge?style=flat)](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1)
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
