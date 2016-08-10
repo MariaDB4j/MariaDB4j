@@ -1,17 +1,18 @@
 MariaDB4j CONTRIBUTORS
 
 - Michael Vorburger @vorburger <mike@vorburger.ch> (http://www.vorburger.ch), February/March 2012; originally for http://mifos.org
-- Michael Seaton @mseaton, October 2013; for OpenMRS
-- Darius Jazayeri @djazayeri; for OpenMRS
-- Cosmin @cioan; for OpenMRS
+- Michael Seaton @mseaton, October 2013; for http://OpenMRS.org
+- Darius Jazayeri @djazayeri; for http://OpenMRS.org
+- Cosmin @cioan; for http://OpenMRS.org
 - Stephane Zermatten @szermatt
 - Timö @timorohwedder
-- Juhani Simola @osimola; March 2014
-- Cedric Gatay @CedricGatay; March 2015
+- Juhani Simola @osimola, March 2014
+- Cedric Gatay @CedricGatay, March 2015
 - Kevin McLaughlin <Kevin.McLaughlin@ipsoft.com> (http://ipsoft.com)
 - John Hewson @jahewson <john@jahewson.com> (http://jahewson.com)
-- Anver Sotnikov @anverus <asotnikov@tripadvisor.com> (http://tripadvisor.com); July 2016
-- Guillaume Hiron @ghiron (http://www.honestica.com)
+- Anver Sotnikov @anverus <asotnikov@tripadvisor.com>, July 2016; for http://tripadvisor.com 
+- Guillaume Hiron @ghiron; for http://www.honestica.com
+- Josef Andersson @hanklank <josef.andersson@svt.se>, July 2016; for http://www.svt.se
 
 also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
