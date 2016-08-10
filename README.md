@@ -9,7 +9,6 @@ Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(
 * Wikipedia: http://en.wikipedia.org/wiki/MariaDB
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j)
-[![Bintray](https://api.bintray.com/packages/vorburger/maven/MariaDB4j/images/download.svg) ](https://bintray.com/vorburger/maven/MariaDB4j/_latestVersion)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
 [![Dependency Status](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1/badge?style=flat)](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1)
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
@@ -75,10 +74,10 @@ Where from?
 
 MariaDB4j JAR binaries are available from:
 
-1. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
-2. Bintray at https://bintray.com/vorburger/maven/MariaDB4j/view.
-3. Bintray's jCenter, meaning that you can get it if you [add the jCenter repository to your Maven's conf/settings.xml](https://github.com/bintray/bintray-examples/blob/master/maven-example/settings.xml).
-4. MariaDB4j is not in Maven central, yet; it could be if you asked for it... ;) Watch [Issue 21](https://github.com/vorburger/MariaDB4j/issues/21).
+1. Maven central (see [Issue 21](https://github.com/vorburger/MariaDB4j/issues/21))
+2. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
+
+Up to version 2.1.3 MariaDB4j was on bintray.  Starting with version 2.2.1 we’re only using Maven central  The 2.2.1 that is on Bintray is broken. 
 
 For bleeding edge SNAPSHOT versions, you (or your build server) can easily build it yourself from
 source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven then coordinates are:
@@ -139,7 +138,7 @@ In addition to the new directory, you then need to correspondingly increase: 1. 
 
 So when you contribute new MariaDB native binaries versions, place them in a new directory named mariaDB4j-db-PLATFORM-VERSION under the DBs/ directory - next to the existing ones.  This is better than renaming an existing one and replacing files, because (in theory) if someone wanted to they could then easily still depend on earlier released database binary versions just by changing the <dependency> of the mariaDB4j-db* artifactId in their own project's pom.xml, even with using later version of MariaDB4j Java classes (mariadb4j core & app).  
 
-Of course, even if we would replace existing version with new binaries (like it used to originally be done in the project), then the ones already deployed to Bintray & Maven central would remain there.  However it is just much easier to see which version are available, and to locally build JARs for older versions, if all are simply kept in the head master branch (even if not actively re-built anymore, other than the latest version).  The size of the git repository will gradually grow through this, and slightly more than if we would replace existing binaries (because git uses delta diffs, for both text and binary files).  We just accept that in this project - for clarity & convenience. 
+Of course, even if we would replace existing version with new binaries (like it used to originally be done in the project), then the ones already deployed to Maven central would remain there.  However it is just much easier to see which version are available, and to locally build JARs for older versions, if all are simply kept in the head master branch (even if not actively re-built anymore, other than the latest version).  The size of the git repository will gradually grow through this, and slightly more than if we would replace existing binaries (because git uses delta diffs, for both text and binary files).  We just accept that in this project - for clarity & convenience. 
 
 
 FAQ
@@ -179,7 +178,7 @@ When doing a release, here are a few things to do every time:
 
    mvn clean deploy -Pgpg
 
-Discard and go back to fix something and re-release (before Publishing in Bintray) e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
+Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
 
 
 Who?
