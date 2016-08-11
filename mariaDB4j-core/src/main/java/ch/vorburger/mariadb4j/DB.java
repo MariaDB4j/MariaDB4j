@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.exec.OutputStreamLogDispatcher;
 
 /**
  * Provides capability to install, start, and use an embedded database.
@@ -100,6 +101,7 @@ public class DB {
             throw new ManagedProcessException(
                     "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
@@ -163,6 +165,7 @@ public class DB {
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
         ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqld"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
@@ -249,6 +252,7 @@ public class DB {
         logger.info("Running a " + logInfoText);
         try {
             ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysql"));
+            builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
             builder.setWorkingDirectory(baseDir);
             if (username != null)
                 builder.addArgument("-u", username);
@@ -272,6 +276,10 @@ public class DB {
 
     public void createDB(String dbName) throws ManagedProcessException {
         this.run("create database if not exists `" + dbName + "`;");
+    }
+
+    protected OutputStreamLogDispatcher getOutputStreamLogDispatcher(@SuppressWarnings("unused") String exec) {
+        return new MariaDBOutputStreamLogDispatcher();
     }
 
     /**

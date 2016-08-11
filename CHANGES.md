@@ -5,6 +5,7 @@ v2.2.2 @ TBD
 ---
 
 * @hanklank contributed [issue #37](https://github.com/vorburger/MariaDB4j/issues/37) upgrade of MariaDB Mac OS X version from 5.5.34 to 10.1.9 (tested by @brendonanderson) 
+* Fixed [issue #27](https://github.com/vorburger/MariaDB4j/issues/27) Do not log info messages as errors 
 
 
 v2.2.1 @ 2016-07-24

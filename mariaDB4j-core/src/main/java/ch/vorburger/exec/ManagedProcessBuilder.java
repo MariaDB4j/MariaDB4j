@@ -53,6 +53,7 @@ public class ManagedProcessBuilder {
     protected InputStream inputStream;
     protected boolean destroyOnShutdown = true;
     protected int consoleBufferMaxLines = 100;
+    protected OutputStreamLogDispatcher outputStreamLogDispatcher = new OutputStreamLogDispatcher();
 
     public ManagedProcessBuilder(String executable) throws ManagedProcessException {
         commonsExecCommandLine = new CommandLine(executable);
@@ -186,10 +187,19 @@ public class ManagedProcessBuilder {
         return consoleBufferMaxLines;
     }
 
+    public void setOutputStreamLogDispatcher(OutputStreamLogDispatcher outputStreamLogDispatcher) {
+        this.outputStreamLogDispatcher = outputStreamLogDispatcher;
+    }
+
+    public OutputStreamLogDispatcher getOutputStreamLogDispatcher() {
+        return outputStreamLogDispatcher;
+    }
+
     // ----
 
     public ManagedProcess build() {
-        return new ManagedProcess(getCommandLine(), directory, environment, inputStream, destroyOnShutdown, consoleBufferMaxLines);
+        return new ManagedProcess(getCommandLine(), directory, environment, inputStream, destroyOnShutdown, consoleBufferMaxLines,
+                outputStreamLogDispatcher);
     }
 
     public void setInputStream(InputStream inputStream) {

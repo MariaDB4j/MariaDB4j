@@ -72,6 +72,7 @@ public class ManagedProcess {
     private final InputStream input;
     private final boolean destroyOnShutdown;
     private final int consoleBufferMaxLines;
+    private final OutputStreamLogDispatcher outputStreamLogDispatcher;
 
     private boolean isAlive = false;
     private String procShortName;
@@ -91,7 +92,7 @@ public class ManagedProcess {
      * @param environment Environment Variable.
      */
     ManagedProcess(CommandLine commandLine, File directory, Map<String, String> environment,
-            InputStream input, boolean destroyOnShutdown, int consoleBufferMaxLines) {
+            InputStream input, boolean destroyOnShutdown, int consoleBufferMaxLines, OutputStreamLogDispatcher outputStreamLogDispatcher) {
         this.commandLine = commandLine;
         this.environment = environment;
         if (input != null) {
@@ -107,6 +108,7 @@ public class ManagedProcess {
         executor.setWatchdog(watchDog);
         this.destroyOnShutdown = destroyOnShutdown;
         this.consoleBufferMaxLines = consoleBufferMaxLines;
+        this.outputStreamLogDispatcher = outputStreamLogDispatcher;
     }
 
     // stolen from commons-io IOUtiles (@since v2.5)
@@ -147,8 +149,8 @@ public class ManagedProcess {
         executor.setStreamHandler(outputHandler);
 
         String pid = procShortName();
-        stdouts.addOutputStream(new SLF4jLogOutputStream(logger, pid, STDOUT));
-        stderrs.addOutputStream(new SLF4jLogOutputStream(logger, pid, STDERR));
+        stdouts.addOutputStream(new SLF4jLogOutputStream(logger, pid, STDOUT, outputStreamLogDispatcher));
+        stderrs.addOutputStream(new SLF4jLogOutputStream(logger, pid, STDERR, outputStreamLogDispatcher));
 
         if (consoleBufferMaxLines > 0) {
             console = new RollingLogOutputStream(consoleBufferMaxLines);

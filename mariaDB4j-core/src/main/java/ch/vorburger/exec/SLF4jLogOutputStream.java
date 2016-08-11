@@ -21,6 +21,7 @@ package ch.vorburger.exec;
 
 import org.apache.commons.exec.LogOutputStream;
 import org.slf4j.Logger;
+import org.slf4j.event.Level;
 
 /**
  * OutputStream which logs to SLF4j.
@@ -34,11 +35,13 @@ import org.slf4j.Logger;
 // intentionally package local
 class SLF4jLogOutputStream extends LogOutputStream {
 
+    private final OutputStreamLogDispatcher dispatcher;
     private final Logger logger;
     private final OutputStreamType type;
     private final String pid;
 
-    protected SLF4jLogOutputStream(Logger logger, String pid, OutputStreamType type) {
+    protected SLF4jLogOutputStream(Logger logger, String pid, OutputStreamType type, OutputStreamLogDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
         this.logger = logger;
         this.type = type;
         this.pid = pid;
@@ -46,12 +49,25 @@ class SLF4jLogOutputStream extends LogOutputStream {
 
     @Override
     protected void processLine(String line, @SuppressWarnings("unused") int level) {
-        switch (type) {
-            case STDOUT:
+        Level logLevel = dispatcher.dispatch(type, line);
+        switch (logLevel) {
+            case TRACE:
+                logger.trace("{}: {}", pid, line);
+                break;
+
+            case DEBUG:
+                logger.debug("{}: {}", pid, line);
+                break;
+
+            case INFO:
                 logger.info("{}: {}", pid, line);
                 break;
 
-            case STDERR:
+            case WARN:
+                logger.warn("{}: {}", pid, line);
+                break;
+
+            case ERROR:
                 logger.error("{}: {}", pid, line);
                 break;
 
