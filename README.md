@@ -10,7 +10,7 @@ Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
-[![Dependency Status](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1/badge?style=flat)](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.1)
+[![Dependency Status](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.2/badge?style=flat)](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.2)
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
 
 
@@ -75,6 +75,13 @@ Where from?
 MariaDB4j JAR binaries are available from:
 
 1. Maven central (see [Issue 21](https://github.com/vorburger/MariaDB4j/issues/21))
+
+```xml
+<groupId>ch.vorburger.mariaDB4j</groupId>
+<artifactId>mariaDB4j</artifactId>
+<version>2.2.2</version>
+```
+
 2. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
 
 Up to version 2.1.3 MariaDB4j was on bintray.  Starting with version 2.2.1 we’re only using Maven central  The 2.2.1 that is on Bintray is broken. 
@@ -85,7 +92,7 @@ source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven
 ```xml
 <groupId>ch.vorburger.mariaDB4j</groupId>
 <artifactId>mariaDB4j</artifactId>
-<version>2.2.*-SNAPSHOT</version>
+<version>2.2.3-SNAPSHOT</version>
 ```
 
 If you use your own packaged versions of MariaDB native binaries, then the mariaDB4j-core artifact JAR,
@@ -161,26 +168,30 @@ When doing a release, here are a few things to do every time:
 
 2. Make sure the project builds, without pulling anything which should be part of this build from outside: 
 
-   mvn clean package; rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j; mvn -o clean package
+   ```mvn clean package; rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j; mvn clean package```
 
 3. Make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)):
 
+``` 
     mvn license:update-file-header
     mvn -Dmaven.test.skip=true package
+```
 
-4. Finalize [CHANGES.md](CHANGES.md) Release Notes, incl. set today's date
+4. Finalize [CHANGES.md](CHANGES.md) Release Notes, incl. set today's date, and update 2.2.* version numbers in this README.
 
 5. Preparing & performing the release (this INCLUDES an mvn deploy):
 
-    mvn release:prepare (-Dresume=false)
+```
+    mvn release:prepare
     mvn release:perform -Pgpg
     mvn release:clean
+```
 
 6. Deploy to Maven central, only for the mariaDB4j-pom-lite & DBs/mariaDB4j-db projects:
 
-   mvn clean deploy -Pgpg
+   ```mvn clean deploy -Pgpg```
 
-Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
+In caase of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
 
 
 Who?
