@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j.springframework.boot;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -51,7 +52,7 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
 
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(MariaDB4jApplication.class);
-        app.setShowBanner(false);
+        app.setBannerMode(Mode.OFF);
         ConfigurableApplicationContext ctx = app.run(args);
 
         MariaDB4jService.waitForKeyPressToCleanlyExit();
