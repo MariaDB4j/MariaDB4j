@@ -168,13 +168,15 @@ When doing a release, here are a few things to do every time:
     mvn license:update-file-header
     mvn -Dmaven.test.skip=true package
 
-4. Preparing & performing the release (this INCLUDES an mvn deploy):
+4. Finalize [CHANGES.md](CHANGES.md) Release Notes, incl. set today's date
+
+5. Preparing & performing the release (this INCLUDES an mvn deploy):
 
     mvn release:prepare (-Dresume=false)
     mvn release:perform -Pgpg
     mvn release:clean
 
-5. Deploy to Maven central, only for the mariaDB4j-pom-lite & DBs/mariaDB4j-db projects:
+6. Deploy to Maven central, only for the mariaDB4j-pom-lite & DBs/mariaDB4j-db projects:
 
    mvn clean deploy -Pgpg
 
