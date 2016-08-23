@@ -21,7 +21,7 @@ package ch.vorburger.exec;
 
 import java.util.Collection;
 
-import org.apache.commons.collections.buffer.CircularFifoBuffer;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.apache.commons.exec.LogOutputStream;
 
 /**
@@ -36,7 +36,7 @@ class RollingLogOutputStream extends LogOutputStream {
 
     @SuppressWarnings("unchecked")
     RollingLogOutputStream(int maxLines) {
-        ringBuffer = new CircularFifoBuffer(maxLines);
+        ringBuffer = new CircularFifoQueue(maxLines);
     }
 
     @Override
