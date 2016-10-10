@@ -16,7 +16,9 @@ Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(
 
 How? (Java)
 ----
-The MariaDB native binaries are in the MariaDB4j-DB-win*/linux*/mac*.JARs on which the main MariaDB4j JAR depends on by Maven transitive dependencies and, by default, are extracted from the classpath to a temporary base directory on the fly, then started by Java:
+The MariaDB native binaries are in the MariaDB4j-DB-win*/linux*/mac*.JARs on which the main MariaDB4j JAR depends on by Maven transitive dependencies and, by default, are extracted from the classpath to a temporary base directory on the fly, then started by Java.
+
+An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).
 
 1. Install the database with a particular configuration, using short-cut:
 
@@ -26,7 +28,7 @@ DB db = DB.newEmbeddedDB(3306);
 
 2. (Optional) The data directory will, by default, be in a temporary directory too, and will automatically get scratched at every restart; this
 is suitable for integration tests.  If you use MariaDB4j for something more permanent (maybe an all-in-one application package?),
-then you can simply specify a more durable location of your data directory in the DBConfiguration, like so:
+then you can simply specify a more durable location of your data directory in the `DBConfiguration`, like so:
 ```java
 DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
 configBuilder.setPort(3306); // OR, default: setPort(0); => autom. detect free port
@@ -39,26 +41,27 @@ DB db = DB.newEmbeddedDB(configBuilder.build());
 db.start();
 ```
 
-4. Use the database
+4. Use the database as per standard JDBC usage. In this example, you're acquiring a JDBC `Connection` from the
+`DriverManager`; note that you could easily configure this url 
+to be used in any JDBC connection pool. MySQL uses a `test` database by default, 
+and a `root` user with no password is also a default.
 ```java
-Connection conn = db.getConnection();
+Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
 ```
-or:
-Use your your favourite connection pool... business as usual.
 
-4. If desired, load data from a SQL resource
+4. If desired, load data from a SQL resource, located in the classpath:
 ```java
 db.source("path/to/resource.sql");
 ```
 
 If you would like to / need to start a specific DB version you already have, instead of the version currently
-packaged in the JAR, you can use DBConfigurationBuilder setUnpackingFromClasspath(false) & setBaseDir("/my/db/") or -DmariaDB4j.unpack=false -DmariaDB4j.baseDir=/home/you/stuff/myFavouritemMariadDBVersion.   Similarly, you can also pack your own version in a JAR and put it on the classpath, and @Override getBinariesClassPathLocation() in DBConfigurationBuilder to return where to find it (check the source of the default implementation).
+packaged in the JAR, you can use `DBConfigurationBuilder setUnpackingFromClasspath(false) & setBaseDir("/my/db/")` or `-DmariaDB4j.unpack=false -DmariaDB4j.baseDir=/home/you/stuff/myFavouritemMariadDBVersion`.   Similarly, you can also pack your own version in a JAR and put it on the classpath, and `@Override getBinariesClassPathLocation()` in `DBConfigurationBuilder` to return where to find it (check the source of the default implementation).
 
 How (Spring)
 ----
 MariaDB4j can be used in any Java environment, and is not dependent on dependency injection and the Spring Framework (the dependency to the spring-core*.jar is for a utility, and is unrelated to DI).
 
-If the application in which you use MariaDB4j is anyway based on Spring already however, then the ready-made MariaDB4jSpringService could possibly be useful to you.
+If the application in which you use MariaDB4j is anyway based on Spring already however, then the ready-made `MariaDB4jSpringService` could possibly be useful to you.
 
 How (CLI)
 ----
@@ -77,9 +80,11 @@ MariaDB4j JAR binaries are available from:
 1. Maven central (see [Issue 21](https://github.com/vorburger/MariaDB4j/issues/21))
 
 ```xml
-<groupId>ch.vorburger.mariaDB4j</groupId>
-<artifactId>mariaDB4j</artifactId>
-<version>2.2.2</version>
+<dependency>
+    <groupId>ch.vorburger.mariaDB4j</groupId>
+    <artifactId>mariaDB4j</artifactId>
+    <version>2.2.2</version>
+</dependency>
 ```
 
 2. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
@@ -90,9 +95,11 @@ For bleeding edge SNAPSHOT versions, you (or your build server) can easily build
 source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven then coordinates are:
 
 ```xml
-<groupId>ch.vorburger.mariaDB4j</groupId>
-<artifactId>mariaDB4j</artifactId>
-<version>2.2.3-SNAPSHOT</version>
+<dependency>
+    <groupId>ch.vorburger.mariaDB4j</groupId>
+    <artifactId>mariaDB4j</artifactId>
+    <version>2.2.3-SNAPSHOT</version>
+</dependency>
 ```
 
 If you use your own packaged versions of MariaDB native binaries, then the mariaDB4j-core artifact JAR,
@@ -127,7 +134,8 @@ See the [USERS.md](USERS.md) file (also included in each built JAR!) for a list 
 Anything else?
 --------------
 
-Security nota bene: Per default, the MariaDB4j install() creates a new DB with a 'root' user without a password.
+Security nota bene: Per default, the MariaDB4j `install()` creates a new DB with a 'root' user without a password.
+It also creates a database called "test".
 
 More generally, note that if you are using the provided mariadb database artifacts, then you are pulling platform specific native binaries which will be executed on your system from a remote repository, not just regular Java JARs with classes running in the JVM, through this project.  If you are completely security paranoid, this may worry you (or someone else in your organization).  If that is the case, note that you could still use only the mariadb4j-core artifact from this project, but use a JAR file containing the binaries which you have created and deployed to your organization's Maven repository yourself.
 
