@@ -21,11 +21,9 @@ The MariaDB native binaries are in the MariaDB4j-DB-win*/linux*/mac*.JARs on whi
 An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).
 
 1. Install the database with a particular configuration, using short-cut:
-
 ```java
 DB db = DB.newEmbeddedDB(3306);
 ```
-
 2. (Optional) The data directory will, by default, be in a temporary directory too, and will automatically get scratched at every restart; this
 is suitable for integration tests.  If you use MariaDB4j for something more permanent (maybe an all-in-one application package?),
 then you can simply specify a more durable location of your data directory in the `DBConfiguration`, like so:
@@ -35,12 +33,10 @@ configBuilder.setPort(3306); // OR, default: setPort(0); => autom. detect free p
 configBuilder.setDataDir("/home/theapp/db"); // just an example
 DB db = DB.newEmbeddedDB(configBuilder.build());
 ```
-
 3. Start the database
 ```java
 db.start();
 ```
-
 4. Use the database as per standard JDBC usage. In this example, you're acquiring a JDBC `Connection` from the
 `DriverManager`; note that you could easily configure this url 
 to be used in any JDBC connection pool. MySQL uses a `test` database by default, 
@@ -48,8 +44,7 @@ and a `root` user with no password is also a default.
 ```java
 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
 ```
-
-4. If desired, load data from a SQL resource, located in the classpath:
+5. If desired, load data from a SQL resource, located in the classpath:
 ```java
 db.source("path/to/resource.sql");
 ```
