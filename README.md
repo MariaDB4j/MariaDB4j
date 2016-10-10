@@ -44,6 +44,13 @@ and a `root` user with no password is also a default.
 ```java
 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
 ```
+
+A similar suitable JDBC URL as String can normally also be directly obtained directly from the MariaDBj API, if you prefer (this is especially useful for tests if you let MariaDB4j automatically choose a free port, in which case a hard-coded URL is problematic):
+
+```java
+Connection conn = DriverManager.getConnection(configBuilder.getURL(dbName), "root", "");
+```
+
 5. If desired, load data from a SQL resource, located in the classpath:
 ```java
 db.source("path/to/resource.sql");
