@@ -1,6 +1,14 @@
 MariaDB4j Release Notes
 =======================
 
+v2.2.3 @ 2017-02-TBD
+---
+
+* @lpearson05 contributed upgrade of older commons-collections with CVE-2011-2092 vulnerability to commons-collections 4.1 (https://issues.apache.org/jira/browse/COLLECTIONS-580)
+* @clfsoft contributed [issue #49](https://github.com/vorburger/MariaDB4j/issues/49) upgrade of MariaDB Win 32 version from 10.0.13 to 10.1.20
+* @vorburger bumped mariadb-java-client from version 1.4.6 to 1.5.5, and Spring Boot from 1.4.0 to 1.5.1
+
+
 v2.2.2 @ 2016-08-20
 ---
 
