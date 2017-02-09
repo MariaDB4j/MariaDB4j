@@ -1,7 +1,7 @@
 MariaDB4j Release Notes
 =======================
 
-v2.2.3 @ 2017-02-TBD
+v2.2.3 @ 2017-02-10
 ---
 
 * @lpearson05 contributed upgrade of older commons-collections with CVE-2011-2092 vulnerability to commons-collections 4.1 (https://issues.apache.org/jira/browse/COLLECTIONS-580)
