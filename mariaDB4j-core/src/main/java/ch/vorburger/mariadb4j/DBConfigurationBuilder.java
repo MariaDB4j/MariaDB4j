@@ -48,6 +48,7 @@ public class DBConfigurationBuilder {
     protected String dataDir = DEFAULT_DATA_DIR;
     protected String socket = null; // see _getSocket()
     protected int port = 0;
+    protected boolean deletesTemporaryDataOnShutdown = true;
     protected boolean isUnpackingFromClasspath = true;
     protected List<String> args = new ArrayList<String>();
 
@@ -113,6 +114,22 @@ public class DBConfigurationBuilder {
         return this;
     }
 
+    public boolean deletesTemporaryDataOnShutdown() {
+        return deletesTemporaryDataOnShutdown;
+    }
+
+    /**
+     * Defines if the configured data and base directories should be deleted on shutdown.
+     *
+     * @param deletesTemporaryDataOnShutdown
+     * @return this
+     */
+    public DBConfigurationBuilder setDeletesTemporaryDataOnShutdown(boolean deletesTemporaryDataOnShutdown) {
+        checkIfFrozen("keepsDataAndBaseDir");
+        this.deletesTemporaryDataOnShutdown = deletesTemporaryDataOnShutdown;
+        return this;
+    }
+
     protected int detectFreePort() {
         try {
             ServerSocket ss = new ServerSocket(0);
@@ -139,7 +156,7 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName());
+                deletesTemporaryDataOnShutdown(), WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName());
     }
 
     public DBConfigurationBuilder addArg(String arg) {
