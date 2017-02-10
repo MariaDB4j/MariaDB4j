@@ -48,6 +48,7 @@ public class DBConfigurationBuilder {
     protected String dataDir = DEFAULT_DATA_DIR;
     protected String socket = null; // see _getSocket()
     protected int port = 0;
+    protected boolean isDeletingTemporaryBaseAndDataDirsOnShutdown = true;
     protected boolean isUnpackingFromClasspath = true;
     protected List<String> args = new ArrayList<String>();
     private boolean isSecurityDisabled = true;
@@ -114,6 +115,22 @@ public class DBConfigurationBuilder {
         return this;
     }
 
+    public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
+        return isDeletingTemporaryBaseAndDataDirsOnShutdown;
+    }
+
+    /**
+     * Defines if the configured data and base directories should be deleted on shutdown.
+     * If you've set the base and data directories to non temporary directories
+     * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
+     * then they'll also never get deleted anyway.
+     */
+    public DBConfigurationBuilder setDeletingTemporaryBaseAndDataDirsOnShutdown(boolean doDelete) {
+        checkIfFrozen("keepsDataAndBaseDir");
+        this.isDeletingTemporaryBaseAndDataDirsOnShutdown = doDelete;
+        return this;
+    }
+
     protected int detectFreePort() {
         try {
             ServerSocket ss = new ServerSocket(0);
@@ -140,14 +157,18 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled());
+                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(), 
+                isDeletingTemporaryBaseAndDataDirsOnShutdown());
     }
 
-    public void setSecurityDisabled(boolean isSecurityDisabled){
+    /**
+     * Whether to to "--skip-grant-tables" (defaults to true).
+     */
+    public void setSecurityDisabled(boolean isSecurityDisabled) {
         this.isSecurityDisabled = isSecurityDisabled;
     }
 
-    protected boolean isSecurityDisabled(){
+    public boolean isSecurityDisabled() {
         return isSecurityDisabled;
     }
 
@@ -266,7 +287,5 @@ public class DBConfigurationBuilder {
     public List<String> _getArgs() {
         return args;
     }
-
-    // getUID() + getPWD() ?
 
 }
