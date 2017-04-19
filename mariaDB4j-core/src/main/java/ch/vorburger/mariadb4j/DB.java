@@ -254,11 +254,11 @@ public class DB {
             ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysql"));
             builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
             builder.setWorkingDirectory(baseDir);
-            if (username != null)
+            if (username != null && !username.isEmpty())
                 builder.addArgument("-u", username);
-            if (password != null)
+            if (password != null && !password.isEmpty())
                 builder.addArgument("-p", password);
-            if (dbName != null)
+            if (dbName != null && !dbName.isEmpty())
                 builder.addArgument("-D", dbName);
             addSocketOrPortArgument(builder);
             if (fromIS != null)
