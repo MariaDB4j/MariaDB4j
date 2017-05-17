@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,13 +19,18 @@
  */
 package ch.vorburger.mariadb4j;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +41,7 @@ import ch.vorburger.exec.OutputStreamLogDispatcher;
 
 /**
  * Provides capability to install, start, and use an embedded database.
- * 
+ *
  * @author Michael Vorburger
  * @author Michael Seaton
  */
@@ -313,6 +318,7 @@ public class DB {
                 Util.forceExecutable(newExecutableFile("bin", "my_print_defaults"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql_install_db"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqld"));
+                Util.forceExecutable(newExecutableFile("bin", "mysqldump"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql"));
             }
         } catch (IOException e) {
@@ -376,4 +382,55 @@ public class DB {
         });
     }
 
+    // The dump*() methods are intentionally *NOT* made "synchronized",
+    // (even though with --lock-tables one could not run two dumps concurrently anyway)
+    // because in theory this could cause a long-running dump to deadlock an application
+    // wanting to stop() a DB. Let it thus be a caller's responsibility to not dump
+    // concurrently (and if she does, it just fails, which is much better than an
+    // unexpected deadlock).
+
+    public ManagedProcess dumpXML(File outputFile, String dbName, String user, String password)
+            throws IOException, ManagedProcessException {
+        return dump(outputFile, Arrays.asList(dbName), true, true, true, user, password);
+    }
+
+    public ManagedProcess dumpSQL(File outputFile, String dbName, String user, String password)
+            throws IOException, ManagedProcessException {
+        return dump(outputFile, Arrays.asList(dbName), true, true, false, user, password);
+    }
+
+    protected ManagedProcess dump(File outputFile, List<String> dbNamesToDump,
+                                               boolean compactDump, boolean lockTables, boolean asXml,
+                                               String user, String password)
+            throws ManagedProcessException, IOException {
+
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqldump"));
+
+        builder.addStdOut(new BufferedOutputStream(new FileOutputStream(outputFile)));
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqldump"));
+        builder.addArgument("--port=" + configuration.getPort());
+        if (!configuration.isWindows()) {
+            builder.addFileArgument("--socket", getAbsoluteSocketFile());
+        }
+        if (lockTables) {
+            builder.addArgument("--flush-logs");
+            builder.addArgument("--lock-tables");
+        }
+        if (compactDump) {
+            builder.addArgument("--compact");
+        }
+        if (asXml) {
+            builder.addArgument("--xml");
+        }
+        if (StringUtils.isNotBlank(user)) {
+            builder.addArgument("-u");
+            builder.addArgument(user);
+            if (StringUtils.isNotBlank(password)) {
+                builder.addArgument("-p" + password);
+            }
+        }
+        builder.addArgument(StringUtils.join(dbNamesToDump, StringUtils.SPACE));
+        builder.setDestroyOnShutdown(true);
+        return builder.build();
+    }
 }
