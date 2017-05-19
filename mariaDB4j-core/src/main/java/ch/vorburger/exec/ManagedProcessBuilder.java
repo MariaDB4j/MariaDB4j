@@ -19,9 +19,14 @@
  */
 package ch.vorburger.exec;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
@@ -54,6 +59,8 @@ public class ManagedProcessBuilder {
     protected boolean destroyOnShutdown = true;
     protected int consoleBufferMaxLines = 100;
     protected OutputStreamLogDispatcher outputStreamLogDispatcher = new OutputStreamLogDispatcher();
+    protected List<OutputStream> stdOuts= new ArrayList<OutputStream>();
+    protected List<OutputStream> stdErrs= new ArrayList<OutputStream>();
 
     public ManagedProcessBuilder(String executable) throws ManagedProcessException {
         commonsExecCommandLine = new CommandLine(executable);
@@ -199,7 +206,7 @@ public class ManagedProcessBuilder {
 
     public ManagedProcess build() {
         return new ManagedProcess(getCommandLine(), directory, environment, inputStream, destroyOnShutdown, consoleBufferMaxLines,
-                outputStreamLogDispatcher);
+                outputStreamLogDispatcher,stdOuts,stdErrs);
     }
 
     public void setInputStream(InputStream inputStream) {
@@ -233,4 +240,12 @@ public class ManagedProcessBuilder {
         return commonsExecCommandLine.toString();
     }
 
+    public ManagedProcessBuilder addStdOut(OutputStream stdOutput) {
+        stdOuts.add(stdOutput);
+        return this;
+    }
+    public ManagedProcessBuilder addStdErr(OutputStream stdError) {
+        stdErrs.add(stdError);
+        return this;
+    }
 }
