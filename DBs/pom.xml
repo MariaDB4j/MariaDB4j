@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>mariaDB4j-db-win32-10.1.23</module>
         <module>mariaDB4j-db-win32-10.1.20</module>
         <module>mariaDB4j-db-win32-10.0.13</module>
         <module>mariaDB4j-db-mac64-10.1.23</module>
