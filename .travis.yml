@@ -3,3 +3,5 @@ language: java
 jdk: 
   - oraclejdk7
 
+before_script:
+  - mvn -f Dbs/pom.xml clean install

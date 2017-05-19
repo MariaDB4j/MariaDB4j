@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vorburger.mariaDB4j</groupId>
+        <artifactId>mariaDB4j-pom</artifactId>
+        <version>2.2.4-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>mariaDB4j-binaries</artifactId>
+    <name>mariaDB4j Platform binaries</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>mariaDB4j-db-win32-10.1.20</module>
+        <module>mariaDB4j-db-win32-10.0.13</module>
+        <module>mariaDB4j-db-mac64-10.1.23</module>
+        <module>mariaDB4j-db-mac64-10.1.9</module>
+        <module>mariaDB4j-db-mac64-5.5.34</module>
+        <module>mariaDB4j-db-linux64-10.1.13</module>
+        <module>mariaDB4j-db-linux64-10.1.23</module>
+    </modules>
+</project>
