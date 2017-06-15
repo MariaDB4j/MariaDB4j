@@ -1,4 +1,4 @@
-This folders contains, per platform,
+These folders contains, per platform and version,
 the bin/mysql_install_db, mysqld, mysql, mysqlcheck, my_print_defaults & share/*
 
 These files come from a standard MariaDB distribution.
