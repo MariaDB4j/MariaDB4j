@@ -377,30 +377,25 @@ public class DB {
     }
 
 
-    synchronized public ManagedProcess xmlDumpDB(File outputFile, String dbName,String user,String password)
+    synchronized public ManagedProcess xmlDump(File outputFile, String dbName, String user, String password)
             throws IOException, ManagedProcessException {
-        return dumpDB(outputFile, Arrays.asList(dbName),true,true,true, user, password);
+        return dump(outputFile, Arrays.asList(dbName),true,true,true, user, password);
     }
 
-    synchronized public ManagedProcess dumpDB(File outputFile, String dbName,String user,String password)
+    synchronized public ManagedProcess dumpSQL(File outputFile, String dbName, String user, String password)
             throws IOException, ManagedProcessException {
-      return dumpDB(outputFile, Arrays.asList(dbName),true,true,false, user, password);
+      return dump(outputFile, Arrays.asList(dbName),true,true,false, user, password);
     }
 
-    synchronized public ManagedProcess dumpDB(File outputFile, List<String> dbNamesToDump,
-                                              boolean compactDump, boolean lockTables, boolean asXml,
-                                              String user, String password)
+    synchronized protected ManagedProcess dump(File outputFile, List<String> dbNamesToDump,
+                                               boolean compactDump, boolean lockTables, boolean asXml,
+                                               String user, String password)
             throws ManagedProcessException, IOException {
 
         ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin","mysqldump"));
-        /** Not used **/
+
         builder.addStdOut(new BufferedOutputStream(new FileOutputStream(outputFile)));
-        builder.setOutputStreamLogDispatcher(new OutputStreamLogDispatcher(){
-            @Override
-            public Level dispatch(OutputStreamType type, String line) {
-                return Level.TRACE;
-            }
-        });
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqldump"));
         builder.addArgument("--port=" + configuration.getPort());
         if (!configuration.isWindows()) {
             builder.addFileArgument("--socket", getAbsoluteSocketFile());
@@ -426,5 +421,4 @@ public class DB {
         builder.setDestroyOnShutdown(true);
         return builder.build();
     }
-
 }

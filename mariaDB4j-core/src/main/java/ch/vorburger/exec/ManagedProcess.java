@@ -71,12 +71,13 @@ public class ManagedProcess {
     private final boolean destroyOnShutdown;
     private final int consoleBufferMaxLines;
     private final OutputStreamLogDispatcher outputStreamLogDispatcher;
+    private final MultiOutputStream stdouts;
+    private final MultiOutputStream stderrs;
 
     private boolean isAlive = false;
     private String procShortName;
     private RollingLogOutputStream console;
-    private MultiOutputStream stdouts;
-    private MultiOutputStream stderrs;
+
 
     /**
      * Package local constructor.

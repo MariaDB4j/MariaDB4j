@@ -22,14 +22,12 @@ package ch.vorburger.mariadb4j.tests;
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -41,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -50,76 +49,53 @@ import static org.junit.Assert.fail;
 /**
  * Tests the functioning of MariaDB4j Dump/Restore illustrating how to use MariaDB4j.
  *
- * @author Michael Vorburger
- * @author Michael Seaton
  * @author Carlos Ortiz
  */
 public class MariaDB4jSampleDumpTest {
 
     private  DB db;
     private  DBConfigurationBuilder config;
-    public  final String DBNAME="planetexpress";
+    private static final String DBNAME="planetexpress";
 
-
-    public void beforeTest(){
+   @Before
+    public void beforeTest() throws ManagedProcessException, SQLException {
         config = DBConfigurationBuilder.newBuilder();
         config.setPort(0);
-        try {
             db = DB.newEmbeddedDB(// 0 => autom. detect free port
                     config.build());
             db.start();
             db.createDB("planetexpress");
             db.source("ch/vorburger/mariadb4j/dumpTest.sql");
-        } catch (ManagedProcessException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+            checkDBIntegrity();
     }
 
-    public void checkDBIntegrity(){
+    private void checkDBIntegrity() throws SQLException {
         Connection conn;
-        try {
             conn = DriverManager.getConnection(config.getURL(DBNAME), "root", "");
             QueryRunner qr = new QueryRunner();
             // Should be able to create a new table
-            List<String> resutls=qr.query(conn, "SELECT * FROM crew;",new ColumnListHandler<String>());
-            assertEquals(4,resutls.size());
-            assertEquals("John A Zoidberg",resutls.get(2));
-        }catch (Exception ex){
-            ex.printStackTrace();
-            fail(ex.getMessage());
-        }
+            List<String> results=qr.query(conn, "SELECT * FROM crew;",new ColumnListHandler<String>());
+            assertEquals(4,results.size());
+            assertEquals("John A Zoidberg",results.get(2));
     }
 
     @Test
-    public void simpleDump(){
-        try {
-            beforeTest();
-            checkDBIntegrity();
+    public void simpleDump() throws IOException, ManagedProcessException, SQLException {
+
             File outputDumpFile = File.createTempFile("sqlDump ",".sql");
-            ManagedProcess dumpProcess = db.dumpDB(outputDumpFile, DBNAME,"root","");
+            ManagedProcess dumpProcess = db.dumpSQL(outputDumpFile, DBNAME,"root","");
             dumpProcess.start();
             assertTrue(outputDumpFile.exists() || outputDumpFile.isDirectory());
             assertTrue(FileUtils.sizeOf(outputDumpFile)>0);
             FileUtils.forceDeleteOnExit(outputDumpFile);
-        }catch (ManagedProcessException ex){
-            ex.printStackTrace();
-            fail(ex.getMessage());
-        }catch (IOException ex){
-            ex.printStackTrace();
-            fail(ex.getMessage());
-        }
-        afterTest();
     }
 
 
     @Test
-    public void XMLDump(){
-        try {
-            beforeTest();
-            checkDBIntegrity();
+    public void XMLDump() throws IOException, SAXException, ManagedProcessException, ParserConfigurationException,
+        SQLException {
             File outputDumpFile = File.createTempFile("xmlsqlDump",".xml");
-            ManagedProcess dumpProcess = db.xmlDumpDB(outputDumpFile,DBNAME,"root","");
+            ManagedProcess dumpProcess = db.xmlDump(outputDumpFile,DBNAME,"root","");
             dumpProcess.start();
             assertTrue(outputDumpFile.exists() || outputDumpFile.isDirectory());
             assertTrue(FileUtils.sizeOf(outputDumpFile)>0);
@@ -128,28 +104,10 @@ public class MariaDB4jSampleDumpTest {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(outputDumpFile);
             FileUtils.forceDeleteOnExit(outputDumpFile);
-        }catch (ManagedProcessException ex){
-            ex.printStackTrace();
-            fail(ex.getMessage());
-        }catch (IOException ex){
-            ex.printStackTrace();
-            fail(ex.getMessage());
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } catch (SAXException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        afterTest();
     }
 
-    public  void afterTest(){
-        try {
+    @After
+    public  void afterTest() throws ManagedProcessException {
             db.stop();
-        } catch (ManagedProcessException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
     }
 }
