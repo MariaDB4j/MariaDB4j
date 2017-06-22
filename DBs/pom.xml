@@ -3,7 +3,7 @@
 
     <!-- The only purpose of this POM is to build the DB binaries.
          This is not a real artifact, just a simple way to do `mvn clean install` instead
-         of going to each dirrectory and run the same command.
+         of going to each directory and run the same command.
     -->
 
     <parent>
@@ -23,10 +23,12 @@
         <module>mariaDB4j-db-win32-10.1.23</module>
         <module>mariaDB4j-db-win32-10.1.20</module>
         <module>mariaDB4j-db-win32-10.0.13</module>
+
         <module>mariaDB4j-db-mac64-10.1.23</module>
         <module>mariaDB4j-db-mac64-10.1.9</module>
         <module>mariaDB4j-db-mac64-5.5.34</module>
-        <module>mariaDB4j-db-linux64-10.1.13</module>
+
         <module>mariaDB4j-db-linux64-10.1.23</module>
+        <module>mariaDB4j-db-linux64-10.1.13</module>
     </modules>
 </project>
