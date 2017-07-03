@@ -111,8 +111,8 @@ public class MariaDB4jSampleTutorialTest {
             qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
 
             // Should be able to create a new user and grant privileges.
-            qr.update(conn, "CREATE USER testUser IDENTIFIED BY 'superSecret'");
-            qr.update(conn, "GRANT ALL PRIVILEGES ON mariaDB4jTestWSecurity.* TO 'testUser'@'%'");
+            qr.update(conn, "CREATE USER 'testUser'@'localhost' IDENTIFIED BY 'superSecret'");
+            qr.update(conn, "GRANT ALL PRIVILEGES ON mariaDB4jTestWSecurity.* TO 'testUser'@'localhost'");
 
             //reconnect with the new user
             conn = DriverManager.getConnection(config.getURL(dbName), "testUser", "superSecret");
