@@ -92,7 +92,7 @@ public class MariaDB4jSampleTutorialTest {
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
 
-        String dbName = "mariaDB4jTest"; // or just "test"
+        String dbName = "mariaDB4jTestWSecurity"; // or just "test"
         if (!dbName.equals("test")) {
             // mysqld out-of-the-box already has a DB named "test"
             // in case we need another DB, here's how to create it first
@@ -110,7 +110,7 @@ public class MariaDB4jSampleTutorialTest {
             // Should be able to insert into a table
             qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
 
-            // Should be able to create a new user and grant priveleges.
+            // Should be able to create a new user and grant privileges.
             qr.update(conn, "CREATE USER testUser");
             qr.update(conn, "GRANT ALL PRIVILEGES ON mariaDB4jTest.hello TO testUser");
 
