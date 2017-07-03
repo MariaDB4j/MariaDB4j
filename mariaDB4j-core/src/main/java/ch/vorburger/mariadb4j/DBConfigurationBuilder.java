@@ -50,6 +50,7 @@ public class DBConfigurationBuilder {
     protected int port = 0;
     protected boolean isUnpackingFromClasspath = true;
     protected List<String> args = new ArrayList<String>();
+    private boolean isSecurityDisabled = true;
 
     private boolean frozen = false;
 
@@ -139,7 +140,15 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName());
+                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled());
+    }
+
+    public void setSecurityDisabled(boolean isSecurityDisabled){
+        this.isSecurityDisabled = isSecurityDisabled;
+    }
+
+    protected boolean isSecurityDisabled(){
+        return isSecurityDisabled;
     }
 
     public DBConfigurationBuilder addArg(String arg) {

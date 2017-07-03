@@ -84,4 +84,48 @@ public class MariaDB4jSampleTutorialTest {
         }
     }
 
+    @Test
+    public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
+        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+        config.setPort(0); // 0 => autom. detect free port
+        config.setSecurityDisabled(false);
+        DB db = DB.newEmbeddedDB(config.build());
+        db.start();
+
+        String dbName = "mariaDB4jTest"; // or just "test"
+        if (!dbName.equals("test")) {
+            // mysqld out-of-the-box already has a DB named "test"
+            // in case we need another DB, here's how to create it first
+            db.createDB(dbName, "root", "");
+        }
+
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(config.getURL(dbName), "root", "");
+            QueryRunner qr = new QueryRunner();
+
+            // Should be able to create a new table
+            qr.update(conn, "CREATE TABLE hello(world VARCHAR(100))");
+
+            // Should be able to insert into a table
+            qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
+
+            // Should be able to create a new user and grant priveleges.
+            qr.update(conn, "CREATE USER testUser");
+            qr.update(conn, "GRANT ALL PRIVILEGES ON mariaDB4jTest.hello TO testUser");
+
+            //reconnect with the new user
+            conn = DriverManager.getConnection(config.getURL(dbName), "testUser", "");
+
+            // Should be able to select from a table
+            List<String> results = qr.query(conn, "SELECT * FROM hello",
+                    new ColumnListHandler<String>());
+            Assert.assertEquals(1, results.size());
+            Assert.assertEquals("Hello, world", results.get(0));
+
+        } finally {
+            DbUtils.closeQuietly(conn);
+        }
+    }
+
 }
