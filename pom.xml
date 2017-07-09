@@ -38,7 +38,7 @@
 
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		 <spring.version>4.3.2.RELEASE</spring.version>
+		 <spring.version>4.3.9.RELEASE</spring.version>
 		 <springboot.version>1.5.1.RELEASE</springboot.version>
 	</properties>
 
