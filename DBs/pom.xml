@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- The only propose of this pom is to
-        build the DB binaries, this is not an artifact just a simple way to do `mvn clean install` instead
+    <!-- The only purpose of this POM is to build the DB binaries.
+         This is not a real artifact, just a simple way to do `mvn clean install` instead
          of going to each dirrectory and run the same command.
     -->
 
