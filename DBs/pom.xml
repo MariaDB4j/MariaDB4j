@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- The only purpose of this POM is to build the DB binaries.
+         This is not a real artifact, just a simple way to do `mvn clean install` instead
+         of going to each dirrectory and run the same command.
+    -->
+
+    <parent>
+        <groupId>ch.vorburger.mariaDB4j</groupId>
+        <artifactId>mariaDB4j-pom-lite</artifactId>
+        <version>2.2.1</version>
+        <relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>mariaDB4j-binaries</artifactId>
+    <name>mariaDB4j Platform binaries</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>mariaDB4j-db-win32-10.1.23</module>
+        <module>mariaDB4j-db-win32-10.1.20</module>
+        <module>mariaDB4j-db-win32-10.0.13</module>
+        <module>mariaDB4j-db-mac64-10.1.23</module>
+        <module>mariaDB4j-db-mac64-10.1.9</module>
+        <module>mariaDB4j-db-mac64-5.5.34</module>
+        <module>mariaDB4j-db-linux64-10.1.13</module>
+        <module>mariaDB4j-db-linux64-10.1.23</module>
+    </modules>
+</project>

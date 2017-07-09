@@ -1,5 +1,5 @@
 These folders contains, per platform and version,
-the bin/mysql_install_db, mysqld, mysql, mysqlcheck, my_print_defaults & share/*
+the bin/mysql_install_db, mysqld, mysql, mysqldump, mysqlcheck, my_print_defaults & share/*
 
 These files come from a standard MariaDB distribution.
 Technically if you really must then an Oracle mySQL distrib would work as well - as the commands are exactly the same.
