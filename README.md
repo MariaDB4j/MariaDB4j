@@ -1,13 +1,11 @@
 What?
 =====
 
-MariaDB4j is a Java "launcher" for MariaDB (=MySQL(R)), allowing to use it from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j! -- If you like/use this project, a Star / Watch / Follow me on GitHub is appreciated. Also, unless you're working on the-next-super-secret-thing, it would be cool if you sent a PR adding your name/project to the [USERS.md](USERS.md) file to show your appreciation for this free project!
+MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backward compatible, drop-in replacement of the MySQL(R) Database Server", see [FAQ](http://kb.askmonty.org/en/mariadb-faq) and [Wikipedia](http://en.wikipedia.org/wiki/MariaDB)), allowing you to use MariaDB (MySQL(R)) from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
 
-Background: MariaDB is "a backward compatible, drop-in replacement of the MySQL(R) Database Server" :
-* Homepage: http://mariadb.org
-* FAQ: http://kb.askmonty.org/en/mariadb-faq
-* Wikipedia: http://en.wikipedia.org/wiki/MariaDB
+If you like/use this project, [consider becoming a patreon to support its future development!](https://www.patreon.com/vorburger) Also if you could Star / Watch / Follow on GitHub, it's much appreciated. You can also send a PR adding your name/project to the [USERS.md](USERS.md) file as a another way to show your appreciation for this free project! 
 
+[![Patreon me!](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/vorburger)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j)
 [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
@@ -19,7 +17,7 @@ How? (Java)
 ----
 The MariaDB native binaries are in the MariaDB4j-DB-win*/linux*/mac*.JARs on which the main MariaDB4j JAR depends on by Maven transitive dependencies and, by default, are extracted from the classpath to a temporary base directory on the fly, then started by Java.
 
-An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).
+An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).  Basically, you can simply:
 
 1. Install the database with a particular configuration, using short-cut:
 ```java
@@ -39,14 +37,14 @@ DB db = DB.newEmbeddedDB(configBuilder.build());
 db.start();
 ```
 4. Use the database as per standard JDBC usage. In this example, you're acquiring a JDBC `Connection` from the
-`DriverManager`; note that you could easily configure this url 
+`DriverManager`; note that you could easily configure this URL 
 to be used in any JDBC connection pool. MySQL uses a `test` database by default, 
 and a `root` user with no password is also a default.
 ```java
 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
 ```
 
-A similar suitable JDBC URL as String can normally also be directly obtained directly from the MariaDBj API, if you prefer (this is especially useful for tests if you let MariaDB4j automatically choose a free port, in which case a hard-coded URL is problematic):
+A similar suitable JDBC URL as String can normally also be directly obtained directly from the MariaDB4j API, if you prefer (this is especially useful for tests if you let MariaDB4j automatically choose a free port, in which case a hard-coded URL is problematic):
 
 ```java
 Connection conn = DriverManager.getConnection(configBuilder.getURL(dbName), "root", "");
@@ -86,7 +84,7 @@ MariaDB4j JAR binaries are available from:
 <dependency>
     <groupId>ch.vorburger.mariaDB4j</groupId>
     <artifactId>mariaDB4j</artifactId>
-    <version>2.2.2</version>
+    <version>2.2.3</version>
 </dependency>
 ```
 
