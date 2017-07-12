@@ -162,7 +162,8 @@ public class ManagedProcessTest {
         if (SystemUtils.IS_OS_WINDOWS) {
             pb = new ManagedProcessBuilder("notepad.exe");
         } else {
-            pb = new ManagedProcessBuilder("vi");
+            pb = new ManagedProcessBuilder("sleep");
+            pb.addArgument("30s");
         }
 
         ManagedProcess p = pb.build();
