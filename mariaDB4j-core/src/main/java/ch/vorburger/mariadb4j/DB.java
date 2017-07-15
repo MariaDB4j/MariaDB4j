@@ -174,7 +174,9 @@ public class DB {
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
-        builder.addArgument("--skip-grant-tables");
+        if(this.configuration.isSecurityDisabled()) {
+            builder.addArgument("--skip-grant-tables");
+        }
         builder.addArgument("--max_allowed_packet=64M");
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
         builder.addFileArgument("--datadir", dataDir);
@@ -252,6 +254,10 @@ public class DB {
         run(command, null, null, null);
     }
 
+    public void run(String command, String username, String password) throws ManagedProcessException {
+        run(command, username, password, null);
+    }
+
     protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName)
             throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
@@ -281,6 +287,10 @@ public class DB {
 
     public void createDB(String dbName) throws ManagedProcessException {
         this.run("create database if not exists `" + dbName + "`;");
+    }
+
+    public void createDB(String dbName, String username, String password) throws ManagedProcessException {
+        this.run("create database if not exists `" + dbName + "`;", username, password);
     }
 
     protected OutputStreamLogDispatcher getOutputStreamLogDispatcher(@SuppressWarnings("unused") String exec) {

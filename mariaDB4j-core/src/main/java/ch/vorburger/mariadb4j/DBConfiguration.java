@@ -55,6 +55,8 @@ public interface DBConfiguration {
 
     String getOSLibraryEnvironmentVarName();
 
+    boolean isSecurityDisabled();
+
     static class Impl implements DBConfiguration {
 
         private final int port;
@@ -66,9 +68,10 @@ public interface DBConfiguration {
         private final boolean isWindows;
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
+        private final boolean isSecurityDisabled;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
-                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName) {
+                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled) {
             super();
             this.port = port;
             this.socket = socket;
@@ -79,6 +82,7 @@ public interface DBConfiguration {
             this.isWindows = isWindows;
             this.args = args;
             this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
+            this.isSecurityDisabled = isSecurityDisabled;
         }
 
         @Override
@@ -124,6 +128,11 @@ public interface DBConfiguration {
         @Override
         public String getOSLibraryEnvironmentVarName() {
             return osLibraryEnvironmentVarName;
+        }
+
+        @Override
+        public boolean isSecurityDisabled() {
+            return isSecurityDisabled;
         }
 
     }
