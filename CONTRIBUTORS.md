@@ -14,6 +14,8 @@ MariaDB4j CONTRIBUTORS
 - Guillaume Hiron @ghiron; for http://www.honestica.com
 - Josef Andersson @hanklank <josef.andersson@svt.se>, July 2016; for http://www.svt.se
 - Leora Pearson @lpearson05 <Leora.Pearson@bazaarvoice.com>, Aug 2016 (http://www.bazaarvoice.com/)
+- Carlos Ortiz [@cortiz](http://github.com/cortiz/) <carlos.ortiz@craftersoftware.com>, Jun 2017 [CrafterCMS](http://craftercms.org)
+.com/)
 
 also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
