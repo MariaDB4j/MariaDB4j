@@ -370,11 +370,11 @@ public class DB {
                     logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
                 }
 
-                if (dataDir.exists() && Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
+                if (dataDir.exists() && (configuration.deletesTemporaryDataOnShutdown() && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
                     FileUtils.deleteQuietly(dataDir);
                 }
-                if (baseDir.exists() && Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
+                if (baseDir.exists() && (configuration.deletesTemporaryDataOnShutdown() && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
                     FileUtils.deleteQuietly(baseDir);
                 }

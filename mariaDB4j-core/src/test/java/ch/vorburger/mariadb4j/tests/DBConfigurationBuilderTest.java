@@ -114,4 +114,19 @@ public class DBConfigurationBuilderTest {
         String updatedLibDir = config.getLibDir();
         assertEquals(updatedLibDir, libDir.toAbsolutePath().toString());
     }
+
+    @Test
+    public void deletesTemporaryDirectoriesAsDefault() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration config = builder.build();
+        assertTrue(config.deletesTemporaryDataOnShutdown());
+    }
+
+    @Test
+    public void keepsTemporaryDirectories() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        builder.setDeletesTemporaryDataOnShutdown(false);
+        DBConfiguration config = builder.build();
+        assertFalse(config.deletesTemporaryDataOnShutdown());
+    }
 }

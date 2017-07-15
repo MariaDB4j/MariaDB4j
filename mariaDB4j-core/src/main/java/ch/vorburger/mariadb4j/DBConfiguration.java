@@ -48,6 +48,9 @@ public interface DBConfiguration {
     /** Base directory for DB's actual data files. */
     String getDataDir();
 
+    /** Whether to delete the base and data directory on shutdown. */
+    boolean deletesTemporaryDataOnShutdown();
+
     /** Whether running on Windows (some start-up parameters are different). */
     boolean isWindows();
 
@@ -63,12 +66,13 @@ public interface DBConfiguration {
         private final String baseDir;
         private final String libDir;
         private final String dataDir;
+        private final boolean deletesTemporaryDataOnShutdown;
         private final boolean isWindows;
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
-                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName) {
+             boolean deletesTemporaryDataOnShutdown, boolean isWindows, List<String> args, String osLibraryEnvironmentVarName) {
             super();
             this.port = port;
             this.socket = socket;
@@ -76,6 +80,7 @@ public interface DBConfiguration {
             this.baseDir = baseDir;
             this.libDir = libDir;
             this.dataDir = dataDir;
+            this.deletesTemporaryDataOnShutdown = deletesTemporaryDataOnShutdown;
             this.isWindows = isWindows;
             this.args = args;
             this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
@@ -109,6 +114,11 @@ public interface DBConfiguration {
         @Override
         public String getDataDir() {
             return dataDir;
+        }
+
+        @Override
+        public boolean deletesTemporaryDataOnShutdown() {
+            return deletesTemporaryDataOnShutdown;
         }
 
         @Override
