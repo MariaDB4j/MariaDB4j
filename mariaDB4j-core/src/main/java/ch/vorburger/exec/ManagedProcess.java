@@ -26,6 +26,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
@@ -73,12 +75,13 @@ public class ManagedProcess {
     private final boolean destroyOnShutdown;
     private final int consoleBufferMaxLines;
     private final OutputStreamLogDispatcher outputStreamLogDispatcher;
+    private final MultiOutputStream stdouts;
+    private final MultiOutputStream stderrs;
 
     private boolean isAlive = false;
     private String procShortName;
     private RollingLogOutputStream console;
-    private MultiOutputStream stdouts;
-    private MultiOutputStream stderrs;
+
 
     /**
      * Package local constructor.
@@ -109,6 +112,35 @@ public class ManagedProcess {
         this.destroyOnShutdown = destroyOnShutdown;
         this.consoleBufferMaxLines = consoleBufferMaxLines;
         this.outputStreamLogDispatcher = outputStreamLogDispatcher;
+        this.stdouts = new MultiOutputStream();
+        this.stderrs = new MultiOutputStream();
+    }
+
+    /**
+     * Package local constructor.
+     *
+     * <p>Keep ch.vorburger.exec's API separate from Apache Commons Exec, so it COULD be replaced.
+     *
+     * @see ManagedProcessBuilder#build()
+     *
+     * @param commandLine Apache Commons Exec CommandLine
+     * @param directory Working directory, or null
+     * @param environment Environment Variable.
+     */
+    ManagedProcess(CommandLine commandLine, File directory, Map<String, String> environment,
+                   InputStream input, boolean destroyOnShutdown, int consoleBufferMaxLines,
+                   OutputStreamLogDispatcher outputStreamLogDispatcher, List<OutputStream> stdOuts,
+                   List<OutputStream> stderr) {
+        this(commandLine, directory, environment, input, destroyOnShutdown, consoleBufferMaxLines,
+                outputStreamLogDispatcher);
+
+        for (OutputStream stdOut : stdOuts) {
+            stdouts.addOutputStream(stdOut);
+        }
+
+        for (OutputStream stde : stderr) {
+            stderrs.addOutputStream(stde);
+        }
     }
 
     // stolen from commons-io IOUtiles (@since v2.5)
@@ -143,8 +175,7 @@ public class ManagedProcess {
         if (logger.isInfoEnabled())
             logger.info("Starting {}", procLongName());
 
-        stdouts = new MultiOutputStream();
-        stderrs = new MultiOutputStream();
+
         PumpStreamHandler outputHandler = new PumpStreamHandler(stdouts, stderrs, input);
         executor.setStreamHandler(outputHandler);
 

@@ -5,7 +5,7 @@
 		<groupId>ch.vorburger.mariaDB4j</groupId>
 		<artifactId>mariaDB4j-pom</artifactId>
 		<version>2.2.4-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>		
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>mariaDB4j</artifactId>
@@ -26,21 +26,20 @@
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-win32</artifactId>
-			<version>10.1.20</version>
+			<version>10.1.23</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-mac64</artifactId>
-			<version>10.1.9</version>
+			<version>10.1.23</version>
 		</dependency>
-		
 		<dependency>
 			<!-- For MariaDB4jSpringService, only. This has to be repeated from mariaDB4j-core here due to the optional true below -->
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<optional>true</optional> <!-- !!! -->
 		</dependency>
-		
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -67,9 +66,9 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.34</version>
-			<! - - For legal reasons (GPL with FOSS Exception story...), it's safest 
-				if projects using mariaDB4j decide this dependency themselves. If we have 
-				to use it in src/main/java instead of only src/test/java, then let's use 
+			<! - - For legal reasons (GPL with FOSS Exception story...), it's safest
+				if projects using mariaDB4j decide this dependency themselves. If we have
+				to use it in src/main/java instead of only src/test/java, then let's use
 				<scope>provided</scope> - - >
 			<scope>test</scope>
 		</dependency> -->
