@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.exec;
+package ch.vorburger.mariadb4j.tests;
 
 import java.io.File;
 import java.io.IOException;
