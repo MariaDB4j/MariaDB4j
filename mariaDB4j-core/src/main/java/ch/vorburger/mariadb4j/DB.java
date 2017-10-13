@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2012 - 2014 Michael Vorburger
+ * Copyright (C) 2012 - 2017 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,11 @@
  */
 package ch.vorburger.mariadb4j;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +39,7 @@ import org.slf4j.event.Level;
 
 /**
  * Provides capability to install, start, and use an embedded database.
- * 
+ *
  * @author Michael Vorburger
  * @author Michael Seaton
  */
@@ -168,7 +172,9 @@ public class DB {
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
-        builder.addArgument("--skip-grant-tables");
+        if(this.configuration.isSecurityDisabled()) {
+            builder.addArgument("--skip-grant-tables");
+        }
         builder.addArgument("--max_allowed_packet=64M");
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
         builder.addFileArgument("--datadir", dataDir);
@@ -246,6 +252,10 @@ public class DB {
         run(command, null, null, null);
     }
 
+    public void run(String command, String username, String password) throws ManagedProcessException {
+        run(command, username, password, null);
+    }
+
     protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName)
             throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
@@ -275,6 +285,10 @@ public class DB {
 
     public void createDB(String dbName) throws ManagedProcessException {
         this.run("create database if not exists `" + dbName + "`;");
+    }
+
+    public void createDB(String dbName, String username, String password) throws ManagedProcessException {
+        this.run("create database if not exists `" + dbName + "`;", username, password);
     }
 
     protected OutputStreamLogDispatcher getOutputStreamLogDispatcher(@SuppressWarnings("unused") String exec) {
@@ -364,11 +378,11 @@ public class DB {
                     logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
                 }
 
-                if (dataDir.exists() && Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
+                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
                     FileUtils.deleteQuietly(dataDir);
                 }
-                if (baseDir.exists() && Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
+                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
                     FileUtils.deleteQuietly(baseDir);
                 }
@@ -376,55 +390,55 @@ public class DB {
         });
     }
 
+    // The dump*() methods are intentionally *NOT* made "synchronized",
+    // (even though with --lock-tables one could not run two dumps concurrently anyway)
+    // because in theory this could cause a long-running dump to deadlock an application
+    // wanting to stop() a DB. Let it thus be a caller's responsibility to not dump
+    // concurrently (and if she does, it just fails, which is much better than an
+    // unexpected deadlock).
 
-    synchronized public ManagedProcess xmlDumpDB(File outputFile, String dbName,String user,String password)
+    public ManagedProcess dumpXML(File outputFile, String dbName, String user, String password)
             throws IOException, ManagedProcessException {
-        return dumpDB(outputFile, Arrays.asList(dbName),true,true,true, user, password);
+        return dump(outputFile, Arrays.asList(dbName), true, true, true, user, password);
     }
 
-    synchronized public ManagedProcess dumpDB(File outputFile, String dbName,String user,String password)
+    public ManagedProcess dumpSQL(File outputFile, String dbName, String user, String password)
             throws IOException, ManagedProcessException {
-      return dumpDB(outputFile, Arrays.asList(dbName),true,true,false, user, password);
+        return dump(outputFile, Arrays.asList(dbName), true, true, false, user, password);
     }
 
-    synchronized public ManagedProcess dumpDB(File outputFile, List<String> dbNamesToDump,
-                                              boolean compactDump, boolean lockTables, boolean asXml,
-                                              String user, String password)
+    protected ManagedProcess dump(File outputFile, List<String> dbNamesToDump,
+                                               boolean compactDump, boolean lockTables, boolean asXml,
+                                               String user, String password)
             throws ManagedProcessException, IOException {
 
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin","mysqldump"));
-        /** Not used **/
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqldump"));
+
         builder.addStdOut(new BufferedOutputStream(new FileOutputStream(outputFile)));
-        builder.setOutputStreamLogDispatcher(new OutputStreamLogDispatcher(){
-            @Override
-            public Level dispatch(OutputStreamType type, String line) {
-                return Level.TRACE;
-            }
-        });
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqldump"));
         builder.addArgument("--port=" + configuration.getPort());
         if (!configuration.isWindows()) {
             builder.addFileArgument("--socket", getAbsoluteSocketFile());
         }
-        if(lockTables) {
+        if (lockTables) {
             builder.addArgument("--flush-logs");
             builder.addArgument("--lock-tables");
         }
-        if(compactDump){
+        if (compactDump) {
             builder.addArgument("--compact");
         }
-        if(asXml){
+        if (asXml) {
             builder.addArgument("--xml");
         }
-        if(StringUtils.isNotBlank(user)){
+        if (StringUtils.isNotBlank(user)) {
             builder.addArgument("-u");
             builder.addArgument(user);
-            if(StringUtils.isNotBlank(password)) {
+            if (StringUtils.isNotBlank(password)) {
                 builder.addArgument("-p" + password);
             }
         }
-        builder.addArgument(StringUtils.join(dbNamesToDump,StringUtils.SPACE));
+        builder.addArgument(StringUtils.join(dbNamesToDump, StringUtils.SPACE));
         builder.setDestroyOnShutdown(true);
         return builder.build();
     }
-
 }

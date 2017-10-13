@@ -1,5 +1,12 @@
 language: java
-# We need Java 7, even though the source code is still Java 6, because Checkstyle during build is Java 7+ only
-jdk: 
-  - oraclejdk7
 
+# We need Java 7, even though the source code is still Java 6, 
+# because Checkstyle during build is Java 7+ only; and we use
+# OpenJDK instead of Oracle JDK because ya all should only
+# ever use OpenJDK!  (And get Red Hat's support for it, if
+# you use it professionally.)
+jdk: 
+  - openjdk7
+
+before_install:
+  - mvn -f DBs/pom.xml clean install

@@ -48,12 +48,23 @@ public interface DBConfiguration {
     /** Base directory for DB's actual data files. */
     String getDataDir();
 
+    /**
+     * Whether to delete the base and data directory on shutdown,
+     * if it is in a temporary directory. NB: If you've set the
+     * base and data directories to non temporary directories,
+     * then they'll never get deleted.
+     */
+    boolean isDeletingTemporaryBaseAndDataDirsOnShutdown();
+
     /** Whether running on Windows (some start-up parameters are different). */
     boolean isWindows();
 
     List<String> getArgs();
 
     String getOSLibraryEnvironmentVarName();
+
+    /** Whether to to "--skip-grant-tables". */
+    boolean isSecurityDisabled();
 
     static class Impl implements DBConfiguration {
 
@@ -63,12 +74,15 @@ public interface DBConfiguration {
         private final String baseDir;
         private final String libDir;
         private final String dataDir;
+        private final boolean isDeletingTemporaryBaseAndDataDirsOnShutdown;
         private final boolean isWindows;
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
+        private final boolean isSecurityDisabled;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
-                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName) {
+                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
+                boolean isDeletingTemporaryBaseAndDataDirsOnShutdown) {
             super();
             this.port = port;
             this.socket = socket;
@@ -76,9 +90,11 @@ public interface DBConfiguration {
             this.baseDir = baseDir;
             this.libDir = libDir;
             this.dataDir = dataDir;
+            this.isDeletingTemporaryBaseAndDataDirsOnShutdown = isDeletingTemporaryBaseAndDataDirsOnShutdown;
             this.isWindows = isWindows;
             this.args = args;
             this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
+            this.isSecurityDisabled = isSecurityDisabled;
         }
 
         @Override
@@ -112,6 +128,11 @@ public interface DBConfiguration {
         }
 
         @Override
+        public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
+            return isDeletingTemporaryBaseAndDataDirsOnShutdown;
+        }
+
+        @Override
         public boolean isWindows() {
             return isWindows;
         }
@@ -124,6 +145,11 @@ public interface DBConfiguration {
         @Override
         public String getOSLibraryEnvironmentVarName() {
             return osLibraryEnvironmentVarName;
+        }
+
+        @Override
+        public boolean isSecurityDisabled() {
+            return isSecurityDisabled;
         }
 
     }
