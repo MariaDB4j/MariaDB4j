@@ -16,7 +16,7 @@
     <artifactId>mariaDB4j-binaries</artifactId>
     <name>mariaDB4j Platform binaries</name>
     <!-- This artefact is never released, and just used in ../.travis.yml, so let's use a special marker version to make that clear -->
-    <version>0.0.0-SNAPSHOT</version>
+    <version>10.1.28</version>
     <packaging>pom</packaging>
 
     <modules>
