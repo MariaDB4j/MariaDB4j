@@ -82,7 +82,7 @@ MariaDB4j JAR binaries are available from:
 
 ```xml
 <dependency>
-    <groupId>ch.vorburger.mariaDB4j</groupId>
+    <groupId>org.craftercms.mariaDB4j</groupId>
     <artifactId>mariaDB4j</artifactId>
     <version>2.2.3</version>
 </dependency>
@@ -97,7 +97,7 @@ source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven
 
 ```xml
 <dependency>
-    <groupId>ch.vorburger.mariaDB4j</groupId>
+    <groupId>org.craftercms.mariaDB4j</groupId>
     <artifactId>mariaDB4j</artifactId>
     <version>2.2.3-SNAPSHOT</version>
 </dependency>

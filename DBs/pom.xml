@@ -7,9 +7,9 @@
     -->
 
     <parent>
-        <groupId>ch.vorburger.mariaDB4j</groupId>
+        <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
-        <version>2.2.1</version>
+        <version>2.2.2</version>
         <relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
@@ -20,15 +20,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>mariaDB4j-db-win32-10.1.23</module>
-        <module>mariaDB4j-db-win32-10.1.20</module>
-        <module>mariaDB4j-db-win32-10.0.13</module>
-
-        <module>mariaDB4j-db-mac64-10.1.23</module>
-        <module>mariaDB4j-db-mac64-10.1.9</module>
-        <module>mariaDB4j-db-mac64-5.5.34</module>
-
-        <module>mariaDB4j-db-linux64-10.1.23</module>
-        <module>mariaDB4j-db-linux64-10.1.13</module>
+        <module>mariaDB4j-db-win32-10.1.28</module>
+        <module>mariaDB4j-db-mac64-10.1.28</module>
+        <module>mariaDB4j-db-linux64-10.1.28</module>
     </modules>
 </project>

@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>ch.vorburger.mariaDB4j</groupId>
+		<groupId>org.craftercms.mariaDB4j</groupId>
 		<artifactId>mariaDB4j-pom</artifactId>
 		<version>2.2.4-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
@@ -11,6 +11,9 @@
 	<artifactId>mariaDB4j</artifactId>
     <name>mariaDB4j (all-in-one artifact)</name>
 
+	<properties>
+	<maria.db.version>10.1.28</maria.db.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -19,19 +22,19 @@
 		</dependency>
 
 		<dependency>
-			<groupId>ch.vorburger.mariaDB4j</groupId>
+			<groupId>org.craftercms.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-linux64</artifactId>
-			<version>10.1.23</version>
+			<version>${maria.db.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>ch.vorburger.mariaDB4j</groupId>
+			<groupId>org.craftercms.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-win32</artifactId>
-			<version>10.1.23</version>
+			<version>${maria.db.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>ch.vorburger.mariaDB4j</groupId>
+			<groupId>org.craftercms.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-mac64</artifactId>
-			<version>10.1.23</version>
+			<version>${maria.db.version}</version>
 		</dependency>
 		<dependency>
 			<!-- For MariaDB4jSpringService, only. This has to be repeated from mariaDB4j-core here due to the optional true below -->
