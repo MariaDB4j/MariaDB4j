@@ -20,8 +20,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>mariaDB4j-db-win32-10.1.23</module>
-        <module>mariaDB4j-db-mac64-10.1.23</module>
-        <module>mariaDB4j-db-linux64-10.1.23</module>
+        <module>mariaDB4j-db-win32-10.1.28</module>
+        <module>mariaDB4j-db-mac64-10.1.28</module>
+        <module>mariaDB4j-db-linux64-10.1.28</module>
     </modules>
 </project>
