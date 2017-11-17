@@ -6,7 +6,6 @@ language: java
 # ever use OpenJDK!  (And get Red Hat's support for it, if
 # you use it professionally.)
 jdk: 
-  - openjdk7
-
+  - openjdk8
 before_install:
   - mvn -f DBs/pom.xml clean install
