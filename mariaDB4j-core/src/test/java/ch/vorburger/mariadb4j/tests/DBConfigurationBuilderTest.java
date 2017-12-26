@@ -129,4 +129,14 @@ public class DBConfigurationBuilderTest {
         DBConfiguration config = builder.build();
         assertFalse(config.isDeletingTemporaryBaseAndDataDirsOnShutdown());
     }
+
+    @Test
+    public void process() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration config = builder.build();
+        String defaultBaseDir = config.getBaseDir();
+        assertTrue(Util.isTemporaryDirectory(defaultBaseDir));
+        String defaultLibDir = config.getLibDir();
+        assertEquals(defaultLibDir, defaultBaseDir + "/libs");
+    }
 }
