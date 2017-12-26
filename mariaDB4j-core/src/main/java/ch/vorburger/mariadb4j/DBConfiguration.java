@@ -19,6 +19,8 @@
  */
 package ch.vorburger.mariadb4j;
 
+import ch.vorburger.exec.ManagedProcessListener;
+
 import java.util.List;
 
 /**
@@ -55,6 +57,12 @@ public interface DBConfiguration {
 
     String getOSLibraryEnvironmentVarName();
 
+    /**
+     *
+     * @return Process callback when DB process is killed or is completed
+     */
+    ManagedProcessListener getProcessListener();
+
     static class Impl implements DBConfiguration {
 
         private final int port;
@@ -66,9 +74,10 @@ public interface DBConfiguration {
         private final boolean isWindows;
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
+        private final ManagedProcessListener listener;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
-                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName) {
+                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName,ManagedProcessListener listener) {
             super();
             this.port = port;
             this.socket = socket;
@@ -79,6 +88,7 @@ public interface DBConfiguration {
             this.isWindows = isWindows;
             this.args = args;
             this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
+            this.listener = listener;
         }
 
         @Override
@@ -126,6 +136,10 @@ public interface DBConfiguration {
             return osLibraryEnvironmentVarName;
         }
 
+        @Override
+        public ManagedProcessListener getProcessListener() {
+            return listener;
+        }
     }
 
 }

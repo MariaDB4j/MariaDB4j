@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.exec.environment.EnvironmentUtils;
 import org.apache.commons.exec.util.StringUtils;
 
@@ -54,6 +55,17 @@ public class ManagedProcessBuilder {
     protected boolean destroyOnShutdown = true;
     protected int consoleBufferMaxLines = 100;
     protected OutputStreamLogDispatcher outputStreamLogDispatcher = new OutputStreamLogDispatcher();
+    protected ManagedProcessListener listener;
+
+    public ManagedProcessListener getProcessListener() {
+        return listener;
+    }
+
+    public ManagedProcessBuilder setProcessListener(ManagedProcessListener listener) {
+        this.listener= listener;
+        return this;
+    }
+
 
     public ManagedProcessBuilder(String executable) throws ManagedProcessException {
         commonsExecCommandLine = new CommandLine(executable);
@@ -199,7 +211,7 @@ public class ManagedProcessBuilder {
 
     public ManagedProcess build() {
         return new ManagedProcess(getCommandLine(), directory, environment, inputStream, destroyOnShutdown, consoleBufferMaxLines,
-                outputStreamLogDispatcher);
+                outputStreamLogDispatcher, listener);
     }
 
     public void setInputStream(InputStream inputStream) {

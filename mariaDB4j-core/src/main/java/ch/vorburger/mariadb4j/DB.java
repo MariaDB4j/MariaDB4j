@@ -263,6 +263,10 @@ public class DB {
             addSocketOrPortArgument(builder);
             if (fromIS != null)
                 builder.setInputStream(fromIS);
+            if(this.configuration.getProcessListener() != null){
+                builder.setProcessListener(this.configuration.getProcessListener());
+            }
+
             ManagedProcess process = builder.build();
             process.start();
             process.waitForExit();

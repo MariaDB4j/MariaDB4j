@@ -114,4 +114,14 @@ public class DBConfigurationBuilderTest {
         String updatedLibDir = config.getLibDir();
         assertEquals(updatedLibDir, libDir.toAbsolutePath().toString());
     }
+
+    @Test
+    public void process() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration config = builder.build();
+        String defaultBaseDir = config.getBaseDir();
+        assertTrue(Util.isTemporaryDirectory(defaultBaseDir));
+        String defaultLibDir = config.getLibDir();
+        assertEquals(defaultLibDir, defaultBaseDir + "/libs");
+    }
 }
