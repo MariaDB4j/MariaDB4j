@@ -24,6 +24,7 @@
         <module>mariaDB4j-db-win32-10.1.20</module>
         <module>mariaDB4j-db-win32-10.0.13</module>
 
+		<module>mariaDB4j-db-mac64-10.2.11</module>
         <module>mariaDB4j-db-mac64-10.1.23</module>
         <module>mariaDB4j-db-mac64-10.1.9</module>
         <module>mariaDB4j-db-mac64-5.5.34</module>
