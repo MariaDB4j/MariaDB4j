@@ -35,7 +35,7 @@
                         <configuration>
                             <target>
                                 <unzip src="${basedir}/mariaDB/linux.zip"
-                                       dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}"/>
+                                       dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux"/>
                             </target>
                         </configuration>
                         <goals>
