@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-mac64</artifactId>
-			<version>10.1.23</version>
+			<version>10.2.11</version>
 		</dependency>
 		<dependency>
 			<!-- For MariaDB4jSpringService, only. This has to be repeated from mariaDB4j-core here due to the optional true below -->
