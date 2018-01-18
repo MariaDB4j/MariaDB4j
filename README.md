@@ -165,6 +165,9 @@ A: Try it out, and if you do find any problem, raise an issue here and let's see
 Q: ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory 
 A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`.
 
+Q: Is there another project that does something similar to this one?
+A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).
+
 
 Release?
 --------
