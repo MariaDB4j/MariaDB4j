@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>mariaDB4j-db-linux64</artifactId>
-    <version>10.2.11-SNAPSHOT</version>
+    <version>10.2.11</version>
 
     <properties>
         <mariaDB.version>10.2.11</mariaDB.version>

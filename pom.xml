@@ -38,8 +38,8 @@
 
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		 <spring.version>4.3.9.RELEASE</spring.version>
-		 <springboot.version>1.5.1.RELEASE</springboot.version>
+		 <spring.version>4.3.13.RELEASE</spring.version>
+		 <springboot.version>1.5.9.RELEASE</springboot.version>
 	</properties>
 
 	<build>
@@ -47,7 +47,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.7.0</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -73,7 +73,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>1.9</version>
+				<version>1.14</version>
                 <configuration>
                     <licenseName>apache_v2</licenseName>
                     <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
@@ -144,7 +144,7 @@
 	        <dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-simple</artifactId>
-				<version>1.7.21</version>
+				<version>1.7.25</version>
 	            <scope>test</scope>
 			</dependency>
 	    </dependencies>
