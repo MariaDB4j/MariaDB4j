@@ -114,22 +114,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
-<!--            
-            <plugin>
-                <groupId>com.versioneye</groupId>
-                <artifactId>versioneye-maven-plugin</artifactId>
-                <version>3.10.0</version>
-                <configuration>
-                    <projectId>5368ed4914c158e279000020</projectId>
-                    <propertiesPath>${user.home}/bin/versioneye.properties</propertiesPath>
-                </configuration>
-            </plugin>
-  -->
-
 		</plugins>
-		
-		
 	</build>			
 
 	<dependencyManagement>

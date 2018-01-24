@@ -9,7 +9,6 @@ If you like/use this project, [consider becoming a patreon to support its future
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j)
 [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
-[![Dependency Status](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.2/badge?style=flat)](https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/2.2.2)
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
 
 
@@ -176,7 +175,7 @@ Remember that mariaDB4j-pom-lite & DBs/mariaDB4j-db-* are now versioned non SNAP
 
 When doing a release, here are a few things to do every time:
 
-1. update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available by [having a look at the VersionEye page](https://www.versioneye.com/user/projects/5368ed4914c158e279000020). 
+1. update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available. 
 
 2. Make sure the project builds, without pulling anything which should be part of this build from outside: 
 
