@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2012 - 2014 Michael Vorburger
+ * Copyright (C) 2012 - 2018 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 
 /**
  * File utilities.
- * 
+ *
  * @author Michael Vorburger
  * @author Michael Seaton
  */
@@ -46,7 +45,7 @@ public class Util {
     /**
      * Retrieve the directory located at the given path. Checks that path indeed is a reabable
      * directory. If this does not exist, create it (and log having done so).
-     * 
+     *
      * @param path directory(ies, can include parent directories) names, as forward slash ('/')
      *            separated String
      * @return safe File object representing that path name
@@ -81,7 +80,7 @@ public class Util {
 
     /**
      * Check for temporary directory name.
-     * 
+     *
      * @param directory directory name
      * @return true if the passed directory name starts with the system temporary directory name.
      */
@@ -90,20 +89,24 @@ public class Util {
     }
 
     public static void forceExecutable(File executableFile) throws IOException {
-        if (executableFile.exists() && !executableFile.canExecute()) {
-            boolean succeeded = executableFile.setExecutable(true);
-            if (succeeded) {
-                logger.info("chmod +x " + executableFile.toString() + " (using java.io.File.setExecutable)");
-            } else {
-                throw new IOException("Failed to do chmod +x " + executableFile.toString()
-                        + " using java.io.File.setExecutable, which will be a problem on *NIX...");
+        if (executableFile.exists()) {
+            if (!executableFile.canExecute()) {
+                boolean succeeded = executableFile.setExecutable(true);
+                if (succeeded) {
+                    logger.info("chmod +x {} (using java.io.File.setExecutable)", executableFile);
+                } else {
+                    throw new IOException("Failed to do chmod +x " + executableFile.toString()
+                            + " using java.io.File.setExecutable, which will be a problem on *NIX...");
+                }
             }
+        } else {
+            logger.info("chmod +x requested on non-existing file: {}", executableFile);
         }
     }
 
     /**
      * Extract files from a package on the classpath into a directory.
-     * 
+     *
      * @param packagePath e.g. "com/stuff" (always forward slash not backslash, never dot)
      * @param toDir directory to extract to
      * @return int the number of files copied
