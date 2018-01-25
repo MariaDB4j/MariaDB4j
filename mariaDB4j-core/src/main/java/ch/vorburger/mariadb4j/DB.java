@@ -327,6 +327,7 @@ public class DB {
             if (!configuration.isWindows()) {
                 Util.forceExecutable(newExecutableFile("bin", "my_print_defaults"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql_install_db"));
+                Util.forceExecutable(newExecutableFile("scripts", "mysql_install_db"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqld"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqldump"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql"));
