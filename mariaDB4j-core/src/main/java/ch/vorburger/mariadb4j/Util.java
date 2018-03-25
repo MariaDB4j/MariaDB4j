@@ -180,24 +180,24 @@ public class Util {
 
 
     /**
-     * Retrieves sorted list of files from $directory/*.suffix
+     * Retrieves sorted list of files from $directory/*.suffix.
      *
-     * @param directory directory within class path from where files are to be retrieved
+     * @param directory directory within class path from where files are to be
+     * retrieved
      * @param suffix to filter file type
-     * @return
+     * @return List of files in the directory
      */
-    public static List<String> getFileList(String directory, String suffix) {
+    public static List<String> getFileList(final String directory, final String suffix) {
         List<String> files = new ArrayList<String>();
         File dir = new File(directory);
-        if (dir.isDirectory()){
+        if (dir.isDirectory()) {
             File[] filesList = dir.listFiles();
-            if (filesList == null)
+            if (filesList == null) {
                 throw new IllegalArgumentException(
-                    "Unable to retrive list of ilies in: " + directory);
-
-
+                    "Unable to retrieve list of files in: " + directory);
+            }
             for (File f: filesList) {
-                if (f.isFile() && f.getName().endsWith(suffix)){
+                if (f.isFile() && f.getName().endsWith(suffix)) {
                     files.add(f.getName());
                 }
             }

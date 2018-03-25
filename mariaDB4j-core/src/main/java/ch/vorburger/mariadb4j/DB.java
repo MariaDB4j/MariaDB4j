@@ -226,7 +226,8 @@ public class DB {
 
 
     /**
-     * Retreives flyway migration scripts and sources them via the mysql command line tool.
+     * Retreives flyway migration scripts and sources them via the mysql
+     * command line tool.
      *
      * @throws ManagedProcessException if something fatal went wrong
      */
@@ -242,8 +243,10 @@ public class DB {
    * @param suffix suffix to filter script to load
    * @throws ManagedProcessException if something fatal went wrong
    */
-    public void migrate(String directory, String suffix) throws ManagedProcessException {
-        String directoryPath = getClass().getClassLoader().getResource(directory).getFile();
+    public void migrate(final String directory, final String suffix)
+        throws ManagedProcessException {
+        String directoryPath = getClass().getClassLoader()
+            .getResource(directory).getFile();
         List<String> files = Util.getFileList(directoryPath, suffix);
 
         if (files == null)
