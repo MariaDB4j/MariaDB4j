@@ -22,6 +22,8 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -174,5 +176,37 @@ public class Util {
     private static interface Procedure<E extends Throwable> {
 
         void apply() throws E;
+    }
+
+
+    /**
+     * Retrieves sorted list of files from $directory/*.suffix
+     *
+     * @param directory directory within class path from where files are to be retrieved
+     * @param suffix to filter file type
+     * @return
+     */
+    public static List<String> getFileList(String directory, String suffix) {
+        List<String> files = new ArrayList<String>();
+        File dir = new File(directory);
+        if (dir.isDirectory()){
+            File[] filesList = dir.listFiles();
+            if (filesList == null)
+                throw new IllegalArgumentException(
+                    "Unable to retrive list of ilies in: " + directory);
+
+
+            for (File f: filesList) {
+                if (f.isFile() && f.getName().endsWith(suffix)){
+                    files.add(f.getName());
+                }
+            }
+
+            java.util.Collections.sort(files);
+        } else {
+            throw new IllegalArgumentException(
+                "Path does not points to a directory: " + directory);
+        }
+        return files;
     }
 }

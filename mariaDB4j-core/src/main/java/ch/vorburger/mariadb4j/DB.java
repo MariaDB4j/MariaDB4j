@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2012 - 2017 Michael Vorburger
+ * Copyright (C) 2012 - 2018 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class DB {
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use.
-     * 
+     *
      * @param config Configuration of the embedded instance
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -86,7 +86,7 @@ public class DB {
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use with default
      * configuration, allowing only for specifying port.
-     * 
+     *
      * @param port the port to start the embedded database on
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -122,7 +122,7 @@ public class DB {
 
     /**
      * Installs the database to the location specified in the configuration.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     synchronized protected void install() throws ManagedProcessException {
@@ -142,7 +142,7 @@ public class DB {
 
     /**
      * Starts up the database, using the data directory and port specified in the configuration.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void start() throws ManagedProcessException {
@@ -215,13 +215,44 @@ public class DB {
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
      * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
      * so we double check.
-     * 
+     *
      * @return config.getSocket() as File getAbsolutePath()
      */
     protected File getAbsoluteSocketFile() {
         String socket = configuration.getSocket();
         File socketFile = new File(socket);
         return socketFile.getAbsoluteFile();
+    }
+
+
+    /**
+     * Retreives flyway migration scripts and sources them via the mysql command line tool.
+     *
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+    public void migrate() throws ManagedProcessException {
+        migrate("db/migrate", ".sql");
+    }
+
+  /**
+   * Takes in a string that represents a resource directory on the classpath
+   * and sources them via the mysql command line tool.
+   *
+   * @param directory path that contain sql migration scripts to load into db
+   * @param suffix suffix to filter script to load
+   * @throws ManagedProcessException if something fatal went wrong
+   */
+    public void migrate(String directory, String suffix) throws ManagedProcessException {
+        String directoryPath = getClass().getClassLoader().getResource(directory).getFile();
+        List<String> files = Util.getFileList(directoryPath, suffix);
+
+        if (files == null)
+            throw new IllegalArgumentException(
+                "Unable to retrive list of ilies in: " + directory);
+
+        for (String f : files) {
+            source(f);
+        }
     }
 
     public void source(String resource) throws ManagedProcessException {
@@ -231,7 +262,7 @@ public class DB {
     /**
      * Takes in a string that represents a resource on the classpath and sources it via the mysql
      * command line tool.
-     * 
+     *
      * @param resource the path to a resource on the classpath to source
      * @param username the username used to login to the database
      * @param password the password used to login to the database
@@ -299,7 +330,7 @@ public class DB {
 
     /**
      * Stops the database.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
@@ -340,7 +371,7 @@ public class DB {
     /**
      * If the data directory specified in the configuration is a temporary directory, this deletes
      * any previous version. It also makes sure that the directory exists.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     protected void prepareDirectories() throws ManagedProcessException {

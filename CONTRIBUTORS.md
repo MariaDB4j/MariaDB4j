@@ -18,6 +18,8 @@ MariaDB4j CONTRIBUTORS
 .com/)
 - Jai Deep Mulchandani [@jai-deep](https://github.com/jai-deep) <Jaideep.Mulchandani@walmart.com> Jan 2018; for http://walmartlabs.com 
 - Lukasz Degus [@lde-avaleo] <lde@avaleo.net>, Jan 2018
+- Usman Akram [@usmanakram232] https://usmanakram232.github.io/
+ , March 2018
 
 also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
