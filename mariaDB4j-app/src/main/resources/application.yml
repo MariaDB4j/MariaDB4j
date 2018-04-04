@@ -1,0 +1,3 @@
+spring:
+  pid:
+    file: ./mariadb4j.pid

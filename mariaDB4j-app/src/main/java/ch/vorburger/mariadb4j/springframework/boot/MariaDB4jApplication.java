@@ -24,6 +24,7 @@ import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.system.ApplicationPidFileWriter;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,13 +53,11 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
 
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(MariaDB4jApplication.class);
+        app.addListeners(new ApplicationPidFileWriter());
         app.setBannerMode(Mode.OFF);
-        ConfigurableApplicationContext ctx = app.run(args);
+        app.run(args);
 
-        MariaDB4jService.waitForKeyPressToCleanlyExit();
-
-        ctx.stop();
-        ctx.close();
+        while(true) { }
     }
 
     @Override
