@@ -3,8 +3,9 @@ What?
 
 MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backward compatible, drop-in replacement of the MySQL(R) Database Server", see [FAQ](http://kb.askmonty.org/en/mariadb-faq) and [Wikipedia](http://en.wikipedia.org/wiki/MariaDB)), allowing you to use MariaDB (MySQL(R)) from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
 
-If you like/use this project, [consider becoming a patreon to support its future development!](https://www.patreon.com/vorburger) Also if you could Star / Watch / Follow on GitHub, it's much appreciated. You can also send a PR adding your name/project to the [USERS.md](USERS.md) file as a another way to show your appreciation for this free project! 
+If you are using this project, consider [supporting it :heart: by donating via PayPal (one time)](https://www.paypal.me/MichaelVorburgerCH?locale.x=en_US) or [becoming a patreon to sponsor](https://www.patreon.com/vorburger) to ensure it is actively developed and maintained in the future!  It's also much appreciate if you Star / Watch / Follow on GitHub. And, of course, do send a PR adding your name/project to the [USERS.md](USERS.md) file as a another way to show your appreciation for this free project! 
 
+<span class="badge-paypal"><a href="https://www.paypal.me/MichaelVorburgerCH?locale.x=en_US" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 [![Patreon me!](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/vorburger)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j)
 [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core)
