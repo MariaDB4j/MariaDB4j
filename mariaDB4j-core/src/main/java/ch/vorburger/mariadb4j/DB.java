@@ -106,9 +106,9 @@ public class DB {
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
-        builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
+        builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false).setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
-            builder.addFileArgument("--basedir", baseDir);
+            builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
             builder.addArgument("--skip-name-resolve");
@@ -176,8 +176,8 @@ public class DB {
             builder.addArgument("--skip-grant-tables");
         }
         builder.addArgument("--max_allowed_packet=64M");
-        builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
-        builder.addFileArgument("--datadir", dataDir);
+        builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false).setWorkingDirectory(baseDir);
+        builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
         addPortAndMaybeSocketArguments(builder);
         for (String arg : configuration.getArgs()) {
             builder.addArgument(arg);
