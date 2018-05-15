@@ -11,6 +11,8 @@ v2.3.0 @ 2018-05-15
 * @lde-avaleo and @jai-deep contributed MariaDB 10.2.11 (and @cortiz 10.1.23)
 * @vorburger moved code to [ch.vorburger.exec](https://github.com/vorburger/ch.vorburger.exec) and added dependency
 * @dependabot bumped various 3rd party libraries, courtesy of https://dependabot.com
+* @vorburger now compiles MariaDB4j with Java 8 instead of 6
+* @vorburger fixed bug #88 running MariaDb4j on Glassfish
 
 
 v2.2.3 @ 2017-02-10
