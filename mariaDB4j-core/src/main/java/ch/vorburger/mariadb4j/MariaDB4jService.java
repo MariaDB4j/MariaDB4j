@@ -60,15 +60,29 @@ public class MariaDB4jService {
         return configBuilder;
     }
 
-    @PostConstruct
-    // note this is from javax.annotation, not a Spring Framework dependency
+    @PostConstruct // note this is from javax.annotation, not a Spring Framework dependency
+    public void postConstruct() throws ManagedProcessRuntimeException {
+        try {
+            start();
+        } catch (ManagedProcessException e) {
+            throw new ManagedProcessRuntimeException(e);
+        }
+    }
+
     public void start() throws ManagedProcessException {
         db = DB.newEmbeddedDB(getConfiguration().build());
         db.start();
     }
 
-    @PreDestroy
-    // note this is from javax.annotation, not a Spring Framework dependency
+    @PreDestroy // note this is from javax.annotation, not a Spring Framework dependency
+    public void preDestroy() throws ManagedProcessRuntimeException {
+        try {
+            stop();
+        } catch (ManagedProcessException e) {
+            throw new ManagedProcessRuntimeException(e);
+        }
+    }
+
     public void stop() throws ManagedProcessException {
         if (!isRunning())
             return;
