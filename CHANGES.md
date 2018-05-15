@@ -1,6 +1,18 @@
 MariaDB4j Release Notes
 =======================
 
+v2.3.0 @ 2018-05-15
+---
+
+* @cortiz added dumpXML and dumpSQL
+* @marcelvanderperk added setSecurityDisabled()
+* @bjornblomqvist empty password string is treated the same as null
+* @paulroemer added setDeletingTemporaryBaseAndDataDirsOnShutdown()
+* @lde-avaleo and @jai-deep contributed MariaDB 10.2.11 (and @cortiz 10.1.23)
+* @vorburger moved code to [ch.vorburger.exec](https://github.com/vorburger/ch.vorburger.exec) and added dependency
+* @dependabot bumped various 3rd party libraries, courtesy of https://dependabot.com
+
+
 v2.2.3 @ 2017-02-10
 ---
 
