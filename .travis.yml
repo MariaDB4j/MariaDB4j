@@ -7,5 +7,6 @@ language: java
 # you use it professionally.)
 jdk: 
   - openjdk8
+
 before_install:
   - mvn -f DBs/pom.xml clean install

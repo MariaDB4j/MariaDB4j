@@ -175,7 +175,9 @@ public class DB {
         if(this.configuration.isSecurityDisabled()) {
             builder.addArgument("--skip-grant-tables");
         }
-        builder.addArgument("--max_allowed_packet=64M");
+        if (! hasArgument("--max_allowed_packet")) {
+            builder.addArgument("--max_allowed_packet=64M");
+        }
         builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false).setWorkingDirectory(baseDir);
         builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
         addPortAndMaybeSocketArguments(builder);
@@ -188,6 +190,15 @@ public class DB {
         builder.setDestroyOnShutdown(false);
         logger.info("mysqld executable: " + builder.getExecutable());
         return builder.build();
+    }
+
+    protected boolean hasArgument(final String argumentName) {
+        for (String argument : this.configuration.getArgs()) {
+            if (argument.startsWith(argumentName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected File newExecutableFile(String dir, String exec) {
@@ -325,6 +336,7 @@ public class DB {
             if (!configuration.isWindows()) {
                 Util.forceExecutable(newExecutableFile("bin", "my_print_defaults"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql_install_db"));
+                Util.forceExecutable(newExecutableFile("scripts", "mysql_install_db"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqld"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqldump"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql"));
