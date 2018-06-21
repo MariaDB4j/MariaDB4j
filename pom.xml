@@ -34,6 +34,7 @@
 		<module>mariaDB4j-core</module>
 		<module>mariaDB4j</module>
 		<module>mariaDB4j-app</module>
+		<module>mariaDB4j-maven-plugin</module>
 	</modules>
 
 	<properties>
@@ -52,6 +53,13 @@
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.ow2.asm</groupId>
+						<artifactId>asm</artifactId>
+						<version>6.2</version> <!-- Use newer version of ASM -->
+					</dependency>
+				</dependencies>
 			</plugin>
 
 			<plugin>

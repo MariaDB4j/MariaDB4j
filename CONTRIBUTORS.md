@@ -19,7 +19,7 @@ MariaDB4j CONTRIBUTORS
 - Jai Deep Mulchandani [@jai-deep](https://github.com/jai-deep) <Jaideep.Mulchandani@walmart.com> Jan 2018; for http://walmartlabs.com 
 - Lukasz Degus [@lde-avaleo] <lde@avaleo.net>, Jan 2018
 - Andrew Groot [@thesquaregroot](https://github.com/thesquaregroot) <groot@softwareverde.com>, June 2018; for https://softwareverde.com
-
-also see https://github.com/vorburger/MariaDB4j/graphs/contributors
+- William Dutton [@duttonw](https://github.com/duttonw)<will.dutt@gmail.com>, June 2018; for maven integration testing of micro services under services.qld.gov.au
+- also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
