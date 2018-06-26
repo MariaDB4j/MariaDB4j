@@ -12,7 +12,7 @@
     <name>mariaDB4j (all-in-one artifact)</name>
 
 	<properties>
-	<maria.db.version>10.1.33</maria.db.version>
+	<maria.db.version>10.1.34</maria.db.version>
 	</properties>
 	<dependencies>
 		<dependency>
