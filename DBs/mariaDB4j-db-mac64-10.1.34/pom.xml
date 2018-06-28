@@ -11,5 +11,5 @@
     </parent>
 
     <artifactId>mariaDB4j-db-mac64</artifactId>
-    <version>10.1.34</version>
+    <version>10.1.34-2</version>
 </project>
