@@ -27,25 +27,34 @@ import org.junit.rules.ExternalResource;
 
 public class MariaDBRule extends ExternalResource {
 
-    private final DB db;
+    private DB db;
+    private DBConfiguration config;
     private final String dbName;
     private final String resource;
 
-    public MariaDBRule(DBConfiguration config, String dbName, String resource) throws ManagedProcessException {
-        this.db = DB.newEmbeddedDB(config);
+    public MariaDBRule(DBConfiguration config, String dbName, String resource) {
+        this.config = config;
         this.dbName = dbName;
         this.resource = resource;
     }
 
-    public MariaDBRule(int port) throws ManagedProcessException {
+    public MariaDBRule(int port) {
         this(DBConfigurationBuilder.newBuilder().setPort(port).build(), null, null);
     }
 
     @Override
     protected void before() throws Throwable {
+        db = DB.newEmbeddedDB(config);
         db.start();
-        db.createDB(dbName);
-        db.source(resource, dbName);
+        initDB();
+    }
+
+    private void initDB() throws ManagedProcessException {
+        if(dbName != null)
+            db.createDB(dbName);
+
+        if(resource != null)
+            db.source(resource, dbName);
     }
 
     @Override
@@ -59,5 +68,9 @@ public class MariaDBRule extends ExternalResource {
 
     public String getConnectionString() {
         return db.getConfiguration().getConnectionURL(dbName);
+    }
+
+    public DBConfiguration getConfiguration() {
+        return db.getConfiguration();
     }
 }
