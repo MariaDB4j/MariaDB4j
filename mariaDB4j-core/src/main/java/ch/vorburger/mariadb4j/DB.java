@@ -239,6 +239,10 @@ public class DB {
         source(resource, null, null, null);
     }
 
+    public void source(String resource, String dbName) throws ManagedProcessException {
+        source(resource, null, null, dbName);
+    }
+
     /**
      * Takes in a string that represents a resource on the classpath and sources it via the mysql
      * command line tool.

@@ -66,6 +66,8 @@ public interface DBConfiguration {
     /** Whether to to "--skip-grant-tables". */
     boolean isSecurityDisabled();
 
+    String getConnectionURL(String dbName);
+
     static class Impl implements DBConfiguration {
 
         private final int port;
@@ -152,6 +154,10 @@ public interface DBConfiguration {
             return isSecurityDisabled;
         }
 
+        @Override
+        public String getConnectionURL(String dbName) {
+            return "jdbc:mysql://localhost:" + getPort() + "/" + dbName;
+        }
     }
 
 }
