@@ -20,7 +20,7 @@
 package ch.vorburger.mariadb4j.tests.junit;
 
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
-import ch.vorburger.mariadb4j.junit.MariaDBRule;
+import ch.vorburger.mariadb4j.junit.MariaDB4jRule;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.junit.Rule;
@@ -38,11 +38,11 @@ public class MariaDB4jUnitRuleInitDBTest {
     private final String DB_NAME = "junittest";
 
     @Rule
-    public MariaDBRule dbRule = new MariaDBRule(DBConfigurationBuilder.newBuilder().build(), DB_NAME, "ch/vorburger/mariadb4j/basicSource.sql");
+    public MariaDB4jRule dbRule = new MariaDB4jRule(DBConfigurationBuilder.newBuilder().build(), DB_NAME, "ch/vorburger/mariadb4j/basicSource.sql");
 
     @Test
     public void validateSourceInitialization() throws SQLException {
-        String connString = dbRule.getConnectionString();
+        String connString = dbRule.getURL();
         Connection conn;
         conn = DriverManager.getConnection(connString, "root", "");
         QueryRunner qr = new QueryRunner();

@@ -19,7 +19,7 @@
  */
 package ch.vorburger.mariadb4j.tests.junit;
 
-import ch.vorburger.mariadb4j.junit.MariaDBRule;
+import ch.vorburger.mariadb4j.junit.MariaDB4jRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -28,10 +28,10 @@ import static org.junit.Assert.assertEquals;
 public class MariaDB4jUnitRuleOverrideDeaultPortTest {
 
     @Rule
-    public MariaDBRule dbRule = new MariaDBRule(3307);
+    public MariaDB4jRule dbRule = new MariaDB4jRule(3307);
 
     @Test
     public void validatePort() {
-        assertEquals(3307, dbRule.getConfiguration().getPort());
+        assertEquals(3307, dbRule.getDBConfiguration().getPort());
     }
 }

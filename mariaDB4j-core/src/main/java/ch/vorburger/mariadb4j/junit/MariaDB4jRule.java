@@ -23,38 +23,39 @@ import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.rules.ExternalResource;
 
-public class MariaDBRule extends ExternalResource {
+public class MariaDB4jRule extends ExternalResource {
 
     private DB db;
-    private DBConfiguration config;
     private final String dbName;
     private final String resource;
+    private final DBConfiguration dbConfiguration;
 
-    public MariaDBRule(DBConfiguration config, String dbName, String resource) {
-        this.config = config;
+    public MariaDB4jRule(DBConfiguration dbConfiguration, String dbName, String resource) {
+        this.dbConfiguration = dbConfiguration;
         this.dbName = dbName;
         this.resource = resource;
     }
 
-    public MariaDBRule(int port) {
-        this(DBConfigurationBuilder.newBuilder().setPort(port).build(), null, null);
+    public MariaDB4jRule(int port) {
+        this(DBConfigurationBuilder.newBuilder().setPort(port).build(), "", null);
     }
 
     @Override
     protected void before() throws Throwable {
-        db = DB.newEmbeddedDB(config);
+        db = DB.newEmbeddedDB(dbConfiguration);
         db.start();
         initDB();
     }
 
-    private void initDB() throws ManagedProcessException {
-        if(dbName != null)
+    protected void initDB() throws ManagedProcessException {
+        if (!StringUtils.isEmpty(dbName)) {
             db.createDB(dbName);
-
-        if(resource != null)
-            db.source(resource, dbName);
+            if (!StringUtils.isEmpty(resource))
+                db.source(resource, dbName);
+        }
     }
 
     @Override
@@ -62,15 +63,15 @@ public class MariaDBRule extends ExternalResource {
         try {
             db.stop();
         } catch (ManagedProcessException e) {
-            throw new AssertionError();
+            throw new AssertionError("db.stop() failed", e);
         }
     }
 
-    public String getConnectionString() {
-        return db.getConfiguration().getConnectionURL(dbName);
+    public String getURL() {
+        return dbConfiguration.getURL(dbName);
     }
 
-    public DBConfiguration getConfiguration() {
+    public DBConfiguration getDBConfiguration() {
         return db.getConfiguration();
     }
 }
