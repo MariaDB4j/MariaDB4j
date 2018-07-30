@@ -18,21 +18,25 @@
  * #L%
  */
 
-package ch.vorburger.mariadb4j.utils;
+package ch.vorburger.mariaDB4j.utils;
 
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
 /**
- * Holds the database and configuration data for MarioDB4j
+ * Holds the database and configuration data for MariaDB4j
  *
  * @author William Dutton
  * @since 1.0.0
  */
-public class DBholder {
+public final class DBSingleton {
 
     private static DB db;
     private static DBConfigurationBuilder configurationBuilder;
+
+    private DBSingleton() {
+        //static final singleton utiliy class
+    }
 
     public static DB getDB() {
         if (db == null)
@@ -41,7 +45,7 @@ public class DBholder {
     }
 
     public static void setDB(DB db) {
-        DBholder.db = db;
+        DBSingleton.db = db;
     }
 
     public static DBConfigurationBuilder getConfigurationBuilder() {
@@ -51,6 +55,6 @@ public class DBholder {
     }
 
     public static void setConfigurationBuilder(DBConfigurationBuilder configurationBuilder) {
-        DBholder.configurationBuilder = configurationBuilder;
+        DBSingleton.configurationBuilder = configurationBuilder;
     }
 }

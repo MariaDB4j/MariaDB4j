@@ -18,10 +18,10 @@
  * #L%
  */
 
-package ch.vorburger.mariadb4j;
+package ch.vorburger.mariaDB4j;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.utils.DBholder;
+import ch.vorburger.mariaDB4j.utils.DBSingleton;
 import java.io.IOException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -59,28 +59,24 @@ public class StopMojo extends AbstractMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if (this.skip) {
             getLog().debug("skipping stop as per configuration.");
             return;
         }
-        getLog().info("Stopping application...");
-        try {
-            stop();
-        } catch (IOException ex) {
-            // The response won't be received as the server has died - ignoring
-            getLog().debug("Service is not reachable anymore (" + ex.getMessage() + ")");
-        }
+        getLog().info("Stopping MariaDB4j...");
+
+        stop();
     }
 
-    private void stop() throws IOException, MojoFailureException, MojoExecutionException {
+    private void stop() throws MojoExecutionException {
         doStop();
     }
 
     private void doStop()
-            throws IOException, MojoExecutionException {
+            throws MojoExecutionException {
         try {
-            DBholder.getDB().stop();
+            DBSingleton.getDB().stop();
         } catch (ManagedProcessException ex) {
             throw new MojoExecutionException(
                     "MariaDB4j Database. Could not stop gracefully",
@@ -88,4 +84,7 @@ public class StopMojo extends AbstractMojo {
         }
     }
 
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
 }

@@ -17,14 +17,17 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariadb4j;
+package ch.vorburger.mariaDB4j;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.utils.DBholder;
+import ch.vorburger.mariaDB4j.utils.DBSingleton;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
 /**
  * Start a MariaDBj4 database. Contrary to the {@code run} goal, this does not block and
@@ -45,14 +48,14 @@ public class StartMojo extends AbstractRunMojo {
     protected void runWithMavenJvm(DBConfigurationBuilder configurationBuilder)
             throws MojoExecutionException {
         try {
-            DBholder.setDB(DB.newEmbeddedDB(configurationBuilder.build()));
-            DBholder.getDB().start();
+            DBSingleton.setDB(DB.newEmbeddedDB(configurationBuilder.build()));
+            DBSingleton.getDB().start();
             if (!databaseName.equals("test")) {
                 // mysqld out-of-the-box already has a DB named "test"
                 // in case we need another DB, here's how to create it first
-                DBholder.getDB().createDB(databaseName);
+                DBSingleton.getDB().createDB(databaseName);
             }
-            getLog().warn("Database started and is configured on" + DBholder.getConfigurationBuilder().getURL(databaseName));
+            getLog().warn("Database started and is configured on" + DBSingleton.getConfigurationBuilder().getURL(databaseName));
         } catch (ManagedProcessException ex) {
             throw new MojoExecutionException(
                     "Could not setup and start database", ex);

@@ -18,14 +18,17 @@
  * #L%
  */
 
-package ch.vorburger.mariadb4j;
+package ch.vorburger.mariaDB4j;
 
-import ch.vorburger.mariadb4j.utils.DBholder;
+import ch.vorburger.mariaDB4j.utils.DBSingleton;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
 /**
  * Base class to run a MariaDB4j
@@ -102,13 +105,13 @@ public abstract class AbstractRunMojo extends AbstractMojo {
         if (dataDir != null) {
             configurationBuilder.setDataDir(dataDir);
         }
-        DBholder.setConfigurationBuilder(configurationBuilder);
+        DBSingleton.setConfigurationBuilder(configurationBuilder);
         return configurationBuilder;
     }
 
     /**
      * Run with the current VM, using the specified arguments.
-     * @param configurationBuilder builder of MarioDB4j
+     * @param configurationBuilder builder of MariaDB4j
      * @throws MojoExecutionException in case of MOJO execution errors
      * @throws MojoFailureException in case of MOJO failures
      */
