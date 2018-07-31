@@ -34,12 +34,15 @@
 		<module>mariaDB4j-core</module>
 		<module>mariaDB4j</module>
 		<module>mariaDB4j-app</module>
+		<module>mariaDB4j-maven-plugin</module>
 	</modules>
 
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		 <spring.version>4.3.9.RELEASE</spring.version>
 		 <springboot.version>2.0.3.RELEASE</springboot.version>
+		 <maven.compiler.source>1.8</maven.compiler.source>
+		 <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<build>
@@ -49,9 +52,10 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
 				</configuration>
+
 			</plugin>
 
 			<plugin>
