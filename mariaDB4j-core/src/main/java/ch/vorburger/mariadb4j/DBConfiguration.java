@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Enables passing in custom options when starting up the database server This is the analog to
@@ -66,6 +67,8 @@ public interface DBConfiguration {
     /** Whether to to "--skip-grant-tables". */
     boolean isSecurityDisabled();
 
+    String getURL(String dbName);
+
     static class Impl implements DBConfiguration {
 
         private final int port;
@@ -79,10 +82,11 @@ public interface DBConfiguration {
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
         private final boolean isSecurityDisabled;
+        private final Function<String, String> getURL;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
-                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
-                boolean isDeletingTemporaryBaseAndDataDirsOnShutdown) {
+             boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
+             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL) {
             super();
             this.port = port;
             this.socket = socket;
@@ -95,6 +99,7 @@ public interface DBConfiguration {
             this.args = args;
             this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
             this.isSecurityDisabled = isSecurityDisabled;
+            this.getURL = getURL;
         }
 
         @Override
@@ -152,6 +157,10 @@ public interface DBConfiguration {
             return isSecurityDisabled;
         }
 
+        @Override
+        public String getURL(String dbName) {
+            return getURL.apply(dbName);
+        }
     }
 
 }
