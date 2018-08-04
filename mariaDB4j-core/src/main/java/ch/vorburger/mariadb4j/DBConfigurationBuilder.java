@@ -158,7 +158,7 @@ public class DBConfigurationBuilder {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
                 WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(), 
-                isDeletingTemporaryBaseAndDataDirsOnShutdown());
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL);
     }
 
     /**

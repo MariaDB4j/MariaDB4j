@@ -177,7 +177,9 @@ public class DB {
         if(this.configuration.isSecurityDisabled()) {
             builder.addArgument("--skip-grant-tables");
         }
-        builder.addArgument("--max_allowed_packet=64M");
+        if (! hasArgument("--max_allowed_packet")) {
+            builder.addArgument("--max_allowed_packet=64M");
+        }
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
         builder.addFileArgument("--datadir", dataDir);
         addPortAndMaybeSocketArguments(builder);
@@ -190,6 +192,15 @@ public class DB {
         builder.setDestroyOnShutdown(false);
         logger.info("mysqld executable: " + builder.getExecutable());
         return builder.build();
+    }
+
+    protected boolean hasArgument(final String argumentName) {
+        for (String argument : this.configuration.getArgs()) {
+            if (argument.startsWith(argumentName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected File newExecutableFile(String dir, String exec) {
@@ -226,6 +237,10 @@ public class DB {
 
     public void source(String resource) throws ManagedProcessException {
         source(resource, null, null, null);
+    }
+
+    public void source(String resource, String dbName) throws ManagedProcessException {
+        source(resource, null, null, dbName);
     }
 
     /**
