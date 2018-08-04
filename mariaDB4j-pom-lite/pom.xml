@@ -23,7 +23,8 @@
     <inceptionYear>2012</inceptionYear>
 
     <scm>
-        <connection>https://github.com/vorburger/MariaDB4j.git</connection>
+        <connection>scm:git:https://github.com/vorburger/MariaDB4j.git</connection>
+
         <url>https://github.com/vorburger/MariaDB4j</url>
         <!-- Do NOT specify developerConnection & tag here, as those are only used
              by the maven-release-plugin, which we don't use here and in the db-*/pom.xml -->
