@@ -17,17 +17,16 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariaDB4j;
+package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariaDB4j.utils.DBSingleton;
+import ch.vorburger.mariadb4j.utils.DBSingleton;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+import java.io.IOException;
 
 /**
  * Start a MariaDBj4 database. Contrary to the {@code run} goal, this does not block and
@@ -45,20 +44,27 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 public class StartMojo extends AbstractRunMojo {
 
     @Override
-    protected void runWithMavenJvm(DBConfigurationBuilder configurationBuilder)
-            throws MojoExecutionException {
+    protected void runWithMavenJvm(DBConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         try {
-            DBSingleton.setDB(DB.newEmbeddedDB(configurationBuilder.build()));
-            DBSingleton.getDB().start();
+            DB db = DB.newEmbeddedDB(configurationBuilder.build());
+            DBSingleton.setDB(db);
+            db.start();
+
+
             if (!databaseName.equals("test")) {
                 // mysqld out-of-the-box already has a DB named "test"
                 // in case we need another DB, here's how to create it first
-                DBSingleton.getDB().createDB(databaseName);
+               db.createDB(databaseName);
             }
-            getLog().warn("Database started and is configured on" + DBSingleton.getConfigurationBuilder().getURL(databaseName));
+            this.runScripts(db, databaseName);
+
+            getLog().warn("Database started and is configured on " + DBSingleton.getConfigurationBuilder().getURL(databaseName));
         } catch (ManagedProcessException ex) {
             throw new MojoExecutionException(
-                    "Could not setup and start database", ex);
+                    "Could not setup, start database", ex);
+        } catch (IOException ex) {
+            throw new MojoExecutionException(
+                    "Could execute scripts after database started", ex);
         }
     }
 
