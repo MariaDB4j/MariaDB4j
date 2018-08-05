@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,9 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
@@ -153,7 +156,9 @@ public class Util {
     }
 
     @SuppressWarnings("null")
-    private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
+    private static void
+    tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
+
         IOException lastIOException = null;
         int attemps = 0;
         while (attemps++ < n) {
@@ -182,30 +187,18 @@ public class Util {
     /**
      * Retrieves sorted list of files from $directory/*.suffix.
      *
-     * @param directory directory within class path from where files are to be
-     * retrieved
+     * @param directory directory where files are to be retrieved
      * @param suffix to filter file type
      * @return List of files in the directory
+     * @throws java.io.IOException if something goes wrong, including if nothing was found on
+     *             classpath
      */
-    public static List<String> getFileList(final String directory, final String suffix) {
-        List<String> files = new ArrayList<String>();
-        File dir = new File(directory);
-        if (dir.isDirectory()) {
-            File[] filesList = dir.listFiles();
-            if (filesList == null) {
-                throw new IllegalArgumentException(
-                    "Unable to retrieve list of files in: " + directory);
-            }
-            for (File f: filesList) {
-                if (f.isFile() && f.getName().endsWith(suffix)) {
-                    files.add(f.getName());
-                }
-            }
-
-            java.util.Collections.sort(files);
-        } else {
-            throw new IllegalArgumentException(
-                "Path does not points to a directory: " + directory);
+    public static List<Path> getFileList(final Path directory, final String suffix)
+        throws IOException {
+        List<Path> files = new ArrayList<>();
+        try (DirectoryStream<Path> pathStream =
+            Files.newDirectoryStream(directory, path -> path.toFile().isFile() && path.endsWith(suffix))) {
+          pathStream.forEach(entry -> files.add(entry));
         }
         return files;
     }

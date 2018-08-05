@@ -27,6 +27,7 @@ import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.vorburger.mariadb4j.DB;
@@ -41,6 +42,7 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 public class MariaDB4jSampleTutorialTest {
 
     @Test
+    @Ignore
     public void testEmbeddedMariaDB4j() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
@@ -76,6 +78,49 @@ public class MariaDB4jSampleTutorialTest {
             db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", "", dbName);
             results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
             Assert.assertEquals(5, results.size());
+            Assert.assertEquals("Hello, world", results.get(0));
+            Assert.assertEquals("Bonjour, monde", results.get(1));
+            Assert.assertEquals("Hola, mundo", results.get(2));
+        } finally {
+            DbUtils.closeQuietly(conn);
+        }
+    }
+
+    @Test
+    public void testEmbeddedMariaDB4jWithSourceAll() throws Exception {
+        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+        config.setPort(0); // 0 => autom. detect free port
+        DB db = DB.newEmbeddedDB(config.build());
+        db.start();
+
+        String dbName = "mariaDB4jTest"; // or just "test"
+        if (!dbName.equals("test")) {
+            // mysqld out-of-the-box already has a DB named "test"
+            // in case we need another DB, here's how to create it first
+            db.createDB(dbName);
+        }
+
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(config.getURL(dbName), "root", "");
+            QueryRunner qr = new QueryRunner();
+
+            // Should be able to create a new table
+            qr.update(conn, "CREATE TABLE hello(world VARCHAR(100))");
+
+            // Should be able to insert into a table
+            qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
+
+            // Should be able to select from a table
+            List<String> results = qr.query(conn, "SELECT * FROM hello",
+                    new ColumnListHandler<>());
+            Assert.assertEquals(1, results.size());
+            Assert.assertEquals("Hello, world", results.get(0));
+
+            // Should be able to source a SQL file
+            db.sourceAll(".", "sql", "root", null, dbName);
+            results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<>());
+            Assert.assertEquals(3, results.size());
             Assert.assertEquals("Hello, world", results.get(0));
             Assert.assertEquals("Bonjour, monde", results.get(1));
             Assert.assertEquals("Hola, mundo", results.get(2));

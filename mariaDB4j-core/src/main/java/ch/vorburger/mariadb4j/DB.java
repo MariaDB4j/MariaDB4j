@@ -25,9 +25,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.Objects;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -84,8 +88,8 @@ public class DB {
 
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
-     * method automatically installs the database and prepares it for use with default
-     * configuration, allowing only for specifying port.
+     * method automatically installs the database and prepares it for use with default configuration,
+     * allowing only for specifying port.
      *
      * @param port the port to start the embedded database on
      * @return a new DB instance
@@ -104,10 +108,12 @@ public class DB {
             installDbCmdFile = newExecutableFile("scripts", "mysql_install_db");
         if (!installDbCmdFile.exists())
             throw new ManagedProcessException(
-                    "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
+                "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir
+                    .getAbsolutePath());
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
-        builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
+        builder.getEnvironment()
+            .put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
             builder.addFileArgument("--basedir", baseDir);
@@ -150,7 +156,8 @@ public class DB {
         boolean ready = false;
         try {
             mysqldProcess = startPreparation();
-            ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(), dbStartMaxWaitInMS);
+            ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(),
+                dbStartMaxWaitInMS);
         } catch (Exception e) {
             logger.error("failed to start mysqld", e);
             throw new ManagedProcessException("An error occurred while starting the database", e);
@@ -158,8 +165,10 @@ public class DB {
         if (!ready) {
             if (mysqldProcess.isAlive())
                 mysqldProcess.destroy();
-            throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
-                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
+            throw new ManagedProcessException(
+                "Database does not seem to have started up correctly? Magic string not seen in "
+                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess
+                    .getLastConsoleLines());
         }
         logger.info("Database startup complete.");
     }
@@ -169,15 +178,17 @@ public class DB {
     }
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(
+            newExecutableFile("bin", "mysqld"));
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqld"));
-        builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
+        builder.getEnvironment()
+            .put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
-        if(this.configuration.isSecurityDisabled()) {
+        if (this.configuration.isSecurityDisabled()) {
             builder.addArgument("--skip-grant-tables");
         }
-        if (! hasArgument("--max_allowed_packet")) {
+        if (!hasArgument("--max_allowed_packet")) {
             builder.addArgument("--max_allowed_packet=64M");
         }
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
@@ -207,7 +218,8 @@ public class DB {
         return new File(baseDir, dir + "/" + exec + getWinExeExt());
     }
 
-    protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder) throws IOException {
+    protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder)
+        throws IOException {
         builder.addArgument("--port=" + configuration.getPort());
         if (!configuration.isWindows()) {
             builder.addFileArgument("--socket", getAbsoluteSocketFile());
@@ -224,8 +236,8 @@ public class DB {
 
     /**
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
-     * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
-     * so we double check.
+     * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location, so
+     * we double check.
      *
      * @return config.getSocket() as File getAbsolutePath()
      */
@@ -236,14 +248,37 @@ public class DB {
     }
 
 
-    /**
-     * Retreives flyway migration scripts and sources them via the mysql
-     * command line tool.
-     *
-     * @throws ManagedProcessException if something fatal went wrong
-     */
-    public void migrate() throws ManagedProcessException {
-        migrate("db/migrate", ".sql");
+  /**
+   * Takes in a string that represents a resource directory on the classpath and sources them via
+   * the mysql command line tool.
+   *
+   * @param directory path that contain sql migration scripts to load into db
+   * @param suffix suffix to filter script to load
+   * @return int the number of files sources
+   * @throws ManagedProcessException if something fatal went wrong
+   * @throws java.io.IOException if something goes wrong, including if nothing was found on
+   * classpath
+   */
+    public int sourceAll(final String directory, final String suffix)
+        throws IOException, ManagedProcessException {
+        return sourceAll(directory, suffix, null, null, null);
+    }
+
+  /**
+   * Takes in a string that represents a resource directory on the classpath and sources them via
+   * the mysql command line tool.
+   *
+   * @param directory path that contain sql migration scripts to load into db
+   * @param suffix suffix to filter script to load
+   * @param dbName the name of the database (schema) to source into
+   * @return int the number of files sources
+   * @throws ManagedProcessException if something fatal went wrong
+   * @throws java.io.IOException if something goes wrong, including if nothing was found on
+   * classpath
+   */
+    public int sourceAll(final String directory, final String suffix, final String dbName)
+        throws IOException, ManagedProcessException {
+        return sourceAll(directory, suffix, null, null, dbName);
     }
 
   /**
@@ -252,21 +287,36 @@ public class DB {
    *
    * @param directory path that contain sql migration scripts to load into db
    * @param suffix suffix to filter script to load
+   * @param username the username used to login to the database
+   * @param password the password used to login to the database
+   * @param dbName the name of the database (schema) to source into
+   * @return int the number of files sources
    * @throws ManagedProcessException if something fatal went wrong
+   * @throws java.io.IOException if something goes wrong, including if nothing was found on
+   *              classpath
    */
-    public void migrate(final String directory, final String suffix)
-        throws ManagedProcessException {
-        String directoryPath = getClass().getClassLoader()
-            .getResource(directory).getFile();
-        List<String> files = Util.getFileList(directoryPath, suffix);
-
-        if (files == null)
-            throw new IllegalArgumentException(
-                "Unable to retrive list of ilies in: " + directory);
-
-        for (String f : files) {
-            source(f);
+    public int sourceAll(final String directory, final String suffix, final String username, final String password, final String dbName)
+        throws ManagedProcessException, IOException {
+        Objects.requireNonNull(directory, "source directory cannot be null.");
+        File toDir = Paths.get(baseDir.getAbsolutePath(),"source", directory).toFile();
+        int copiedFIlesCount = Util.extractFromClasspathToFile(directory, toDir);
+        if (copiedFIlesCount == 0) {
+            logger.info("No files to source.");
+            return 0;
         }
+        List<Path> files = Util.getFileList(toDir.toPath(), suffix);
+      if (files.isEmpty()) {
+        logger.info("No sql script found to source.");
+        return 0;
+      }
+
+        int counter = 0;
+        for (Path entry : files) {
+            run("script file sourced from the classpath at: " + entry.toString(),
+                Files.newInputStream(entry), username, password, dbName);
+            counter++;
+        }
+        return counter;
     }
 
     public void source(String resource) throws ManagedProcessException {
