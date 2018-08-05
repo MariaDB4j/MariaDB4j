@@ -21,6 +21,7 @@ MariaDB4j CONTRIBUTORS
 - Andrew Groot [@thesquaregroot](https://github.com/thesquaregroot) <groot@softwareverde.com>, June 2018; for https://softwareverde.com
 - Yftach Zur [@yiftizur](https://github.com/yiftizur), June 2018; for MariaDB4jRule for easy integration with JUnit
 - William Dutton [@duttonw](https://github.com/duttonw)<will.dutt@gmail.com>, June 2018; for mariaDB4j-maven-plugin integration testing of micro services under services.qld.gov.au
+- Mike Chaberski [@mike10004](https://github.com/mike10004),  May 2017; initial [mariadb4j-maven-plugin](https://github.com/mike10004/mariadb4j-maven-plugin) incorporated to improve mariaDB4j-maven-plugin    
 - also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
