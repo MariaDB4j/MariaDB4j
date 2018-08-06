@@ -73,7 +73,7 @@ public class DB {
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use.
-     *
+     * 
      * @param config Configuration of the embedded instance
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -90,7 +90,7 @@ public class DB {
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use with default
      * configuration, allowing only for specifying port.
-     *
+     * 
      * @param port the port to start the embedded database on
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -126,7 +126,7 @@ public class DB {
 
     /**
      * Installs the database to the location specified in the configuration.
-     *
+     * 
      * @throws ManagedProcessException if something fatal went wrong
      */
     synchronized protected void install() throws ManagedProcessException {
@@ -146,7 +146,7 @@ public class DB {
 
     /**
      * Starts up the database, using the data directory and port specified in the configuration.
-     *
+     * 
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void start() throws ManagedProcessException {
@@ -230,7 +230,7 @@ public class DB {
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
      * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
      * so we double check.
-     *
+     * 
      * @return config.getSocket() as File getAbsolutePath()
      */
     protected File getAbsoluteSocketFile() {
@@ -289,7 +289,7 @@ public class DB {
    */
     public int sourceAll(final String directory, final String suffix, final String username, final String password, final String dbName)
         throws ManagedProcessException, IOException {
-        Objects.requireNonNull(directory, "source directory cannot be null.");
+        Objects.requireNonNull(directory, "directory cannot be null.");
         File toDir = Paths.get(baseDir.getAbsolutePath(),"source", directory).toFile();
         int copiedFIlesCount = Util.extractFromClasspathToFile(directory, toDir);
         if (copiedFIlesCount == 0) {
@@ -322,7 +322,7 @@ public class DB {
     /**
      * Takes in a string that represents a resource on the classpath and sources it via the mysql
      * command line tool.
-     *
+     * 
      * @param resource the path to a resource on the classpath to source
      * @param username the username used to login to the database
      * @param password the password used to login to the database
@@ -390,7 +390,7 @@ public class DB {
 
     /**
      * Stops the database.
-     *
+     * 
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
@@ -431,7 +431,7 @@ public class DB {
     /**
      * If the data directory specified in the configuration is a temporary directory, this deletes
      * any previous version. It also makes sure that the directory exists.
-     *
+     * 
      * @throws ManagedProcessException if something fatal went wrong
      */
     protected void prepareDirectories() throws ManagedProcessException {
