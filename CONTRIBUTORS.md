@@ -24,5 +24,4 @@ MariaDB4j CONTRIBUTORS
 - Usman Akram [@usmanakram232](https://usmanakram232.github.io/), March 2018
 - also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
-
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)

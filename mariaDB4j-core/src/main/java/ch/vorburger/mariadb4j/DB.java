@@ -88,8 +88,8 @@ public class DB {
 
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
-     * method automatically installs the database and prepares it for use with default configuration,
-     * allowing only for specifying port.
+     * method automatically installs the database and prepares it for use with default
+     * configuration, allowing only for specifying port.
      *
      * @param port the port to start the embedded database on
      * @return a new DB instance
@@ -108,12 +108,10 @@ public class DB {
             installDbCmdFile = newExecutableFile("scripts", "mysql_install_db");
         if (!installDbCmdFile.exists())
             throw new ManagedProcessException(
-                "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir
-                    .getAbsolutePath());
+                    "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
-        builder.getEnvironment()
-            .put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
+        builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
             builder.addFileArgument("--basedir", baseDir);
@@ -156,8 +154,7 @@ public class DB {
         boolean ready = false;
         try {
             mysqldProcess = startPreparation();
-            ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(),
-                dbStartMaxWaitInMS);
+            ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(), dbStartMaxWaitInMS);
         } catch (Exception e) {
             logger.error("failed to start mysqld", e);
             throw new ManagedProcessException("An error occurred while starting the database", e);
@@ -165,10 +162,8 @@ public class DB {
         if (!ready) {
             if (mysqldProcess.isAlive())
                 mysqldProcess.destroy();
-            throw new ManagedProcessException(
-                "Database does not seem to have started up correctly? Magic string not seen in "
-                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess
-                    .getLastConsoleLines());
+            throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
+                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
         }
         logger.info("Database startup complete.");
     }
@@ -178,11 +173,9 @@ public class DB {
     }
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(
-            newExecutableFile("bin", "mysqld"));
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqld"));
-        builder.getEnvironment()
-            .put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
+        builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
         if (this.configuration.isSecurityDisabled()) {
@@ -218,8 +211,7 @@ public class DB {
         return new File(baseDir, dir + "/" + exec + getWinExeExt());
     }
 
-    protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder)
-        throws IOException {
+    protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder) throws IOException {
         builder.addArgument("--port=" + configuration.getPort());
         if (!configuration.isWindows()) {
             builder.addFileArgument("--socket", getAbsoluteSocketFile());
@@ -236,8 +228,8 @@ public class DB {
 
     /**
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
-     * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location, so
-     * we double check.
+     * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
+     * so we double check.
      *
      * @return config.getSocket() as File getAbsolutePath()
      */

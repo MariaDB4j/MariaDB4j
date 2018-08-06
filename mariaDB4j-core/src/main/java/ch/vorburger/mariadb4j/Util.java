@@ -156,9 +156,7 @@ public class Util {
     }
 
     @SuppressWarnings("null")
-    private static void
-    tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
-
+    private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
         IOException lastIOException = null;
         int attemps = 0;
         while (attemps++ < n) {

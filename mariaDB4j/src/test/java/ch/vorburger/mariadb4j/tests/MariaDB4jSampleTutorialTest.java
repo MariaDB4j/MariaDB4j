@@ -27,7 +27,6 @@ import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.vorburger.mariadb4j.DB;
@@ -42,7 +41,6 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 public class MariaDB4jSampleTutorialTest {
 
     @Test
-    @Ignore
     public void testEmbeddedMariaDB4j() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
