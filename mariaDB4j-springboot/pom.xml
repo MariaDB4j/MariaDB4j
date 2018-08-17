@@ -4,7 +4,11 @@
     <parent>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
+<<<<<<< HEAD
         <version>2.4.1-SNAPSHOT</version>
+=======
+        <version>2.3.1-SNAPSHOT</version>
+>>>>>>> Add mariaDB4j-springboot module for auto-configuration with spring boot
         <relativePath>../pom.xml</relativePath>
     </parent>
 
