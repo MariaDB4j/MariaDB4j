@@ -1,4 +1,4 @@
-package com.github.mike10004.mariadb4jmavenplugintest.basic;
+package ch.vorburger.mariadb4j.mariadb4jmavenplugintest.basic;
 
 import org.junit.Test;
 
