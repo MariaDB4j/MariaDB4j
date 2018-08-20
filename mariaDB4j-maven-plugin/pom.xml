@@ -172,7 +172,6 @@
                 <artifactId>guava</artifactId>
                 <version>11.0</version><!-- can't take newest as it crashes maven -->
                 <scope>test</scope>
->>>>>>> Mike10004 mariadb4j maven plugin (#1)
             </dependency>
         </dependencies>
     </dependencyManagement>
