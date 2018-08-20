@@ -34,7 +34,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>mariaDB4j</artifactId>
+			<artifactId>mariaDB4j-springboot</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -42,6 +42,22 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 			<optional>true</optional> <!-- !!! -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<version>2.2.6</version>
+		</dependency>
+		<dependency>
+			<!-- Use JPA for example -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.0</version>
 		</dependency>
 		
 		<dependency>

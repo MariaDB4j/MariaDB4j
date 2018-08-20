@@ -24,8 +24,8 @@ import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import ch.vorburger.mariadb4j.MariaDB4jService;
@@ -42,13 +42,12 @@ import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 @EnableAutoConfiguration
 public class MariaDB4jApplication implements ExitCodeGenerator {
 
-    @Bean
-    protected MariaDB4jSpringService mariaDB4j() {
-        MariaDB4jSpringService bean = new MariaDB4jSpringService();
-        return bean;
-    }
+    private final ApplicationContext applicationContext;
 
-    protected @Autowired MariaDB4jSpringService dbService;
+    @Autowired
+    public MariaDB4jApplication(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(MariaDB4jApplication.class);
@@ -63,6 +62,7 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
 
     @Override
     public int getExitCode() {
+        MariaDB4jSpringService dbService = applicationContext.getBean(MariaDB4jSpringService.class);
         return dbService.getLastException() == null ? 0 : -1;
     }
 
