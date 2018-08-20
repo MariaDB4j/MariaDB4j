@@ -1,0 +1,2 @@
+CREATE TABLE `bar` (`bar_id` INTEGER AUTO_INCREMENT PRIMARY KEY, `baz` VARCHAR(127));
+INSERT INTO `bar` (`baz`) VALUES ('gaw');

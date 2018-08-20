@@ -132,6 +132,41 @@ MariaDB4j was initially developed for use in Mifos, the "Open Source Technology 
 See the [USERS.md](USERS.md) file (also included in each built JAR!) for a list of known users, and please send a PR adding your name to it to show your appreciation for this free project!
 
 
+Maven Plugin Info (mariadb4j-maven-plugin)
+-----------------
+
+#### 
+Maven plugin that starts and stops a MariaDB instance for the integration test phase.
+
+This is a Maven plugin wrapper around https://github.com/vorburger/MariaDB4j, a 
+helpful tool for launching MariaDB from Java. 
+
+See pom and integration test in https://github.com/vorburger/MariaDB4j/tree/mariaDB4j-maven-plugin/mariaDB4j-maven-plugin/src/it/mariadb4j-maven-plugin-test-basic  for usage example.
+
+#### How to upgrade the maven plugin from mike10004 version to this version
+To upgrade from mike10004 to vorbuger version please change
+
+```xml
+<plugin>
+    <groupId>com.github.mike10004</groupId>
+    <artifactId>mariadb4j-maven-plugin</artifactId>
+    ...
+</plugin>
+```
+
+to
+
+```xml
+<plugin>
+    <groupId>ch.vorburger.mariaDB4j</groupId>
+    <artifactId>mariaDB4j-maven-plugin</artifactId>
+    ...
+</plugin>
+```
+If you are using the argument "createDatabase" rename it to "databaseName"
+
+
+
 Anything else?
 --------------
 
