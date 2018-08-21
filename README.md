@@ -78,19 +78,19 @@ In [issue #64](<https://github.com/vorburger/MariaDB4j/issues/64>) there is also
 
 <<<<<<< HEAD
 =======
-If the application in which you use MariaDB4j is anyway based on Spring already however, then the ready-made [MariaDB4jSpringService](https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j-core/src/main/java/ch/vorburger/mariadb4j/springframework/MariaDB4jSpringService.java), which you can very easily use in a Spring Boot application, as illustrated in the [MariaDB4jApplication](https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j-app/src/main/java/ch/vorburger/mariadb4j/springframework/boot/MariaDB4jApplication.java) or the [MariaDB4jSpringServiceTestSpringConfiguration](https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/springframework/MariaDB4jSpringServiceTestSpringConfiguration.java) could possibly be useful to you.   
+If you want to use MariaDB4j with Spring-boot the opinionated presets for spring applications, then you can easily use this the ready-made MariaDB4jSpringService to reduce your coding/configuration to get you going, we have an example application ([mariaDB4j-app](<https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j-app/>)) which illustrates how to wire it up or as an alternative approach via the [MariaDB4jSpringServiceTestSpringConfiguration](<https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/springframework/MariaDB4jSpringServiceTestSpringConfiguration.java>).
 
 The DataSource initialization have to wait until MariaDB is ready to receive connections, so we provide `mariaDB4j-springboot` to implement it. You can use it by :
 
-```gradle
+```
 dependencies {
-    testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.3.1-SNAPSHOT")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.3.1-SNAPSHOT")
 }
 ```
 
-In the module, bean name of `MariaDB4jSpringService` is `mariaDB4j`, and `dataSource` depends on it by name. So if you want to custom your mariaDB, please make sure the name is correctly.
+In the module, bean name of MariaDB4jSpringService is mariaDB4j, and dataSource depends on it by name. So if you want to customize your mariaDB4j, please make sure the name is correctly.
 
-In [issue #64](https://github.com/vorburger/MariaDB4j/issues/64) there is also a discussion about it and pointing to a [TestDbConfig.java gist](https://gist.github.com/zaenk/71e2e1ee5340fa19a4fcd3b67b003a59).
+In [issue #64](<https://github.com/vorburger/MariaDB4j/issues/64>) there is also a discussion about it and pointing to a TestDbConfig.java gist.
 
 >>>>>>> update readme and sample of how to use mariaDB4j with spring boot
 
