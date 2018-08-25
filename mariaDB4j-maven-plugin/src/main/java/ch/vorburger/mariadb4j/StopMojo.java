@@ -18,14 +18,12 @@
  * #L%
  */
 
-package ch.vorburger.mariaDB4j;
+package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariaDB4j.utils.DBSingleton;
-import java.io.IOException;
+import ch.vorburger.mariadb4j.utils.DBSingleton;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -73,10 +71,9 @@ public class StopMojo extends AbstractMojo {
         doStop();
     }
 
-    private void doStop()
-            throws MojoExecutionException {
+    private void doStop() throws MojoExecutionException {
         try {
-            DBSingleton.getDB().stop();
+            DBSingleton.shutdownDB();
         } catch (ManagedProcessException ex) {
             throw new MojoExecutionException(
                     "MariaDB4j Database. Could not stop gracefully",
