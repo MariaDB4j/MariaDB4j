@@ -170,7 +170,7 @@
                 <!-- DbUtils uses guava, remove once test depenancy is dropped-->
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>11.0</version><!-- can't take newest as it crashes maven -->
+                <version>23.0</version><!-- can't take newest as it crashes maven -->
                 <scope>test</scope>
             </dependency>
         </dependencies>
