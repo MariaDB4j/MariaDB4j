@@ -29,7 +29,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ch.vorburger.mariadb4j.springframework.boot.MariaDB4jApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = MariaDB4jApplication.class, properties = { "mariaDB4j.port=0" }, webEnvironment = NONE)
+@SpringBootTest(classes = MariaDB4jApplication.class, webEnvironment = NONE)
 public class MariaDB4jApplicationTest {
 
     @Test

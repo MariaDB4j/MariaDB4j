@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  ch.vorburger.mariadb4j.springboot.autoconfigure.MariaDB4jSpringConfiguration,\
+  ch.vorburger.mariadb4j.springboot.autoconfigure.DataSourceAutoConfiguration
