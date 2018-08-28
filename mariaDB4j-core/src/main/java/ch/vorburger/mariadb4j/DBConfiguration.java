@@ -19,6 +19,8 @@
  */
 package ch.vorburger.mariadb4j;
 
+import ch.vorburger.exec.ManagedProcessListener;
+
 import java.util.List;
 import java.util.function.Function;
 
@@ -64,6 +66,12 @@ public interface DBConfiguration {
 
     String getOSLibraryEnvironmentVarName();
 
+    /**
+     *
+     * @return Process callback when DB process is killed or is completed
+     */
+    ManagedProcessListener getProcessListener();
+
     /** Whether to to "--skip-grant-tables". */
     boolean isSecurityDisabled();
 
@@ -81,12 +89,13 @@ public interface DBConfiguration {
         private final boolean isWindows;
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
+        private final ManagedProcessListener listener;
         private final boolean isSecurityDisabled;
         private final Function<String, String> getURL;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
              boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
-             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL) {
+             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, ManagedProcessListener listener) {
             super();
             this.port = port;
             this.socket = socket;
@@ -100,6 +109,7 @@ public interface DBConfiguration {
             this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
             this.isSecurityDisabled = isSecurityDisabled;
             this.getURL = getURL;
+            this.listener = listener;
         }
 
         @Override
@@ -160,6 +170,11 @@ public interface DBConfiguration {
         @Override
         public String getURL(String dbName) {
             return getURL.apply(dbName);
+        }
+
+        @Override
+        public ManagedProcessListener getProcessListener() {
+            return listener;
         }
     }
 
