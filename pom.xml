@@ -34,6 +34,7 @@
 		<module>mariaDB4j-core</module>
 		<module>mariaDB4j</module>
 		<module>mariaDB4j-app</module>
+		<module>mariaDB4j-springboot</module>
 		<module>mariaDB4j-maven-plugin</module>
 	</modules>
 
