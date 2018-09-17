@@ -18,7 +18,7 @@
     <properties>
         <!-- Maven set to 3.1.1 since spring-boot is also set to it,
             this allows backwards compability, or when spring-boot maven min version increments -->
-        <maven.version>3.1.1</maven.version>
+        <maven.version>3.5.4</maven.version>
         <skipTests>false</skipTests>
     </properties>
 
