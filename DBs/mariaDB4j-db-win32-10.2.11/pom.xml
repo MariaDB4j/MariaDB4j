@@ -35,6 +35,8 @@
                             <target>
                                 <unzip src="${basedir}/mariaDB/win32.zip"
                                        dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/win32"/>
+							    <unzip src="${basedir}/mariaDB/timezone.zip"
+                                       dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/win32/timezone"/>
                             </target>
                         </configuration>
                         <goals>
