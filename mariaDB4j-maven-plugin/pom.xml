@@ -9,15 +9,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-
     <artifactId>mariaDB4j-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
     <name>mariaDB4j-maven-plugin</name>
 
     <properties>
-        <!-- Maven set to 3.1.1 since spring-boot is also set to it,
-            this allows backwards compability, or when spring-boot maven min version increments -->
         <maven.version>3.5.4</maven.version>
         <skipTests>false</skipTests>
     </properties>
@@ -26,69 +23,75 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mariaDB4j</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.plugin-tools</groupId>
-            <artifactId>maven-plugin-annotations</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.maven.plugin-testing</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <scope>test</scope>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+        </dependency>
+        <dependency>
+            <scope>test</scope>
+            <groupId>org.apache.maven</groupId>
             <artifactId>maven-compat</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- DbUtils uses guava, remove once test depenancy is dropped-->
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>test</scope>
+            <scope>provided</scope>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
         </dependency>
 
-
         <dependency>
+            <scope>test</scope>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
+            <scope>test</scope>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
+            <scope>test</scope>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
+            <scope>test</scope>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <!-- Maven/MariaDB4j clash includes an older version -->
+                <groupId>${project.groupId}</groupId>
+                <artifactId>mariaDB4j</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Maven testing includes an older version at a higher level tham mariaDB4j, so including here -->
+            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.3</version>
+                <version>2.6</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
@@ -131,47 +134,40 @@
                 <version>3.5.2</version>
             </dependency>
             <dependency>
+                <scope>test</scope>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.12</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
+                <scope>test</scope>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>3.11.1</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
+                <scope>test</scope>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>2.22.0</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
+                <scope>test</scope>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>8.0.12</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
+                <scope>test</scope>
                 <groupId>org.apache.maven.plugin-testing</groupId>
                 <artifactId>maven-plugin-testing-harness</artifactId>
                 <version>3.3.0</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
+                <scope>test</scope>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-compat</artifactId>
                 <version>3.5.4</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <!-- DbUtils uses guava, remove once test depenancy is dropped-->
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>11.0</version><!-- can't take newest as it crashes maven -->
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
