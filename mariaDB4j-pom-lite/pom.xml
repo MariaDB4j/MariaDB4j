@@ -22,14 +22,6 @@
     <url>https://github.com/vorburger/MariaDB4j</url>
     <inceptionYear>2012</inceptionYear>
 
-    <scm>
-        <connection>scm:git:https://github.com/vorburger/MariaDB4j.git</connection>
-
-        <url>https://github.com/vorburger/MariaDB4j</url>
-        <!-- Do NOT specify developerConnection & tag here, as those are only used
-             by the maven-release-plugin, which we don't use here and in the db-*/pom.xml -->
-    </scm>
-
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -64,18 +56,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.1</version>
@@ -235,13 +215,14 @@
     </profiles>
 
     <distributionManagement>
-        <!-- http://central.sonatype.org/pages/apache-maven.html -->
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <!-- <repository> isn't needed with nexus-staging-maven-plugin, it somehow
-             has this hard-coded or automatically find sit somehow, IFF <version> is non-SNAPSHOT -->
-    </distributionManagement>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<url>${nexus_spanshot_url}</url>
+		</snapshotRepository>
+		<repository>
+			<id>nexus-releases</id>
+			<url>${nexus_release_url}</url>
+		</repository>
+	</distributionManagement>
 
 </project>
