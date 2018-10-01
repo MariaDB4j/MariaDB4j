@@ -43,7 +43,9 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * Mariadb4jStartMojoTest to ensure mariaDB4j-maven-plugin works like previous version by mike10004.
@@ -142,7 +144,7 @@ public class Mariadb4jStartMojoTest {
 
     private Connection openConnection(DB db, String databaseName) throws SQLException {
         checkNotNull(db, "db");
-        String jdbcUrl = "jdbc:mysql://localhost:" + db.getConfiguration().getPort() + "/" + databaseName;
+        String jdbcUrl = "jdbc:mysql://localhost:" + db.getConfiguration().getPort() + "/" + databaseName + "?serverTimezone=UTC";
         return DriverManager.getConnection(jdbcUrl);
     }
 
