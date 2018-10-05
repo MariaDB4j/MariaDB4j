@@ -243,4 +243,5 @@
         <!-- <repository> isn't needed with nexus-staging-maven-plugin, it somehow
              has this hard-coded or automatically find sit somehow, IFF <version> is non-SNAPSHOT -->
     </distributionManagement>
+    
 </project>
