@@ -5,15 +5,15 @@
 	<parent>
 		<groupId>ch.vorburger.mariaDB4j</groupId>
 		<artifactId>mariaDB4j-pom-lite</artifactId>
-		<version>2.2.1</version>
+		<version>2.3.1</version>
 		<relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>mariaDB4j-db-win32</artifactId>
-	<version>10.3.1-SNAPSHOT</version>
+	<version>10.3.1</version>
 
 	<properties>
-		<mariaDB.version>10.3.1-SNAPSHOT</mariaDB.version>
+		<mariaDB.version>10.3.1</mariaDB.version>
 	</properties>
 
 	<distributionManagement>

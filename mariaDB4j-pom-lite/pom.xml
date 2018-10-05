@@ -14,7 +14,7 @@
          DBs/mariaDB4j-db-*/pom.xml versions (as those are also always
          non-SNAPSHOT, existing ones do NOT get changed).
      -->
-    <version>2.2.1</version>
+    <version>2.3.1</version>
     <packaging>pom</packaging>
 
     <name>MariaDB4j</name>
@@ -215,10 +215,6 @@
     </profiles>
 
     <distributionManagement>
-		<snapshotRepository>
-			<id>nexus-snapshots</id>
-			<url>${nexus_spanshot_url}</url>
-		</snapshotRepository>
 		<repository>
 			<id>nexus-releases</id>
 			<url>${nexus_release_url}</url>
