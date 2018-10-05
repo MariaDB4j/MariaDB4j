@@ -5,27 +5,17 @@
 	<parent>
 		<groupId>ch.vorburger.mariaDB4j</groupId>
 		<artifactId>mariaDB4j-pom-lite</artifactId>
-		<version>2.3.1</version>
+		<version>2.2.1</version>
 		<relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>mariaDB4j-db-win32</artifactId>
-	<version>10.3.1</version>
+	<version>10.2.11</version>
 
 	<properties>
-		<mariaDB.version>10.3.1</mariaDB.version>
+		<mariaDB.version>10.2.11</mariaDB.version>
 	</properties>
 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>nexus-snapshots</id>
-			<url>${nexus_spanshot_url}</url>
-		</snapshotRepository>
-		<repository>
-			<id>nexus-releases</id>
-			<url>${nexus_release_url}</url>
-		</repository>
-	</distributionManagement>
 	<build>
 		<resources>
 			<resource>
