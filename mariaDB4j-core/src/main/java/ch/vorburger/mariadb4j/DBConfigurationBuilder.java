@@ -246,7 +246,7 @@ public class DBConfigurationBuilder {
             else if (LINUX.equals(getOS()))
                 databaseVersion = "mariadb-10.2.11";
             else if (WIN32.equals(getOS()))
-                databaseVersion = "mariadb-10.3.1";
+                databaseVersion = "mariadb-10.2.11";
             else
                 throw new IllegalStateException(
                         "OS not directly supported, please use setDatabaseVersion() to set the name "
