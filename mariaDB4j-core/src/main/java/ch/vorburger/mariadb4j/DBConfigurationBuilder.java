@@ -179,8 +179,10 @@ public class DBConfigurationBuilder {
     /**
      * Whether to to "--skip-grant-tables" (defaults to true).
      */
-    public void setSecurityDisabled(boolean isSecurityDisabled) {
+    public DBConfigurationBuilder setSecurityDisabled(boolean isSecurityDisabled) {
+        checkIfFrozen("setSecurityDisabled");
         this.isSecurityDisabled = isSecurityDisabled;
+        return this;
     }
 
     public boolean isSecurityDisabled() {
@@ -234,8 +236,10 @@ public class DBConfigurationBuilder {
         return databaseVersion;
     }
 
-    public void setDatabaseVersion(String databaseVersion) {
+    public DBConfigurationBuilder setDatabaseVersion(String databaseVersion) {
+        checkIfFrozen("setDatabaseVersion");
         this.databaseVersion = databaseVersion;
+        return this;
     }
 
     protected String _getDatabaseVersion() {
@@ -264,8 +268,10 @@ public class DBConfigurationBuilder {
         return binariesClassPathLocation.toString();
     }
 
-    public void setOS(String osDirectoryName) {
+    public DBConfigurationBuilder setOS(String osDirectoryName) {
+        checkIfFrozen("setOS");
         this.osDirectoryName = osDirectoryName;
+        return this;
     }
 
     public String getOS() {
