@@ -8,5 +8,10 @@ language: java
 jdk: 
   - openjdk8
 
+cache:
+  directories:
+  - $HOME/.m2
+  - .mvn
+
 before_install:
   - mvn -f DBs/pom.xml clean install

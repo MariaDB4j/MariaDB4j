@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,11 +19,11 @@
  */
 package ch.vorburger.mariadb4j;
 
+import ch.vorburger.exec.ManagedProcessListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.SystemUtils;
 
 /**
@@ -54,6 +54,7 @@ public class DBConfigurationBuilder {
     private boolean isSecurityDisabled = true;
 
     private boolean frozen = false;
+    private ManagedProcessListener listener;
 
     public static DBConfigurationBuilder newBuilder() {
         return new DBConfigurationBuilder();
@@ -115,6 +116,20 @@ public class DBConfigurationBuilder {
         return this;
     }
 
+    /**
+     * Set a custom process listener to listen to DB start/shutdown events
+     * @param listener custom listener
+     * @return this
+     */
+    public DBConfigurationBuilder setProcessListener(ManagedProcessListener listener) {
+        this.listener = listener;
+        return this;
+    }
+
+    public ManagedProcessListener getProcessListener() {
+        return listener;
+    }
+
     public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
         return isDeletingTemporaryBaseAndDataDirsOnShutdown;
     }
@@ -157,8 +172,8 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(), 
-                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL);
+                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getProcessListener());
     }
 
     /**

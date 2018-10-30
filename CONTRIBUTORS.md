@@ -15,14 +15,14 @@ MariaDB4j CONTRIBUTORS
 - Josef Andersson @hanklank <josef.andersson@svt.se>, July 2016; for http://www.svt.se
 - Leora Pearson @lpearson05 <Leora.Pearson@bazaarvoice.com>, Aug 2016 (http://www.bazaarvoice.com/)
 - Carlos Ortiz [@cortiz](http://github.com/cortiz/) <carlos.ortiz@craftersoftware.com>, Jun 2017 [CrafterCMS](http://craftercms.org)
-.com/)
 - Jai Deep Mulchandani [@jai-deep](https://github.com/jai-deep) <Jaideep.Mulchandani@walmart.com> Jan 2018; for http://walmartlabs.com 
 - Lukasz Degus [@lde-avaleo] <lde@avaleo.net>, Jan 2018
 - Andrew Groot [@thesquaregroot](https://github.com/thesquaregroot) <groot@softwareverde.com>, June 2018; for https://softwareverde.com
 - Yftach Zur [@yiftizur](https://github.com/yiftizur), June 2018; for MariaDB4jRule for easy integration with JUnit
-- William Dutton [@duttonw](https://github.com/duttonw)<will.dutt@gmail.com>, June 2018; for mariaDB4j-maven-plugin integration testing of micro services under services.qld.gov.au
+- William Dutton [@duttonw](https://github.com/duttonw) <will.dutt@gmail.com>, June 2018; for mariaDB4j-maven-plugin integration testing of micro services under services.qld.gov.au
 - Mike Chaberski [@mike10004](https://github.com/mike10004),  May 2017; initial [mariadb4j-maven-plugin](https://github.com/mike10004/mariadb4j-maven-plugin) incorporated to improve mariaDB4j-maven-plugin
-- Yuexiang Gao [@kbyyd24](https://github.com/kbyyd24) <melo@gaoyuexiang.cn> (http://blog.gaoyuexiang.cn), August 2018; for mariaDB4j-springboot auto-configure with spring boot 
+- Yuexiang Gao [@kbyyd24](https://github.com/kbyyd24) <melo@gaoyuexiang.cn> (http://blog.gaoyuexiang.cn), August 2018; for mariaDB4j-springboot auto-configure with spring boot
+- Neelesh Shastry [@neeleshs](https://github.com/neeleshs), Dec 2017 Provide a callback if the DB process crashes
 - also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)

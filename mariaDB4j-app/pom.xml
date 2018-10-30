@@ -12,8 +12,8 @@
 	
 	<build>
 		<plugins>
-			<!-- This enables executable JAR -->
 	        <plugin>
+                    <!-- This enables executable JAR -->
 	            <groupId>org.springframework.boot</groupId>
 	            <artifactId>spring-boot-maven-plugin</artifactId>
 	            <version>${springboot.version}</version>
@@ -37,11 +37,14 @@
 			<artifactId>mariaDB4j-springboot</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+                        <scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-			<optional>true</optional> <!-- !!! -->
+			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 
 		<dependency>
