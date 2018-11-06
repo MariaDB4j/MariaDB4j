@@ -95,6 +95,10 @@ public class MariaDB4jService {
         return db != null;
     }
 
+    public int getPort() {
+        return this.configBuilder.getPort();
+    }
+
     public static void main(String[] args) throws Exception {
         MariaDB4jService service = new MariaDB4jService();
         service.start();

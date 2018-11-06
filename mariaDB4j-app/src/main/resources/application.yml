@@ -6,4 +6,4 @@ spring:
     password:
 
 mariaDB4j:
-  port: 3307
+  port: 0
