@@ -13,6 +13,11 @@
 
     <artifactId>mariadb4j-maven-plugin-test-basic</artifactId>
 
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+        <license.skipCheckLicense>true</license.skipCheckLicense>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -22,7 +27,6 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>port</goal>
                             <goal>start</goal>
                             <goal>stop</goal>
                         </goals>
@@ -37,7 +41,9 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.0</version>
                 <configuration>
                     <systemPropertyVariables>
                         <mariadb4j.port>${mariadb4j.port}</mariadb4j.port>
@@ -71,6 +77,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
