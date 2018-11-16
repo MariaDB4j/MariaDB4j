@@ -19,6 +19,8 @@
  */
 package ch.vorburger.mariadb4j.springboot.autoconfigure;
 
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -32,13 +34,20 @@ import javax.sql.DataSource;
 @Configuration
 @ConfigurationProperties("spring.datasource")
 public class DataSourceAutoConfiguration {
+    private MariaDB4jSpringService mariaDB4j;
+
+    public DataSourceAutoConfiguration(MariaDB4jSpringService mariaDB4j){
+        this.mariaDB4j = mariaDB4j;
+    }
 
     @Bean
     @DependsOn("mariaDB4j")
-    public DataSource dataSource(DataSourceProperties dataSourceProperties) {
+    public DataSource dataSource(DataSourceProperties dataSourceProperties) throws ManagedProcessException {
+        MariaDBUrl mariaDBUrl = new MariaDBUrl(dataSourceProperties.getUrl());
+        mariaDB4j.getDB().createDB(mariaDBUrl.getDb());
         return DataSourceBuilder.create()
                 .driverClassName(dataSourceProperties.getDriverClassName())
-                .url(dataSourceProperties.getUrl())
+                .url(mariaDBUrl.urlWithPort(mariaDB4j.getConfiguration().getPort()))
                 .username(dataSourceProperties.getUsername())
                 .password(dataSourceProperties.getPassword())
                 .build();
