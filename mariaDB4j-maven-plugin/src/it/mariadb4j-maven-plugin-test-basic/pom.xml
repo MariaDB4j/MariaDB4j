@@ -22,7 +22,6 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>port</goal>
                             <goal>start</goal>
                             <goal>stop</goal>
                         </goals>
@@ -59,6 +58,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
