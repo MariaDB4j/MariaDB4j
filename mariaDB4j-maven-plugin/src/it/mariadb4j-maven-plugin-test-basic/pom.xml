@@ -22,7 +22,6 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>port</goal>
                             <goal>start</goal>
                             <goal>stop</goal>
                         </goals>
@@ -38,6 +37,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M1</version>
                 <configuration>
                     <systemPropertyVariables>
                         <mariadb4j.port>${mariadb4j.port}</mariadb4j.port>
@@ -58,6 +58,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
