@@ -174,7 +174,7 @@ public class DB {
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
-        if(this.configuration.isSecurityDisabled()) {
+        if (this.configuration.isSecurityDisabled()) {
             builder.addArgument("--skip-grant-tables");
         }
         if (! hasArgument("--max_allowed_packet")) {
