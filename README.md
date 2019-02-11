@@ -68,7 +68,7 @@ The DataSource initialization have to wait until MariaDB is ready to receive con
 
 ```
 dependencies {
-   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.3.1-SNAPSHOT")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.4.0")
 }
 ```
 

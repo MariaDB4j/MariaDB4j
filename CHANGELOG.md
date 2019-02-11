@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## UNRELEASED
+
+## v2.4.0 - 2019-02-11
 
 ### Added
 
@@ -20,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @EGJ Updated Builder Methods Returning Void To Return The Builder
 * @dependabot bumped 3rd party libraries, thank you https://dependabot.com
 * @vorburger made a number of release related changes and clean ups
+
+### Fixed
+
+* No bug fixes, because... it has no more bugs?! ;-)
 
 
 ## v2.3.0 - 2018-05-15
