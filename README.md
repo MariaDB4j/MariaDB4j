@@ -76,15 +76,13 @@ In the module, bean name of MariaDB4jSpringService is mariaDB4j, and dataSource 
 
 In [issue #64](<https://github.com/vorburger/MariaDB4j/issues/64>) there is also a discussion about it and pointing to a TestDbConfig.java gist.
 
-<<<<<<< HEAD
-=======
 If you want to use MariaDB4j with Spring-boot the opinionated presets for spring applications, then you can easily use this the ready-made MariaDB4jSpringService to reduce your coding/configuration to get you going, we have an example application ([mariaDB4j-app](<https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j-app/>)) which illustrates how to wire it up or as an alternative approach via the [MariaDB4jSpringServiceTestSpringConfiguration](<https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/springframework/MariaDB4jSpringServiceTestSpringConfiguration.java>).
 
 The DataSource initialization have to wait until MariaDB is ready to receive connections, so we provide `mariaDB4j-springboot` to implement it. You can use it by :
 
 ```
 dependencies {
-   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.3.1-SNAPSHOT")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.4.0")
 }
 ```
 
@@ -92,7 +90,6 @@ In the module, bean name of MariaDB4jSpringService is mariaDB4j, and dataSource 
 
 In [issue #64](<https://github.com/vorburger/MariaDB4j/issues/64>) there is also a discussion about it and pointing to a TestDbConfig.java gist.
 
->>>>>>> update readme and sample of how to use mariaDB4j with spring boot
 
 How (CLI)
 ----
