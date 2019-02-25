@@ -217,7 +217,7 @@ A: This could happen e.g. on Fedora 24 if you have not previous installed any ot
 Q: Is there another project that does something similar to this one?
 A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).  Also the [mariadb4j-maven-plugin](https://github.com/mike10004/mariadb4j-maven-plugin) and OpenMRS' [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) build on MariaDB4j.
 
-
+Q: When I execute a Script for the Maria DB, the Maria DB saves this like the "normal" Database, that i can execute other Test-Classes which do something with the same record?
 Release?
 --------
 
