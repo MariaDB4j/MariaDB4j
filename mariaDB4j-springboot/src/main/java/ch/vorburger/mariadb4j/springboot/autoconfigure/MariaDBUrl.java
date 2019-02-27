@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class MariaDBUrl {
-    private static final String REGEX = "^jdbc:mariadb://(?<host>[^:/]+)(?::(?<port>[0-9]+))?/(?<db>[^\\/?%*:|"<>.]{1,64})$";
+    private static final String REGEX = "^jdbc:mariadb://(?<host>[^:/]+)(?::(?<port>[0-9]+))?/(?<db>[^\\\\/?%*:|\"<>.]{1,64})$";
     private static final Pattern pattern = Pattern.compile(REGEX);
     private final Matcher matcher;
     private final boolean matches;
