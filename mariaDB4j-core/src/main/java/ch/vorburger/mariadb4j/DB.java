@@ -108,16 +108,23 @@ public class DB {
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
-        builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
+        builder.setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
+            builder.addFileArgument("--datadir", dataDir);
             builder.addFileArgument("--basedir", baseDir);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
             builder.addArgument("--skip-name-resolve");
             // builder.addArgument("--verbose");
+        } else {
+            builder.addFileArgument("--datadir", toWindowsPath(dataDir));
         }
         ManagedProcess mysqlInstallProcess = builder.build();
         return mysqlInstallProcess;
+    }
+
+    private static File toWindowsPath(File file) throws IOException {
+        return new File(file.getCanonicalPath().replace(" ", "%20"));
     }
 
     /**
@@ -181,7 +188,11 @@ public class DB {
             builder.addArgument("--max_allowed_packet=64M");
         }
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
-        builder.addFileArgument("--datadir", dataDir);
+        if (!configuration.isWindows()) {
+            builder.addFileArgument("--datadir", dataDir);
+        } else {
+            builder.addFileArgument("--datadir", toWindowsPath(dataDir));
+        }
         addPortAndMaybeSocketArguments(builder);
         for (String arg : configuration.getArgs()) {
             builder.addArgument(arg);
