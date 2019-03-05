@@ -18,6 +18,10 @@
                     <scripts>
                         <script>target/test-classes/basic-usage/foo-script.sql</script>
                     </scripts>
+                    <args>
+                        <arg>--default-time-zone</arg>
+                        <arg>+00:00</arg>
+                    </args>
                 </configuration>
                 <executions>
                     <execution>
