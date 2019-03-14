@@ -180,6 +180,52 @@ to
 If you are using the argument "createDatabase" rename it to "databaseName"
 
 
+JUnit Integration
+-----------------
+
+Using the JUnit feature of [Rules](https://github.com/junit-team/junit4/wiki/rules) a MariaDB4JRule class is available to be used in your tests.
+
+Add it as a `@Rule` to your test class
+```
+public class TestClass {
+    @Rule
+    public MariaDB4jRule dbRule = new MariaDB4jRule(0); //port 0 means select random available port
+
+    @Test
+    public void test() {
+        // Do whatever you want with the running DB
+    }
+}
+```
+
+The `MariaDB4jRule` provides 2 methods for getting data on the running DB:
+
+* getURL() - Get the JDBC connection string to the running DB
+  ```
+  @Test
+  public void test() {
+      Connection conn = DriverManager.getConnection(dbRule.getURL(), "root", "");
+  }
+  ```
+* getDBConfiguration() - Get the Configuration object of the running DB, exposing properties such as DB Port, Data directory, Lib Directory and even a reference to the ProcessListener for the DB process.
+  ```
+  public class TestClass {
+    @Rule
+    public MariaDB4jRule dbRule = new MariaDB4jRule(3307);
+
+    @Test
+    public void test() {
+        assertEquals(3307, dbRule.getDBConfiguration().getPort());
+    }
+  }
+
+  ```
+  
+The `MariaDB4jRule` class extends the JUnit [`ExternalResource`](https://github.com/junit-team/junit4/wiki/rules#externalresource-rules) - which means it starts the DB process before each test method is run, and stops it at the end of that test method.
+
+The `MariaDB4jRule(DBConfiguration dbConfiguration, String dbName, String resource)` Constructor, allows to initialize your DB with a provided SQL Script (resource = path to script file) to setup needed database, tables and data.
+
+This rule, can also be used as a [@ClassRule](https://github.com/junit-team/junit4/wiki/rules#classrule) to avoid DB Process starting every test - just make sure to clean/reset your data in the DB.
 
 Anything else?
 --------------
