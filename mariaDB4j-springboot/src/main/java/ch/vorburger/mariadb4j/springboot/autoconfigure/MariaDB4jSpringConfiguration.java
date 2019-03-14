@@ -20,6 +20,8 @@
 package ch.vorburger.mariadb4j.springboot.autoconfigure;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties
+@ConditionalOnProperty(
+    prefix = "mariaDB4j",
+    name = {"enabled"},
+    matchIfMissing = true
+)
 public class MariaDB4jSpringConfiguration {
     @Bean
     public MariaDB4jSpringService mariaDB4j(DataSourceProperties dataSourceProperties) {

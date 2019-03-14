@@ -21,6 +21,10 @@ package ch.vorburger.mariadb4j.springboot.autoconfigure;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+
+import javax.sql.DataSource;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -28,11 +32,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import javax.sql.DataSource;
-
 //separate with MariaDB4jSpringConfiguration for test of it
 @Configuration
 @ConfigurationProperties("spring.datasource")
+@ConditionalOnProperty(
+    prefix = "mariaDB4j",
+    name = {"enabled"},
+    matchIfMissing = true
+)
 public class DataSourceAutoConfiguration {
     private MariaDB4jSpringService mariaDB4j;
 
