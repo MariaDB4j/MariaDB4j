@@ -30,25 +30,36 @@ import java.util.function.Function;
  */
 public interface DBConfiguration {
 
-    /** TCP Port to start DB server on. */
+    /** 
+     * TCP Port to start DB server on. 
+     * @return returns port value
+     **/
     int getPort();
 
-    /** UNIX Socket to start DB server on (ignored on Windows). */
+    /** 
+     * UNIX Socket to start DB server on (ignored on Windows). 
+     * @return returns socket value
+     **/
     String getSocket();
 
     /**
      * Where from on the classpath should the binaries be extracted to the file system.
-     *
      * @return null (not empty) if nothing should be extracted.
      */
     String getBinariesClassPathLocation();
 
-    /** Base directory where DB binaries are expected to be found. */
+    /** 
+     * Base directory where DB binaries are expected to be found. 
+     * @return returns base directory value
+     **/
     String getBaseDir();
 
     String getLibDir();
 
-    /** Base directory for DB's actual data files. */
+    /** 
+     * Base directory for DB's actual data files. 
+     * @return returns data directory value
+     **/
     String getDataDir();
 
     /**
@@ -56,10 +67,14 @@ public interface DBConfiguration {
      * if it is in a temporary directory. NB: If you've set the
      * base and data directories to non temporary directories,
      * then they'll never get deleted.
+     * @return returns value of isDeletingTemporaryBaseAndDataDirsOnShutdown
      */
     boolean isDeletingTemporaryBaseAndDataDirsOnShutdown();
 
-    /** Whether running on Windows (some start-up parameters are different). */
+    /** 
+     * Whether running on Windows (some start-up parameters are different). 
+     * @return returns boolean isWindows
+     **/
     boolean isWindows();
 
     List<String> getArgs();
@@ -67,12 +82,15 @@ public interface DBConfiguration {
     String getOSLibraryEnvironmentVarName();
 
     /**
-     *
+     * Returns an instance of @ManagedProcessListener class.
      * @return Process callback when DB process is killed or is completed
      */
     ManagedProcessListener getProcessListener();
 
-    /** Whether to to "--skip-grant-tables". */
+    /** 
+     * Whether to to "--skip-grant-tables". 
+     * @return returns boolean isSecurityDisabled value
+     **/
     boolean isSecurityDisabled();
 
     String getURL(String dbName);

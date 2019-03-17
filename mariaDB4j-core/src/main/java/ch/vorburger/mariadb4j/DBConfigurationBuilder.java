@@ -117,7 +117,7 @@ public class DBConfigurationBuilder {
     }
 
     /**
-     * Set a custom process listener to listen to DB start/shutdown events
+     * Set a custom process listener to listen to DB start/shutdown events.
      * @param listener custom listener
      * @return this
      */
@@ -138,7 +138,9 @@ public class DBConfigurationBuilder {
      * Defines if the configured data and base directories should be deleted on shutdown.
      * If you've set the base and data directories to non temporary directories
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
-     * then they'll also never get deleted anyway.
+     * then they'll also never get deleted anyway. 
+     * @param doDelete Default valule is true, set false to override
+     * @return returns this
      */
     public DBConfigurationBuilder setDeletingTemporaryBaseAndDataDirsOnShutdown(boolean doDelete) {
         checkIfFrozen("keepsDataAndBaseDir");
@@ -178,6 +180,8 @@ public class DBConfigurationBuilder {
 
     /**
      * Whether to to "--skip-grant-tables" (defaults to true).
+     * @param isSecurityDisabled set isSecurityDisabled value
+     * @return returns this
      */
     public DBConfigurationBuilder setSecurityDisabled(boolean isSecurityDisabled) {
         checkIfFrozen("setSecurityDisabled");
