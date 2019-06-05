@@ -23,6 +23,7 @@ MariaDB4j CONTRIBUTORS
 - Mike Chaberski [@mike10004](https://github.com/mike10004),  May 2017; initial [mariadb4j-maven-plugin](https://github.com/mike10004/mariadb4j-maven-plugin) incorporated to improve mariaDB4j-maven-plugin
 - Yuexiang Gao [@kbyyd24](https://github.com/kbyyd24) <melo@gaoyuexiang.cn> (http://blog.gaoyuexiang.cn), August 2018; for mariaDB4j-springboot auto-configure with spring boot
 - Neelesh Shastry [@neeleshs](https://github.com/neeleshs), Dec 2017 Provide a callback if the DB process crashes
+- Gordon Little [@glittle1972](https://github.com/glittle1972), Jun 2019 Add option to force continue-on-error for sourcing SQL scripts
 - also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
