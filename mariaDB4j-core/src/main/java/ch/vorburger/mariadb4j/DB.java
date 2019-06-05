@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * Provides capability to install, start, and use an embedded database.
  *
  * @author Michael Vorburger
+ * @author Gordon Little
  * @author Michael Seaton
  */
 public class DB {
@@ -266,15 +267,29 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     public void source(String resource, String username, String password, String dbName) throws ManagedProcessException {
+        source(resource, username, password, dbName, false);
+    }
+
+    /**
+     * Takes in a string that represents a resource on the classpath and sources it via the mysql
+     * command line tool. Optionally force continue if individual statements fail.
+     *
+     * @param resource the path to a resource on the classpath to source
+     * @param username the username used to login to the database
+     * @param password the password used to login to the database
+     * @param dbName the name of the database (schema) to source into
+     * @param force if true then continue on error (mysql --force)
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+    public void source(String resource, String username, String password, String dbName, boolean force) throws ManagedProcessException {
         InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
         if (from == null)
             throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
-        run("script file sourced from the classpath at: " + resource, from, username, password, dbName);
+        run("script file sourced from the classpath at: " + resource, from, username, password, dbName, force);
     }
 
     public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
-        InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset());
-        run("command: " + command, from, username, password, dbName);
+        run(command, username, password, dbName, false);
     }
 
     public void run(String command) throws ManagedProcessException {
@@ -285,7 +300,12 @@ public class DB {
         run(command, username, password, null);
     }
 
-    protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName)
+    public void run(String command, String username, String password, String dbName, boolean force) throws ManagedProcessException {
+        InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset());
+        run("command: " + command, from, username, password, dbName, force);
+    }
+
+    protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName, boolean force)
             throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
         try {
@@ -298,6 +318,8 @@ public class DB {
                 builder.addArgument("-p", password);
             if (dbName != null && !dbName.isEmpty())
                 builder.addArgument("-D", dbName);
+            if (force == true)
+                builder.addArgument("-f");
             addSocketOrPortArgument(builder);
             if (fromIS != null)
                 builder.setInputStream(fromIS);
