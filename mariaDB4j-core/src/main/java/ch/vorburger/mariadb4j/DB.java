@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
  * Provides capability to install, start, and use an embedded database.
  *
  * @author Michael Vorburger
- * @author Gordon Little
  * @author Michael Seaton
+ * @author Gordon Little
  */
 public class DB {
 
