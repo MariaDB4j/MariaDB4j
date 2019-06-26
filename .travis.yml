@@ -14,8 +14,10 @@ jdk:
 #  - $HOME/.m2
 #  - .mvn
 
-before_install:
-  - mvn -f DBs/pom.xml clean install
+# Not needed anymore, because we now avoid dependencies to SNAPSHOT DBs/
+# before_install:
+#  - mvn -f DBs/pom.xml clean install
 
 # https://github.com/vorburger/MariaDB4j/issues/208
-script: mvn install -B -V
+# just `package`, no need for `install` here (because of above)
+script: mvn package -B -V
