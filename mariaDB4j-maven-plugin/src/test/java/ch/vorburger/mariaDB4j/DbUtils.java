@@ -37,7 +37,6 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author mike10004
  * @author William Dutton
  */
-@SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 class DbUtils {
     private DbUtils() {}
 
