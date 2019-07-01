@@ -303,10 +303,13 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     public void source(String resource, String username, String password, String dbName, boolean force) throws ManagedProcessException {
-        InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
-        if (from == null)
-            throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
-        run("script file sourced from the classpath at: " + resource, from, username, password, dbName, force);
+        try (InputStream from = getClass().getClassLoader().getResourceAsStream(resource)) {
+            if (from == null)
+                throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
+            run("script file sourced from the classpath at: " + resource, from, username, password, dbName, force);
+        } catch (IOException ioe) {
+            logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
+        }
     }
 
     public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
@@ -322,8 +325,13 @@ public class DB {
     }
 
     public void run(String command, String username, String password, String dbName, boolean force) throws ManagedProcessException {
-        InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset());
-        run("command: " + command, from, username, password, dbName, force);
+        // If resource is created here, it should probably be released here also (as opposed to in protected run method)
+        // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
+        try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {
+            run("command: " + command, from, username, password, dbName, force);
+        } catch (IOException ioe) {
+            logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
+        }
     }
 
     protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName, boolean force)
@@ -353,8 +361,6 @@ public class DB {
             process.waitForExit();
         } catch (Exception e) {
             throw new ManagedProcessException("An error occurred while running a " + logInfoText, e);
-        } finally {
-            IOUtils.closeQuietly(fromIS);
         }
         logger.info("Successfully ran the " + logInfoText);
     }
