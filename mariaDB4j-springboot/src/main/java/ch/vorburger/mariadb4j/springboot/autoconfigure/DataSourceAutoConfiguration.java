@@ -51,6 +51,7 @@ public class DataSourceAutoConfiguration {
     @DependsOn("mariaDB4j")
     public DataSource dataSource(DataSourceProperties dataSourceProperties) throws ManagedProcessException {
         MariaDBUrl mariaDBUrl = new MariaDBUrl(dataSourceProperties.getUrl());
+        mariaDB4j.getConfiguration().addArg("--user=root");
         mariaDB4j.getDB().createDB(mariaDBUrl.getDb());
         return DataSourceBuilder.create()
                 .driverClassName(dataSourceProperties.getDriverClassName())
