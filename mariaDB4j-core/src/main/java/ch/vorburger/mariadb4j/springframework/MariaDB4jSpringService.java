@@ -51,6 +51,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String BASE_DIR = "mariaDB4j.baseDir";
     public final static String LIB_DIR = "mariaDB4j.libDir";
     public final static String UNPACK = "mariaDB4j.unpack";
+    public final static String RUN_AS_ROOT = "mariaDB4j.runAsRoot";
 
     protected ManagedProcessException lastException;
 
@@ -58,6 +59,12 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public void setDefaultPort(int port) {
         if (port != -1)
             getConfiguration().setPort(port);
+    }
+
+    @Value("${" + RUN_AS_ROOT + ":false}")
+    public void setRunAsRoot(boolean runAsRoot){
+        if(runAsRoot)
+            getConfiguration().addArg("--user=root");
     }
 
     @Value("${" + SOCKET + ":NA}")
