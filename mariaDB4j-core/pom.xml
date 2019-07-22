@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
-        <version>2.2.6</version>
+        <version>2.4.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>ch.vorburger.exec</groupId>
             <artifactId>exec</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -28,7 +28,6 @@
             <!-- For ClasspathUnpacker -->
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
         </dependency>
         <dependency>
             <!-- For ClasspathUnpacker -->
@@ -45,7 +44,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

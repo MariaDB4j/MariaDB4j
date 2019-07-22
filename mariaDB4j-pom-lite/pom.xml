@@ -14,7 +14,7 @@
          DBs/mariaDB4j-db-*/pom.xml versions (as those are also always
          non-SNAPSHOT, existing ones do NOT get changed).
      -->
-    <version>2.2.2</version>
+    <version>2.2.3</version>
     <packaging>pom</packaging>
 
     <name>MariaDB4j</name>
@@ -58,6 +58,12 @@
             <id>cortiz</id>
             <name>Carlos Ortiz</name>
             <email>carlos.ortiz@craftercms.org</email>
+            <url>http://craftercms.org</url>
+        </developer>
+        <developer>
+            <id>dejan.brkic</id>
+            <name>Dejan Brkic</name>
+            <email>dejan.brkic@craftersoftware.com</email>
             <url>http://craftercms.org</url>
         </developer>
     </developers>

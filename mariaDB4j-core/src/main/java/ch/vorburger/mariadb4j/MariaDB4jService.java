@@ -19,15 +19,15 @@
  */
 package ch.vorburger.mariadb4j;
 
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 /**
  * MariaDB4j starter "Service". This is basically just "sugar" - you can of course also use the DB
