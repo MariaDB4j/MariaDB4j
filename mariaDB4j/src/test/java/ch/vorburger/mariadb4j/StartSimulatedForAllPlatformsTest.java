@@ -40,8 +40,8 @@ import ch.vorburger.exec.ManagedProcessException;
  */
 public class StartSimulatedForAllPlatformsTest {
 
-    @Test public void simulatedStartWin32() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.WIN32);
+    @Test public void simulatedStartWin64() throws Exception {
+        checkPlatformStart(DBConfigurationBuilder.WIN64);
     }
 
     @Test public void simulatedStartLinux() throws Exception {

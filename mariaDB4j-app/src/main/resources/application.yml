@@ -1,3 +1,11 @@
 spring:
   pid:
     file: ./mariadb4j.pid
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:${mariaDB4j.port}/test
+    username: root
+    password:
+
+mariaDB4j:
+  port: 3307

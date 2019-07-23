@@ -19,14 +19,14 @@
  */
 package ch.vorburger.mariadb4j.springframework;
 
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.MariaDB4jService;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.MariaDB4jService;
 
 /**
  * MariaDB4jService extension suitable for use in Spring Framework-based applications.
@@ -54,7 +54,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
 
     protected ManagedProcessException lastException;
 
-    @Value("${$DBVersion:mariadb-10.1.34}")
+    @Value("${$DBVersion:mariadb-10.4.6}")
     public void setDBVersion(String version){
         getConfiguration().setDatabaseVersion(version);
     }

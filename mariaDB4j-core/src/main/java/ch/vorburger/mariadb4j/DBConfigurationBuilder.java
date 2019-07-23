@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,11 +19,11 @@
  */
 package ch.vorburger.mariadb4j;
 
+import ch.vorburger.exec.ManagedProcessListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.SystemUtils;
 
 /**
@@ -32,6 +32,7 @@ import org.apache.commons.lang3.SystemUtils;
 public class DBConfigurationBuilder {
 
     protected static final String WIN32 = "win32";
+    protected static final String WIN64 = "win64";
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
 
@@ -40,7 +41,7 @@ public class DBConfigurationBuilder {
     private String databaseVersion = null;
 
     // all these are just some defaults
-    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32
+    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN64
             : SystemUtils.IS_OS_MAC ? OSX : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
     protected String libDir = null;
@@ -54,6 +55,7 @@ public class DBConfigurationBuilder {
     private boolean isSecurityDisabled = true;
 
     private boolean frozen = false;
+    private ManagedProcessListener listener;
 
     public static DBConfigurationBuilder newBuilder() {
         return new DBConfigurationBuilder();
@@ -115,6 +117,20 @@ public class DBConfigurationBuilder {
         return this;
     }
 
+    /**
+     * Set a custom process listener to listen to DB start/shutdown events.
+     * @param listener custom listener
+     * @return this
+     */
+    public DBConfigurationBuilder setProcessListener(ManagedProcessListener listener) {
+        this.listener = listener;
+        return this;
+    }
+
+    public ManagedProcessListener getProcessListener() {
+        return listener;
+    }
+
     public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
         return isDeletingTemporaryBaseAndDataDirsOnShutdown;
     }
@@ -123,7 +139,9 @@ public class DBConfigurationBuilder {
      * Defines if the configured data and base directories should be deleted on shutdown.
      * If you've set the base and data directories to non temporary directories
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
-     * then they'll also never get deleted anyway.
+     * then they'll also never get deleted anyway. 
+     * @param doDelete Default valule is true, set false to override
+     * @return returns this
      */
     public DBConfigurationBuilder setDeletingTemporaryBaseAndDataDirsOnShutdown(boolean doDelete) {
         checkIfFrozen("keepsDataAndBaseDir");
@@ -157,15 +175,19 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(), 
-                isDeletingTemporaryBaseAndDataDirsOnShutdown());
+                WIN64.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getProcessListener());
     }
 
     /**
      * Whether to to "--skip-grant-tables" (defaults to true).
+     * @param isSecurityDisabled set isSecurityDisabled value
+     * @return returns this
      */
-    public void setSecurityDisabled(boolean isSecurityDisabled) {
+    public DBConfigurationBuilder setSecurityDisabled(boolean isSecurityDisabled) {
+        checkIfFrozen("setSecurityDisabled");
         this.isSecurityDisabled = isSecurityDisabled;
+        return this;
     }
 
     public boolean isSecurityDisabled() {
@@ -219,19 +241,21 @@ public class DBConfigurationBuilder {
         return databaseVersion;
     }
 
-    public void setDatabaseVersion(String databaseVersion) {
+    public DBConfigurationBuilder setDatabaseVersion(String databaseVersion) {
+        checkIfFrozen("setDatabaseVersion");
         this.databaseVersion = databaseVersion;
+        return this;
     }
 
     protected String _getDatabaseVersion() {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
             if (OSX.equals(getOS()))
-                databaseVersion = "mariadb-10.1.34";
+                databaseVersion = "mariadb-10.4.6";
             else if (LINUX.equals(getOS()))
-                databaseVersion = "mariadb-10.1.34";
-            else if (WIN32.equals(getOS()))
-                databaseVersion = "mariadb-10.1.34";
+                databaseVersion = "mariadb-10.4.6";
+            else if (WIN64.equals(getOS()))
+                databaseVersion = "mariadb-10.4.6";
             else
                 throw new IllegalStateException(
                         "OS not directly supported, please use setDatabaseVersion() to set the name "
@@ -249,8 +273,10 @@ public class DBConfigurationBuilder {
         return binariesClassPathLocation.toString();
     }
 
-    public void setOS(String osDirectoryName) {
+    public DBConfigurationBuilder setOS(String osDirectoryName) {
+        checkIfFrozen("setOS");
         this.osDirectoryName = osDirectoryName;
+        return this;
     }
 
     public String getOS() {
