@@ -467,7 +467,7 @@ public class DB {
                     FileUtils.deleteQuietly(dataDir);
                 }
                 if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
-                                    && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
+                                    && Util.isTemporaryDirectory(baseDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
                     FileUtils.deleteQuietly(baseDir);
                 }
