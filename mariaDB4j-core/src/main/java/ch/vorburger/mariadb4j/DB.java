@@ -382,6 +382,9 @@ public class DB {
                 Util.forceExecutable(newExecutableFile("bin", "mysqld"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqldump"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql"));
+                Util.forceExecutable(newExecutableFile("bin", "mysql_upgrade"));
+                Util.forceExecutable(newExecutableFile("bin", "mysqlcheck"));
+                Util.forceExecutable(newExecutableFile("bin", "resolveip"));
             }
         } catch (IOException e) {
             throw new RuntimeException("Error unpacking embedded DB", e);
