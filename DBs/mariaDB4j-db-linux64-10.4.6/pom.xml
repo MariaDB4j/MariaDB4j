@@ -15,7 +15,6 @@
 
     <properties>
         <mariaDB.version>10.4.6</mariaDB.version>
-        <downloadsDir>${project.basedir}/../../../downloads</downloadsDir>
     </properties>
 
     <build>
