@@ -13,9 +13,7 @@ Windows
 Linux
 -----
 
-1. Download the binary distribution for the new version `mariadb-{x.y.z}-linuxx86_64.tar.gz`
-2. Uncompress and copy the required files from `bin` & `shared` folders
-3. Update the version in `pom.xml` and all folders
+1. Update the version in `pom.xml` and all folders
 
 macOS
 -----
