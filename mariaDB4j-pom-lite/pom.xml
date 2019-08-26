@@ -4,17 +4,7 @@
 
     <groupId>org.craftercms.mariaDB4j</groupId>
     <artifactId>mariaDB4j-pom-lite</artifactId>
-    <!-- This here is NOT a *-SNAPSHOT version, never!
-    
-         Just manually increment this whenever you have to make a change to
-         this pom.xml - which should, normally, be relatively rare!
-         
-         If you do have to change this, remember to adjust the <version> of
-         the <parent> in the current mariaDB4j-pom SNAPSHOT, and in future
-         DBs/mariaDB4j-db-*/pom.xml versions (as those are also always
-         non-SNAPSHOT, existing ones do NOT get changed).
-     -->
-    <version>2.2.4.2</version>
+    <version>2.4.2.3</version>
     <packaging>pom</packaging>
 
     <name>MariaDB4j</name>
@@ -67,6 +57,7 @@
             <url>http://craftercms.org</url>
         </developer>
     </developers>
+
     <contributors>
         <contributor>
             <name>Please consult the CONTRIBUTORS file which should be included with this JAR</name>

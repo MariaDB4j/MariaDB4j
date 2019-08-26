@@ -4,14 +4,12 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
-        <!-- Do NOT depend on a SNAPSHOT here!
-             Note that this parent version and the version below are, intentionally, completely unrelated. -->
-        <version>2.2.4.2</version>
+        <version>2.4.2.3</version>
         <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
 	<artifactId>mariaDB4j-pom</artifactId>
-	<version>2.4.2.2</version>
+	<version>2.4.2.3</version>
 	<packaging>pom</packaging>
 
     <scm>
@@ -25,13 +23,6 @@
     </scm>
 
 	<modules>
-        <!-- We do NOT include <module> for the mariaDB4j-pom-lite, nor for the DBs/mariaDB4j-db-* here!
-
-             This is because those are NOT version'd the same way as this artifact and the ones below.
-             Therefore the mvn release:* and mvn depoy is done separately for this (below)
-             and the mariaDB4j-pom-lite and DBs/mariaDB4j-db-*.
-         -->
-        <module>mariaDB4j-pom-lite</module>
         <module>DBs</module>
 		<module>mariaDB4j-core</module>
 		<module>mariaDB4j</module>
