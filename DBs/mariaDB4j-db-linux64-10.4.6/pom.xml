@@ -34,8 +34,11 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <unzip src="${basedir}/mariaDB/linux.zip"
-                                       dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux"/>
+                                <property name="project.basedir" value="${project.basedir}"/>
+                                <property name="project.build.directory" value="${project.build.directory}"/>
+                                <property name="mariaDB.version" value="${mariaDB.version}"/>
+                                <ant antfile="${project.basedir}/prepare.xml">
+                                </ant>
                             </target>
                         </configuration>
                         <goals>
@@ -43,8 +46,8 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>                                 
         </plugins>
-
     </build>
+
 </project>
