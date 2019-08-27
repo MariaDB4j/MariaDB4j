@@ -214,7 +214,7 @@
 
     <profiles>
         <profile>
-            <id>gpg</id>
+            <id>release-sign-artifacts</id>
             <build>
                 <plugins>
                     <plugin>
