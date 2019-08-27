@@ -84,8 +84,7 @@ public class MariaDB4jSampleTutorialTest {
         }
     }
 
-    // TODO: Fix, since 10.4.6 it doesn't work, MariaDB doesn't allow login as root if Unix user is not root - Alfonso
-    //@Test
+    @Test
     public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
@@ -97,7 +96,6 @@ public class MariaDB4jSampleTutorialTest {
         if (!dbName.equals("test")) {
             // mysqld out-of-the-box already has a DB named "test"
             // in case we need another DB, here's how to create it first
-            // Doesn't work, can't run if Unix user is not root!!!
             db.createDB(dbName, "root", "");
         }
 

@@ -8,7 +8,6 @@
         <echo message="Project path      : ${project.basedir}"/>
         <echo message="Output location   : ${project.build.directory}"/>
         <echo message="MariaDB version   : ${mariaDB.version}"/>
-        <mkdir dir="${downloadsDir}" />
     </target>
 
     <target name="download" depends="env"
