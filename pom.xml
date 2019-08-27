@@ -23,6 +23,7 @@
     </scm>
 
 	<modules>
+		<module>mariaDB4j-pom-lite</module>
         <module>DBs</module>
 		<module>mariaDB4j-core</module>
 		<module>mariaDB4j</module>

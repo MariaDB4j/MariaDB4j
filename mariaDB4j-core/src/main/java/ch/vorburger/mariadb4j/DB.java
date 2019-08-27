@@ -115,6 +115,9 @@ public class DB {
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false).setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
+            // Since 10.4.6, this needs to be specified to allow root login from any user and avoid creating an extra user,
+            // basically like it used to do in 10.3 and before
+            builder.addArgument("--auth-root-authentication-method=normal");            
             builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
