@@ -10,7 +10,7 @@
     </parent>
 
 	<artifactId>mariaDB4j-db-linux64</artifactId>
-	<version>10.3.13</version>
+	<version>10.3.17</version>
 
     <properties>
         <mariaDB.version>${project.version}</mariaDB.version>
