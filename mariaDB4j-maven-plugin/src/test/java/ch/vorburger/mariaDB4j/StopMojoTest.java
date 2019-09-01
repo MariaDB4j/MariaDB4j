@@ -19,9 +19,18 @@
  */
 package ch.vorburger.mariaDB4j;
 
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariaDB4j.utils.DBSingleton;
-import ch.vorburger.mariadb4j.DB;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
@@ -30,11 +39,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.util.List;
 
-import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.StopMojo;
+import ch.vorburger.mariadb4j.utils.DBSingleton;
 
+/**
+ *  StopMojoTest mocking database testing function
+ *
+ *  @author William Dutton
+ */
 public class StopMojoTest {
 
     StopMojo stopMojo;
@@ -65,7 +80,7 @@ public class StopMojoTest {
         verify(mockLog, times(1)).debug(logCaptor.capture());
         verifyNoMoreInteractions(mockLog);
 
-        assertThat(logCaptor.getValue()).isEqualTo("skipping stop as per configuration.");
+        assertEquals("skipping stop as per configuration.", logCaptor.getValue());
     }
 
     @Test
@@ -76,7 +91,7 @@ public class StopMojoTest {
         verify(mockLog, times(1)).info(logCaptor.capture());
         verifyNoMoreInteractions(mockLog);
 
-        assertThat(logCaptor.getValue()).isEqualTo("Stopping MariaDB4j...");
+        assertEquals("Stopping MariaDB4j...", logCaptor.getValue());
     }
 
     @Test
@@ -92,7 +107,7 @@ public class StopMojoTest {
             fail("Should have thrown exception");
         } catch (MojoExecutionException e) {
             //expected
-            assertThat(e.getMessage()).contains("MariaDB4j Database. Could not stop gracefull");
+            assertTrue(e.getMessage().contains("MariaDB4j Database. Could not stop gracefull"));
         }
 
         verify(mockDb).stop();
@@ -101,6 +116,6 @@ public class StopMojoTest {
 
         List<String> logMessages = logCaptor.getAllValues();
 
-        assertThat(logMessages.get(0)).isEqualTo("Stopping MariaDB4j...");
+        assertEquals("Stopping MariaDB4j...", logMessages.get(0));
     }
 }
