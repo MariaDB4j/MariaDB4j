@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project name="MariaDB4J" default="extract" >
+    <description>
+        Ant task to download file from internet and extract during maven package
+    </description>
+
+    <target name="env">
+        <echo message="Project path   : ${project.basedir}"/>
+        <echo message="Output location: ${project.build.directory}"/>
+        <echo message="Cache location : ${cacheDir}"/>
+        <echo message="MariaDB version: ${mariaDB.version}"/>
+        <mkdir dir="${cacheDir}" />
+        <mkdir dir="${cacheDir}/input" />
+    </target>
+
+    <target name="download" depends="env"
+        description="Download linux tar.gz file from mariadb.com">
+        <echo message="Downloading linux MariaDB ${mariaDB.version} file ..." />
+        <get src="https://downloads.mariadb.com/MariaDB/mariadb-${mariaDB.version}/bintar-linux-x86_64/mariadb-${mariaDB.version}-linux-x86_64.tar.gz" 
+            skipexisting="true"             
+            dest="${cacheDir}/input/mariadb-${mariaDB.version}-linux-x86_64.tar.gz" />
+    </target>
+
+    <target name="extract" depends="env,download"
+        description="Extract project files">
+        <echo message="Extracting tar.gz file" />
+        <untar src="${cacheDir}/input/mariadb-${mariaDB.version}-linux-x86_64.tar.gz" 
+                dest="${project.build.directory}"
+                compression="gzip"  />
+        <echo message="Copying share folders and files" />
+        <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-x86_64">
+                <include name="share/**/*"/>
+            </fileset>
+        </copy>
+        <echo message="Copying lib files" />
+        <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/libs">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-x86_64/lib">
+                <include name="libmariadb.so*"/>
+                <include name="libmariadbclient*"/>
+                <include name="libmysql*"/>
+            </fileset>
+        </copy>
+        <echo message="Copying bin files" />
+        <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-x86_64/bin">
+                <include name="mysql"/>
+                <include name="mysqld"/>
+                <include name="mysqldump"/>
+                <include name="mysqlcheck"/>
+                <include name="my_print_defaults"/>
+                <include name="resolveip"/>
+            </fileset>
+        </copy>
+        <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-x86_64/scripts">
+                <include name="*"/>
+            </fileset>
+        </copy> 
+        <echo message="Update chmod for bin files ..." />
+        <chmod dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin" perm="ugo+rx"
+                includes="*"/>                               
+    </target>
+</project>

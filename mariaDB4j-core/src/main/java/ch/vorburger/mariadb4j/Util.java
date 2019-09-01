@@ -153,12 +153,14 @@ public class Util {
     @SuppressWarnings("null")
     private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
         IOException lastIOException = null;
-        int attemps = 0;
-        while (attemps++ < n) {
+        int numAttempts = 0;
+        while (numAttempts++ < n) {
             try {
                 procedure.apply();
+                return;
             } catch (IOException e) {
-                logger.warn("Failure " + attemps + " of " + n + ", retrying again in " + msToWait + "ms", e);
+                lastIOException = e;
+                logger.warn("Failure {} of {}, retrying again in {}ms", numAttempts, n, msToWait, e);
                 try {
                     Thread.sleep(msToWait);
                 } catch (InterruptedException interruptedException) {
@@ -166,9 +168,7 @@ public class Util {
                 }
             }
         }
-        if (attemps == 3) {
-            throw lastIOException;
-        }
+        throw lastIOException;
     }
 
     private static interface Procedure<E extends Throwable> {
