@@ -252,8 +252,29 @@ public class DB {
         source(resource, null, null, null);
     }
 
+    public void source(InputStream resource) throws ManagedProcessException {
+        source(resource, null, null, null);
+    }
+
     public void source(String resource, String dbName) throws ManagedProcessException {
         source(resource, null, null, dbName);
+    }
+
+    public void source(InputStream resource, String dbName) throws ManagedProcessException {
+        source(resource, null, null, dbName);
+    }
+
+    /**
+     * Takes in a {@link InputStream} and sources it via the mysql command line tool.
+     *
+     * @param resource an {@link InputStream} InputStream to source
+     * @param username the username used to login to the database
+     * @param password the password used to login to the database
+     * @param dbName the name of the database (schema) to source into
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+    public void source(InputStream resource, String username, String password, String dbName) throws ManagedProcessException {
+        run("script file sourced from an InputStream", resource, username, password, dbName, false);
     }
 
     /**
