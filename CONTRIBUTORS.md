@@ -24,6 +24,7 @@ MariaDB4j CONTRIBUTORS
 - Yuexiang Gao [@kbyyd24](https://github.com/kbyyd24) <melo@gaoyuexiang.cn> (http://blog.gaoyuexiang.cn), August 2018; for mariaDB4j-springboot auto-configure with spring boot
 - Neelesh Shastry [@neeleshs](https://github.com/neeleshs), Dec 2017 Provide a callback if the DB process crashes
 - Gordon Little [@glittle1972](https://github.com/glittle1972), Jun 2019 Add option to force continue-on-error for sourcing SQL scripts
+- Theodore Ni [@tjni](https://github.com/tjni), Aug 2019 Reduce file copying during classpath unpacking
 - also see https://github.com/vorburger/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
