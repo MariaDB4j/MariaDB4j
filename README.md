@@ -11,6 +11,7 @@ If you are using this project, consider [supporting it :heart: by donating via P
 [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=vorburger/MariaDB4j)](https://dependabot.com)
 
 
 How? (Java)
@@ -180,6 +181,52 @@ to
 If you are using the argument "createDatabase" rename it to "databaseName"
 
 
+JUnit Integration
+-----------------
+
+Using the JUnit feature of [Rules](https://github.com/junit-team/junit4/wiki/rules) a MariaDB4JRule class is available to be used in your tests.
+
+Add it as a `@Rule` to your test class
+```
+public class TestClass {
+    @Rule
+    public MariaDB4jRule dbRule = new MariaDB4jRule(0); //port 0 means select random available port
+
+    @Test
+    public void test() {
+        // Do whatever you want with the running DB
+    }
+}
+```
+
+The `MariaDB4jRule` provides 2 methods for getting data on the running DB:
+
+* getURL() - Get the JDBC connection string to the running DB
+  ```
+  @Test
+  public void test() {
+      Connection conn = DriverManager.getConnection(dbRule.getURL(), "root", "");
+  }
+  ```
+* getDBConfiguration() - Get the Configuration object of the running DB, exposing properties such as DB Port, Data directory, Lib Directory and even a reference to the ProcessListener for the DB process.
+  ```
+  public class TestClass {
+    @Rule
+    public MariaDB4jRule dbRule = new MariaDB4jRule(3307);
+
+    @Test
+    public void test() {
+        assertEquals(3307, dbRule.getDBConfiguration().getPort());
+    }
+  }
+
+  ```
+  
+The `MariaDB4jRule` class extends the JUnit [`ExternalResource`](https://github.com/junit-team/junit4/wiki/rules#externalresource-rules) - which means it starts the DB process before each test method is run, and stops it at the end of that test method.
+
+The `MariaDB4jRule(DBConfiguration dbConfiguration, String dbName, String resource)` Constructor, allows to initialize your DB with a provided SQL Script (resource = path to script file) to setup needed database, tables and data.
+
+This rule, can also be used as a [@ClassRule](https://github.com/junit-team/junit4/wiki/rules#classrule) to avoid DB Process starting every test - just make sure to clean/reset your data in the DB.
 
 Anything else?
 --------------
@@ -215,7 +262,7 @@ Q: ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql
 A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`.
 
 Q: Is there another project that does something similar to this one?
-A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).  Also the [mariadb4j-maven-plugin](https://github.com/mike10004/mariadb4j-maven-plugin) and OpenMRS' [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) build on MariaDB4j.
+A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).  [Testcontainers' has something similar which we recommend you use ](https://www.testcontainers.org/modules/databases/mariadb/) if you can run containers (Docker).  Also OpenMRS' [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) build on MariaDB4j.
 
 
 Release?
@@ -252,7 +299,7 @@ When doing a release, here are a few things to do every time:
 
    ```mvn clean deploy -Pgpg```
 
-In caase of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
+In case of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
 
 
 Who?
