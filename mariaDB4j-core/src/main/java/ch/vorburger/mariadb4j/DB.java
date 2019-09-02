@@ -165,7 +165,7 @@ public class DB {
             throw new ManagedProcessException("An error occurred while starting the database", e);
         }
         if (!ready) {
-            if (mysqldProcess.isAlive())
+            if (mysqldProcess != null && mysqldProcess.isAlive())
                 mysqldProcess.destroy();
             throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
                     + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
@@ -383,7 +383,7 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
-        if (mysqldProcess.isAlive()) {
+        if (mysqldProcess != null && mysqldProcess.isAlive()) {
             logger.debug("Stopping the database...");
             mysqldProcess.destroy();
             logger.info("Database stopped.");
