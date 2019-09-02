@@ -20,6 +20,8 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -117,7 +119,7 @@ public class DBConfigurationBuilder {
     }
 
     /**
-     * Set a custom process listener to listen to DB start/shutdown events
+     * Set a custom process listener to listen to DB start/shutdown events.
      * @param listener custom listener
      * @return this
      */
@@ -138,7 +140,9 @@ public class DBConfigurationBuilder {
      * Defines if the configured data and base directories should be deleted on shutdown.
      * If you've set the base and data directories to non temporary directories
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
-     * then they'll also never get deleted anyway.
+     * then they'll also never get deleted anyway. 
+     * @param doDelete Default valule is true, set false to override
+     * @return returns this
      */
     public DBConfigurationBuilder setDeletingTemporaryBaseAndDataDirsOnShutdown(boolean doDelete) {
         checkIfFrozen("keepsDataAndBaseDir");
@@ -178,6 +182,8 @@ public class DBConfigurationBuilder {
 
     /**
      * Whether to to "--skip-grant-tables" (defaults to true).
+     * @param isSecurityDisabled set isSecurityDisabled value
+     * @return returns this
      */
     public DBConfigurationBuilder setSecurityDisabled(boolean isSecurityDisabled) {
         checkIfFrozen("setSecurityDisabled");
@@ -197,7 +203,7 @@ public class DBConfigurationBuilder {
 
     protected String _getDataDir() {
         if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR))
-            return DEFAULT_DATA_DIR + SystemUtils.FILE_SEPARATOR + getPort();
+            return DEFAULT_DATA_DIR + File.separator + getPort();
         else
             return getDataDir();
     }
@@ -246,11 +252,11 @@ public class DBConfigurationBuilder {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
             if (OSX.equals(getOS()))
-                databaseVersion = "mariadb-10.2.11";
+                databaseVersion = "mariadb-10.3.16";
             else if (LINUX.equals(getOS()))
-                databaseVersion = "mariadb-10.2.11";
+                databaseVersion = "mariadb-10.3.16";
             else if (WIN32.equals(getOS()))
-                databaseVersion = "mariadb-10.2.11";
+                databaseVersion = "mariadb-10.3.16";
             else
                 throw new IllegalStateException(
                         "OS not directly supported, please use setDatabaseVersion() to set the name "

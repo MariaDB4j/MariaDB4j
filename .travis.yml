@@ -1,6 +1,6 @@
 language: java
 
-# We need Java 7, even though the source code is still Java 6, 
+# We need Java 8, even though the source code is still Java 6, 
 # because Checkstyle during build is Java 7+ only; and we use
 # OpenJDK instead of Oracle JDK because ya all should only
 # ever use OpenJDK!  (And get Red Hat's support for it, if
@@ -8,10 +8,13 @@ language: java
 jdk: 
   - openjdk8
 
-cache:
-  directories:
-  - $HOME/.m2
-  - .mvn
+# Do *NOT* cache, see https://github.com/vorburger/MariaDB4j/issues/262
+# cache:
+#  directories:
+#  - $HOME/.m2
+#  - .mvn
 
 before_install:
   - mvn -f DBs/pom.xml clean install
+
+script: mvn package -B -V

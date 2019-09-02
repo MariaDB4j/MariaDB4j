@@ -1,21 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
     <parent>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
         <!-- Do NOT depend on a SNAPSHOT here!
              Note that this parent version and the version below are, intentionally, completely unrelated. -->
         <version>2.2.1</version>
-        <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>      
+        <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
-    
+
 	<artifactId>mariaDB4j-pom</artifactId>
-	<version>2.3.1-SNAPSHOT</version>
+	<version>2.4.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
     <scm>
-        <!-- The <connection> and <url> are specified in the <parent> but the 
+        <!-- The <connection> and <url> are specified in the <parent> but the
              <developerConnection> and the <tag> must be here, for the maven-release-plugin
              to work correctly, if the <parent> is not a SNAPSHOT;
              see https://github.com/vorburger/MariaDB4j/issues/43.
@@ -26,7 +26,7 @@
 
 	<modules>
         <!-- We do NOT include <module> for the mariaDB4j-pom-lite, nor for the DBs/mariaDB4j-db-* here!
-        
+
              This is because those are NOT version'd the same way as this artifact and the ones below.
              Therefore the mvn release:* and mvn depoy is done separately for this (below)
              and the mariaDB4j-pom-lite and DBs/mariaDB4j-db-*.
@@ -40,8 +40,7 @@
 
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		 <spring.version>4.3.9.RELEASE</spring.version>
-		 <springboot.version>2.1.0.RELEASE</springboot.version>
+		 <springboot.version>2.1.7.RELEASE</springboot.version>
 		 <maven.compiler.source>1.8</maven.compiler.source>
 		 <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
@@ -51,7 +50,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
@@ -67,18 +66,18 @@
 				    <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-					<!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven 
+					<!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
 						http://jira.codehaus.org/browse/MGPG-9 & http://jira.codehaus.org/browse/MRELEASE-263 -->
 					<mavenExecutorId>forked-path</mavenExecutorId>
 					<!-- Following is required because artifactId is (now) mariaDB4j-pom, but we want mariaDB4j -->
 					<tagNameFormat>mariaDB4j-@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>1.16</version>
+				<version>2.0.0</version>
                 <configuration>
                     <licenseName>apache_v2</licenseName>
                     <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
@@ -102,7 +101,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.1.0</version>
 				<executions>
 					<execution>
 						<id>validate</id>
@@ -120,7 +119,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>			
+	</build>
 
 	<dependencyManagement>
 	     <dependencies>
@@ -134,9 +133,14 @@
 	        <dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-simple</artifactId>
-				<version>1.7.25</version>
+				<version>1.7.28</version>
 	            <scope>test</scope>
 			</dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.6</version>
+            </dependency>
 	    </dependencies>
 	</dependencyManagement>
 

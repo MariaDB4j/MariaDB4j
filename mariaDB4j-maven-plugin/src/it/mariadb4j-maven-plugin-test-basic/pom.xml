@@ -6,7 +6,7 @@
     <parent>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
-        <version>2.3.1-SNAPSHOT</version>
+        <version>2.4.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>3.0.0-M1</version>
                 <configuration>
                     <systemPropertyVariables>
                         <mariadb4j.port>${mariadb4j.port}</mariadb4j.port>
@@ -64,6 +64,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>

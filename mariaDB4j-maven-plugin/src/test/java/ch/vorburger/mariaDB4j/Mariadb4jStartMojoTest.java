@@ -54,6 +54,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 public class Mariadb4jStartMojoTest {
 
+    @SuppressWarnings("rawtypes")
     private Map pluginContext;
 
     @Rule
@@ -74,7 +75,6 @@ public class Mariadb4jStartMojoTest {
 
     private static final String BASIC_TABLE_NAME = "bar";
     private static final String BASIC_DB_NAME = "foo";
-    @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     private static final String BASIC_TABLE_INSERT_STMT = "INSERT INTO bar (baz) VALUES (?)";
     private static final String BASIC_TABLE_VALUE_COLUMN = "baz";
 

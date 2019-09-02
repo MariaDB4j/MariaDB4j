@@ -3,7 +3,7 @@ What?
 
 MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backward compatible, drop-in replacement of the MySQL(R) Database Server", see [FAQ](http://kb.askmonty.org/en/mariadb-faq) and [Wikipedia](http://en.wikipedia.org/wiki/MariaDB)), allowing you to use MariaDB (MySQL(R)) from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
 
-If you are using this project, consider [supporting it :heart: by donating via PayPal (one time)](https://www.paypal.me/MichaelVorburgerCH?locale.x=en_US) or [becoming a patreon to sponsor](https://www.patreon.com/vorburger) to ensure it is actively developed and maintained in the future!  It's also much appreciate if you Star / Watch / Follow on GitHub. And, of course, do send a PR adding your name/project to the [USERS.md](USERS.md) file as a another way to show your appreciation for this free project! 
+If you are using this project, consider [supporting it :heart: by donating via PayPal (one time)](https://www.paypal.me/MichaelVorburgerCH?locale.x=en_US) or [becoming a patreon to sponsor](https://www.patreon.com/vorburger) to ensure it is actively developed and maintained in the future!  It's also much appreciate if you Star / Watch / Follow on GitHub. And, of course, do send a PR adding your name/project to the [USERS.md](USERS.md) file as a another way to show your appreciation for this free project!
 
 <span class="badge-paypal"><a href="https://www.paypal.me/MichaelVorburgerCH?locale.x=en_US" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 [![Patreon me!](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/vorburger)
@@ -11,6 +11,7 @@ If you are using this project, consider [supporting it :heart: by donating via P
 [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
 [![Build Status](https://secure.travis-ci.org/vorburger/MariaDB4j.png?branch=master)](http://travis-ci.org/vorburger/MariaDB4j/)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=vorburger/MariaDB4j)](https://dependabot.com)
 
 
 How? (Java)
@@ -37,8 +38,8 @@ DB db = DB.newEmbeddedDB(configBuilder.build());
 db.start();
 ```
 4. Use the database as per standard JDBC usage. In this example, you're acquiring a JDBC `Connection` from the
-`DriverManager`; note that you could easily configure this URL 
-to be used in any JDBC connection pool. MySQL uses a `test` database by default, 
+`DriverManager`; note that you could easily configure this URL
+to be used in any JDBC connection pool. MySQL uses a `test` database by default,
 and a `root` user with no password is also a default.
 ```java
 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
@@ -68,7 +69,7 @@ The DataSource initialization have to wait until MariaDB is ready to receive con
 
 ```
 dependencies {
-   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.3.1-SNAPSHOT")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.4.0")
 }
 ```
 
@@ -79,7 +80,7 @@ In [issue #64](<https://github.com/vorburger/MariaDB4j/issues/64>) there is also
 
 How (CLI)
 ----
-Because the MariaDB4j JAR is executable, you can also quickly fire up a database from a command line interface: 
+Because the MariaDB4j JAR is executable, you can also quickly fire up a database from a command line interface:
 ```
 java [-DmariaDB4j.port=3718] [-DmariaDB4j.baseDir=/home/theapp/bin/mariadb4j] [-DmariaDB4j.dataDir=/home/theapp/db] -jar mariaDB4j-app*.jar
 ```
@@ -97,13 +98,13 @@ MariaDB4j JAR binaries are available from:
 <dependency>
     <groupId>ch.vorburger.mariaDB4j</groupId>
     <artifactId>mariaDB4j</artifactId>
-    <version>2.2.3</version>
+    <version>2.4.0</version>
 </dependency>
 ```
 
 2. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
 
-Up to version 2.1.3 MariaDB4j was on bintray.  Starting with version 2.2.1 we’re only using Maven central  The 2.2.1 that is on Bintray is broken. 
+Up to version 2.1.3 MariaDB4j was on bintray.  Starting with version 2.2.1 we’re only using Maven central  The 2.2.1 that is on Bintray is broken.
 
 For bleeding edge SNAPSHOT versions, you (or your build server) can easily build it yourself from
 source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven then coordinates are:
@@ -112,12 +113,12 @@ source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven
 <dependency>
     <groupId>ch.vorburger.mariaDB4j</groupId>
     <artifactId>mariaDB4j</artifactId>
-    <version>2.2.3-SNAPSHOT</version>
+    <version>2.4.1-SNAPSHOT</version>
 </dependency>
 ```
 
 If you use your own packaged versions of MariaDB native binaries, then the mariaDB4j-core artifact JAR,
-which contains only the launcher Java code but no embedded native binaries, will be more suitable for you.  
+which contains only the launcher Java code but no embedded native binaries, will be more suitable for you.
 
 Similarly, you could also exclude one of artifacts of the currently 3 packaged OS platform to save download if your project / community is mono-platform.
 
@@ -127,7 +128,7 @@ You could also override the version(s) of the respective (transitive) mariaDB4j-
 
 Why?
 ----
-Being able to start a database without any installation / external dependencies 
+Being able to start a database without any installation / external dependencies
 is useful in a number of scenarios, such as all-in-one application packages,
 or for running integration tests without depending on the installation,
 set-up and up-and-running of an externally managed server.
@@ -157,6 +158,7 @@ helpful tool for launching MariaDB from Java.
 See pom and integration test in https://github.com/vorburger/MariaDB4j/tree/mariaDB4j-maven-plugin/mariaDB4j-maven-plugin/src/it/mariadb4j-maven-plugin-test-basic  for usage example.
 
 #### How to upgrade the maven plugin from mike10004 version to this version
+
 To upgrade from mike10004 to vorbuger version please change
 
 ```xml
@@ -179,6 +181,52 @@ to
 If you are using the argument "createDatabase" rename it to "databaseName"
 
 
+JUnit Integration
+-----------------
+
+Using the JUnit feature of [Rules](https://github.com/junit-team/junit4/wiki/rules) a MariaDB4JRule class is available to be used in your tests.
+
+Add it as a `@Rule` to your test class
+```
+public class TestClass {
+    @Rule
+    public MariaDB4jRule dbRule = new MariaDB4jRule(0); //port 0 means select random available port
+
+    @Test
+    public void test() {
+        // Do whatever you want with the running DB
+    }
+}
+```
+
+The `MariaDB4jRule` provides 2 methods for getting data on the running DB:
+
+* getURL() - Get the JDBC connection string to the running DB
+  ```
+  @Test
+  public void test() {
+      Connection conn = DriverManager.getConnection(dbRule.getURL(), "root", "");
+  }
+  ```
+* getDBConfiguration() - Get the Configuration object of the running DB, exposing properties such as DB Port, Data directory, Lib Directory and even a reference to the ProcessListener for the DB process.
+  ```
+  public class TestClass {
+    @Rule
+    public MariaDB4jRule dbRule = new MariaDB4jRule(3307);
+
+    @Test
+    public void test() {
+        assertEquals(3307, dbRule.getDBConfiguration().getPort());
+    }
+  }
+
+  ```
+  
+The `MariaDB4jRule` class extends the JUnit [`ExternalResource`](https://github.com/junit-team/junit4/wiki/rules#externalresource-rules) - which means it starts the DB process before each test method is run, and stops it at the end of that test method.
+
+The `MariaDB4jRule(DBConfiguration dbConfiguration, String dbName, String resource)` Constructor, allows to initialize your DB with a provided SQL Script (resource = path to script file) to setup needed database, tables and data.
+
+This rule, can also be used as a [@ClassRule](https://github.com/junit-team/junit4/wiki/rules#classrule) to avoid DB Process starting every test - just make sure to clean/reset your data in the DB.
 
 Anything else?
 --------------
@@ -192,7 +240,7 @@ More generally, note that if you are using the provided mariadb database Maven a
 MariaDB database JARs, and version upgrades
 -------------------------------------------
 
-The original creator and current maintainer of this library (@vorburger) will gladly merge any pull request contributions with updates to the MariaDB native binaries.  If you raise a change with new versions, you will be giving back to other users of the community, in exchange for being able to use this free project - that's how open-source works.  
+The original creator and current maintainer of this library (@vorburger) will gladly merge any pull request contributions with updates to the MariaDB native binaries.  If you raise a change with new versions, you will be giving back to other users of the community, in exchange for being able to use this free project - that's how open-source works.
 
 Any issues raised in the GitHub bug tracker about requesting new versions of MariaDB native binaries will be tagged with the "helpwanted" label, asking for contributions from YOU or others - ideally from the person raising the issue, but perhaps from someone else, some.. other time, later.  (But if you are reading this, YOU should contribute through a Pull Request!)
 
@@ -200,9 +248,9 @@ Note that the Maven <version> number of the core/app/pom artifacts versus the db
 
 In addition to the new directory, you then need to correspondingly increase: 1. the `version` of the `dependency` in the mariaDB4j/pom.xml (non-root)  &  2. the databaseVersion in the DBConfigurationBuilder class.  Please have a look for contributions made by others in the git log if in doubt; e.g. [issue 37](https://github.com/vorburger/MariaDB4j/issues/37).   Please TEST your pull request on your platform!  @vorburger will only only run the build on Linux, not Windows and Mac OS X.  As the DBs jars are separated from the main project, one needs to build the DB JAR so it ends it up in your local repo first: cd down the DBs subfolder and do a mvn clean install for the DB you want to build i.e. mariaDB4j-db-mac64-10.1.9/ . After that, up again to the project root repository and mvn clean install should work fine.
 
-So when you contribute new MariaDB native binaries versions, place them in a new directory named mariaDB4j-db-PLATFORM-VERSION under the DBs/ directory - next to the existing ones.  This is better than renaming an existing one and replacing files, because (in theory) if someone wanted to they could then easily still depend on earlier released database binary versions just by changing the <dependency> of the mariaDB4j-db* artifactId in their own project's pom.xml, even with using later version of MariaDB4j Java classes (mariadb4j core & app).  
+So when you contribute new MariaDB native binaries versions, place them in a new directory named mariaDB4j-db-PLATFORM-VERSION under the DBs/ directory - next to the existing ones.  This is better than renaming an existing one and replacing files, because (in theory) if someone wanted to they could then easily still depend on earlier released database binary versions just by changing the <dependency> of the mariaDB4j-db* artifactId in their own project's pom.xml, even with using later version of MariaDB4j Java classes (mariadb4j core & app).
 
-Of course, even if we would replace existing version with new binaries (like it used to originally be done in the project), then the ones already deployed to Maven central would remain there.  However it is just much easier to see which version are available, and to locally build JARs for older versions, if all are simply kept in the head master branch (even if not actively re-built anymore, other than the latest version).  The size of the git repository will gradually grow through this, and slightly more than if we would replace existing binaries (because git uses delta diffs, for both text and binary files).  We just accept that in this project - for clarity & convenience. 
+Of course, even if we would replace existing version with new binaries (like it used to originally be done in the project), then the ones already deployed to Maven central would remain there.  However it is just much easier to see which version are available, and to locally build JARs for older versions, if all are simply kept in the head master branch (even if not actively re-built anymore, other than the latest version).  The size of the git repository will gradually grow through this, and slightly more than if we would replace existing binaries (because git uses delta diffs, for both text and binary files).  We just accept that in this project - for clarity & convenience.
 
 
 FAQ
@@ -210,11 +258,11 @@ FAQ
 Q: Is MariaDB4j stable enough for production? I need the data to be safe, and performant.
 A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
 
-Q: ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory 
+Q: ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory
 A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`.
 
 Q: Is there another project that does something similar to this one?
-A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).  Also the [mariadb4j-maven-plugin](https://github.com/mike10004/mariadb4j-maven-plugin) and OpenMRS' [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) build on MariaDB4j.
+A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).  [Testcontainers' has something similar which we recommend you use ](https://www.testcontainers.org/modules/databases/mariadb/) if you can run containers (Docker).  Also OpenMRS' [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) build on MariaDB4j.
 
 
 Release?
@@ -224,20 +272,20 @@ Remember that mariaDB4j-pom-lite & DBs/mariaDB4j-db-* are now versioned non SNAP
 
 When doing a release, here are a few things to do every time:
 
-1. update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available. 
+1. update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available.
 
-2. Make sure the project builds, without pulling anything which should be part of this build from outside: 
+2. Make sure the project builds, without pulling anything which should be part of this build from outside:
 
    ```mvn clean package; rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j; mvn clean package```
 
 3. Make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)):
 
-``` 
+```
     mvn license:update-file-header
     mvn -Dmaven.test.skip=true package
 ```
 
-4. Finalize [CHANGES.md](CHANGES.md) Release Notes, incl. set today's date, and update 2.2.* version numbers in this README.
+4. Finalize [CHANGES.md](CHANGES.md) Release Notes, incl. set today's date, and update the version numbers in this README.
 
 5. Preparing & performing the release (this INCLUDES an mvn deploy):
 
@@ -251,7 +299,7 @@ When doing a release, here are a few things to do every time:
 
    ```mvn clean deploy -Pgpg```
 
-In caase of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
+In case of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
 
 
 Who?

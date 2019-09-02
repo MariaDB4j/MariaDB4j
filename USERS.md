@@ -11,6 +11,7 @@ If you too use MariaDB4j, please show your support for the project by adding you
 - nyo @lc-nyovchev; at http://relay42.com  
 - Brendon Anderson @brendonanderson; at https://objectpartners.com
 - [`spwrap`](https://github.com/mhewedy/spwrap): Simple Stored Procedure call wrapper with no framework dependencies.
+- [ROMVoid](https://github.com/ROMVoid95): Discord Bot Developer. 
 
 
 Also see the [CONTRIBUTORS.md](CONTRIBUTORS.md) file for a list of contributors which presumably all are users too! 

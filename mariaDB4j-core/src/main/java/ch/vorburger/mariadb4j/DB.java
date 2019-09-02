@@ -19,6 +19,11 @@
  */
 package ch.vorburger.mariadb4j;
 
+import ch.vorburger.exec.ManagedProcess;
+import ch.vorburger.exec.ManagedProcessBuilder;
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.exec.OutputStreamLogDispatcher;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,19 +36,16 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.vorburger.exec.ManagedProcess;
-import ch.vorburger.exec.ManagedProcessBuilder;
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.exec.OutputStreamLogDispatcher;
 
 /**
  * Provides capability to install, start, and use an embedded database.
  *
  * @author Michael Vorburger
  * @author Michael Seaton
+ * @author Gordon Little
  */
 public class DB {
 
@@ -108,16 +110,23 @@ public class DB {
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
-        builder.addFileArgument("--datadir", dataDir).setWorkingDirectory(baseDir);
+        builder.setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
+            builder.addFileArgument("--datadir", dataDir);
             builder.addFileArgument("--basedir", baseDir);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
             builder.addArgument("--skip-name-resolve");
             // builder.addArgument("--verbose");
+        } else {
+            builder.addFileArgument("--datadir", toWindowsPath(dataDir));
         }
         ManagedProcess mysqlInstallProcess = builder.build();
         return mysqlInstallProcess;
+    }
+
+    private static File toWindowsPath(File file) throws IOException {
+        return new File(file.getCanonicalPath().replace(" ", "%20"));
     }
 
     /**
@@ -174,14 +183,18 @@ public class DB {
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
-        if(this.configuration.isSecurityDisabled()) {
+        if (this.configuration.isSecurityDisabled()) {
             builder.addArgument("--skip-grant-tables");
         }
         if (! hasArgument("--max_allowed_packet")) {
             builder.addArgument("--max_allowed_packet=64M");
         }
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
-        builder.addFileArgument("--datadir", dataDir);
+        if (!configuration.isWindows()) {
+            builder.addFileArgument("--datadir", dataDir);
+        } else {
+            builder.addFileArgument("--datadir", toWindowsPath(dataDir));
+        }
         addPortAndMaybeSocketArguments(builder);
         for (String arg : configuration.getArgs()) {
             builder.addArgument(arg);
@@ -239,8 +252,29 @@ public class DB {
         source(resource, null, null, null);
     }
 
+    public void source(InputStream resource) throws ManagedProcessException {
+        source(resource, null, null, null);
+    }
+
     public void source(String resource, String dbName) throws ManagedProcessException {
         source(resource, null, null, dbName);
+    }
+
+    public void source(InputStream resource, String dbName) throws ManagedProcessException {
+        source(resource, null, null, dbName);
+    }
+
+    /**
+     * Takes in a {@link InputStream} and sources it via the mysql command line tool.
+     *
+     * @param resource an {@link InputStream} InputStream to source
+     * @param username the username used to login to the database
+     * @param password the password used to login to the database
+     * @param dbName the name of the database (schema) to source into
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+    public void source(InputStream resource, String username, String password, String dbName) throws ManagedProcessException {
+        run("script file sourced from an InputStream", resource, username, password, dbName, false);
     }
 
     /**
@@ -254,15 +288,32 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     public void source(String resource, String username, String password, String dbName) throws ManagedProcessException {
-        InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
-        if (from == null)
-            throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
-        run("script file sourced from the classpath at: " + resource, from, username, password, dbName);
+        source(resource, username, password, dbName, false);
+    }
+
+    /**
+     * Takes in a string that represents a resource on the classpath and sources it via the mysql
+     * command line tool. Optionally force continue if individual statements fail.
+     *
+     * @param resource the path to a resource on the classpath to source
+     * @param username the username used to login to the database
+     * @param password the password used to login to the database
+     * @param dbName the name of the database (schema) to source into
+     * @param force if true then continue on error (mysql --force)
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+    public void source(String resource, String username, String password, String dbName, boolean force) throws ManagedProcessException {
+        try (InputStream from = getClass().getClassLoader().getResourceAsStream(resource)) {
+            if (from == null)
+                throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
+            run("script file sourced from the classpath at: " + resource, from, username, password, dbName, force);
+        } catch (IOException ioe) {
+            logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
+        }
     }
 
     public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
-        InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset());
-        run("command: " + command, from, username, password, dbName);
+        run(command, username, password, dbName, false);
     }
 
     public void run(String command) throws ManagedProcessException {
@@ -273,7 +324,17 @@ public class DB {
         run(command, username, password, null);
     }
 
-    protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName)
+    public void run(String command, String username, String password, String dbName, boolean force) throws ManagedProcessException {
+        // If resource is created here, it should probably be released here also (as opposed to in protected run method)
+        // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
+        try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {
+            run("command: " + command, from, username, password, dbName, force);
+        } catch (IOException ioe) {
+            logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
+        }
+    }
+
+    protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName, boolean force)
             throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
         try {
@@ -286,6 +347,8 @@ public class DB {
                 builder.addArgument("-p", password);
             if (dbName != null && !dbName.isEmpty())
                 builder.addArgument("-D", dbName);
+            if (force == true)
+                builder.addArgument("-f");
             addSocketOrPortArgument(builder);
             if (fromIS != null)
                 builder.setInputStream(fromIS);
@@ -298,8 +361,6 @@ public class DB {
             process.waitForExit();
         } catch (Exception e) {
             throw new ManagedProcessException("An error occurred while running a " + logInfoText, e);
-        } finally {
-            IOUtils.closeQuietly(fromIS);
         }
         logger.info("Successfully ran the " + logInfoText);
     }
@@ -400,11 +461,13 @@ public class DB {
                     logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
                 }
 
-                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
+                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
+                                    && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
                     FileUtils.deleteQuietly(dataDir);
                 }
-                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
+                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
+                                    && Util.isTemporaryDirectory(baseDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
                     FileUtils.deleteQuietly(baseDir);
                 }
