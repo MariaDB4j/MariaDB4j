@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,14 +30,14 @@ import java.util.function.Function;
  */
 public interface DBConfiguration {
 
-    /** 
-     * TCP Port to start DB server on. 
+    /**
+     * TCP Port to start DB server on.
      * @return returns port value
      **/
     int getPort();
 
-    /** 
-     * UNIX Socket to start DB server on (ignored on Windows). 
+    /**
+     * UNIX Socket to start DB server on (ignored on Windows).
      * @return returns socket value
      **/
     String getSocket();
@@ -48,16 +48,16 @@ public interface DBConfiguration {
      */
     String getBinariesClassPathLocation();
 
-    /** 
-     * Base directory where DB binaries are expected to be found. 
+    /**
+     * Base directory where DB binaries are expected to be found.
      * @return returns base directory value
      **/
     String getBaseDir();
 
     String getLibDir();
 
-    /** 
-     * Base directory for DB's actual data files. 
+    /**
+     * Base directory for DB's actual data files.
      * @return returns data directory value
      **/
     String getDataDir();
@@ -71,8 +71,8 @@ public interface DBConfiguration {
      */
     boolean isDeletingTemporaryBaseAndDataDirsOnShutdown();
 
-    /** 
-     * Whether running on Windows (some start-up parameters are different). 
+    /**
+     * Whether running on Windows (some start-up parameters are different).
      * @return returns boolean isWindows
      **/
     boolean isWindows();
@@ -87,11 +87,15 @@ public interface DBConfiguration {
      */
     ManagedProcessListener getProcessListener();
 
-    /** 
-     * Whether to to "--skip-grant-tables". 
+    /**
+     * Whether to to "--skip-grant-tables".
      * @return returns boolean isSecurityDisabled value
      **/
     boolean isSecurityDisabled();
+
+    int getInstallationTimeoutInMs();
+
+    int getTimesToAttemptInstall();
 
     String getURL(String dbName);
 
@@ -108,12 +112,15 @@ public interface DBConfiguration {
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
         private final ManagedProcessListener listener;
+        private int installationTimeoutInMs;
+        private int timesToAttemptInstall;
         private final boolean isSecurityDisabled;
         private final Function<String, String> getURL;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
-             boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
-             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, ManagedProcessListener listener) {
+            boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
+            boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL,
+            ManagedProcessListener listener, int installationTimeoutInMs, int timesToAttemptInstall) {
             super();
             this.port = port;
             this.socket = socket;
@@ -128,6 +135,8 @@ public interface DBConfiguration {
             this.isSecurityDisabled = isSecurityDisabled;
             this.getURL = getURL;
             this.listener = listener;
+            this.installationTimeoutInMs = installationTimeoutInMs;
+            this.timesToAttemptInstall = timesToAttemptInstall;
         }
 
         @Override
@@ -186,6 +195,11 @@ public interface DBConfiguration {
         }
 
         @Override
+        public int getInstallationTimeoutInMs() {
+            return installationTimeoutInMs;
+        }
+
+        @Override
         public String getURL(String dbName) {
             return getURL.apply(dbName);
         }
@@ -193,6 +207,10 @@ public interface DBConfiguration {
         @Override
         public ManagedProcessListener getProcessListener() {
             return listener;
+        }
+
+        public int getTimesToAttemptInstall() {
+            return timesToAttemptInstall;
         }
     }
 

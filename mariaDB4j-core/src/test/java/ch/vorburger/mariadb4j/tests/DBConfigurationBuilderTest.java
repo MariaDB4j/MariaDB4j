@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,10 +18,6 @@
  * #L%
  */
 package ch.vorburger.mariadb4j.tests;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +28,9 @@ import org.junit.Test;
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.Util;
+
+import static org.junit.Assert.*;
+
 
 public class DBConfigurationBuilderTest {
 
@@ -113,6 +112,30 @@ public class DBConfigurationBuilderTest {
 
         String updatedLibDir = config.getLibDir();
         assertEquals(updatedLibDir, libDir.toAbsolutePath().toString());
+    }
+
+    @Test
+    public void timeoutIsNegativeOneByDefault() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration build = builder.build();
+        assertEquals(-1, build.getInstallationTimeoutInMs());
+    }
+
+    @Test
+    public void numberOfTimesToAttemptIsOneByDefault() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration build = builder.build();
+        assertEquals(1, build.getTimesToAttemptInstall());
+    }
+
+    @Test
+    public void timeoutAndNumberOfInstallAttemptsAreBothConfigurable() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        builder.setTimesToAttemptInstall(3);
+        builder.setInstallationTimeoutInMs(20000);
+        DBConfiguration build = builder.build();
+        assertEquals(20000, build.getInstallationTimeoutInMs());
+        assertEquals(3, build.getTimesToAttemptInstall());
     }
 
     @Test

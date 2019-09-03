@@ -54,6 +54,9 @@ public class DBConfigurationBuilder {
     private boolean isSecurityDisabled = true;
 
     private boolean frozen = false;
+    private int installationTimeoutInMs = -1;
+    private int timesToAttemptInstall = 1;
+
     private ManagedProcessListener listener;
 
     public static DBConfigurationBuilder newBuilder() {
@@ -138,7 +141,7 @@ public class DBConfigurationBuilder {
      * Defines if the configured data and base directories should be deleted on shutdown.
      * If you've set the base and data directories to non temporary directories
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
-     * then they'll also never get deleted anyway. 
+     * then they'll also never get deleted anyway.
      * @param doDelete Default valule is true, set false to override
      * @return returns this
      */
@@ -175,7 +178,25 @@ public class DBConfigurationBuilder {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
                 WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
-                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getProcessListener());
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getProcessListener(), getInstallationTimeoutInMs(), getTimesToAttemptInstall());
+    }
+
+    public DBConfigurationBuilder setInstallationTimeoutInMs(int installationTimeoutInMs) {
+        this.installationTimeoutInMs = installationTimeoutInMs;
+        return this;
+    }
+
+    private int getInstallationTimeoutInMs() {
+        return installationTimeoutInMs;
+    }
+
+    public int getTimesToAttemptInstall() {
+        return timesToAttemptInstall;
+    }
+
+    public DBConfigurationBuilder setTimesToAttemptInstall(int timesToAttemptInstall) {
+        this.timesToAttemptInstall = timesToAttemptInstall;
+        return this;
     }
 
     /**
@@ -312,5 +333,4 @@ public class DBConfigurationBuilder {
     public List<String> _getArgs() {
         return args;
     }
-
 }

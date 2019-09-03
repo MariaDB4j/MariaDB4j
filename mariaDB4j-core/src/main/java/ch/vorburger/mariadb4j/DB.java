@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,7 +71,7 @@ public class DB {
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use.
-     * 
+     *
      * @param config Configuration of the embedded instance
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -88,7 +88,7 @@ public class DB {
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use with default
      * configuration, allowing only for specifying port.
-     * 
+     *
      * @param port the port to start the embedded database on
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -99,7 +99,7 @@ public class DB {
         return newEmbeddedDB(config.build());
     }
 
-    ManagedProcess installPreparation() throws ManagedProcessException, IOException {
+    ManagedProcess createMysqlInstallProcess() throws ManagedProcessException, IOException {
         logger.info("Installing a new embedded database to: " + baseDir);
         File installDbCmdFile = newExecutableFile("bin", "mysql_install_db");
         if (!installDbCmdFile.exists())
@@ -121,8 +121,7 @@ public class DB {
         } else {
             builder.addFileArgument("--datadir", toWindowsPath(dataDir));
         }
-        ManagedProcess mysqlInstallProcess = builder.build();
-        return mysqlInstallProcess;
+        return builder.build();
     }
 
     private static File toWindowsPath(File file) throws IOException {
@@ -131,18 +130,53 @@ public class DB {
 
     /**
      * Installs the database to the location specified in the configuration.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
-    synchronized protected void install() throws ManagedProcessException {
+    synchronized void install() throws ManagedProcessException {
         try {
-            ManagedProcess mysqlInstallProcess = installPreparation();
-            mysqlInstallProcess.start();
-            mysqlInstallProcess.waitForExit();
+            if (configuration.getInstallationTimeoutInMs() > 0) {
+                //loop
+                attemptToInstallNTimesWithTimeoutInMs(configuration.getTimesToAttemptInstall(), configuration.getInstallationTimeoutInMs());
+            } else {
+                ManagedProcess mysqlInstallProcess = createMysqlInstallProcess();
+                mysqlInstallProcess.start();
+                mysqlInstallProcess.waitForExit();
+            }
         } catch (Exception e) {
             throw new ManagedProcessException("An error occurred while installing the database", e);
         }
         logger.info("Installation complete.");
+    }
+
+    /**
+     * Attempts to run the installation process timesToAttemptInstall number of times until it can successfully finish
+     * in under installationTimeoutInMs milliseconds.
+     *
+     * @param timesToAttemptInstall number of times to attempt
+     * @param installationTimeoutInMs timeout for process to finish
+     * @return number of attempts it actually took to install
+     * @throws ManagedProcessException if there is an issue with the ManagedProcess
+     * @throws IOException if there is an issue constructing the ManagedProcess
+     */
+    int attemptToInstallNTimesWithTimeoutInMs(int timesToAttemptInstall, int installationTimeoutInMs)
+        throws ManagedProcessException, IOException {
+        int attemptNumber = 0;
+        while (attemptNumber < timesToAttemptInstall) {
+            ManagedProcess mysqlInstallProcess = createMysqlInstallProcess();
+            mysqlInstallProcess.start();
+            mysqlInstallProcess.waitForExitMaxMsOrDestroy(installationTimeoutInMs);
+            attemptNumber += 1;
+            if (mysqlInstallProcess.wasDestroyed()) {
+                // did not finish in time
+                logger.info("Unable to install mysql in {} seconds on attempt {}/{}", installationTimeoutInMs, attemptNumber, timesToAttemptInstall);
+            } else {
+                logger.info("Successfully installed mysql on attempt {}/{}", attemptNumber, timesToAttemptInstall);
+                return attemptNumber;
+            }
+        }
+        // If we have reached this point, we have failed to install
+        throw new ManagedProcessException("Unable to install mysql after " + timesToAttemptInstall + " attempts");
     }
 
     protected String getWinExeExt() {
@@ -151,7 +185,7 @@ public class DB {
 
     /**
      * Starts up the database, using the data directory and port specified in the configuration.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void start() throws ManagedProcessException {
@@ -239,7 +273,7 @@ public class DB {
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
      * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
      * so we double check.
-     * 
+     *
      * @return config.getSocket() as File getAbsolutePath()
      */
     protected File getAbsoluteSocketFile() {
@@ -259,7 +293,7 @@ public class DB {
     /**
      * Takes in a string that represents a resource on the classpath and sources it via the mysql
      * command line tool.
-     * 
+     *
      * @param resource the path to a resource on the classpath to source
      * @param username the username used to login to the database
      * @param password the password used to login to the database
@@ -352,7 +386,7 @@ public class DB {
 
     /**
      * Stops the database.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
@@ -369,7 +403,7 @@ public class DB {
      * Based on the current OS, unpacks the appropriate version of MariaDB to the file system based
      * on the configuration.
      */
-    protected void unpackEmbeddedDb() {
+    void unpackEmbeddedDb() {
         if (configuration.getBinariesClassPathLocation() == null) {
             logger.info("Not unpacking any embedded database (as BinariesClassPathLocation configuration is null)");
             return;
@@ -393,10 +427,10 @@ public class DB {
     /**
      * If the data directory specified in the configuration is a temporary directory, this deletes
      * any previous version. It also makes sure that the directory exists.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
-    protected void prepareDirectories() throws ManagedProcessException {
+    void prepareDirectories() throws ManagedProcessException {
         baseDir = Util.getDirectory(configuration.getBaseDir());
         libDir = Util.getDirectory(configuration.getLibDir());
         try {
@@ -434,12 +468,12 @@ public class DB {
                     logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
                 }
 
-                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
+                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
                                     && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
                     FileUtils.deleteQuietly(dataDir);
                 }
-                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
+                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
                                     && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
                     FileUtils.deleteQuietly(baseDir);
