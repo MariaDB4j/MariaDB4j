@@ -39,7 +39,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import ch.vorburger.exec.ManagedProcess;
@@ -97,7 +96,7 @@ public class MariaDB4jSampleDumpTest {
         // We just want to check that the file is a valid XML, output of it is mysqldump's responsability
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(outputDumpFile);
+        dBuilder.parse(outputDumpFile);
         FileUtils.forceDeleteOnExit(outputDumpFile);
     }
 

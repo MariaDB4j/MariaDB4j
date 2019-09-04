@@ -41,9 +41,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 
 /**
  * Mariadb4jStartMojoTest to ensure mariaDB4j-maven-plugin works like previous version by mike10004.
@@ -54,6 +54,7 @@ import static org.junit.Assert.*;
 
 public class Mariadb4jStartMojoTest {
 
+    @SuppressWarnings("rawtypes")
     private Map pluginContext;
 
     @Rule
@@ -74,7 +75,6 @@ public class Mariadb4jStartMojoTest {
 
     private static final String BASIC_TABLE_NAME = "bar";
     private static final String BASIC_DB_NAME = "foo";
-    @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     private static final String BASIC_TABLE_INSERT_STMT = "INSERT INTO bar (baz) VALUES (?)";
     private static final String BASIC_TABLE_VALUE_COLUMN = "baz";
 
@@ -82,7 +82,7 @@ public class Mariadb4jStartMojoTest {
     public void shouldSkipIfSkipIsSet() throws Exception {
         File pom = new File(getClass().getResource( "/skip/pom.xml").toURI());
         StartMojo mojo = (StartMojo) mojoRule.lookupMojo("start", pom);
-        assertNotNull(mojo);
+        assertThat(mojo).isNotNull();
         mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
         mojo.execute();
         // without config and plugin context, combined with timeout, this will most certainly fail if not skipped
@@ -97,19 +97,20 @@ public class Mariadb4jStartMojoTest {
     @Test
     public void basicUsage() throws Exception {
         File pom = new File(getClass().getResource( "/basic-usage/pom.xml").toURI());
-        checkState(pom.isFile(), "not found: %s", pom);
+        assertThat(pom.isFile()).overridingErrorMessage( "not found: %s", pom).isTrue();
+        assertThat(pom.exists()).isTrue();
         StartMojo mojo = (StartMojo) mojoRule.lookupMojo("start", pom);
-        assertNotNull(mojo);
+        assertThat(mojo).isNotNull();
         pluginContext = mojo.getPluginContext();
         if (pluginContext == null) {
             mojo.setPluginContext(pluginContext = new HashMap<>());
         }
         mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
         String databaseName = mojo.getDatabaseName();
-        assertEquals("databaseName(name)", BASIC_DB_NAME, databaseName);
+        assertThat(databaseName).overridingErrorMessage("databaseName(name)").isEqualTo(BASIC_DB_NAME);
         mojo.execute();
         DB db = getDb();
-        assertNotNull("db from plugin context", db);
+        assertThat(db).overridingErrorMessage("db from plugin context").isNotNull();
         System.out.println("querying database...");
         Map<String, String> vars;
         Table<Integer, String, Object> table;
@@ -127,9 +128,9 @@ public class Mariadb4jStartMojoTest {
             table = DbUtils.selectAll(conn, BASIC_TABLE_NAME);
             System.out.format("table post-insertion: %s%n", table);
         }
-        assertEquals("vars like version", 1, vars.size());
+        assertThat(vars.size()).overridingErrorMessage("vars like version").isEqualTo(1);
         Set<Object> valueSet = ImmutableSet.copyOf(table.column(BASIC_TABLE_VALUE_COLUMN).values());
-        assertEquals("table values", ImmutableSet.of("a", "b"), valueSet);
+        assertThat(valueSet).overridingErrorMessage("table values").isEqualTo(ImmutableSet.of("a", "b"));
     }
 
     private DB getDb() {
@@ -141,8 +142,8 @@ public class Mariadb4jStartMojoTest {
     }
 
     private Connection openConnection(DB db, String databaseName) throws SQLException {
-        checkNotNull(db, "db");
-        String jdbcUrl = "jdbc:mysql://localhost:" + db.getConfiguration().getPort() + "/" + databaseName;
+        assertThat(db).isNotNull();
+        String jdbcUrl = "jdbc:mysql://localhost:" + db.getConfiguration().getPort() + "/" + databaseName + "?serverTimezone=UTC";
         return DriverManager.getConnection(jdbcUrl);
     }
 
@@ -151,9 +152,9 @@ public class Mariadb4jStartMojoTest {
     @Test
     public void utf8mb4() throws Exception {
         File pom = new File(getClass().getResource( "/utf8mb4/pom.xml").toURI());
-        checkState(pom.isFile(), "not found: %s", pom);
+        assertThat(pom.isFile()).overridingErrorMessage( "not found: %s", pom).isTrue();
         StartMojo mojo = (StartMojo) mojoRule.lookupMojo("start", pom);
-        assertNotNull(mojo);
+        assertThat(mojo).isNotNull();
         pluginContext = mojo.getPluginContext();
         if (pluginContext == null) {
             mojo.setPluginContext(pluginContext = new HashMap<>());
@@ -177,9 +178,9 @@ public class Mariadb4jStartMojoTest {
         try (Connection conn = openConnection(getDb(), UTF8MB4_TEST_DB_NAME);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT content FROM supertext WHERE 1")) {
-            checkState(rs.next());
+            assertThat(rs.next()).isTrue();
             retrievedValue = rs.getString(1);
         }
-        assertEquals("retrieved", complexString, retrievedValue);
+        assertThat(retrievedValue).isEqualTo(complexString);
     }
 }

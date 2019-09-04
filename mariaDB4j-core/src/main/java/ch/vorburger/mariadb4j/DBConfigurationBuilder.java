@@ -20,6 +20,8 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -222,7 +224,7 @@ public class DBConfigurationBuilder {
 
     protected String _getDataDir() {
         if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR))
-            return DEFAULT_DATA_DIR + SystemUtils.FILE_SEPARATOR + getPort();
+            return DEFAULT_DATA_DIR + File.separator + getPort();
         else
             return getDataDir();
     }
@@ -271,11 +273,11 @@ public class DBConfigurationBuilder {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
             if (OSX.equals(getOS()))
-                databaseVersion = "mariadb-10.2.11";
+                databaseVersion = "mariadb-10.3.16";
             else if (LINUX.equals(getOS()))
-                databaseVersion = "mariadb-10.2.11";
+                databaseVersion = "mariadb-10.3.16";
             else if (WIN32.equals(getOS()))
-                databaseVersion = "mariadb-10.2.11";
+                databaseVersion = "mariadb-10.3.16";
             else
                 throw new IllegalStateException(
                         "OS not directly supported, please use setDatabaseVersion() to set the name "

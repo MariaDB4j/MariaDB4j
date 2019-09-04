@@ -199,7 +199,7 @@ public class DB {
             throw new ManagedProcessException("An error occurred while starting the database", e);
         }
         if (!ready) {
-            if (mysqldProcess.isAlive())
+            if (mysqldProcess != null && mysqldProcess.isAlive())
                 mysqldProcess.destroy();
             throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
                     + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
@@ -286,8 +286,29 @@ public class DB {
         source(resource, null, null, null);
     }
 
+    public void source(InputStream resource) throws ManagedProcessException {
+        source(resource, null, null, null);
+    }
+
     public void source(String resource, String dbName) throws ManagedProcessException {
         source(resource, null, null, dbName);
+    }
+
+    public void source(InputStream resource, String dbName) throws ManagedProcessException {
+        source(resource, null, null, dbName);
+    }
+
+    /**
+     * Takes in a {@link InputStream} and sources it via the mysql command line tool.
+     *
+     * @param resource an {@link InputStream} InputStream to source
+     * @param username the username used to login to the database
+     * @param password the password used to login to the database
+     * @param dbName the name of the database (schema) to source into
+     * @throws ManagedProcessException if something fatal went wrong
+     */
+    public void source(InputStream resource, String username, String password, String dbName) throws ManagedProcessException {
+        run("script file sourced from an InputStream", resource, username, password, dbName, false);
     }
 
     /**
@@ -316,10 +337,13 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     public void source(String resource, String username, String password, String dbName, boolean force) throws ManagedProcessException {
-        InputStream from = getClass().getClassLoader().getResourceAsStream(resource);
-        if (from == null)
-            throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
-        run("script file sourced from the classpath at: " + resource, from, username, password, dbName, force);
+        try (InputStream from = getClass().getClassLoader().getResourceAsStream(resource)) {
+            if (from == null)
+                throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
+            run("script file sourced from the classpath at: " + resource, from, username, password, dbName, force);
+        } catch (IOException ioe) {
+            logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
+        }
     }
 
     public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
@@ -335,8 +359,13 @@ public class DB {
     }
 
     public void run(String command, String username, String password, String dbName, boolean force) throws ManagedProcessException {
-        InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset());
-        run("command: " + command, from, username, password, dbName, force);
+        // If resource is created here, it should probably be released here also (as opposed to in protected run method)
+        // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
+        try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {
+            run("command: " + command, from, username, password, dbName, force);
+        } catch (IOException ioe) {
+            logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
+        }
     }
 
     protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName, boolean force)
@@ -366,8 +395,6 @@ public class DB {
             process.waitForExit();
         } catch (Exception e) {
             throw new ManagedProcessException("An error occurred while running a " + logInfoText, e);
-        } finally {
-            IOUtils.closeQuietly(fromIS);
         }
         logger.info("Successfully ran the " + logInfoText);
     }
@@ -390,7 +417,7 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
-        if (mysqldProcess.isAlive()) {
+        if (mysqldProcess != null && mysqldProcess.isAlive()) {
             logger.debug("Stopping the database...");
             mysqldProcess.destroy();
             logger.info("Database stopped.");
@@ -473,8 +500,8 @@ public class DB {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
                     FileUtils.deleteQuietly(dataDir);
                 }
-                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
-                                    && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
+                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
+                                    && Util.isTemporaryDirectory(baseDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
                     FileUtils.deleteQuietly(baseDir);
                 }

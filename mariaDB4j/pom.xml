@@ -21,17 +21,17 @@
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-linux64</artifactId>
-			<version>10.2.11</version>
+			<version>10.3.16</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-win32</artifactId>
-			<version>10.2.11</version>
+			<version>10.3.16</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-mac64</artifactId>
-			<version>10.2.11</version>
+			<version>10.3.16</version>
 		</dependency>
 		<dependency>
 			<!-- For MariaDB4jSpringService, only. This has to be repeated from mariaDB4j-core here due to the optional true below -->
