@@ -99,7 +99,7 @@ public class DB {
         return newEmbeddedDB(config.build());
     }
 
-    protected ManagedProcess createMysqlInstallProcess() throws ManagedProcessException, IOException {
+    protected ManagedProcess createDBInstallProcess() throws ManagedProcessException, IOException {
         logger.info("Installing a new embedded database to: " + baseDir);
         File installDbCmdFile = newExecutableFile("bin", "mysql_install_db");
         if (!installDbCmdFile.exists())
