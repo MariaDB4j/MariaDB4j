@@ -136,7 +136,7 @@ public class DB {
      */
     synchronized protected void install() throws ManagedProcessException {
         try {
-            ManagedProcess mysqlInstallProcess = createMysqlInstallProcess();
+            ManagedProcess mysqlInstallProcess = createDBInstallProcess();
             mysqlInstallProcess.start();
             mysqlInstallProcess.waitForExit();
         } catch (Exception e) {
