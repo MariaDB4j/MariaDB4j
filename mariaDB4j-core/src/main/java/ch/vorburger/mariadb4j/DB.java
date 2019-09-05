@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,7 +71,7 @@ public class DB {
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use.
-     * 
+     *
      * @param config Configuration of the embedded instance
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -88,7 +88,7 @@ public class DB {
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use with default
      * configuration, allowing only for specifying port.
-     * 
+     *
      * @param port the port to start the embedded database on
      * @return a new DB instance
      * @throws ManagedProcessException if something fatal went wrong
@@ -99,7 +99,7 @@ public class DB {
         return newEmbeddedDB(config.build());
     }
 
-    ManagedProcess installPreparation() throws ManagedProcessException, IOException {
+    protected ManagedProcess createMysqlInstallProcess() throws ManagedProcessException, IOException {
         logger.info("Installing a new embedded database to: " + baseDir);
         File installDbCmdFile = newExecutableFile("bin", "mysql_install_db");
         if (!installDbCmdFile.exists())
@@ -131,12 +131,12 @@ public class DB {
 
     /**
      * Installs the database to the location specified in the configuration.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     synchronized protected void install() throws ManagedProcessException {
         try {
-            ManagedProcess mysqlInstallProcess = installPreparation();
+            ManagedProcess mysqlInstallProcess = createMysqlInstallProcess();
             mysqlInstallProcess.start();
             mysqlInstallProcess.waitForExit();
         } catch (Exception e) {
@@ -151,7 +151,7 @@ public class DB {
 
     /**
      * Starts up the database, using the data directory and port specified in the configuration.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void start() throws ManagedProcessException {
@@ -239,7 +239,7 @@ public class DB {
      * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
      * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
      * so we double check.
-     * 
+     *
      * @return config.getSocket() as File getAbsolutePath()
      */
     protected File getAbsoluteSocketFile() {
@@ -280,7 +280,7 @@ public class DB {
     /**
      * Takes in a string that represents a resource on the classpath and sources it via the mysql
      * command line tool.
-     * 
+     *
      * @param resource the path to a resource on the classpath to source
      * @param username the username used to login to the database
      * @param password the password used to login to the database
@@ -379,7 +379,7 @@ public class DB {
 
     /**
      * Stops the database.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
@@ -420,7 +420,7 @@ public class DB {
     /**
      * If the data directory specified in the configuration is a temporary directory, this deletes
      * any previous version. It also makes sure that the directory exists.
-     * 
+     *
      * @throws ManagedProcessException if something fatal went wrong
      */
     protected void prepareDirectories() throws ManagedProcessException {
@@ -461,12 +461,12 @@ public class DB {
                     logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
                 }
 
-                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
+                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
                                     && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
                     FileUtils.deleteQuietly(dataDir);
                 }
-                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown() 
+                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
                                     && Util.isTemporaryDirectory(baseDir.getAbsolutePath()))) {
                     logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
                     FileUtils.deleteQuietly(baseDir);
