@@ -154,7 +154,7 @@
                 <scope>test</scope>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.13</version>
+                <version>8.0.17</version>
             </dependency>
             <dependency>
                 <scope>test</scope>
@@ -312,7 +312,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.2.0</version>
+                        <version>3.2.1</version>
                         <configuration>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                         </configuration>
