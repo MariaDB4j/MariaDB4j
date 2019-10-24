@@ -61,7 +61,7 @@ public class StartSimulatedForAllPlatformsTest {
         db.prepareDirectories();
         db.unpackEmbeddedDb();
 
-        ManagedProcess installProc = db.createMysqlInstallProcess();
+        ManagedProcess installProc = db.createDBInstallProcess();
         checkManagedProcessExists(installProc);
 
         ManagedProcess startProc = db.startPreparation();
