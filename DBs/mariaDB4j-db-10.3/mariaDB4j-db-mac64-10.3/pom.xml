@@ -12,7 +12,6 @@
     <artifactId>mariaDB4j-db-mac64</artifactId>
 
     <properties>
-        <!--mariaDB.version>${project.version}</mariaDB.version-->
         <cacheDir>${project.basedir}/../../../tmpDir</cacheDir>
     </properties>
     <build>
