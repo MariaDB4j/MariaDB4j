@@ -13,11 +13,11 @@
         <relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
-    <artifactId>mariaDB4j-10.3</artifactId>
+    <artifactId>mariaDB4j-10.4</artifactId>
     <!-- This artefact is never released, and just used in ../.travis.yml, so let's use a special marker version to make that clear -->
-    <version>10.3.21</version>
+    <version>10.4.11</version>
     <packaging>pom</packaging>
-    <name>MariaDB4j 10.3.x Parent POM</name>
+    <name>MariaDB4j 10.4.x Parent POM</name>
 
     <build>
         <resources>
@@ -55,9 +55,9 @@
         </pluginManagement>
     </build>
     <modules>
-	<module>mariaDB4j-db-win32-10.3</module>
-	<module>mariaDB4j-db-winx64-10.3</module>
-        <module>mariaDB4j-db-mac64-10.3</module>
-        <module>mariaDB4j-db-linux64-10.3</module>
+	<module>mariaDB4j-db-win32-10.4</module>
+	<module>mariaDB4j-db-winx64-10.4</module>
+        <module>mariaDB4j-db-mac64-10.4</module>
+        <module>mariaDB4j-db-linux64-10.4</module>
     </modules>
 </project>
