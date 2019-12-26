@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>mariaDB4j-db-mac64</artifactId>
-    <version>10.3.16</version>
+    <version>10.3.20_1</version>
     <properties>
         <cacheDir>${project.basedir}/../../../tmpDir</cacheDir>
     </properties>

@@ -16,7 +16,7 @@
     <target name="download" depends="env"
         description="Download Mac file from bintray.com">
         <echo message="Downloading Mac MariaDB ${mariaDB.version} file ..." />
-        <get src="https://bintray.com/homebrew/bottles/download_file?file_path=mariadb-${mariaDB.version}.mojave.bottle.tar.gz" 
+        <get src="https://bintray.com/homebrew/bottles/download_file?file_path=mariadb%4010.3-${mariaDB.version}.mojave.bottle.tar.gz" 
             skipexisting="true" 
             dest="${cacheDir}/input/mariadb-${mariaDB.version}.mojave.bottle.tar.gz" />
         <available property="download.file" file="${cacheDir}/input/download_file"/>
@@ -35,14 +35,14 @@
                 compression="gzip"  />
         <echo message="Copying files ..." />
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx">
-            <fileset dir="${project.build.directory}/mariadb/${mariaDB.version}">
+            <fileset dir="${project.build.directory}/mariadb@10.3/${mariaDB.version}">
                 <include name="bin/*"/>
                 <include name="share/**/*"/>
             </fileset>
         </copy>
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/bin"
                 overwrite="yes" >
-            <fileset dir="${project.build.directory}/mariadb/${mariaDB.version}/scripts">
+            <fileset dir="${project.build.directory}/mariadb@10.3/${mariaDB.version}/scripts">
                 <include name="*"/>
             </fileset>
         </copy>
