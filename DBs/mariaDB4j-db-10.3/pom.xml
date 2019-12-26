@@ -15,7 +15,7 @@
 
     <artifactId>mariaDB4j-10.3</artifactId>
     <!-- This artefact is never released, and just used in ../.travis.yml, so let's use a special marker version to make that clear -->
-    <version>10.3.16</version>
+    <version>10.3.21</version>
     <packaging>pom</packaging>
     <name>MariaDB4j ${project.version} Parent POM</name>
 

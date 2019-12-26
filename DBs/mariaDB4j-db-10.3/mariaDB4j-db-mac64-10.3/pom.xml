@@ -5,12 +5,12 @@
     <parent>
         <groupId>ch.vorburger.mariaDB4j</groupId>
         <artifactId>mariaDB4j-10.3</artifactId>
-        <version>10.3.16</version>
+        <version>10.3.21</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>mariaDB4j-db-mac64</artifactId>
-
+    <version>10.3.16</version>
     <properties>
         <cacheDir>${project.basedir}/../../../tmpDir</cacheDir>
     </properties>
