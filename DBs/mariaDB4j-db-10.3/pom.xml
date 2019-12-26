@@ -13,12 +13,47 @@
         <relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
-    <artifactId>mariaDB4j-10.3-binaries</artifactId>
-    <name>mariaDB4j 10.3 binaries</name>
+    <artifactId>mariaDB4j-10.3</artifactId>
     <!-- This artefact is never released, and just used in ../.travis.yml, so let's use a special marker version to make that clear -->
-    <version>0.0.0-SNAPSHOT</version>
+    <version>10.3.16</version>
     <packaging>pom</packaging>
+    <name>MariaDB4j ${project.version} Parent POM</name>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </resource>
+        </resources>
+        <pluginManagement>
+        <plugins>         
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>generate-resources</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <property name="project.basedir" value="${project.basedir}"/>
+                                <property name="project.build.directory" value="${project.build.directory}"/>
+                                <property name="cacheDir" value="${cacheDir}"/>
+                                <property name="mariaDB.version" value="${project.version}"/>
+                                <ant antfile="${project.basedir}/prepare.xml">
+                                </ant>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>        
+        </plugins>
+        </pluginManagement>
+    </build>
     <modules>
 	<module>mariaDB4j-db-win32-10.3</module>
 	<module>mariaDB4j-db-winx64-10.3</module>
