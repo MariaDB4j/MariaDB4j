@@ -59,9 +59,8 @@ public class MariaDB4jSampleDumpTest {
 
     @Before public void beforeTest() throws ManagedProcessException, SQLException {
         config = DBConfigurationBuilder.newBuilder();
-        config.setPort(0);
-        db = DB.newEmbeddedDB(// 0 => autom. detect free port
-        config.build());
+        config.setPort(0);// 0 => autom. detect free port
+        db = DB.newEmbeddedDB(config.build());
         db.start();
         db.createDB("planetexpress");
         db.source("ch/vorburger/mariadb4j/dumpTest.sql");
