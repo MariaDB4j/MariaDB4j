@@ -313,7 +313,7 @@ public class DB {
     }
 
     public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
-        run(command, username, password, dbName, false);
+        run(command, username, password, dbName, false, true);
     }
 
     public void run(String command) throws ManagedProcessException {
@@ -325,10 +325,17 @@ public class DB {
     }
 
     public void run(String command, String username, String password, String dbName, boolean force) throws ManagedProcessException {
+        run(command, username, password, dbName, force, true);
+    }
+
+    public void run(String command, String username, String password, String dbName, boolean force, boolean verbose) throws ManagedProcessException {
         // If resource is created here, it should probably be released here also (as opposed to in protected run method)
         // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
         try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {
-            run("command: " + command, from, username, password, dbName, force);
+            final String logInfoText = verbose
+                                       ? "command: " + command
+                                       : "command (" + (command.length() / 1_024) + " KiB long)";
+            run(logInfoText, from, username, password, dbName, force);
         } catch (IOException ioe) {
             logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
         }
