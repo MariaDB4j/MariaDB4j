@@ -89,6 +89,7 @@ public class MariaDB4jSampleTutorialTest {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         config.setSecurityDisabled(false);
+        config.setDefaultRootPassword("root");
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
 
@@ -96,12 +97,12 @@ public class MariaDB4jSampleTutorialTest {
         if (!dbName.equals("test")) {
             // mysqld out-of-the-box already has a DB named "test"
             // in case we need another DB, here's how to create it first
-            db.createDB(dbName, "root", "");
+            db.createDB(dbName, "root", "root");
         }
 
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(config.getURL(dbName), "root", "");
+            conn = DriverManager.getConnection(config.getURL(dbName), "root", "root");
             QueryRunner qr = new QueryRunner();
 
             // Should be able to create a new table

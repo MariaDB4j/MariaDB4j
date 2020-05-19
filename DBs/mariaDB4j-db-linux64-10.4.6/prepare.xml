@@ -41,6 +41,7 @@
                 <include name="mysqld"/>
                 <include name="mysqldump"/>
                 <include name="mysqlcheck"/>
+                <include name="mysql_secure_installation" />
                 <include name="mysql_upgrade"/>
                 <include name="my_print_defaults"/>
                 <include name="resolveip"/>
