@@ -51,6 +51,9 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String BASE_DIR = "mariaDB4j.baseDir";
     public final static String LIB_DIR = "mariaDB4j.libDir";
     public final static String UNPACK = "mariaDB4j.unpack";
+    public final static String SECURITY_DISABLED = "mariaDB4j.securityDisabled";
+    public final static String DEFAULT_ROOT_PASSWORD = "mariaDB4j.defaultRootPassword";
+    public final static String DRIVER_CLASS_NAME= "mariaDB4j.driverClassName";
 
     protected ManagedProcessException lastException;
 
@@ -92,6 +95,27 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public void setDefaultIsUnpackingFromClasspath(Boolean unpack) {
         if (unpack != null)
             getConfiguration().setUnpackingFromClasspath(unpack);
+    }
+
+    @Value("${" + SECURITY_DISABLED + ":#{null}}")
+    public void setSecurityDisabled(Boolean securityDisabled) {
+        if (securityDisabled != null) {
+            getConfiguration().setSecurityDisabled(securityDisabled);
+        }
+    }
+
+    @Value("${" + DEFAULT_ROOT_PASSWORD + ":#NA}")
+    public void setDefaultRootPassword(String defaultRootPassword) {
+        if (!"NA".equals(defaultRootPassword)) {
+            getConfiguration().setDefaultRootPassword(defaultRootPassword);
+        }
+    }
+
+    @Value("${" + DRIVER_CLASS_NAME + ":#NA}")
+    public void setDriverClassName(String driverClassName) {
+        if (!"NA".equals(driverClassName)) {
+            getConfiguration().setDriverClassName(driverClassName);
+        }
     }
 
     @Override

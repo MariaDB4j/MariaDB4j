@@ -53,6 +53,8 @@ public class DBConfigurationBuilder {
     protected boolean isUnpackingFromClasspath = true;
     protected List<String> args = new ArrayList<String>();
     private boolean isSecurityDisabled = true;
+    private String defaultRootPassword;
+    private String driverClassName = "org.mariadb.jdbc.Driver";
 
     private boolean frozen = false;
     private ManagedProcessListener listener;
@@ -176,7 +178,7 @@ public class DBConfigurationBuilder {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
                 WIN64.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
-                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getProcessListener());
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getProcessListener(), getDefaultRootPassword(), getDriverClassName());
     }
 
     /**
@@ -314,4 +316,23 @@ public class DBConfigurationBuilder {
         return args;
     }
 
+    public String getDefaultRootPassword() {
+        return defaultRootPassword;
+    }
+
+    public DBConfigurationBuilder setDefaultRootPassword(String defaultRootPassword) {
+        checkIfFrozen("setDefaultRootPasswrd");
+        this.defaultRootPassword = defaultRootPassword;
+        return this;
+    }
+
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public DBConfigurationBuilder setDriverClassName(String driverClassName) {
+        checkIfFrozen("setDriverClassName");
+        this.driverClassName = driverClassName;
+        return this;
+    }
 }

@@ -93,6 +93,19 @@ public interface DBConfiguration {
      **/
     boolean isSecurityDisabled();
 
+    /**
+     * Returns default root password
+     * 
+     * @return default root password
+     */
+    String getDefaultRootPassword();
+
+    /**
+     * Returns driver class name
+     * @return driver class name
+     */
+    String getDriverClassName();
+
     String getURL(String dbName);
 
     static class Impl implements DBConfiguration {
@@ -110,10 +123,13 @@ public interface DBConfiguration {
         private final ManagedProcessListener listener;
         private final boolean isSecurityDisabled;
         private final Function<String, String> getURL;
+        private final String defaultRootPassword;
+        private final String driverClassName;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
              boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
-             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, ManagedProcessListener listener) {
+             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, ManagedProcessListener listener,
+             String defaultRootPassword, String driverClassName) {
             super();
             this.port = port;
             this.socket = socket;
@@ -128,6 +144,8 @@ public interface DBConfiguration {
             this.isSecurityDisabled = isSecurityDisabled;
             this.getURL = getURL;
             this.listener = listener;
+            this.defaultRootPassword = defaultRootPassword;
+            this.driverClassName = driverClassName;
         }
 
         @Override
@@ -193,6 +211,16 @@ public interface DBConfiguration {
         @Override
         public ManagedProcessListener getProcessListener() {
             return listener;
+        }
+
+        @Override
+        public String getDefaultRootPassword() {
+            return defaultRootPassword;
+        }
+
+        @Override
+        public String getDriverClassName() {
+            return driverClassName;
         }
     }
 

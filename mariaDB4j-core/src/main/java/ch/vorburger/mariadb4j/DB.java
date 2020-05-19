@@ -25,11 +25,16 @@ import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.exec.OutputStreamLogDispatcher;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,6 +68,10 @@ public class DB {
 
     protected int dbStartMaxWaitInMS = 30000;
 
+    private static final String ROOT_PASSWORD_PLACEHOLDER = "{root_password}";
+
+    private static final String MYSQL_SECURE_INSTALLATION_INTERACTION = "\nn\ny\n{root_password}\n{root_password}\ny\ny\ny\ny";
+
     protected DB(DBConfiguration config) {
         this.configuration = config;
     }
@@ -84,6 +93,9 @@ public class DB {
         db.prepareDirectories();
         db.unpackEmbeddedDb();
         db.install();
+        if (!db.configuration.isSecurityDisabled()) {
+            db.runMysqlSecureInstallationScript();
+        }
         return db;
     }
 
@@ -130,6 +142,25 @@ public class DB {
         return mysqlInstallProcess;
     }
 
+    ManagedProcess secureInstallPreparation() throws ManagedProcessException, IOException {
+        logger.info("Run mysql_secure_installation for embedded database at: " + baseDir);
+        File installDbCmdFile = newExecutableFile("bin", "mysql_secure_installation");
+        if (!installDbCmdFile.exists())
+            throw new ManagedProcessException(
+                    "mysql_secure_installation was not found in bin/ under " + baseDir.getAbsolutePath());
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_secure_installation"));
+        builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
+        String interaction = StringUtils.replace(MYSQL_SECURE_INSTALLATION_INTERACTION, ROOT_PASSWORD_PLACEHOLDER,
+                configuration.getDefaultRootPassword());
+        builder.setInputStream(new ByteArrayInputStream(
+                interaction.getBytes(Charset.forName(StandardCharsets.US_ASCII.name()))));
+        builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false).setWorkingDirectory(baseDir);
+        addPortAndMaybeSocketArguments(builder);
+        ManagedProcess mysqlInstallProcess = builder.build();
+        return mysqlInstallProcess;
+    }
+
     private static File toWindowsPath(File file) throws IOException {
         return new File(file.getCanonicalPath().replace(" ", "%20"));
     }
@@ -148,6 +179,52 @@ public class DB {
             throw new ManagedProcessException("An error occurred while installing the database", e);
         }
         logger.info("Installation complete.");
+    }
+
+
+    /**
+     * Runs mysql secure installation script
+     * 
+     * @throws ManagedProcessException if something went wrong
+     */
+    synchronized protected void runMysqlSecureInstallationScript() throws ManagedProcessException{
+        ManagedProcess mysqlSecureInstallProcess = null;
+        try {
+            logger.info("Start secure database script");
+            start();
+
+            try {
+                Class.forName(configuration.getDriverClassName());
+            } catch (Exception e) {
+                logger.error("Error connecting to database", e);
+            }
+            
+            boolean secured = false;
+            try (Connection conn = DriverManager.getConnection(configuration.getURL("mysql"), "root", "")) {
+                secured = false;
+                logger.debug("Connected to database as root without password. Database is not secured");
+            } catch (SQLException e) {
+                secured = true;
+                logger.info("Database is already secured");
+                logger.debug("Can not connect to database as root without password. Database is already secured", e);
+            } catch (Exception e) {
+                logger.error("Can not connect to database as root without password.", e);
+            }
+            if (!secured) {
+                mysqlSecureInstallProcess = secureInstallPreparation();
+                mysqlSecureInstallProcess.start();
+                mysqlSecureInstallProcess.waitForExit();
+                logger.info("Securing database complete.");
+            }
+        } catch (Exception e) {
+            logger.error("Error when trying to secure database.", e);
+        } finally {
+            if (mysqlSecureInstallProcess != null && mysqlSecureInstallProcess.isAlive()) {
+                mysqlSecureInstallProcess.destroy();
+            }
+            stop();
+        }
+        
     }
 
     protected String getWinExeExt() {
@@ -385,6 +462,7 @@ public class DB {
                 Util.forceExecutable(newExecutableFile("bin", "mysqld"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqldump"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql"));
+                Util.forceExecutable(newExecutableFile("bin", "mysql_secure_installation"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql_upgrade"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqlcheck"));
                 Util.forceExecutable(newExecutableFile("bin", "resolveip"));
