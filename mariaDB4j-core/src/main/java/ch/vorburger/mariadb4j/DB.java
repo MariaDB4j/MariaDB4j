@@ -187,7 +187,13 @@ public class DB {
      * 
      * @throws ManagedProcessException if something went wrong
      */
-    synchronized protected void runMysqlSecureInstallationScript() throws ManagedProcessException{
+    synchronized protected void runMysqlSecureInstallationScript() throws ManagedProcessException {
+        if (StringUtils.isEmpty(configuration.getDefaultRootPassword())) {
+            logger.info("*** crafter-set-env.sh hasn't been upgraded within your bundle. " + 
+                    "The property MARIADB_ROOT_PASSWD is set to empty. " + 
+                    "The database secure installation script will not be run. ***");
+            return;
+        }
         ManagedProcess mysqlSecureInstallProcess = null;
         try {
             logger.info("Start secure database script");
@@ -202,11 +208,11 @@ public class DB {
             boolean secured = false;
             try (Connection conn = DriverManager.getConnection(configuration.getURL("mysql"), "root", "")) {
                 secured = false;
-                logger.debug("Connected to database as root without password. Database is not secured");
+                logger.info("Unsecured database detected, running the secure installation script against the database.");
             } catch (SQLException e) {
                 secured = true;
-                logger.info("Database is already secured");
-                logger.debug("Can not connect to database as root without password. Database is already secured", e);
+                logger.info("Secured database detected.");
+                logger.debug("Can not connect to database as root without password. Secured database detected.", e);
             } catch (Exception e) {
                 logger.error("Can not connect to database as root without password.", e);
             }
