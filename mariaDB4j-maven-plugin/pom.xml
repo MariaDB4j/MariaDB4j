@@ -86,7 +86,7 @@
                 <artifactId>mariaDB4j</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- Maven testing includes an older version at a higher level tham mariaDB4j, so including here -->
+            <!-- Maven testing includes an older version at a higher level than mariaDB4j, so including here -->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
