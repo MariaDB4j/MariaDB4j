@@ -4,7 +4,7 @@
 
     <groupId>org.craftercms.mariaDB4j</groupId>
     <artifactId>mariaDB4j-pom-lite</artifactId>
-    <version>2.4.7</version>
+    <version>2.4.8</version>
     <packaging>pom</packaging>
 
     <name>MariaDB4j</name>

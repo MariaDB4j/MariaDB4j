@@ -4,12 +4,16 @@
 	<parent>
 		<groupId>org.craftercms.mariaDB4j</groupId>
 		<artifactId>mariaDB4j-pom</artifactId>
-		<version>2.4.7</version>
+		<version>2.4.8</version>
 		<relativePath>../pom.xml</relativePath>		
 	</parent>
 
 	<artifactId>mariaDB4j-app</artifactId>
-	
+
+	<properties>
+		<hikaricp.version>3.3.0</hikaricp.version> <!-- Override the version defined by spring-boot -->
+	</properties>
+
 	<build>
 		<plugins>
 	        <plugin>
