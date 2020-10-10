@@ -49,7 +49,7 @@ public class MariaDB4jService {
     protected DBConfigurationBuilder configBuilder;
 
     public DB getDB() {
-        if (db == null)
+        if (!isRunning())
             throw new IllegalStateException("start() me up first!");
         return db;
     }
@@ -70,6 +70,8 @@ public class MariaDB4jService {
     }
 
     public void start() throws ManagedProcessException {
+        if (isRunning())
+            return;
         db = DB.newEmbeddedDB(getConfiguration().build());
         db.start();
     }
