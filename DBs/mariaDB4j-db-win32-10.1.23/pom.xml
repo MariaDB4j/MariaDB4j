@@ -11,4 +11,9 @@
 
 	<artifactId>mariaDB4j-db-win32</artifactId>
 	<version>10.1.23</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 </project>

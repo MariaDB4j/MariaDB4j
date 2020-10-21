@@ -12,4 +12,9 @@
 
     <artifactId>mariaDB4j-db-linux64</artifactId>
     <version>10.1.13</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 </project>
