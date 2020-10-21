@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<project name="MariaDB4J" default="extract" >
+    <description>
+        Ant task to download file from internet and extract during maven package
+    </description>
+
+    <target name="env">
+        <echo message="Project path   : ${project.basedir}" />
+        <echo message="Output location: ${project.build.directory}" />
+        <echo message="Cache location : ${cacheDir}" />
+        <echo message="MariaDB version: ${mariaDB.version}" />
+        <mkdir dir="${cacheDir}" />
+        <mkdir dir="${cacheDir}/input" />
+    </target>
+
+    <target name="download" depends="env" description="Download Mac file from bintray.com">
+        <echo message="Downloading macOS MariaDB ${mariaDB.version} file..." />
+        <get src="https://bintray.com/homebrew/bottles/download_file?file_path=mariadb@${mariaDB.series}-${mariaDB.version}.mojave.bottle.tar.gz"
+             dest="${cacheDir}/input/mariadb-${mariaDB.version}.bottle.tar.gz"
+             ignoreerrors="true"
+             skipexisting="true" />
+        <get src="https://bintray.com/homebrew/bottles/download_file?file_path=mariadb-${mariaDB.version}.mojave.bottle.tar.gz"
+             dest="${cacheDir}/input/mariadb-${mariaDB.version}.bottle.tar.gz"
+             ignoreerrors="true"
+             skipexisting="true" />
+        <available property="download.file" file="${cacheDir}/input/download_file"/>
+    </target>
+
+    <target name="rename" if="${download.file}" depends="download" description="Rename downloaded temp file">
+        <move file="${cacheDir}/input/download_file" tofile="${cacheDir}/input/mariadb-${mariaDB.version}.bottle.tar.gz"/>
+    </target>
+
+    <target name="extract" depends="env,download,rename" description="Extract project files">
+        <echo message="Extracting tar.gz file..." />
+        <untar src="${cacheDir}/input/mariadb-${mariaDB.version}.bottle.tar.gz"
+               dest="${project.build.directory}/mariadb"
+               compression="gzip">
+            <cutdirsmapper dirs="1"/>
+        </untar>
+        <echo message="Copying files..." />
+        <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx">
+            <fileset dir="${project.build.directory}/mariadb/${mariaDB.version}">
+                <include name="bin/*"/>
+                <include name="share/**/*"/>
+            </fileset>
+        </copy>
+        <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/bin" overwrite="yes" >
+            <fileset dir="${project.build.directory}/mariadb/${mariaDB.version}/scripts">
+                <include name="*"/>
+            </fileset>
+        </copy>
+        <echo message="Updating chmod for bin files..." />
+        <chmod dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/bin" perm="ugo+rx" includes="*"/>
+    </target>
+</project>

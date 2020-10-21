@@ -1,5 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,11 +11,13 @@
     </parent>
 
 	<artifactId>mariaDB4j-db-linux64</artifactId>
-	<version>10.3.16</version>
+	<version>10.3.25</version>
 
     <properties>
         <mariaDB.version>${project.version}</mariaDB.version>
         <cacheDir>${project.basedir}/../../../tmpDir</cacheDir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <build>
@@ -34,12 +37,11 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <property name="project.basedir" value="${project.basedir}"/>
-                                <property name="project.build.directory" value="${project.build.directory}"/>
-                                <property name="cacheDir" value="${cacheDir}"/>
-                                <property name="mariaDB.version" value="${mariaDB.version}"/>
-                                <ant antfile="${project.basedir}/prepare.xml">
-                                </ant>
+                                <property name="project.basedir" value="${project.basedir}" />
+                                <property name="project.build.directory" value="${project.build.directory}" />
+                                <property name="cacheDir" value="${cacheDir}" />
+                                <property name="mariaDB.version" value="${mariaDB.version}" />
+                                <ant antfile="${project.basedir}/../../mariaDB4j-db-common/linux64-prepare.xml" />
                             </target>
                         </configuration>
                         <goals>
@@ -47,7 +49,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>                                 
+            </plugin>
         </plugins>
     </build>
 </project>
