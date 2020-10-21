@@ -35,5 +35,6 @@
         <module>mariaDB4j-db-linux64-10.1.13</module>
 
         <module>mariaDB4j-db-10.3</module>
+        <module>mariaDB4j-db-10.4</module>
     </modules>
 </project>
