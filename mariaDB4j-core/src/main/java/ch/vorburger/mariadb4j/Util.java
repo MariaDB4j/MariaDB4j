@@ -95,9 +95,10 @@ public class Util {
                 if (succeeded) {
                     logger.info("chmod +x {} (using java.io.File.setExecutable)", executableFile);
                 } else {
-                    throw new IOException("Failed to do chmod +x " + executableFile.toString()
-                            + " using java.io.File.setExecutable, which will be a problem on *NIX...");
+                    throw new IOException("Failed to do chmod +x " + executableFile.toString() + " using java.io.File.setExecutable");
                 }
+            } else {
+                logger.info("chmod +x {} not needed", executableFile);
             }
         } else {
             logger.info("chmod +x requested on non-existing file: {}", executableFile);

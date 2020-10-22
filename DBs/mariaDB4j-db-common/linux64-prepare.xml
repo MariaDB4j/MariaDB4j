@@ -42,11 +42,18 @@
         <echo message="Copying bin files..." />
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin">
             <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-x86_64/bin">
+                <include name="my_print_defaults" />
+
+                <include name="mariadb" />
+                <include name="mariadbd" />
+                <include name="mariadb-check" />
+                <include name="mariadb-dump" />
+
                 <include name="mysql" />
                 <include name="mysqld" />
-                <include name="mysqldump" />
                 <include name="mysqlcheck" />
-                <include name="my_print_defaults" />
+                <include name="mysqldump" />
+
                 <include name="resolveip" />
             </fileset>
         </copy>

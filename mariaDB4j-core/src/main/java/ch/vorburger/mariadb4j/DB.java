@@ -30,6 +30,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +59,7 @@ public class DB {
     private File baseDir;
     private File libDir;
     private File dataDir;
-    private ManagedProcess mysqldProcess;
+    private ManagedProcess daemonProcess;
 
     protected int dbStartMaxWaitInMS = 30000;
 
@@ -101,14 +104,17 @@ public class DB {
 
     protected ManagedProcess createDBInstallProcess() throws ManagedProcessException, IOException {
         logger.info("Installing a new embedded database to: " + baseDir);
-        File installDbCmdFile = newExecutableFile("bin", "mysql_install_db");
+
+        String executableName = "mysql_install_db";
+        File installDbCmdFile = newExecutableFile("bin", executableName);
         if (!installDbCmdFile.exists())
-            installDbCmdFile = newExecutableFile("scripts", "mysql_install_db");
+            installDbCmdFile = newExecutableFile("scripts", executableName);
+
         if (!installDbCmdFile.exists())
-            throw new ManagedProcessException(
-                    "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
+            throw new ManagedProcessException(executableName + " was not found neither in bin nor in scripts under " + baseDir.getAbsolutePath());
+
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
-        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher(executableName));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
@@ -158,17 +164,17 @@ public class DB {
         logger.info("Starting up the database...");
         boolean ready = false;
         try {
-            mysqldProcess = startPreparation();
-            ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(), dbStartMaxWaitInMS);
+            daemonProcess = startPreparation();
+            ready = daemonProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(), dbStartMaxWaitInMS);
         } catch (Exception e) {
             logger.error("failed to start mysqld", e);
             throw new ManagedProcessException("An error occurred while starting the database", e);
         }
         if (!ready) {
-            if (mysqldProcess != null && mysqldProcess.isAlive())
-                mysqldProcess.destroy();
+            if (daemonProcess != null && daemonProcess.isAlive())
+                daemonProcess.destroy();
             throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
-                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
+                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + daemonProcess.getLastConsoleLines());
         }
         logger.info("Database startup complete.");
     }
@@ -178,8 +184,10 @@ public class DB {
     }
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
-        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqld"));
+        String executableName = "mysqld";
+        File daemonFile = newExecutableFile("bin", executableName);
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(daemonFile);
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher(executableName));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
@@ -203,7 +211,7 @@ public class DB {
         // because cleanupOnExit() just installed our (class DB) own
         // Shutdown hook, we don't need the one from ManagedProcess:
         builder.setDestroyOnShutdown(false);
-        logger.info("mysqld executable: " + builder.getExecutable());
+        logger.info(executableName + " executable: " + builder.getExecutable());
         return builder.build();
     }
 
@@ -345,8 +353,11 @@ public class DB {
             throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
         try {
-            ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysql"));
-            builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
+            String executableName = "mysql";
+            File clientFile = newExecutableFile("bin", executableName);
+
+            ManagedProcessBuilder builder = new ManagedProcessBuilder(clientFile);
+            builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher(executableName));
             builder.setWorkingDirectory(baseDir);
             if (username != null && !username.isEmpty())
                 builder.addArgument("-u", username);
@@ -390,9 +401,9 @@ public class DB {
      * @throws ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
-        if (mysqldProcess != null && mysqldProcess.isAlive()) {
+        if (daemonProcess != null && daemonProcess.isAlive()) {
             logger.debug("Stopping the database...");
-            mysqldProcess.destroy();
+            daemonProcess.destroy();
             logger.info("Database stopped.");
         } else {
             logger.debug("Database was already stopped.");
@@ -411,17 +422,37 @@ public class DB {
 
         try {
             Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
+
             if (!configuration.isWindows()) {
-                Util.forceExecutable(newExecutableFile("bin", "my_print_defaults"));
-                Util.forceExecutable(newExecutableFile("bin", "mysql_install_db"));
-                Util.forceExecutable(newExecutableFile("scripts", "mysql_install_db"));
-                Util.forceExecutable(newExecutableFile("bin", "mysqld"));
-                Util.forceExecutable(newExecutableFile("bin", "mysqldump"));
-                Util.forceExecutable(newExecutableFile("bin", "mysql"));
+                makeExecutableWithFallback("bin", "my_print_defaults", null);
+                makeExecutableWithFallback("bin", "mariadb", "mysql");
+                makeExecutableWithFallback("bin", "mariadbd", "mysqld");
+                makeExecutableWithFallback("bin", "mariadb-dump", "mysqldump");
+                makeExecutableWithFallback("bin", "mariadb-install-db", "mysql_install_db");
+                makeExecutableWithFallback("scripts", "mariadb-install-db", "mysql_install_db");
             }
         } catch (IOException e) {
             throw new RuntimeException("Error unpacking embedded DB", e);
         }
+    }
+
+    private void makeExecutableWithFallback(String dir, String targetName, String linkName) throws IOException {
+        File targetFile = newExecutableFile(dir, targetName);
+        Util.forceExecutable(targetFile);
+
+        if (linkName == null)
+            return;
+
+        File linkFile = newExecutableFile(dir, linkName);
+        if (targetFile.exists()) {
+            Path target = Paths.get(targetFile.getCanonicalPath());
+            Path link = Paths.get(linkFile.getCanonicalPath());
+            if (Files.exists(link)) {
+                Files.delete(link);
+            }
+            Files.createSymbolicLink(link, target);
+        }
+        Util.forceExecutable(linkFile);
     }
 
     /**
@@ -460,7 +491,7 @@ public class DB {
                 // than sorry and do it again ourselves here as well.
                 try {
                     // Shut up and don't log if it was already stop() before
-                    if (mysqldProcess != null && mysqldProcess.isAlive()) {
+                    if (daemonProcess != null && daemonProcess.isAlive()) {
                         logger.info("cleanupOnExit() ShutdownHook now stopping database");
                         db.stop();
                     }
@@ -504,10 +535,12 @@ public class DB {
                                                String user, String password)
             throws ManagedProcessException, IOException {
 
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqldump"));
+        String executableName = "mysqldump";
+        File dumpFile = newExecutableFile("bin", executableName);
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(dumpFile);
 
         builder.addStdOut(new BufferedOutputStream(new FileOutputStream(outputFile)));
-        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqldump"));
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher(executableName));
         builder.addArgument("--port=" + configuration.getPort());
         if (!configuration.isWindows()) {
             builder.addFileArgument("--socket", getAbsoluteSocketFile());

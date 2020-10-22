@@ -26,12 +26,19 @@
                dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/win32"
                overwrite="true">
             <patternset>
+                <include name="mariadb-${mariaDB.version}-win32/bin/my_print_defaults.exe" />
+
                 <include name="mariadb-${mariaDB.version}-win32/bin/mysql.exe" />
                 <include name="mariadb-${mariaDB.version}-win32/bin/mysqld.exe" />
                 <include name="mariadb-${mariaDB.version}-win32/bin/mysqlcheck.exe" />
                 <include name="mariadb-${mariaDB.version}-win32/bin/mysqldump.exe" />
                 <include name="mariadb-${mariaDB.version}-win32/bin/mysql_install_db.exe" />
-                <include name="mariadb-${mariaDB.version}-win32/bin/my_print_defaults.exe" />
+
+                <include name="mariadb-${mariaDB.version}-win32/bin/mariadb.exe" />
+                <include name="mariadb-${mariaDB.version}-win32/bin/mariadbd.exe" />
+                <include name="mariadb-${mariaDB.version}-win32/bin/mariadb-check.exe" />
+                <include name="mariadb-${mariaDB.version}-win32/bin/mariadb-dump.exe" />
+                <include name="mariadb-${mariaDB.version}-win32/bin/mariadb-install-db.exe" />
                 <include name="mariadb-${mariaDB.version}-win32/share/**/*" />
             </patternset>
             <mapper>
