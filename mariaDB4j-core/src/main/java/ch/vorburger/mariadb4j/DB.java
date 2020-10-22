@@ -117,6 +117,7 @@ public class DB {
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
             builder.addArgument("--skip-name-resolve");
+            builder.addArgument("--auth-root-authentication-method=normal");
             // builder.addArgument("--verbose");
         } else {
             builder.addFileArgument("--datadir", toWindowsPath(dataDir));
