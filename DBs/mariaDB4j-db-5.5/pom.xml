@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ch.vorburger.mariaDB4j</groupId>
+        <artifactId>mariaDB4j-pom-lite</artifactId>
+        <version>2.2.1</version>
+        <relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
+    </parent>
+    <!--
+        This is not a real artifact: it is just used in .travis.yml and never released.
+        The only purpose of this POM is to build the DB binaries with `mvn clean install`
+        instead of going to each directory and run the same command.
+    -->
+    <artifactId>mariaDB4j-5.5-binaries</artifactId>
+    <name>mariaDB4j 5.5 binaries</name>
+    <version>0.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>mariaDB4j-db-win32-5.5</module>
+        <module>mariaDB4j-db-winx64-5.5</module>
+        <module>mariaDB4j-db-linux64-5.5</module>
+    </modules>
+</project>
