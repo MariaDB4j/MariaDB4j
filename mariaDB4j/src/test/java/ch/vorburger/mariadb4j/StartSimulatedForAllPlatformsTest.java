@@ -22,6 +22,7 @@ package ch.vorburger.mariadb4j;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
@@ -39,7 +40,6 @@ import ch.vorburger.exec.ManagedProcessException;
  * @author Michael Vorburger
  */
 public class StartSimulatedForAllPlatformsTest {
-
     @Test public void simulatedStartWin32() throws Exception {
         checkPlatformStart(DBConfigurationBuilder.WIN32);
     }
@@ -57,20 +57,27 @@ public class StartSimulatedForAllPlatformsTest {
         configBuilder.setOS(platform);
         DBConfiguration config = configBuilder.build();
 
-        DB db = new DB(config);
-        db.prepareDirectories();
-        db.unpackEmbeddedDb();
+        try {
+            DB db = new DB(config);
+            db.prepareDirectories();
+            db.unpackEmbeddedDb();
 
-        ManagedProcess installProc = db.createDBInstallProcess();
-        checkManagedProcessExists(installProc);
+            ManagedProcess installProc = db.createDBInstallProcess();
+            checkManagedProcessExists(installProc);
 
-        ManagedProcess startProc = db.startPreparation();
-        checkManagedProcessExists(startProc);
+            ManagedProcess startProc = db.startPreparation();
+            checkManagedProcessExists(startProc);
 
-        // This is super important.. without this, the test is useless,
-        // as it will not catch platform specific problems, because the files
-        // from previous platform test will still be available
-        FileUtils.deleteDirectory(new File(config.getBaseDir()));
+        } catch(Exception e) {
+            if (!(e.getCause() instanceof FileNotFoundException)) {
+                throw e;
+            }
+        } finally {
+            // This is super important.. without this, the test is useless,
+            // as it will not catch platform specific problems, because the files
+            // from previous platform test will still be available
+            FileUtils.deleteDirectory(new File(config.getBaseDir()));
+        }
     }
 
     void checkManagedProcessExists(ManagedProcess proc) {
