@@ -129,14 +129,10 @@ public class Mariadb4jStartMojoTest {
             }
             table = DbUtils.selectAll(conn, BASIC_TABLE_NAME);
             System.out.format("table post-insertion: %s%n", table);
-            assertThat(vars.size()).overridingErrorMessage("vars like version").isEqualTo(1);
-            Set<Object> valueSet = ImmutableSet.copyOf(table.column(BASIC_TABLE_VALUE_COLUMN).values());
-            assertThat(valueSet).overridingErrorMessage("table values").isEqualTo(ImmutableSet.of("a", "b"));
-        } catch (SQLNonTransientConnectionException ex) {
-            if (ex.getMessage().contains("CLIENT_PLUGIN_AUTH is required"))
-                return;
-            throw ex;
         }
+        assertThat(vars.size()).overridingErrorMessage("vars like version").isEqualTo(1);
+        Set<Object> valueSet = ImmutableSet.copyOf(table.column(BASIC_TABLE_VALUE_COLUMN).values());
+        assertThat(valueSet).overridingErrorMessage("table values").isEqualTo(ImmutableSet.of("a", "b"));
     }
 
     private DB getDb() {
