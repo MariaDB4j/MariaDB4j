@@ -16,11 +16,11 @@
     <target name="download" depends="env" description="Download Mac file from bintray.com">
         <echo message="Downloading macOS MariaDB ${mariaDB.version} file..." />
         <get src="https://bintray.com/homebrew/bottles/download_file?file_path=mariadb@${mariaDB.series}-${mariaDB.version}.mojave.bottle.tar.gz"
-             dest="${cacheDir}/input/mariadb-${mariaDB.version}.bottle.tar.gz"
+             dest="${cacheDir}/input/mariadb-${mariaDB.version}-osx.tar.gz"
              ignoreerrors="true"
              skipexisting="true" />
         <get src="https://bintray.com/homebrew/bottles/download_file?file_path=mariadb-${mariaDB.version}.mojave.bottle.tar.gz"
-             dest="${cacheDir}/input/mariadb-${mariaDB.version}.bottle.tar.gz"
+             dest="${cacheDir}/input/mariadb-${mariaDB.version}-osx.tar.gz"
              ignoreerrors="true"
              skipexisting="true" />
         <available property="download.file" file="${cacheDir}/input/download_file"/>
@@ -32,20 +32,20 @@
 
     <target name="extract" depends="env,download,rename" description="Extract project files">
         <echo message="Extracting tar.gz file..." />
-        <untar src="${cacheDir}/input/mariadb-${mariaDB.version}.bottle.tar.gz"
-               dest="${project.build.directory}/mariadb"
+        <untar src="${cacheDir}/input/mariadb-${mariaDB.version}-osx.tar.gz"
+               dest="${project.build.directory}/mariadb-${mariaDB.version}-osx"
                compression="gzip">
-            <cutdirsmapper dirs="1"/>
+            <cutdirsmapper dirs="2"/>
         </untar>
         <echo message="Copying files..." />
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx">
-            <fileset dir="${project.build.directory}/mariadb/${mariaDB.version}">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-osx">
                 <include name="bin/*"/>
                 <include name="share/**/*"/>
             </fileset>
         </copy>
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/bin" overwrite="yes" >
-            <fileset dir="${project.build.directory}/mariadb/${mariaDB.version}/scripts">
+            <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-osx/scripts">
                 <include name="*"/>
             </fileset>
         </copy>
