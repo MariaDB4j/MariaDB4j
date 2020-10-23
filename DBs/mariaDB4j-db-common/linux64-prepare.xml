@@ -17,14 +17,21 @@
         <echo message="Downloading Linux MariaDB ${mariaDB.version} file..." />
         <get src="https://downloads.mariadb.com/MariaDB/mariadb-${mariaDB.version}/bintar-linux-x86_64/mariadb-${mariaDB.version}-linux-x86_64.tar.gz"
              dest="${cacheDir}/input/mariadb-${mariaDB.version}-linux-x86_64.tar.gz"
+             ignoreerrors="true"
+             skipexisting="true" />
+        <get src="https://downloads.mariadb.com/MariaDB/mariadb-${mariaDB.version}/kvm-bintar-precise-amd64/mariadb-${mariaDB.version}-Linux-x86_64.tar.gz"
+             dest="${cacheDir}/input/mariadb-${mariaDB.version}-linux-x86_64.tar.gz"
+             ignoreerrors="true"
              skipexisting="true" />
     </target>
 
     <target name="extract" depends="env,download" description="Extract project files">
         <echo message="Extracting tar.gz file..." />
         <untar src="${cacheDir}/input/mariadb-${mariaDB.version}-linux-x86_64.tar.gz"
-               dest="${project.build.directory}"
-               compression="gzip" />
+               dest="${project.build.directory}/mariadb-${mariaDB.version}-linux-x86_64"
+               compression="gzip">
+            <cutdirsmapper dirs="1"/>
+        </untar>
         <echo message="Copying share folders and files..." />
         <copy todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux">
             <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-x86_64">

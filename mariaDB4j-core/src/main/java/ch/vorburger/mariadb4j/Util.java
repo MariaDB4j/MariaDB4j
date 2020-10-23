@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import org.apache.commons.io.FileUtils;
@@ -118,7 +119,7 @@ public class Util {
         ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resourcePatternResolver.getResources(locationPattern);
         if (resources.length == 0) {
-            throw new IOException("Nothing found at " + locationPattern);
+            throw new FileNotFoundException("Nothing found at " + locationPattern);
         }
         int counter = 0;
         for (Resource resource : resources) {
