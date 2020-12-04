@@ -73,7 +73,7 @@
                 <configuration>
                 <archive>
                     <manifestEntries>
-                        <Automatic-Module-Name>ch.vorburger.mariaDB4j</Automatic-Module-Name>
+                        <Automatic-Module-Name>ch.vorburger.mariadb4j</Automatic-Module-Name>
                     </manifestEntries>
                 </archive>
                 </configuration>
