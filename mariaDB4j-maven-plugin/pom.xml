@@ -142,7 +142,7 @@
                 <scope>test</scope>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.17.2</version>
+                <version>3.19.0</version>
             </dependency>
             <dependency>
                 <scope>test</scope>
