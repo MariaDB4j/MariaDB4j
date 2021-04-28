@@ -1,0 +1,34 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: sunday
+    time: "04:00"
+  open-pull-requests-limit: 99
+  ignore:
+  - dependency-name: mysql:mysql-connector-java
+    versions:
+    - 8.0.23
+  - dependency-name: org.mockito:mockito-core
+    versions:
+    - 3.7.7
+    - 3.8.0
+  - dependency-name: org.springframework.boot:spring-boot-maven-plugin
+    versions:
+    - 2.4.2
+    - 2.4.3
+  - dependency-name: org.springframework.boot:spring-boot-dependencies
+    versions:
+    - 2.4.2
+    - 2.4.3
+  - dependency-name: org.apache.maven.shared:maven-common-artifact-filters
+    versions:
+    - 3.1.1
+  - dependency-name: org.assertj:assertj-core
+    versions:
+    - 3.18.1
+  - dependency-name: org.apache.maven.plugins:maven-checkstyle-plugin
+    versions:
+    - 3.1.1
