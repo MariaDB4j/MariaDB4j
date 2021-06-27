@@ -1,5 +1,7 @@
 SOME DAY
 
+- https://jreleaser.org
+
 - MariaDB4j.setup to test and register: Oomph Setup Model, incl. Checkstyle and m2e-checkstyle plug-ins, and its configuration
 
 - add https://github.com/brsanthu/google-analytics-java to see how many people actually use this? ;-)
