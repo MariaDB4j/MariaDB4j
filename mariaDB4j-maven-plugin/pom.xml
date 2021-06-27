@@ -154,7 +154,7 @@
                 <scope>test</scope>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.22</version>
+                <version>8.0.25</version>
             </dependency>
             <dependency>
                 <scope>test</scope>
