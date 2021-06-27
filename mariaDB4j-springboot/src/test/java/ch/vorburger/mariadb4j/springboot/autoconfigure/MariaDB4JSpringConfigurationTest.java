@@ -20,7 +20,7 @@
 package ch.vorburger.mariadb4j.springboot.autoconfigure;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
