@@ -55,6 +55,7 @@ public class StartSimulatedForAllPlatformsTest {
     void checkPlatformStart(String platform) throws ManagedProcessException, IOException {
         DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
         configBuilder.setOS(platform);
+        configBuilder.setBaseDir(configBuilder.getBaseDir() + "/" + platform);
         DBConfiguration config = configBuilder.build();
 
         DB db = new DB(config);
