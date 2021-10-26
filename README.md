@@ -156,6 +156,51 @@ helpful tool for launching MariaDB from Java.
 
 See pom and integration test in https://github.com/vorburger/MariaDB4j/tree/mariaDB4j-maven-plugin/mariaDB4j-maven-plugin/src/it/mariadb4j-maven-plugin-test-basic  for usage example.
 
+#### Example usage
+
+An example usage of this plugin is to install and start a database at the start of the integration test phase, and stop and uninstall the database afterwards.
+
+This is done by configuring the plugin to execute the `start` goal in the `pre-integration-test` phase and the `stop` goal in the `post-integration-test` phase:
+
+```xml
+<plugin>
+  <groupId>ch.vorburger.mariaDB4j</groupId>
+  <artifactId>mariaDB4j-maven-plugin</artifactId>
+  ...
+  <executions>
+    <execution>
+      <id>pre-integration-test</id>
+      <goals>
+        <goal>start</goal>
+      </goals>
+    </execution>
+    <execution>
+      <id>post-integration-test</id>
+      <goals>
+        <goal>stop</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+```
+
+This will ensure there is a MariaDB instance running on a random port, and expose the database URL as a Maven Project property.
+
+To access the database in your integration tests, you can pass the database URL as system property to your integration tests:
+
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-failsafe-plugin</artifactId>
+  ...
+  <configuration>
+    <systemProperties>
+      <mariadb.databaseurl>${mariadb4j.databaseurl}</mariadb.databaseurl>
+    </systemProperties>
+  </configuration>
+</plugin>
+```
+
 #### How to upgrade the maven plugin from mike10004 version to this version
 
 To upgrade from mike10004 to vorbuger version please change
