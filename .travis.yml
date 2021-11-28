@@ -18,4 +18,5 @@ before_install:
 # TODO uncomment this when raising a PR to fix https://github.com/vorburger/MariaDB4j/issues/484
 #  - mvn -f DBs/pom.xml clean install
 
-script: mvn package -B -V
+# Must explicitly invoke checkstyle-check because package does not include it
+script: mvn checkstyle:check package -B -V
