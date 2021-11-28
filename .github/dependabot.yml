@@ -15,14 +15,6 @@ updates:
     versions:
     - 3.7.7
     - 3.8.0
-  - dependency-name: org.springframework.boot:spring-boot-maven-plugin
-    versions:
-    - 2.4.2
-    - 2.4.3
-  - dependency-name: org.springframework.boot:spring-boot-dependencies
-    versions:
-    - 2.4.2
-    - 2.4.3
   - dependency-name: org.apache.maven.shared:maven-common-artifact-filters
     versions:
     - 3.1.1
