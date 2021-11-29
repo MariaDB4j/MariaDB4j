@@ -20,7 +20,6 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;

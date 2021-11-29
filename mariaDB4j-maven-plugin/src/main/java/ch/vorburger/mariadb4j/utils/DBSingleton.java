@@ -27,7 +27,7 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 /**
  * Holds the database and configuration data for MariaDB4j
  *
- * Future option:
+ * <p>Future option:
  * If possible change serilized data and pid pointer to db and store in target/MariaDB4j/MariaDB4j.state
  * so database can be started with maven exiting and after some time mariaDB4j:stop can be called in a
  * new process to shut it down

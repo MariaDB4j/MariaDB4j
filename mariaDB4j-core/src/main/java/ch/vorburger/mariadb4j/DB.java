@@ -23,7 +23,6 @@ import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.exec.OutputStreamLogDispatcher;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,11 +31,9 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -328,7 +325,8 @@ public class DB {
         run(command, username, password, dbName, force, true);
     }
 
-    public void run(String command, String username, String password, String dbName, boolean force, boolean verbose) throws ManagedProcessException {
+    public void run(String command, String username, String password, String dbName, boolean force, boolean verbose) 
+            throws ManagedProcessException {
         // If resource is created here, it should probably be released here also (as opposed to in protected run method)
         // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
         try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {

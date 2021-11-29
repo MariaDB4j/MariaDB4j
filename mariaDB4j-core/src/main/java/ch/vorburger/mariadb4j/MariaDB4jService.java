@@ -21,11 +21,9 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
