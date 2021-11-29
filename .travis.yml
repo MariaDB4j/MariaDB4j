@@ -15,6 +15,8 @@ jdk:
 #  - .mvn
 
 before_install:
-  - mvn -f DBs/pom.xml clean install
+# TODO uncomment this when raising a PR to fix https://github.com/vorburger/MariaDB4j/issues/484
+#  - mvn -f DBs/pom.xml clean install
 
-script: mvn package -B -V
+# Run verify, not just package, to catch any failures of mariaDB4j-maven-plugin's integration test
+script: mvn verify -B -V
