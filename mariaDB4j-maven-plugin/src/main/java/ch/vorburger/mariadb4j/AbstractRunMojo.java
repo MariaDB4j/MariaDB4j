@@ -22,12 +22,6 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -35,6 +29,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Optional;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Base class to run a MariaDB4j
@@ -89,13 +88,13 @@ public abstract class AbstractRunMojo extends AbstractMojo {
 
 
     /**
-     * scriptCharset set this if you scripts are not UTF-8
+     * scriptCharset set this if you scripts are not UTF-8.
      */
     @Parameter(defaultValue = "UTF-8")
     private String scriptCharset;
 
     /**
-     * Path to scripts to run on the database once started
+     * Path to scripts to run on the database once started.
      */
     @Parameter
     private File[] scripts;

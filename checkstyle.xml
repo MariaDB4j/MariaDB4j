@@ -4,7 +4,7 @@
     Checkstyle-Configuration: Michael Vorburger's <http://www.vorburger.ch> Checkstyle Checks
 -->
 <module name="Checker">
-  <property name="severity" value="warning"/>
+  <property name="severity" value="error"/>
   <property name="charset" value="UTF-8"/>
   <module name="TreeWalker">
     <module name="OuterTypeFilename"/>
@@ -29,9 +29,8 @@
       <property name="tokens" value="LITERAL_DO,LITERAL_FOR,LITERAL_WHILE"/>
     </module>
     <module name="LeftCurly"/>
-    <module name="RightCurly"/>
     <module name="RightCurly">
-      <property name="option" value="alone"/>
+      <property name="option" value="alone_or_singleline"/>
       <property name="tokens" value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO, STATIC_INIT, INSTANCE_INIT"/>
     </module>
     <module name="WhitespaceAround">
@@ -130,10 +129,12 @@
       <property name="target" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
       <property name="tagOrder" value="@param, @return, @throws, @deprecated"/>
     </module>
-    <module name=JavadocStyle">
+    <module name="JavadocStyle">
       <property name="scope" value="nothing"/>
     </module>
     <module name="MissingJavadocMethod">
+      <!-- @TODO Find time to re-enable this check and provide meaningful Javadocs -->
+      <property name="severity" value="ignore"/>
       <property name="minLineCount" value="2"/>
     </module>
     <module name="JavadocMethod">

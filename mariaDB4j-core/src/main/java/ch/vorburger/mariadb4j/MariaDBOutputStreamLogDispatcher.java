@@ -21,7 +21,6 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.OutputStreamLogDispatcher;
 import ch.vorburger.exec.OutputStreamType;
-
 import org.slf4j.event.Level;
 
 /**
