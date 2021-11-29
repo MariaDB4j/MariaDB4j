@@ -99,7 +99,7 @@ public class Mariadb4jStartMojoTest {
         File pom = new File(getClass().getResource( "/basic-usage/pom.xml").toURI());
         assertThat(pom.isFile()).overridingErrorMessage( "not found: %s", pom).isTrue();
         assertThat(pom.exists()).isTrue();
-        StartMojo mojo = (StartMojo) mojoRule.lookupMojo("start", pom);
+        StartMojo mojo = (StartMojo) mojoRule.lookupConfiguredMojo(pom.getParentFile(), "start");
         assertThat(mojo).isNotNull();
         pluginContext = mojo.getPluginContext();
         if (pluginContext == null) {
@@ -153,7 +153,7 @@ public class Mariadb4jStartMojoTest {
     public void utf8mb4() throws Exception {
         File pom = new File(getClass().getResource( "/utf8mb4/pom.xml").toURI());
         assertThat(pom.isFile()).overridingErrorMessage( "not found: %s", pom).isTrue();
-        StartMojo mojo = (StartMojo) mojoRule.lookupMojo("start", pom);
+        StartMojo mojo = (StartMojo) mojoRule.lookupConfiguredMojo(pom.getParentFile(), "start");
         assertThat(mojo).isNotNull();
         pluginContext = mojo.getPluginContext();
         if (pluginContext == null) {
