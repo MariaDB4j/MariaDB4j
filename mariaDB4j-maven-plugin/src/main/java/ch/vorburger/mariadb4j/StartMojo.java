@@ -21,12 +21,12 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
+import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import java.io.IOException;
 
 /**
  * Start a MariaDBj4 database. Contrary to the {@code run} goal, this does not block and
@@ -54,7 +54,7 @@ public class StartMojo extends AbstractRunMojo {
             if (!databaseName.equals("test")) {
                 // mysqld out-of-the-box already has a DB named "test"
                 // in case we need another DB, here's how to create it first
-               db.createDB(databaseName);
+                db.createDB(databaseName);
             }
             this.runScripts(db, databaseName);
 

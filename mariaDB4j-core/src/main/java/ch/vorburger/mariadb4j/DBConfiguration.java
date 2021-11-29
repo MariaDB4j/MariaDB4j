@@ -20,7 +20,6 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
-
 import java.util.List;
 import java.util.function.Function;
 
