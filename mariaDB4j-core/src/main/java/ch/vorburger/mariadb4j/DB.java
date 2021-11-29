@@ -451,35 +451,7 @@ public class DB {
     protected void cleanupOnExit() {
         String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + dataDir.toString();
         final DB db = this;
-        Runtime.getRuntime().addShutdownHook(new Thread(threadName) {
-
-            @Override
-            public void run() {
-                // ManagedProcess DestroyOnShutdown ProcessDestroyer does
-                // something similar, but it shouldn't hurt to better be save
-                // than sorry and do it again ourselves here as well.
-                try {
-                    // Shut up and don't log if it was already stop() before
-                    if (mysqldProcess != null && mysqldProcess.isAlive()) {
-                        logger.info("cleanupOnExit() ShutdownHook now stopping database");
-                        db.stop();
-                    }
-                } catch (ManagedProcessException e) {
-                    logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
-                }
-
-                if (dataDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
-                                    && Util.isTemporaryDirectory(dataDir.getAbsolutePath()))) {
-                    logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
-                    FileUtils.deleteQuietly(dataDir);
-                }
-                if (baseDir.exists() && (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
-                                    && Util.isTemporaryDirectory(baseDir.getAbsolutePath()))) {
-                    logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
-                    FileUtils.deleteQuietly(baseDir);
-                }
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new DBShutdownHook(threadName, db, () -> mysqldProcess, () -> baseDir, () -> dataDir, configuration));
     }
 
     // The dump*() methods are intentionally *NOT* made "synchronized",
@@ -533,4 +505,5 @@ public class DB {
         builder.setDestroyOnShutdown(true);
         return builder.build();
     }
+
 }
