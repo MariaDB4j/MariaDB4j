@@ -19,4 +19,4 @@ before_install:
 #  - mvn -f DBs/pom.xml clean install
 
 # Must explicitly invoke checkstyle-check because package does not include it
-script: mvn checkstyle:check package -B -V
+script: mvn package -B -V
