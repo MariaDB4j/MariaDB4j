@@ -19,18 +19,16 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
-
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.junit.Assert;
 import org.junit.Test;
-
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
 /**
  * Tests the functioning of MariaDB4j Sample / Tutorial illustrating how to use MariaDB4j.

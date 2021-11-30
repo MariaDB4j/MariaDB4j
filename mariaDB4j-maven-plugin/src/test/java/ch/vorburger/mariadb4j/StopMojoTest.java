@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariaDB4j;
+package ch.vorburger.mariadb4j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,8 +28,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.utils.DBSingleton;
 import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
@@ -39,13 +40,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.StopMojo;
-import ch.vorburger.mariadb4j.utils.DBSingleton;
-
 /**
- * StopMojoTest mocking database testing function
+ * StopMojoTest mocking database testing function.
  *
  * @author William Dutton
  */
@@ -98,7 +94,7 @@ public class StopMojoTest {
             stopMojo.execute();
             fail("Should have thrown exception");
         } catch (MojoExecutionException e) {
-            //expected
+            // expected
             assertTrue(e.getMessage().contains("MariaDB4j Database. Could not stop gracefull"));
         }
 

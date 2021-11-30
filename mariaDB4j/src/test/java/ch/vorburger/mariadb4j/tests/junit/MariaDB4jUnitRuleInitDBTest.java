@@ -19,29 +19,27 @@
  */
 package ch.vorburger.mariadb4j.tests.junit;
 
+import static org.junit.Assert.assertEquals;
+
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.junit.MariaDB4jRule;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
 public class MariaDB4jUnitRuleInitDBTest {
 
-    private final String DB_NAME = "junittest";
+    private final static String DB_NAME = "junittest";
 
-    @Rule
-    public MariaDB4jRule dbRule = new MariaDB4jRule(DBConfigurationBuilder.newBuilder().build(), DB_NAME, "ch/vorburger/mariadb4j/basicSource.sql");
+    @Rule public MariaDB4jRule dbRule = new MariaDB4jRule(DBConfigurationBuilder.newBuilder().build(), DB_NAME,
+            "ch/vorburger/mariadb4j/basicSource.sql");
 
-    @Test
-    public void validateSourceInitialization() throws SQLException {
+    @Test public void validateSourceInitialization() throws SQLException {
         String connString = dbRule.getURL();
         Connection conn;
         conn = DriverManager.getConnection(connString, "root", "");
