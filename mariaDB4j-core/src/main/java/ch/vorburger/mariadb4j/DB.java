@@ -19,8 +19,11 @@
  */
 package ch.vorburger.mariadb4j;
 
-import ch.vorburger.exec.*;
-
+import ch.vorburger.exec.ManagedProcess;
+import ch.vorburger.exec.ManagedProcessBuilder;
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.exec.ManagedProcessListener;
+import ch.vorburger.exec.OutputStreamLogDispatcher;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -516,10 +519,11 @@ public class DB {
                 closeOutputStream();
             }
 
-            private void closeOutputStream(){
+            private void closeOutputStream() {
                 try {
                     outputStream.close();
-                } catch (IOException ignore) {
+                } catch (IOException exception) {
+                    logger.error("Problem while trying to close the stream to the file containing the DB dump", exception);
                 }
             }
         });
