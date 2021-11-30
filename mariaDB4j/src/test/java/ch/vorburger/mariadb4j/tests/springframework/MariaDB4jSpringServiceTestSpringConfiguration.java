@@ -19,13 +19,11 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
+import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import java.util.Properties;
-
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 @Configuration
 public class MariaDB4jSpringServiceTestSpringConfiguration {

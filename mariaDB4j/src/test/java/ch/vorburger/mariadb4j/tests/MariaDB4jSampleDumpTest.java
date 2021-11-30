@@ -22,17 +22,19 @@ package ch.vorburger.mariadb4j.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import ch.vorburger.exec.ManagedProcess;
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.apache.commons.io.FileUtils;
@@ -40,11 +42,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
-import ch.vorburger.exec.ManagedProcess;
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
 /**
  * Tests the functioning of MariaDB4j Dump/Restore illustrating how to use MariaDB4j.

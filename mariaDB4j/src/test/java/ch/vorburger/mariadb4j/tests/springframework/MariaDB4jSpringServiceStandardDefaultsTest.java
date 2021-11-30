@@ -22,14 +22,13 @@ package ch.vorburger.mariadb4j.tests.springframework;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 /**
  * Tests the default configuration of a MariaDB4jSpringService.

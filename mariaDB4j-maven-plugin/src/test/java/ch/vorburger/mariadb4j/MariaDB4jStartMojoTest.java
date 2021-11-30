@@ -17,18 +17,15 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariaDB4j;
+package ch.vorburger.mariadb4j;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.StartMojo;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Table;
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Rule;
-import org.junit.Test;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -40,10 +37,9 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
+import org.apache.maven.plugin.testing.MojoRule;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * Mariadb4jStartMojoTest to ensure mariaDB4j-maven-plugin works like previous version by mike10004.
@@ -51,16 +47,12 @@ import static org.assertj.core.api.Assertions.fail;
  * @author mike10004
  * @author William Dutton
  */
+public class MariaDB4jStartMojoTest {
 
-public class Mariadb4jStartMojoTest {
+    @SuppressWarnings("rawtypes") private Map pluginContext;
 
-    @SuppressWarnings("rawtypes")
-    private Map pluginContext;
-
-    @Rule
-    public MojoRule mojoRule = new MojoRule() {
-        @Override
-        protected void after() {
+    @Rule public MojoRule mojoRule = new MojoRule() {
+        @Override protected void after() {
             try {
                 System.out.println("stopping database...");
                 DBSingleton.shutdownDB();
@@ -78,9 +70,8 @@ public class Mariadb4jStartMojoTest {
     private static final String BASIC_TABLE_INSERT_STMT = "INSERT INTO bar (baz) VALUES (?)";
     private static final String BASIC_TABLE_VALUE_COLUMN = "baz";
 
-    @Test(timeout = 500)
-    public void shouldSkipIfSkipIsSet() throws Exception {
-        File pom = new File(getClass().getResource( "/skip/pom.xml").toURI());
+    @Test(timeout = 500) public void shouldSkipIfSkipIsSet() throws Exception {
+        File pom = new File(getClass().getResource("/skip/pom.xml").toURI());
         StartMojo mojo = (StartMojo) mojoRule.lookupMojo("start", pom);
         assertThat(mojo).isNotNull();
         mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
@@ -89,15 +80,14 @@ public class Mariadb4jStartMojoTest {
         try {
             DBSingleton.getDB();
             fail("database was created when it should have skipped");
-        } catch ( IllegalStateException e) {
-            //pass
+        } catch (IllegalStateException e) {
+            // pass
         }
     }
 
-    @Test
-    public void basicUsage() throws Exception {
-        File pom = new File(getClass().getResource( "/basic-usage/pom.xml").toURI());
-        assertThat(pom.isFile()).overridingErrorMessage( "not found: %s", pom).isTrue();
+    @Test public void basicUsage() throws Exception {
+        File pom = new File(getClass().getResource("/basic-usage/pom.xml").toURI());
+        assertThat(pom.isFile()).overridingErrorMessage("not found: %s", pom).isTrue();
         assertThat(pom.exists()).isTrue();
         StartMojo mojo = (StartMojo) mojoRule.lookupConfiguredMojo(pom.getParentFile(), "start");
         assertThat(mojo).isNotNull();
@@ -136,7 +126,7 @@ public class Mariadb4jStartMojoTest {
     private DB getDb() {
         try {
             return DBSingleton.getDB();
-        } catch ( IllegalStateException e) {
+        } catch (IllegalStateException e) {
             return null;
         }
     }
@@ -149,10 +139,9 @@ public class Mariadb4jStartMojoTest {
 
     private static final String UTF8MB4_TEST_DB_NAME = "charset_test";
 
-    @Test
-    public void utf8mb4() throws Exception {
-        File pom = new File(getClass().getResource( "/utf8mb4/pom.xml").toURI());
-        assertThat(pom.isFile()).overridingErrorMessage( "not found: %s", pom).isTrue();
+    @Test public void utf8mb4() throws Exception {
+        File pom = new File(getClass().getResource("/utf8mb4/pom.xml").toURI());
+        assertThat(pom.isFile()).overridingErrorMessage("not found: %s", pom).isTrue();
         StartMojo mojo = (StartMojo) mojoRule.lookupConfiguredMojo(pom.getParentFile(), "start");
         assertThat(mojo).isNotNull();
         pluginContext = mojo.getPluginContext();
@@ -161,23 +150,19 @@ public class Mariadb4jStartMojoTest {
         }
         mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
         mojo.execute();
-        byte[] pokerHandBytes = {
-                (byte) 0xf0, (byte) 0x9f, (byte) 0x82, (byte) 0xa1,
-                (byte) 0xf0, (byte) 0x9f, (byte) 0x82, (byte) 0xa8,
-                (byte) 0xf0,(byte) 0x9f, (byte) 0x83, (byte) 0x91,
-                (byte) 0xf0, (byte) 0x9f, (byte) 0x83, (byte) 0x98,
-                (byte) 0xf0, (byte) 0x9f, (byte) 0x83, (byte) 0x93,
-        };
+        byte[] pokerHandBytes = { (byte) 0xf0, (byte) 0x9f, (byte) 0x82, (byte) 0xa1, (byte) 0xf0, (byte) 0x9f, (byte) 0x82, (byte) 0xa8,
+            (byte) 0xf0, (byte) 0x9f, (byte) 0x83, (byte) 0x91, (byte) 0xf0, (byte) 0x9f, (byte) 0x83, (byte) 0x98, (byte) 0xf0,
+            (byte) 0x9f, (byte) 0x83, (byte) 0x93, };
         String complexString = new String(pokerHandBytes, StandardCharsets.UTF_8);
         try (Connection conn = openConnection(getDb(), UTF8MB4_TEST_DB_NAME);
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO supertext (content) VALUES (?)")) {
+                PreparedStatement stmt = conn.prepareStatement("INSERT INTO supertext (content) VALUES (?)")) {
             stmt.setString(1, complexString);
             stmt.execute();
         }
         String retrievedValue;
         try (Connection conn = openConnection(getDb(), UTF8MB4_TEST_DB_NAME);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT content FROM supertext WHERE 1")) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT content FROM supertext WHERE 1")) {
             assertThat(rs.next()).isTrue();
             retrievedValue = rs.getString(1);
         }

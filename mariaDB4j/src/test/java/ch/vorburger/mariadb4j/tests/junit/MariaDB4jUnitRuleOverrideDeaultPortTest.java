@@ -19,11 +19,11 @@
  */
 package ch.vorburger.mariadb4j.tests.junit;
 
+import static org.junit.Assert.assertEquals;
+
 import ch.vorburger.mariadb4j.junit.MariaDB4jRule;
 import org.junit.Rule;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class MariaDB4jUnitRuleOverrideDeaultPortTest {
 
