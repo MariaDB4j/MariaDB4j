@@ -40,6 +40,7 @@ public class BasicUsageIT {
         int port = Integer.parseInt(System.getProperty("mariadb4j.port"));
         assertTrue("expect positive port value: " + port, port > 0);
         String jdbcUrl = "jdbc:mysql://localhost:" + port + "/foo";
+        assertEquals("database url in system properties", jdbcUrl, System.getProperty("mariadb.databaseurl"));
         try (Connection conn = DriverManager.getConnection(jdbcUrl)) {
             try (Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SHOW TABLES LIKE 'bar'")) {

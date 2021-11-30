@@ -43,6 +43,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
         requiresDependencyResolution = ResolutionScope.TEST)
 public class StartMojo extends AbstractRunMojo {
 
+    private static final String PROPNAME_DATABASE_URL = "mariadb4j.databaseurl";
+
     @Override
     protected void runWithMavenJvm(DBConfigurationBuilder configurationBuilder) throws MojoExecutionException {
         try {
@@ -58,7 +60,10 @@ public class StartMojo extends AbstractRunMojo {
             }
             this.runScripts(db, databaseName);
 
-            getLog().warn("Database started and is configured on " + DBSingleton.getConfigurationBuilder().getURL(databaseName));
+            String databaseURL = DBSingleton.getConfigurationBuilder().getURL(databaseName);
+            getProject().getProperties().setProperty(PROPNAME_DATABASE_URL, databaseURL);
+
+            getLog().warn("Database started and is configured on " + databaseURL);
         } catch (ManagedProcessException ex) {
             throw new MojoExecutionException(
                     "Could not setup, start database", ex);

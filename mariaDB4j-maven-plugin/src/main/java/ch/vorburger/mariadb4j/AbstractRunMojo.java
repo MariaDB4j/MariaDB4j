@@ -180,4 +180,8 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     public String getDatabaseName() {
         return databaseName;
     }
+
+    protected final MavenProject getProject() {
+        return project;
+    }
 }

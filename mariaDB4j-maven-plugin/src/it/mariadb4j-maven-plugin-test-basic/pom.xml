@@ -49,6 +49,7 @@
                     <systemPropertyVariables>
                         <mariadb4j.port>${mariadb4j.port}</mariadb4j.port>
                         <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+                        <mariadb.databaseurl>${mariadb4j.databaseurl}</mariadb.databaseurl>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>
