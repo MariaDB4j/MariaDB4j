@@ -19,10 +19,8 @@
  */
 package ch.vorburger.mariadb4j;
 
-import ch.vorburger.exec.ManagedProcess;
-import ch.vorburger.exec.ManagedProcessBuilder;
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.exec.OutputStreamLogDispatcher;
+import ch.vorburger.exec.*;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -481,7 +479,8 @@ public class DB {
 
         ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqldump"));
 
-        builder.addStdOut(new BufferedOutputStream(new FileOutputStream(outputFile)));
+        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
+        builder.addStdOut(outputStream);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqldump"));
         builder.addArgument("--port=" + configuration.getPort());
         if (!configuration.isWindows()) {
@@ -506,6 +505,24 @@ public class DB {
         }
         builder.addArgument(StringUtils.join(dbNamesToDump, StringUtils.SPACE));
         builder.setDestroyOnShutdown(true);
+        builder.setProcessListener(new ManagedProcessListener() {
+            @Override
+            public void onProcessComplete(int i) {
+                closeOutputStream();
+            }
+
+            @Override
+            public void onProcessFailed(int i, Throwable throwable) {
+                closeOutputStream();
+            }
+
+            private void closeOutputStream(){
+                try {
+                    outputStream.close();
+                } catch (IOException ignore) {
+                }
+            }
+        });
         return builder.build();
     }
 
