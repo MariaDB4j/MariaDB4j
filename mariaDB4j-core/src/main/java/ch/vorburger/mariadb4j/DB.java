@@ -125,7 +125,9 @@ public class DB {
     }
 
     private static File toWindowsPath(File file) throws IOException {
-        return new File(file.getCanonicalPath().replace(" ", "%20"));
+        // @see MariaDB4j Issue #501 Fix for spaces in data path doesn't work on windows
+        // https://github.com/vorburger/MariaDB4j/issues/501
+        return new File(file.getCanonicalPath());
     }
 
     /**
