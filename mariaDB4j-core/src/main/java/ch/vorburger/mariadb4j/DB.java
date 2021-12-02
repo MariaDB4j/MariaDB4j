@@ -119,15 +119,9 @@ public class DB {
             builder.addArgument("--skip-name-resolve");
             // builder.addArgument("--verbose");
         } else {
-            builder.addFileArgument("--datadir", toWindowsPath(dataDir));
+            builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
         }
         return builder.build();
-    }
-
-    private static File toWindowsPath(File file) throws IOException {
-        // @see MariaDB4j Issue #501 Fix for spaces in data path doesn't work on windows
-        // https://github.com/vorburger/MariaDB4j/issues/501
-        return new File(file.getCanonicalPath());
     }
 
     /**
@@ -195,7 +189,7 @@ public class DB {
         if (!configuration.isWindows()) {
             builder.addFileArgument("--datadir", dataDir);
         } else {
-            builder.addFileArgument("--datadir", toWindowsPath(dataDir));
+            builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
         }
         addPortAndMaybeSocketArguments(builder);
         for (String arg : configuration.getArgs()) {
@@ -511,13 +505,11 @@ public class DB {
         builder.addArgument(StringUtils.join(dbNamesToDump, StringUtils.SPACE));
         builder.setDestroyOnShutdown(true);
         builder.setProcessListener(new ManagedProcessListener() {
-            @Override
-            public void onProcessComplete(int i) {
+            @Override public void onProcessComplete(int i) {
                 closeOutputStream();
             }
 
-            @Override
-            public void onProcessFailed(int i, Throwable throwable) {
+            @Override public void onProcessFailed(int i, Throwable throwable) {
                 closeOutputStream();
             }
 
