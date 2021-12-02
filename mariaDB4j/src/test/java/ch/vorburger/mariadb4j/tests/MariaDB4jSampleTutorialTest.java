@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,14 +32,13 @@ import org.junit.Test;
 
 /**
  * Tests the functioning of MariaDB4j Sample / Tutorial illustrating how to use MariaDB4j.
- * 
+ *
  * @author Michael Vorburger
  * @author Michael Seaton
  */
 public class MariaDB4jSampleTutorialTest {
 
-    @Test
-    public void testEmbeddedMariaDB4j() throws Exception {
+    @Test public void testEmbeddedMariaDB4j() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         DB db = DB.newEmbeddedDB(config.build());
@@ -64,8 +63,7 @@ public class MariaDB4jSampleTutorialTest {
             qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
 
             // Should be able to select from a table
-            List<String> results = qr.query(conn, "SELECT * FROM hello",
-                    new ColumnListHandler<String>());
+            List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
             Assert.assertEquals(1, results.size());
             Assert.assertEquals("Hello, world", results.get(0));
 
@@ -82,8 +80,7 @@ public class MariaDB4jSampleTutorialTest {
         }
     }
 
-    @Test
-    public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
+    @Test public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         config.setSecurityDisabled(false);
@@ -109,21 +106,24 @@ public class MariaDB4jSampleTutorialTest {
             qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
 
             // Should be able to create a new user and grant privileges.
-            qr.update(conn, "CREATE USER 'testUser'@'localhost' IDENTIFIED BY 'superSecret'");
+            // NB: The "'" single quote and space in the password is intentional, to test argument escaping of db.source() below
+            qr.update(conn, "CREATE USER 'testUser'@'localhost' IDENTIFIED BY \"super Secret\"");
             qr.update(conn, "GRANT ALL PRIVILEGES ON mariaDB4jTestWSecurity.* TO 'testUser'@'localhost'");
 
-            //reconnect with the new user
-            conn = DriverManager.getConnection(config.getURL(dbName), "testUser", "superSecret");
+            // reconnect with the new user
+            conn = DriverManager.getConnection(config.getURL(dbName), "testUser", "super Secret");
 
             // Should be able to select from a table
-            List<String> results = qr.query(conn, "SELECT * FROM hello",
-                    new ColumnListHandler<String>());
+            List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
             Assert.assertEquals(1, results.size());
             Assert.assertEquals("Hello, world", results.get(0));
 
         } finally {
             DbUtils.closeQuietly(conn);
         }
+
+        // Should be able to source a SQL file into database for user with strange password
+        db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "testUser", "super Secret", dbName);
     }
 
 }

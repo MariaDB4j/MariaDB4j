@@ -349,13 +349,13 @@ public class DB {
             builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
             builder.setWorkingDirectory(baseDir);
             if (username != null && !username.isEmpty()) {
-                builder.addArgument("-u", username);
+                builder.addArgument("--user", "=", username);
             }
             if (password != null && !password.isEmpty()) {
-                builder.addArgument("-p", password);
+                builder.addArgument("--password", "=", password);
             }
             if (dbName != null && !dbName.isEmpty()) {
-                builder.addArgument("-D", dbName);
+                builder.addArgument("--database", "=", dbName);
             }
             if (force) {
                 builder.addArgument("-f");
@@ -509,13 +509,11 @@ public class DB {
         builder.addArgument(StringUtils.join(dbNamesToDump, StringUtils.SPACE));
         builder.setDestroyOnShutdown(true);
         builder.setProcessListener(new ManagedProcessListener() {
-            @Override
-            public void onProcessComplete(int i) {
+            @Override public void onProcessComplete(int i) {
                 closeOutputStream();
             }
 
-            @Override
-            public void onProcessFailed(int i, Throwable throwable) {
+            @Override public void onProcessFailed(int i, Throwable throwable) {
                 closeOutputStream();
             }
 
