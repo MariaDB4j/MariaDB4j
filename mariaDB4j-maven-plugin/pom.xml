@@ -207,18 +207,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <!-- Include slf4j-api in the plugin jar to ensure some versions of maven don't have logging issues.
                      Deprecate when min maven version is 3.3.9+ currently we allow 3.1.1+
                      see https://issues.apache.org/jira/browse/MNG-5787 for details.
