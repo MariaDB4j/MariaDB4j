@@ -114,6 +114,8 @@
                 </dependencies>
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
+					<!-- https://github.com/vorburger/MariaDB4j/issues/511 -->
+					<sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
