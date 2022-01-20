@@ -21,6 +21,7 @@ package ch.vorburger.mariadb4j.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import ch.vorburger.mariadb4j.DBConfiguration;
@@ -117,5 +118,21 @@ public class DBConfigurationBuilderTest {
         builder.setDeletingTemporaryBaseAndDataDirsOnShutdown(false);
         DBConfiguration config = builder.build();
         assertFalse(config.isDeletingTemporaryBaseAndDataDirsOnShutdown());
+    }
+
+    @Test public void defaultCharacterSet() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        String character = "utf8mb4";
+        builder.setDefaultCharacterSet(character);
+        DBConfiguration config = builder.build();
+        String defaultCharacterSet = config.getDefaultCharacterSet();
+        assertEquals(character, defaultCharacterSet);
+    }
+
+    @Test public void defaultCharacterSetIsEmpty() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration config = builder.build();
+        String defaultCharacterSet = config.getDefaultCharacterSet();
+        assertNull(defaultCharacterSet);
     }
 }

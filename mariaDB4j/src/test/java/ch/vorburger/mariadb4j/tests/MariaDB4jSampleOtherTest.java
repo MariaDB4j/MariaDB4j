@@ -87,4 +87,15 @@ public class MariaDB4jSampleOtherTest {
         db.stop();
     }
 
+    @Test public void customCharacterSet() throws Exception {
+        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+        config.setBaseDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/" + MariaDB4jSampleOtherTest.class.getName() + "customBaseDir");
+        config.setDefaultCharacterSet("utf8mb4");
+        DB db = DB.newEmbeddedDB(config.build());
+        db.start();
+        db.createDB("junittest");
+        db.source("ch/vorburger/mariadb4j/characterTest.sql");
+        db.stop();
+    }
+
 }

@@ -94,6 +94,8 @@ public interface DBConfiguration {
 
     String getURL(String dbName);
 
+    String getDefaultCharacterSet();
+
     static class Impl implements DBConfiguration {
 
         private final int port;
@@ -106,13 +108,15 @@ public interface DBConfiguration {
         private final boolean isWindows;
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
+        private String defaultCharacterSet;
         private final ManagedProcessListener listener;
         private final boolean isSecurityDisabled;
         private final Function<String, String> getURL;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
              boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
-             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, ManagedProcessListener listener) {
+             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL,
+             String defaultCharacterSet, ManagedProcessListener listener) {
             super();
             this.port = port;
             this.socket = socket;
@@ -126,6 +130,7 @@ public interface DBConfiguration {
             this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
             this.isSecurityDisabled = isSecurityDisabled;
             this.getURL = getURL;
+            this.defaultCharacterSet = defaultCharacterSet;
             this.listener = listener;
         }
 
@@ -192,6 +197,15 @@ public interface DBConfiguration {
         @Override
         public ManagedProcessListener getProcessListener() {
             return listener;
+        }
+
+        @Override
+        public String getDefaultCharacterSet() {
+            return defaultCharacterSet;
+        }
+
+        public void setDefaultCharacterSet(String defaultCharacterSet) {
+            this.defaultCharacterSet = defaultCharacterSet;
         }
     }
 
