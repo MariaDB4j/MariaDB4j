@@ -195,6 +195,9 @@ public class DB {
         for (String arg : configuration.getArgs()) {
             builder.addArgument(arg);
         }
+        if (StringUtils.isNotBlank(configuration.getDefaultCharacterSet())) {
+            builder.addArgument("--character-set-server=", configuration.getDefaultCharacterSet());
+        }
         cleanupOnExit();
         // because cleanupOnExit() just installed our (class DB) own
         // Shutdown hook, we don't need the one from ManagedProcess:
@@ -362,6 +365,9 @@ public class DB {
             }
             if (configuration.getProcessListener() != null) {
                 builder.setProcessListener(configuration.getProcessListener());
+            }
+            if (configuration.getDefaultCharacterSet() != null) {
+                builder.addArgument("--default-character-set=", configuration.getDefaultCharacterSet());
             }
 
             ManagedProcess process = builder.build();

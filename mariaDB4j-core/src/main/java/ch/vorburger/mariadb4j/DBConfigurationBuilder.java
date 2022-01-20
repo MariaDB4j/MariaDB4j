@@ -23,6 +23,7 @@ import ch.vorburger.exec.ManagedProcessListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.SystemUtils;
@@ -56,6 +57,8 @@ public class DBConfigurationBuilder {
 
     private boolean frozen = false;
     private ManagedProcessListener listener;
+
+    protected String defaultCharacterSet = null;
 
     public static DBConfigurationBuilder newBuilder() {
         return new DBConfigurationBuilder();
@@ -176,7 +179,7 @@ public class DBConfigurationBuilder {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
                 WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
-                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getProcessListener());
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getDefaultCharacterSet(), getProcessListener());
     }
 
     /**
@@ -314,4 +317,11 @@ public class DBConfigurationBuilder {
         return args;
     }
 
+    public void setDefaultCharacterSet(String defaultCharacterSet) {
+        this.defaultCharacterSet = defaultCharacterSet;
+    }
+
+    public String getDefaultCharacterSet() {
+        return defaultCharacterSet;
+    }
 }
