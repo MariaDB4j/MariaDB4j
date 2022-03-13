@@ -141,7 +141,7 @@
                 <scope>test</scope>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>4.3.1</version>
+                <version>4.4.0</version>
             </dependency>
             <dependency>
                 <scope>test</scope>
