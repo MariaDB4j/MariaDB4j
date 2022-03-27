@@ -117,7 +117,7 @@ public interface DBConfiguration {
         private final boolean isWindows;
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
-        private String defaultCharacterSet;
+        private final String defaultCharacterSet;
         private final ManagedProcessListener listener;
         private final boolean isSecurityDisabled;
         private final Function<String, String> getURL;
@@ -196,10 +196,6 @@ public interface DBConfiguration {
 
         @Override public String getDefaultCharacterSet() {
             return defaultCharacterSet;
-        }
-
-        public void setDefaultCharacterSet(String defaultCharacterSet) {
-            this.defaultCharacterSet = defaultCharacterSet;
         }
     }
 
