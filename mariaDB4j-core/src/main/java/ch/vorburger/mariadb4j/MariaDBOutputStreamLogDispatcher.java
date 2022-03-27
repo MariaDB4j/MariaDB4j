@@ -36,9 +36,8 @@ public class MariaDBOutputStreamLogDispatcher extends OutputStreamLogDispatcher 
         }
         if (line.contains("ERROR") || line.contains("error")) {
             return Level.ERROR;
-        } else {
-            return Level.INFO;
         }
+        return Level.INFO;
     }
 
 }
