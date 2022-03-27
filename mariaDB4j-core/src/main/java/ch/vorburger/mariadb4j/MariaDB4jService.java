@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,15 +30,15 @@ import javax.annotation.PreDestroy;
 /**
  * MariaDB4j starter "Service". This is basically just "sugar" - you can of course also use the DB
  * class directly instead of this convenience utility.
- * 
+ *
  * <p>This class does not depend on Spring, and is intended for direct "JavaBean" like usage, and may
  * be useful for DI containers such as Guice. When using Spring, then the MariaDB4jSpringService may
  * be of interest. If you're using Spring Boot, then have a look at the MariaDB4jApplication.
- * 
+ *
  * <p>The main() could be used typically from an IDE (waits for CR to shutdown..).
- * 
+ *
  * @see MariaDB4jSpringService
- * 
+ *
  * @author Michael Vorburger
  */
 public class MariaDB4jService {
@@ -47,14 +47,16 @@ public class MariaDB4jService {
     protected DBConfigurationBuilder configBuilder;
 
     public DB getDB() {
-        if (!isRunning())
+        if (!isRunning()) {
             throw new IllegalStateException("start() me up first!");
+        }
         return db;
     }
 
     public DBConfigurationBuilder getConfiguration() {
-        if (configBuilder == null)
+        if (configBuilder == null) {
             configBuilder = DBConfigurationBuilder.newBuilder();
+        }
         return configBuilder;
     }
 
@@ -68,8 +70,9 @@ public class MariaDB4jService {
     }
 
     public void start() throws ManagedProcessException {
-        if (isRunning())
+        if (isRunning()) {
             return;
+        }
         db = DB.newEmbeddedDB(getConfiguration().build());
         db.start();
     }
@@ -84,8 +87,9 @@ public class MariaDB4jService {
     }
 
     public void stop() throws ManagedProcessException {
-        if (!isRunning())
+        if (!isRunning()) {
             return;
+        }
         db.stop();
         db = null;
         configBuilder = null;

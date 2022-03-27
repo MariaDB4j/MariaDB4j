@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,8 +24,9 @@ import ch.vorburger.exec.ManagedProcessException;
 
 /**
  * Exception thrown when unexpected thing happen in {@link ManagedProcess} and
- * <a href="https://github.com/vorburger/MariaDB4j/issues/88">caller needs an unchecked instead of a checked exception</a>.
- * 
+ * <a href="https://github.com/vorburger/MariaDB4j/issues/88">caller needs an unchecked instead of a checked
+ * exception</a>.
+ *
  * @author Michael Vorburger.ch
  */
 public class ManagedProcessRuntimeException extends RuntimeException {
@@ -35,5 +36,4 @@ public class ManagedProcessRuntimeException extends RuntimeException {
     public ManagedProcessRuntimeException(ManagedProcessException original) {
         super(original.getMessage(), original.getCause());
     }
-
 }

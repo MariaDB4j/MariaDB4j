@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,39 +24,44 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Enables passing in custom options when starting up the database server This is the analog to
- * my.cnf
+ * Enables passing in custom options when starting up the database server.
+ * This is similar to MySQL/MariaDB's my.cnf configuration file.
  */
 public interface DBConfiguration {
 
-    /** 
-     * TCP Port to start DB server on. 
+    /**
+     * TCP Port to start DB server on.
+     *
      * @return returns port value
      **/
     int getPort();
 
-    /** 
-     * UNIX Socket to start DB server on (ignored on Windows). 
+    /**
+     * UNIX Socket to start DB server on (ignored on Windows).
+     *
      * @return returns socket value
      **/
     String getSocket();
 
     /**
      * Where from on the classpath should the binaries be extracted to the file system.
+     *
      * @return null (not empty) if nothing should be extracted.
      */
     String getBinariesClassPathLocation();
 
-    /** 
-     * Base directory where DB binaries are expected to be found. 
+    /**
+     * Base directory where DB binaries are expected to be found.
+     *
      * @return returns base directory value
      **/
     String getBaseDir();
 
     String getLibDir();
 
-    /** 
-     * Base directory for DB's actual data files. 
+    /**
+     * Base directory for DB's actual data files.
+     *
      * @return returns data directory value
      **/
     String getDataDir();
@@ -66,12 +71,14 @@ public interface DBConfiguration {
      * if it is in a temporary directory. NB: If you've set the
      * base and data directories to non temporary directories,
      * then they'll never get deleted.
+     *
      * @return returns value of isDeletingTemporaryBaseAndDataDirsOnShutdown
      */
     boolean isDeletingTemporaryBaseAndDataDirsOnShutdown();
 
-    /** 
-     * Whether running on Windows (some start-up parameters are different). 
+    /**
+     * Whether running on Windows (some start-up parameters are different).
+     *
      * @return returns boolean isWindows
      **/
     boolean isWindows();
@@ -81,13 +88,15 @@ public interface DBConfiguration {
     String getOSLibraryEnvironmentVarName();
 
     /**
-     * Returns an instance of @ManagedProcessListener class.
+     * Returns an instance of ManagedProcessListener class.
+     *
      * @return Process callback when DB process is killed or is completed
      */
     ManagedProcessListener getProcessListener();
 
-    /** 
-     * Whether to to "--skip-grant-tables". 
+    /**
+     * Whether to to "--skip-grant-tables".
+     *
      * @return returns boolean isSecurityDisabled value
      **/
     boolean isSecurityDisabled();
@@ -113,11 +122,10 @@ public interface DBConfiguration {
         private final boolean isSecurityDisabled;
         private final Function<String, String> getURL;
 
-        Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
-             boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
-             boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL,
-             String defaultCharacterSet, ManagedProcessListener listener) {
-            super();
+        Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir, boolean isWindows,
+                List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
+                boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, String defaultCharacterSet,
+                ManagedProcessListener listener) {
             this.port = port;
             this.socket = socket;
             this.binariesClassPathLocation = binariesClassPathLocation;
@@ -134,73 +142,59 @@ public interface DBConfiguration {
             this.listener = listener;
         }
 
-        @Override
-        public int getPort() {
+        @Override public int getPort() {
             return port;
         }
 
-        @Override
-        public String getSocket() {
+        @Override public String getSocket() {
             return socket;
         }
 
-        @Override
-        public String getBinariesClassPathLocation() {
+        @Override public String getBinariesClassPathLocation() {
             return binariesClassPathLocation;
         }
 
-        @Override
-        public String getBaseDir() {
+        @Override public String getBaseDir() {
             return baseDir;
         }
 
-        @Override
-        public String getLibDir() {
+        @Override public String getLibDir() {
             return libDir;
         }
 
-        @Override
-        public String getDataDir() {
+        @Override public String getDataDir() {
             return dataDir;
         }
 
-        @Override
-        public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
+        @Override public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
             return isDeletingTemporaryBaseAndDataDirsOnShutdown;
         }
 
-        @Override
-        public boolean isWindows() {
+        @Override public boolean isWindows() {
             return isWindows;
         }
 
-        @Override
-        public List<String> getArgs() {
+        @Override public List<String> getArgs() {
             return args;
         }
 
-        @Override
-        public String getOSLibraryEnvironmentVarName() {
+        @Override public String getOSLibraryEnvironmentVarName() {
             return osLibraryEnvironmentVarName;
         }
 
-        @Override
-        public boolean isSecurityDisabled() {
+        @Override public boolean isSecurityDisabled() {
             return isSecurityDisabled;
         }
 
-        @Override
-        public String getURL(String dbName) {
+        @Override public String getURL(String dbName) {
             return getURL.apply(dbName);
         }
 
-        @Override
-        public ManagedProcessListener getProcessListener() {
+        @Override public ManagedProcessListener getProcessListener() {
             return listener;
         }
 
-        @Override
-        public String getDefaultCharacterSet() {
+        @Override public String getDefaultCharacterSet() {
             return defaultCharacterSet;
         }
 

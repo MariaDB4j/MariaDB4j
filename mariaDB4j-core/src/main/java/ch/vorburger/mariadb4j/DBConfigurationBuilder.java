@@ -23,7 +23,6 @@ import ch.vorburger.exec.ManagedProcessListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.SystemUtils;
@@ -42,8 +41,7 @@ public class DBConfigurationBuilder {
     private String databaseVersion = null;
 
     // all these are just some defaults
-    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32
-            : SystemUtils.IS_OS_MAC ? OSX : LINUX;
+    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32 : SystemUtils.IS_OS_MAC ? OSX : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
     protected String libDir = null;
 
@@ -52,7 +50,7 @@ public class DBConfigurationBuilder {
     protected int port = 0;
     protected boolean isDeletingTemporaryBaseAndDataDirsOnShutdown = true;
     protected boolean isUnpackingFromClasspath = true;
-    protected List<String> args = new ArrayList<String>();
+    protected List<String> args = new ArrayList<>();
     private boolean isSecurityDisabled = true;
 
     private boolean frozen = false;
@@ -64,11 +62,13 @@ public class DBConfigurationBuilder {
         return new DBConfigurationBuilder();
     }
 
-    protected DBConfigurationBuilder() {}
+    protected DBConfigurationBuilder() {
+    }
 
     protected void checkIfFrozen(String setterName) {
-        if (frozen)
+        if (frozen) {
             throw new IllegalStateException("cannot " + setterName + "() anymore after build()");
+        }
     }
 
     public String getBaseDir() {
@@ -82,10 +82,10 @@ public class DBConfigurationBuilder {
     }
 
     public String getLibDir() {
-        if (libDir == null)
+        if (libDir == null) {
             return baseDir + "/libs";
-        else
-            return libDir;
+        }
+        return libDir;
     }
 
     public DBConfigurationBuilder setLibDir(String libDir) {
@@ -122,6 +122,7 @@ public class DBConfigurationBuilder {
 
     /**
      * Set a custom process listener to listen to DB start/shutdown events.
+     *
      * @param listener custom listener
      * @return this
      */
@@ -142,13 +143,14 @@ public class DBConfigurationBuilder {
      * Defines if the configured data and base directories should be deleted on shutdown.
      * If you've set the base and data directories to non temporary directories
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
-     * then they'll also never get deleted anyway. 
+     * then they'll also never get deleted anyway.
+     *
      * @param doDelete Default valule is true, set false to override
      * @return returns this
      */
     public DBConfigurationBuilder setDeletingTemporaryBaseAndDataDirsOnShutdown(boolean doDelete) {
         checkIfFrozen("keepsDataAndBaseDir");
-        this.isDeletingTemporaryBaseAndDataDirsOnShutdown = doDelete;
+        isDeletingTemporaryBaseAndDataDirsOnShutdown = doDelete;
         return this;
     }
 
@@ -184,6 +186,7 @@ public class DBConfigurationBuilder {
 
     /**
      * Whether to to "--skip-grant-tables" (defaults to true).
+     *
      * @param isSecurityDisabled set isSecurityDisabled value
      * @return returns this
      */
@@ -204,20 +207,20 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getDataDir() {
-        if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR))
+        if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR)) {
             return DEFAULT_DATA_DIR + File.separator + getPort();
-        else
-            return getDataDir();
+        }
+        return getDataDir();
     }
 
     protected boolean isNull(String string) {
-        if (string == null)
+        if (string == null) {
             return true;
+        }
         String trim = string.trim();
-        if (trim.length() == 0)
+        if ((trim.length() == 0) || trim.equalsIgnoreCase("null")) {
             return true;
-        if (trim.equalsIgnoreCase("null"))
-            return true;
+        }
         return false;
     }
 
@@ -253,17 +256,12 @@ public class DBConfigurationBuilder {
     protected String _getDatabaseVersion() {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
-            if (OSX.equals(getOS()))
+            if (OSX.equals(getOS()) || LINUX.equals(getOS()) || WIN32.equals(getOS())) {
                 databaseVersion = "mariadb-10.2.11";
-            else if (LINUX.equals(getOS()))
-                databaseVersion = "mariadb-10.2.11";
-            else if (WIN32.equals(getOS()))
-                databaseVersion = "mariadb-10.2.11";
-            else
-                throw new IllegalStateException(
-                        "OS not directly supported, please use setDatabaseVersion() to set the name "
-                                + "of the package that the binaries are in, for: "
-                                + SystemUtils.OS_VERSION);
+            } else {
+                throw new IllegalStateException("OS not directly supported, please use setDatabaseVersion() to set the name "
+                        + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
+            }
         }
         return databaseVersion;
     }
@@ -287,16 +285,14 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getOSLibraryEnvironmentVarName() {
-        return SystemUtils.IS_OS_WINDOWS ? "PATH"
-                : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH "
-                        : "LD_LIBRARY_PATH";
+        return SystemUtils.IS_OS_WINDOWS ? "PATH" : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH " : "LD_LIBRARY_PATH";
     }
 
     protected String _getBinariesClassPathLocation() {
-        if (isUnpackingFromClasspath)
+        if (isUnpackingFromClasspath) {
             return getBinariesClassPathLocation();
-        else
-            return null; // see ch.vorburger.mariadb4j.DB.unpackEmbeddedDb()
+        }
+        return null; // see ch.vorburger.mariadb4j.DB.unpackEmbeddedDb()
     }
 
     public boolean isUnpackingFromClasspath() {
@@ -310,7 +306,7 @@ public class DBConfigurationBuilder {
     }
 
     public String getURL(String databaseName) {
-        return "jdbc:mysql://localhost:" + this.getPort() + "/" + databaseName;
+        return "jdbc:mysql://localhost:" + getPort() + "/" + databaseName;
     }
 
     public List<String> _getArgs() {
