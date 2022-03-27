@@ -14,6 +14,8 @@ jdk:
 #  - .mvn
 
 before_install:
+  - sudo apt update
+  - sudo apt -y install libncurses5
 # TODO uncomment this when raising a PR to fix https://github.com/vorburger/MariaDB4j/issues/484
 #  - mvn -f DBs/pom.xml clean install
 
