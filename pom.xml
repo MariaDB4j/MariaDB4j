@@ -41,11 +41,8 @@
 	<properties>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		 <springboot.version>2.6.5</springboot.version>
-         <!-- TODO when ^^^ springboot.version is 2.6.2 instead of 2.6.1,
-                 then remove the dependencyManagement for log4j at the end of this file;
-                 see https://github.com/vorburger/MariaDB4j/issues/509. -->
-		 <maven.compiler.source>1.8</maven.compiler.source>
-		 <maven.compiler.target>1.8</maven.compiler.target>
+		 <maven.compiler.source>11</maven.compiler.source>
+		 <maven.compiler.target>11</maven.compiler.target>
 	</properties>
 
 	<build>
