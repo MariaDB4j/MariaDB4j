@@ -284,7 +284,7 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getOSLibraryEnvironmentVarName() {
-        return SystemUtils.IS_OS_WINDOWS ? "PATH" : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH " : "LD_LIBRARY_PATH";
+        return SystemUtils.IS_OS_WINDOWS ? "PATH" : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
     }
 
     protected String _getBinariesClassPathLocation() {
