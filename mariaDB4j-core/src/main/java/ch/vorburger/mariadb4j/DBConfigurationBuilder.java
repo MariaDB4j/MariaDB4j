@@ -218,7 +218,7 @@ public class DBConfigurationBuilder {
             return true;
         }
         String trim = string.trim();
-        if ((trim.length() == 0) || trim.equalsIgnoreCase("null")) {
+        if (trim.length() == 0 || trim.equalsIgnoreCase("null")) {
             return true;
         }
         return false;
@@ -256,12 +256,11 @@ public class DBConfigurationBuilder {
     protected String _getDatabaseVersion() {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
-            if (OSX.equals(getOS()) || LINUX.equals(getOS()) || WIN32.equals(getOS())) {
-                databaseVersion = "mariadb-10.2.11";
-            } else {
+            if (!OSX.equals(getOS()) && !LINUX.equals(getOS()) && !WIN32.equals(getOS())) {
                 throw new IllegalStateException("OS not directly supported, please use setDatabaseVersion() to set the name "
                         + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
             }
+            databaseVersion = "mariadb-10.2.11";
         }
         return databaseVersion;
     }
