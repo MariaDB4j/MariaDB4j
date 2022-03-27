@@ -15,7 +15,8 @@ jdk:
 
 before_install:
   - sudo apt update
-  - sudo apt -y install libncurses5
+  - sudo apt remove mysql-server mysql-common
+  - sudo apt install libncurses5 mariadb-server
 # TODO uncomment this when raising a PR to fix https://github.com/vorburger/MariaDB4j/issues/484
 #  - mvn -f DBs/pom.xml clean install
 
