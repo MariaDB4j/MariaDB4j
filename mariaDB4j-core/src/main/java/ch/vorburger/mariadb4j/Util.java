@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,14 +40,15 @@ public class Util {
 
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
-    private Util() {}
+    private Util() {
+    }
 
     /**
      * Retrieve the directory located at the given path. Checks that path indeed is a reabable
      * directory. If this does not exist, create it (and log having done so).
      *
      * @param path directory(ies, can include parent directories) names, as forward slash ('/')
-     *            separated String
+     *             separated String
      * @return safe File object representing that path name
      * @throws IllegalArgumentException If it is not a directory, or it is not readable
      */
@@ -92,12 +93,11 @@ public class Util {
         if (executableFile.exists()) {
             if (!executableFile.canExecute()) {
                 boolean succeeded = executableFile.setExecutable(true);
-                if (succeeded) {
-                    logger.info("chmod +x {} (using java.io.File.setExecutable)", executableFile);
-                } else {
+                if (!succeeded) {
                     throw new IOException("Failed to do chmod +x " + executableFile.toString()
                             + " using java.io.File.setExecutable, which will be a problem on *NIX...");
                 }
+                logger.info("chmod +x {} (using java.io.File.setExecutable)", executableFile);
             }
         } else {
             logger.info("chmod +x requested on non-existing file: {}", executableFile);
@@ -108,10 +108,10 @@ public class Util {
      * Extract files from a package on the classpath into a directory.
      *
      * @param packagePath e.g. "com/stuff" (always forward slash not backslash, never dot)
-     * @param toDir directory to extract to
+     * @param toDir       directory to extract to
      * @return int the number of files copied
      * @throws java.io.IOException if something goes wrong, including if nothing was found on
-     *             classpath
+     *                             classpath
      */
     public static int extractFromClasspathToFile(String packagePath, File toDir) throws IOException {
         String locationPattern = "classpath*:" + packagePath + "/**";
@@ -131,27 +131,20 @@ public class Util {
                     final File targetFile = new File(toDir, path);
                     long len = resource.contentLength();
                     if (!targetFile.exists() || targetFile.length() != len) { // Only copy new files
-                        tryN(5, 500, new Procedure<IOException>() {
-
-                            @Override
-                            public void apply() throws IOException {
-                                FileUtils.copyURLToFile(url, targetFile);
-                            }
-                        });
+                        tryN(5, 500, () -> FileUtils.copyURLToFile(url, targetFile));
                         counter++;
                     }
                 }
             }
         }
         if (counter > 0) {
-            Object[] info = new Object[] { counter, locationPattern, toDir };
+            Object[] info = { counter, locationPattern, toDir };
             logger.info("Unpacked {} files from {} to {}", info);
         }
         return counter;
     }
 
-    @SuppressWarnings("null")
-    private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
+    @SuppressWarnings("null") private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
         IOException lastIOException = null;
         int numAttempts = 0;
         while (numAttempts++ < n) {
@@ -171,7 +164,7 @@ public class Util {
         throw lastIOException;
     }
 
-    private static interface Procedure<E extends Throwable> {
+    private interface Procedure<E extends Throwable> {
 
         void apply() throws E;
     }
