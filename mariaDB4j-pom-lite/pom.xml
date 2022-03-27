@@ -95,22 +95,6 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                      <version>2.10.4</version>
-                      <configuration>
-                          <quiet>true</quiet>
-                      </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            
-            <plugin>
                 <groupId>com.alexecollins.maven.plugin</groupId>
                 <artifactId>script-maven-plugin</artifactId>
                 <version>1.0.0</version>
