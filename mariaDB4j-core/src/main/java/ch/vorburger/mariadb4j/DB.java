@@ -19,11 +19,18 @@
  */
 package ch.vorburger.mariadb4j;
 
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Client;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.PrintDefaults;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.exec.ManagedProcessListener;
 import ch.vorburger.exec.OutputStreamLogDispatcher;
+import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -99,14 +106,7 @@ public class DB {
 
     protected ManagedProcess createDBInstallProcess() throws ManagedProcessException, IOException {
         logger.info("Installing a new embedded database to: " + baseDir);
-        File installDbCmdFile = newExecutableFile("bin", "mysql_install_db");
-        if (!installDbCmdFile.exists()) {
-            installDbCmdFile = newExecutableFile("scripts", "mysql_install_db");
-        }
-        if (!installDbCmdFile.exists()) {
-            throw new ManagedProcessException(
-                    "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
-        }
+        File installDbCmdFile = configuration.getExecutable(Executable.InstallDB);
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
@@ -140,10 +140,6 @@ public class DB {
         logger.info("Installation complete.");
     }
 
-    protected String getWinExeExt() {
-        return configuration.isWindows() ? ".exe" : "";
-    }
-
     /**
      * Starts up the database, using the data directory and port specified in the configuration.
      *
@@ -170,11 +166,11 @@ public class DB {
     }
 
     protected String getReadyForConnectionsTag() {
-        return "mysqld" + getWinExeExt() + ": ready for connections.";
+        return ": ready for connections.";
     }
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Server));
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqld"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
@@ -213,10 +209,6 @@ public class DB {
             }
         }
         return false;
-    }
-
-    protected File newExecutableFile(String dir, String exec) {
-        return new File(baseDir, dir + "/" + exec + getWinExeExt());
     }
 
     protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder) throws IOException {
@@ -344,7 +336,7 @@ public class DB {
             throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
         try {
-            ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysql"));
+            ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Client));
             builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
             builder.setWorkingDirectory(baseDir);
             if (username != null && !username.isEmpty()) {
@@ -419,12 +411,11 @@ public class DB {
         try {
             Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
             if (!configuration.isWindows()) {
-                Util.forceExecutable(newExecutableFile("bin", "my_print_defaults"));
-                Util.forceExecutable(newExecutableFile("bin", "mysql_install_db"));
-                Util.forceExecutable(newExecutableFile("scripts", "mysql_install_db"));
-                Util.forceExecutable(newExecutableFile("bin", "mysqld"));
-                Util.forceExecutable(newExecutableFile("bin", "mysqldump"));
-                Util.forceExecutable(newExecutableFile("bin", "mysql"));
+                Util.forceExecutable(configuration.getExecutable(PrintDefaults));
+                Util.forceExecutable(configuration.getExecutable(InstallDB));
+                Util.forceExecutable(configuration.getExecutable(Server));
+                Util.forceExecutable(configuration.getExecutable(Dump));
+                Util.forceExecutable(configuration.getExecutable(Client));
             }
         } catch (IOException e) {
             throw new RuntimeException("Error unpacking embedded DB", e);
@@ -482,7 +473,7 @@ public class DB {
     protected ManagedProcess dump(File outputFile, List<String> dbNamesToDump, boolean compactDump, boolean lockTables, boolean asXml,
             String user, String password) throws ManagedProcessException, IOException {
 
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqldump"));
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Dump));
 
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
         builder.addStdOut(outputStream);

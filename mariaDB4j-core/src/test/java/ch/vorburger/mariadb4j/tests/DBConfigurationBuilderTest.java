@@ -25,8 +25,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import ch.vorburger.mariadb4j.DBConfiguration;
+import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.Util;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -134,5 +136,18 @@ public class DBConfigurationBuilderTest {
         DBConfiguration config = builder.build();
         String defaultCharacterSet = config.getDefaultCharacterSet();
         assertNull(defaultCharacterSet);
+    }
+
+    @Test public void defaultExecutables() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration config = builder.build();
+        assertTrue(config.getExecutable(Executable.Server).toString().contains("MariaDB4j/base/bin/mysqld"));
+    }
+
+    @Test public void customExecutables() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        builder.setExecutable(Executable.Server, "/usr/sbin/mariadbd");
+        DBConfiguration config = builder.build();
+        assertEquals(new File("/usr/sbin/mariadbd"), config.getExecutable(Executable.Server));
     }
 }

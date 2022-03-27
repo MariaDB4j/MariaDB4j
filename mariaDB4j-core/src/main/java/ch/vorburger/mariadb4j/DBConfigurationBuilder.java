@@ -19,12 +19,23 @@
  */
 package ch.vorburger.mariadb4j;
 
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Client;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.PrintDefaults;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+import static java.util.Objects.requireNonNull;
+
 import ch.vorburger.exec.ManagedProcessListener;
+import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import org.apache.commons.lang3.SystemUtils;
 
 /**
@@ -57,6 +68,7 @@ public class DBConfigurationBuilder {
     private ManagedProcessListener listener;
 
     protected String defaultCharacterSet = null;
+    protected Map<Executable, Supplier<File>> executables = new HashMap<>();
 
     public static DBConfigurationBuilder newBuilder() {
         return new DBConfigurationBuilder();
@@ -180,8 +192,9 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                WIN32.equals(getOS()), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
-                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getDefaultCharacterSet(), getProcessListener());
+                isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getDefaultCharacterSet(), _getExecutables(),
+                getProcessListener());
     }
 
     /**
@@ -312,11 +325,49 @@ public class DBConfigurationBuilder {
         return args;
     }
 
-    public void setDefaultCharacterSet(String defaultCharacterSet) {
+    public DBConfigurationBuilder setDefaultCharacterSet(String defaultCharacterSet) {
+        checkIfFrozen("setDefaultCharacterSet");
         this.defaultCharacterSet = defaultCharacterSet;
+        return this;
     }
 
     public String getDefaultCharacterSet() {
         return defaultCharacterSet;
+    }
+
+    public DBConfigurationBuilder setExecutable(Executable executable, String path) {
+        checkIfFrozen("setExecutable");
+        executables.put(requireNonNull(executable, "executable"), () -> new File(requireNonNull(path, "path")));
+        return this;
+    }
+
+    public DBConfigurationBuilder setExecutable(Executable executable, Supplier<File> pathSupplier) {
+        checkIfFrozen("setExecutable");
+        executables.put(requireNonNull(executable, "executable"), requireNonNull(pathSupplier, "pathSupplier"));
+        return this;
+    }
+
+    protected Map<Executable, Supplier<File>> _getExecutables() {
+        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/mysqld" + getExtension()));
+        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/mysql" + getExtension()));
+        executables.putIfAbsent(Dump, () -> new File(baseDir, "bin/mysqldump" + getExtension()));
+        executables.putIfAbsent(PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
+        executables.putIfAbsent(InstallDB, () -> {
+            File bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
+            if (bin.exists()) {
+                return bin;
+            }
+            return new File(baseDir, "scripts/mysql_install_db" + getExtension());
+        });
+
+        return executables;
+    }
+
+    public boolean isWindows() {
+        return WIN32.equals(getOS());
+    }
+
+    protected String getExtension() {
+        return isWindows() ? ".exe" : "";
     }
 }

@@ -20,8 +20,11 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Enables passing in custom options when starting up the database server.
@@ -105,6 +108,12 @@ public interface DBConfiguration {
 
     String getDefaultCharacterSet();
 
+    File getExecutable(Executable executable);
+
+    enum Executable {
+        InstallDB, Server, Client, Dump, PrintDefaults
+    }
+
     static class Impl implements DBConfiguration {
 
         private final int port;
@@ -121,11 +130,12 @@ public interface DBConfiguration {
         private final ManagedProcessListener listener;
         private final boolean isSecurityDisabled;
         private final Function<String, String> getURL;
+        private final Map<Executable, Supplier<File>> executables;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir, boolean isWindows,
                 List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
                 boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, String defaultCharacterSet,
-                ManagedProcessListener listener) {
+                Map<Executable, Supplier<File>> executables, ManagedProcessListener listener) {
             this.port = port;
             this.socket = socket;
             this.binariesClassPathLocation = binariesClassPathLocation;
@@ -140,6 +150,7 @@ public interface DBConfiguration {
             this.getURL = getURL;
             this.defaultCharacterSet = defaultCharacterSet;
             this.listener = listener;
+            this.executables = executables;
         }
 
         @Override public int getPort() {
@@ -197,6 +208,11 @@ public interface DBConfiguration {
         @Override public String getDefaultCharacterSet() {
             return defaultCharacterSet;
         }
-    }
 
+        @Override public File getExecutable(Executable executable) {
+            return executables.getOrDefault(executable, () -> {
+                throw new IllegalArgumentException(executable.name());
+            }).get();
+        }
+    }
 }
