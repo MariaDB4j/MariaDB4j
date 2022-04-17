@@ -339,7 +339,7 @@ public class DB {
             ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Client));
             builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
             builder.setWorkingDirectory(baseDir);
-            builder.addArgument("--default-character-set", "utf8");
+            builder.addArgument("--default-character-set=utf8");
             if (username != null && !username.isEmpty()) {
                 builder.addArgument("-u", username);
             }
