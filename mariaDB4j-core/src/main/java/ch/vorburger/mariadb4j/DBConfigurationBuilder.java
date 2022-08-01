@@ -49,6 +49,8 @@ public class DBConfigurationBuilder {
 
     private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 
+    private static final String DEFAULT_TMP_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/tmp";
+
     private String databaseVersion = null;
 
     // all these are just some defaults
@@ -57,6 +59,7 @@ public class DBConfigurationBuilder {
     protected String libDir = null;
 
     protected String dataDir = DEFAULT_DATA_DIR;
+    protected String tmpDir = DEFAULT_TMP_DIR;
     protected String socket = null; // see _getSocket()
     protected int port = 0;
     protected boolean isDeletingTemporaryBaseAndDataDirsOnShutdown = true;
@@ -113,6 +116,16 @@ public class DBConfigurationBuilder {
     public DBConfigurationBuilder setDataDir(String dataDir) {
         checkIfFrozen("setDataDir");
         this.dataDir = dataDir;
+        return this;
+    }
+
+    public String getTmpDir() {
+        return tmpDir;
+    }
+
+    public DBConfigurationBuilder setTmpDir(String tmpDir) {
+        checkIfFrozen("setTmpDir");
+        this.tmpDir = tmpDir;
         return this;
     }
 
@@ -192,7 +205,7 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
+                _getTmpDir(), isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
                 isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getDefaultCharacterSet(), _getExecutables(),
                 getProcessListener());
     }
@@ -224,6 +237,13 @@ public class DBConfigurationBuilder {
             return DEFAULT_DATA_DIR + File.separator + getPort();
         }
         return getDataDir();
+    }
+
+    protected String _getTmpDir() {
+        if (isNull(getTmpDir()) || getTmpDir().equals(DEFAULT_TMP_DIR)) {
+            return DEFAULT_TMP_DIR + File.separator + getPort();
+        }
+        return getTmpDir();
     }
 
     protected boolean isNull(String string) {

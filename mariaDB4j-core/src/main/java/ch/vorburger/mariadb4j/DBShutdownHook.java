@@ -66,16 +66,18 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
     private final Supplier<ManagedProcess> mysqldProcessSupplier;
     private final Supplier<File> dataDirSupplier;
     private final Supplier<File> baseDirSupplier;
+    private final Supplier<File> tmpDirSupplier;
     private final DBConfiguration configuration;
     private final LinkOption[] linkOptions = {};
 
     public DBShutdownHook(String threadName, DB db, Supplier<ManagedProcess> mysqldProcessSupplier, Supplier<File> baseDirSupplier,
-            Supplier<File> dataDirSupplier, DBConfiguration configuration) {
+            Supplier<File> tmpDirSupplier, Supplier<File> dataDirSupplier, DBConfiguration configuration) {
         super(threadName);
         this.db = db;
         this.mysqldProcessSupplier = mysqldProcessSupplier;
         this.baseDirSupplier = baseDirSupplier;
         this.dataDirSupplier = dataDirSupplier;
+        this.tmpDirSupplier = tmpDirSupplier;
         this.configuration = configuration;
     }
 
@@ -283,8 +285,6 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
 
     @Override public void run() {
         ManagedProcess mysqldProcess = mysqldProcessSupplier.get();
-        File dataDir = dataDirSupplier.get();
-        File baseDir = baseDirSupplier.get();
         // ManagedProcess DestroyOnShutdown ProcessDestroyer does
         // something similar, but it shouldn't hurt to better be save
         // than sorry and do it again ourselves here as well.
@@ -298,15 +298,22 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
             logger.warn("cleanupOnExit() ShutdownHook: An error occurred while stopping the database", e);
         }
 
+        File dataDir = dataDirSupplier.get();
         if (dataDir.exists() && configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
                 && Util.isTemporaryDirectory(dataDir.getAbsolutePath())) {
             logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: " + dataDir);
             deleteQuietly(dataDir);
         }
+        File baseDir = baseDirSupplier.get();
         if (baseDir.exists() && configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
                 && Util.isTemporaryDirectory(baseDir.getAbsolutePath())) {
             logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: " + baseDir);
             deleteQuietly(baseDir);
+        }
+        File tmpDir = tmpDirSupplier.get();
+        if (tmpDir.exists() && Util.isTemporaryDirectory(tmpDir.getAbsolutePath())) {
+            logger.info("cleanupOnExit() ShutdownHook quietly deleting temporary DB tmp directory: " + tmpDir);
+            deleteQuietly(tmpDir);
         }
     }
 }
