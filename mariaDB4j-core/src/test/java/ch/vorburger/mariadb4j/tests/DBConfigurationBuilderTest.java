@@ -78,6 +78,48 @@ public class DBConfigurationBuilderTest {
         assertTrue(defaultDataDir.contains(Integer.toString(port)));
     }
 
+    @Test public void defaultTmpDirIsTemporaryAndIncludesPortNumber() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        DBConfiguration config = builder.build();
+        String defaultTmpDir = config.getTmpDir();
+        assertTrue(Util.isTemporaryDirectory(defaultTmpDir));
+        int port = config.getPort();
+        assertTrue(defaultTmpDir.contains(Integer.toString(port)));
+    }
+
+    @Test public void defaultTmpDirIsTemporaryAndIncludesPortNumberEvenIfPortIsExplicitlySet() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        builder.setPort(12345);
+        DBConfiguration config = builder.build();
+        String defaultTmpDir = config.getTmpDir();
+        assertTrue(Util.isTemporaryDirectory(defaultTmpDir));
+        assertTrue(defaultTmpDir.contains(Integer.toString(12345)));
+    }
+
+    @Test public void tmpDirDoesNotIncludePortNumberEvenItsExplicitlySet() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        builder.setTmpDir("db/tmp");
+        DBConfiguration config = builder.build();
+        String defaultTmpDir = config.getTmpDir();
+        assertEquals("db/tmp", defaultTmpDir);
+        assertFalse(Util.isTemporaryDirectory(defaultTmpDir));
+    }
+
+    @Test public void resetTmpDirToDefaultTemporary() {
+        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
+        builder.setTmpDir("db/tmp");
+        assertEquals("db/tmp", builder.getTmpDir());
+        builder.setTmpDir(null);
+        assertEquals(null, builder.getTmpDir());
+        builder.setTmpDir("null");
+        assertEquals("null", builder.getTmpDir());
+        DBConfiguration config = builder.build();
+        String defaultTmpDir = config.getTmpDir();
+        assertTrue(Util.isTemporaryDirectory(defaultTmpDir));
+        int port = config.getPort();
+        assertTrue(defaultTmpDir.contains(Integer.toString(port)));
+    }
+
     @Test public void defaultLibDirIsRelativeToBaseDir() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();

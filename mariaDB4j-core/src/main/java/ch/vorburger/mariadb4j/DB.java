@@ -61,6 +61,7 @@ public class DB {
     private File baseDir;
     private File libDir;
     private File dataDir;
+    private File tmpDir;
     private ManagedProcess mysqldProcess;
 
     protected int dbStartMaxWaitInMS = 30000;
@@ -113,6 +114,7 @@ public class DB {
         builder.setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
             builder.addFileArgument("--datadir", dataDir);
+            builder.addFileArgument("--tmpdir", tmpDir);
             builder.addFileArgument("--basedir", baseDir);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
@@ -120,6 +122,7 @@ public class DB {
             // builder.addArgument("--verbose");
         } else {
             builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
+            builder.addFileArgument("--tmpdir", tmpDir.getCanonicalFile());
         }
         return builder.build();
     }
@@ -184,8 +187,10 @@ public class DB {
         builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
             builder.addFileArgument("--datadir", dataDir);
+            builder.addFileArgument("--tmpdir", tmpDir);
         } else {
             builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
+            builder.addFileArgument("--tmpdir", tmpDir.getCanonicalFile());
         }
         addPortAndMaybeSocketArguments(builder);
         for (String arg : configuration.getArgs()) {
@@ -432,6 +437,7 @@ public class DB {
     protected void prepareDirectories() throws ManagedProcessException {
         baseDir = Util.getDirectory(configuration.getBaseDir());
         libDir = Util.getDirectory(configuration.getLibDir());
+        tmpDir = Util.getDirectory(configuration.getTmpDir());
         try {
             String dataDirPath = configuration.getDataDir();
             if (Util.isTemporaryDirectory(dataDirPath)) {
@@ -450,8 +456,9 @@ public class DB {
     protected void cleanupOnExit() {
         String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + dataDir.toString();
         final DB db = this;
-        Runtime.getRuntime()
-                .addShutdownHook(new DBShutdownHook(threadName, db, () -> mysqldProcess, () -> baseDir, () -> dataDir, configuration));
+        Runtime.getRuntime().addShutdownHook(
+            new DBShutdownHook(threadName, db, () -> mysqldProcess, () -> baseDir, () -> dataDir, () -> tmpDir, configuration)
+        );
     }
 
     // The dump*() methods are intentionally *NOT* made "synchronized",

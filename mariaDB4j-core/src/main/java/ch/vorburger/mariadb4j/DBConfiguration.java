@@ -70,6 +70,13 @@ public interface DBConfiguration {
     String getDataDir();
 
     /**
+     * Directory for DB's temporary files.
+     *
+     * @return returns temporary directory value
+     **/
+    String getTmpDir();
+
+    /**
      * Whether to delete the base and data directory on shutdown,
      * if it is in a temporary directory. NB: If you've set the
      * base and data directories to non temporary directories,
@@ -122,6 +129,7 @@ public interface DBConfiguration {
         private final String baseDir;
         private final String libDir;
         private final String dataDir;
+        private final String tmpDir;
         private final boolean isDeletingTemporaryBaseAndDataDirsOnShutdown;
         private final boolean isWindows;
         private final List<String> args;
@@ -132,8 +140,8 @@ public interface DBConfiguration {
         private final Function<String, String> getURL;
         private final Map<Executable, Supplier<File>> executables;
 
-        Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir, boolean isWindows,
-                List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
+        Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir, String tmpDir,
+                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
                 boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, String defaultCharacterSet,
                 Map<Executable, Supplier<File>> executables, ManagedProcessListener listener) {
             this.port = port;
@@ -142,6 +150,7 @@ public interface DBConfiguration {
             this.baseDir = baseDir;
             this.libDir = libDir;
             this.dataDir = dataDir;
+            this.tmpDir = tmpDir;
             this.isDeletingTemporaryBaseAndDataDirsOnShutdown = isDeletingTemporaryBaseAndDataDirsOnShutdown;
             this.isWindows = isWindows;
             this.args = args;
@@ -175,6 +184,10 @@ public interface DBConfiguration {
 
         @Override public String getDataDir() {
             return dataDir;
+        }
+
+        @Override public String getTmpDir() {
+            return tmpDir;
         }
 
         @Override public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {

@@ -47,6 +47,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String PORT = "mariaDB4j.port";
     public final static String SOCKET = "mariaDB4j.socket";
     public final static String DATA_DIR = "mariaDB4j.dataDir";
+    public final static String TMP_DIR = "mariaDB4j.tmpDir";
     public final static String BASE_DIR = "mariaDB4j.baseDir";
     public final static String LIB_DIR = "mariaDB4j.libDir";
     public final static String UNPACK = "mariaDB4j.unpack";
@@ -70,6 +71,12 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public void setDefaultDataDir(String dataDir) {
         if (!"NA".equals(dataDir))
             getConfiguration().setDataDir(dataDir);
+    }
+
+    @Value("${" + TMP_DIR + ":NA}")
+    public void setDefaultTmpDir(String tmpDir) {
+        if (!"NA".equals(tmpDir))
+            getConfiguration().setTmpDir(tmpDir);
     }
 
     @Value("${" + BASE_DIR + ":NA}")
