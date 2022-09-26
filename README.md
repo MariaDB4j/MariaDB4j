@@ -57,6 +57,29 @@ db.source("path/to/resource.sql");
 If you would like to / need to start a specific DB version you already have, instead of the version currently
 packaged in the JAR, you can use `DBConfigurationBuilder setUnpackingFromClasspath(false) & setBaseDir("/my/db/")` or `-DmariaDB4j.unpack=false -DmariaDB4j.baseDir=/home/you/stuff/myFavouritemMariadDBVersion`.   Similarly, you can also pack your own version in a JAR and put it on the classpath, and `@Override getBinariesClassPathLocation()` in `DBConfigurationBuilder` to return where to find it (check the source of the default implementation).
 
+How (using existing native MariaDB binaries)
+----
+MariaDB4j supports using existing native MariaDB binaries on the host system rather than unpacking MariaDB from the
+classpath. You can control this via the `DBConfigurationBuilder`:
+
+```java
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+
+DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+config.setPort(0); // 0 => autom. detect free port
+config.setUnpackingFromClasspath(false);
+config.setLibDir(System.getProperty("java.io.tmpdir") + "/MariaDB4j/no-libs");
+
+// On Linux it may be necessary to set both the base dir and the server executable
+// as the `mysqld` binary lives in `/usr/sbin` rather than `/usr/bin`
+config.setBaseDir("/usr");
+config.setExecutable(Server, "/usr/sbin/mysqld");
+
+// On MacOS with MariaDB installed via homebrew, you can just set base dir to the output of `brew --prefix`
+config.setBaseDir("/usr/local") // or "/opt/homebrew" for M1 Macs
+```
+
 How (Spring)
 ----
 MariaDB4j can be used in any Java Application on its own. It is not dependent on dependency injection or the Spring Framework (the dependency to the spring-core*.jar is for a utility, and is unrelated to DI).
