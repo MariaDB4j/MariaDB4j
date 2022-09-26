@@ -338,7 +338,7 @@ public class DBConfigurationBuilder {
     }
 
     public String getURL(String databaseName) {
-        return "jdbc:mysql://localhost:" + getPort() + "/" + databaseName;
+        return "jdbc:mariadb://localhost:" + getPort() + "/" + databaseName;
     }
 
     public List<String> _getArgs() {
