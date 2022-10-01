@@ -10,13 +10,13 @@ If you are using this project, consider [supporting it :heart: by donating via P
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j)
 [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core)
 [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j)
-[![Build Status](https://app.travis-ci.com/vorburger/MariaDB4j.svg?branch=master)](https://app.travis-ci.com/vorburger/MariaDB4j)
+[![Build Status](https://app.travis-ci.com/vorburger/MariaDB4j.svg?branch=main)](https://app.travis-ci.com/vorburger/MariaDB4j)
 
 How? (Java)
 ----
 The MariaDB native binaries are in the MariaDB4j-DB-win*/linux*/mac*.JARs on which the main MariaDB4j JAR depends on by Maven transitive dependencies and, by default, are extracted from the classpath to a temporary base directory on the fly, then started by Java.
 
-An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).  Basically, you can simply:
+An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/vorburger/MariaDB4j/blob/main/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).  Basically, you can simply:
 
 1. Install the database with a particular configuration, using short-cut:
 ```java
@@ -84,7 +84,7 @@ How (Spring)
 ----
 MariaDB4j can be used in any Java Application on its own. It is not dependent on dependency injection or the Spring Framework (the dependency to the spring-core*.jar is for a utility, and is unrelated to DI).
 
-If you want to use MariaDB4j with Spring-boot the opinionated presets for spring applications, then you can easily use this the ready-made MariaDB4jSpringService to reduce your coding/configuration to get you going, we have an example application ([mariaDB4j-app](<https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j-app/>)) which illustrates how to wire it up or as an alternative approach via the [MariaDB4jSpringServiceTestSpringConfiguration](<https://github.com/vorburger/MariaDB4j/blob/master/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/springframework/MariaDB4jSpringServiceTestSpringConfiguration.java>).
+If you want to use MariaDB4j with Spring-boot the opinionated presets for spring applications, then you can easily use this the ready-made MariaDB4jSpringService to reduce your coding/configuration to get you going, we have an example application ([mariaDB4j-app](<https://github.com/vorburger/MariaDB4j/blob/main/mariaDB4j-app/>)) which illustrates how to wire it up or as an alternative approach via the [MariaDB4jSpringServiceTestSpringConfiguration](<https://github.com/vorburger/MariaDB4j/blob/main/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/springframework/MariaDB4jSpringServiceTestSpringConfiguration.java>).
 
 The DataSource initialization have to wait until MariaDB is ready to receive connections, so we provide `mariaDB4j-springboot` to implement it. You can use it by :
 
@@ -123,7 +123,7 @@ MariaDB4j JAR binaries are available from:
 </dependency>
 ```
 
-2. https://jitpack.io: [master-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/master-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
+2. https://jitpack.io: [main-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/main-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
 
 Up to version 2.1.3 MariaDB4j was on bintray.  Starting with version 2.2.1 we’re only using Maven central  The 2.2.1 that is on Bintray is broken.
 
@@ -316,7 +316,7 @@ In addition to the new directory, you then need to correspondingly increase: 1. 
 
 So when you contribute new MariaDB native binaries versions, place them in a new directory named mariaDB4j-db-PLATFORM-VERSION under the DBs/ directory - next to the existing ones.  This is better than renaming an existing one and replacing files, because (in theory) if someone wanted to they could then easily still depend on earlier released database binary versions just by changing the <dependency> of the mariaDB4j-db* artifactId in their own project's pom.xml, even with using later version of MariaDB4j Java classes (mariadb4j core & app).
 
-Of course, even if we would replace existing version with new binaries (like it used to originally be done in the project), then the ones already deployed to Maven central would remain there.  However it is just much easier to see which version are available, and to locally build JARs for older versions, if all are simply kept in the head master branch (even if not actively re-built anymore, other than the latest version).  The size of the git repository will gradually grow through this, and slightly more than if we would replace existing binaries (because git uses delta diffs, for both text and binary files).  We just accept that in this project - for clarity & convenience.
+Of course, even if we would replace existing version with new binaries (like it used to originally be done in the project), then the ones already deployed to Maven central would remain there.  However it is just much easier to see which version are available, and to locally build JARs for older versions, if all are simply kept in the head `main` branch (even if not actively re-built anymore, other than the latest version).  The size of the git repository will gradually grow through this, and slightly more than if we would replace existing binaries (because git uses delta diffs, for both text and binary files).  We just accept that in this project - for clarity & convenience.
 
 
 FAQ
