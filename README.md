@@ -351,7 +351,7 @@ When doing a release, here are a few things to do every time:
     mvn -Dmaven.test.skip=true package
 ```
 
-4. Finalize [CHANGES.md](CHANGES.md) Release Notes, incl. set today's date, and update the version numbers in this README.
+4. Finalize [CHANGELOG.md](CHANGELOG.md) Release Notes, incl. set today's date, and update the version numbers in this README.
 
 5. Preparing & performing the release (this INCLUDES an mvn deploy):
 
