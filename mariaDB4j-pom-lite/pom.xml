@@ -5,16 +5,16 @@
     <groupId>ch.vorburger.mariaDB4j</groupId>
     <artifactId>mariaDB4j-pom-lite</artifactId>
     <!-- This here is NOT a *-SNAPSHOT version, never!
-    
+
          Just manually increment this whenever you have to make a change to
          this pom.xml - which should, normally, be relatively rare!
-         
+
          If you do have to change this, remember to adjust the <version> of
          the <parent> in the current mariaDB4j-pom SNAPSHOT, and in future
          DBs/mariaDB4j-db-*/pom.xml versions (as those are also always
          non-SNAPSHOT, existing ones do NOT get changed).
      -->
-    <version>2.2.1</version>
+    <version>2.2.2</version>
     <packaging>pom</packaging>
 
     <name>MariaDB4j</name>
@@ -67,7 +67,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
@@ -78,7 +78,7 @@
 
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.1</version>
                 <configuration>
                   <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
                   <excludeResources>true</excludeResources>
@@ -124,12 +124,12 @@
                              }
                              dirStream.close();
                          }
-        
+
                          File gitRepoRootDir = project.basedir;
                          while (!new File(gitRepoRootDir, ".git").exists() &amp;&amp; gitRepoRootDir.getParentFile() != null) {
                              gitRepoRootDir = gitRepoRootDir.getParentFile();
                          }
-        
+
                          File target = new File(project.build.outputDirectory);
                          target.mkdirs();
                          copy(gitRepoRootDir, "README*", target);
@@ -202,7 +202,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
