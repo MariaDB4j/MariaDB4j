@@ -46,6 +46,7 @@ public class DBConfigurationBuilder {
     protected static final String WIN32 = "win32";
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
+    protected static final String MACOS_ARM64 = "macos-arm64";
 
     private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
 
@@ -54,7 +55,7 @@ public class DBConfigurationBuilder {
     private String databaseVersion = null;
 
     // all these are just some defaults
-    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32 : SystemUtils.IS_OS_MAC ? OSX : LINUX;
+    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32 : SystemUtils.IS_OS_LINUX ? LINUX : SystemUtils.OS_ARCH.equals("aarch64") ? MACOS_ARM64 : OSX ;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
     protected String libDir = null;
 
@@ -289,7 +290,7 @@ public class DBConfigurationBuilder {
     protected String _getDatabaseVersion() {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
-            if (!OSX.equals(getOS()) && !LINUX.equals(getOS()) && !WIN32.equals(getOS())) {
+            if (!List.of(WIN32, LINUX, OSX, MACOS_ARM64).contains(getOS())) {
                 throw new IllegalStateException("OS not directly supported, please use setDatabaseVersion() to set the name "
                         + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
             }

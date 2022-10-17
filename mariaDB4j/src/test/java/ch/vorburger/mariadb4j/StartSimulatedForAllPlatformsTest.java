@@ -50,6 +50,10 @@ public class StartSimulatedForAllPlatformsTest {
         checkPlatformStart(DBConfigurationBuilder.OSX);
     }
 
+    @Test public void simulatedStartMacOS_ARM64() throws Exception {
+        checkPlatformStart(DBConfigurationBuilder.MACOS_ARM64);
+    }
+
     void checkPlatformStart(String platform) throws ManagedProcessException, IOException {
         DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
         configBuilder.setOS(platform);
