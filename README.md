@@ -1,9 +1,9 @@
 What?
 =====
 
-MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backward compatible, drop-in replacement of the MySQL(R) Database Server", see [FAQ](http://kb.askmonty.org/en/mariadb-faq) and [Wikipedia](http://en.wikipedia.org/wiki/MariaDB)), allowing you to use MariaDB (MySQL(R)) from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
+_Please :star: Star on GitHub and **support me 🫶 through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance!_
 
-If you are using this project, consider [supporting it :heart: by donating via PayPal (one time)](https://www.paypal.me/MichaelVorburgerCH?locale.x=en_US) or [becoming a patreon to sponsor](https://www.patreon.com/vorburger) to ensure it is actively developed and maintained in the future!  It's also much appreciate if you Star / Watch / Follow on GitHub. And, of course, do send a PR adding your name/project to the [USERS.md](USERS.md) file as a another way to show your appreciation for this free project!
+MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backward compatible, drop-in replacement of the MySQL® Database Server", see [Wikipedia](http://en.wikipedia.org/wiki/MariaDB)), allowing you to use MariaDB (MySQL®) from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
 
 <span class="badge-paypal"><a href="https://www.paypal.me/MichaelVorburgerCH?locale.x=en_US" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span>
 [![Patreon me!](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/vorburger)
@@ -19,40 +19,40 @@ The MariaDB native binaries are in the MariaDB4j-DB-win*/linux*/mac*.JARs on whi
 An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/vorburger/MariaDB4j/blob/main/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).  Basically, you can simply:
 
 1. Install the database with a particular configuration, using short-cut:
-```java
-DB db = DB.newEmbeddedDB(3306);
-```
+   ```java
+   DB db = DB.newEmbeddedDB(3306);
+   ```
 2. (Optional) The data directory will, by default, be in a temporary directory too, and will automatically get scratched at every restart; this
 is suitable for integration tests.  If you use MariaDB4j for something more permanent (maybe an all-in-one application package?),
 then you can simply specify a more durable location of your data directory in the `DBConfiguration`, like so:
-```java
-DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
-configBuilder.setPort(3306); // OR, default: setPort(0); => autom. detect free port
-configBuilder.setDataDir("/home/theapp/db"); // just an example
-DB db = DB.newEmbeddedDB(configBuilder.build());
-```
+   ```java
+   DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
+   configBuilder.setPort(3306); // OR, default: setPort(0); => autom. detect free port
+   configBuilder.setDataDir("/home/theapp/db"); // just an example
+   DB db = DB.newEmbeddedDB(configBuilder.build());
+   ```
 3. Start the database
-```java
-db.start();
-```
+   ```java
+   db.start();
+   ```
 4. Use the database as per standard JDBC usage. In this example, you're acquiring a JDBC `Connection` from the
 `DriverManager`; note that you could easily configure this URL
 to be used in any JDBC connection pool. MySQL uses a `test` database by default,
 and a `root` user with no password is also a default.
-```java
-Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
-```
+   ```java
+   Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
+   ```
 
-A similar suitable JDBC URL as String can normally also be directly obtained directly from the MariaDB4j API, if you prefer (this is especially useful for tests if you let MariaDB4j automatically choose a free port, in which case a hard-coded URL is problematic):
+   A similar suitable JDBC URL as String can normally also be directly obtained directly from the MariaDB4j API, if you prefer (this is especially useful for tests if you let MariaDB4j automatically choose a free port, in which case a hard-coded URL is problematic):
 
-```java
-Connection conn = DriverManager.getConnection(configBuilder.getURL(dbName), "root", "");
-```
+   ```java
+   Connection conn = DriverManager.getConnection(configBuilder.getURL(dbName), "root", "");
+   ```
 
 5. If desired, load data from a SQL resource, located in the classpath:
-```java
-db.source("path/to/resource.sql");
-```
+   ```java
+   db.source("path/to/resource.sql");
+   ```
 
 If you would like to / need to start a specific DB version you already have, instead of the version currently
 packaged in the JAR, you can use `DBConfigurationBuilder setUnpackingFromClasspath(false) & setBaseDir("/my/db/")` or `-DmariaDB4j.unpack=false -DmariaDB4j.baseDir=/home/you/stuff/myFavouritemMariadDBVersion`.   Similarly, you can also pack your own version in a JAR and put it on the classpath, and `@Override getBinariesClassPathLocation()` in `DBConfigurationBuilder` to return where to find it (check the source of the default implementation).
@@ -60,7 +60,7 @@ packaged in the JAR, you can use `DBConfigurationBuilder setUnpackingFromClasspa
 How (using existing native MariaDB binaries)
 ----
 MariaDB4j supports using existing native MariaDB binaries on the host system rather than unpacking MariaDB from the
-classpath. You can control this via the `DBConfigurationBuilder`:
+classpath. This is useful if you need a newer version than is currently distributed, [or e.g. for Mac M1/M2](https://github.com/vorburger/MariaDB4j/issues/497). You can control this via the `DBConfigurationBuilder`:
 
 ```java
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
@@ -90,7 +90,7 @@ The DataSource initialization have to wait until MariaDB is ready to receive con
 
 ```
 dependencies {
-   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.4.0")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.6.0")
 }
 ```
 
@@ -119,7 +119,7 @@ MariaDB4j JAR binaries are available from:
 <dependency>
     <groupId>ch.vorburger.mariaDB4j</groupId>
     <artifactId>mariaDB4j</artifactId>
-    <version>2.4.0</version>
+    <version>2.6.0</version>
 </dependency>
 ```
 
@@ -134,7 +134,7 @@ source; just git clone this and then mvn install or deploy. -- MariaDB4j's Maven
 <dependency>
     <groupId>ch.vorburger.mariaDB4j</groupId>
     <artifactId>mariaDB4j</artifactId>
-    <version>2.4.1-SNAPSHOT</version>
+    <version>2.6.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -164,7 +164,9 @@ Who's using it?
 
 MariaDB4j was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see http://mifos.org. Coincidentally, OpenMRS the "Open Source Medical Records System" (see http://openmrs.org), another Humanitarian Open Source (HFOSS) project, also uses MariaDB4j (see https://github.com/vorburger/MariaDB4j/pull/1).
 
-See the [USERS.md](USERS.md) file (also included in each built JAR!) for a list of known users, and please send a PR adding your name to it to show your appreciation for this free project!
+See the [`USERS.md`](USERS.md) file (also included in each built JAR!) for a list of publicly known users.
+
+Do send a PR adding your name/organization to `USERS.md` to show your appreciation for this free project!
 
 
 Maven Plugin Info (mariadb4j-maven-plugin)
@@ -338,32 +340,34 @@ Remember that mariaDB4j-pom-lite & DBs/mariaDB4j-db-* are now versioned non SNAP
 
 When doing a release, here are a few things to do every time:
 
+1. update the Maven version numbers in this README
+
 1. update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available.
 
 2. Make sure the project builds, without pulling anything which should be part of this build from outside:
 
-   ```mvn clean package; rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j; mvn clean package```
+       mvn clean package; rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j; mvn clean package
 
 3. Make to sure that the JavaDoc is clean.  Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)):
 
-```
-    mvn license:update-file-header
-    mvn -Dmaven.test.skip=true package
-```
+   ```shell
+   mvn license:update-file-header
+   mvn -Dmaven.test.skip=true package
+   ```
 
 4. Finalize [CHANGELOG.md](CHANGELOG.md) Release Notes, incl. set today's date, and update the version numbers in this README.
 
 5. Preparing & performing the release (this INCLUDES an mvn deploy):
 
-```
-    mvn release:prepare
-    mvn release:perform -Pgpg
-    mvn release:clean
-```
+   ```shell
+   mvn release:prepare
+   mvn release:perform -Pgpg
+   mvn release:clean
+   ```
 
 6. Deploy to Maven central, only for the mariaDB4j-pom-lite & DBs/mariaDB4j-db projects:
 
-   ```mvn clean deploy -Pgpg```
+       mvn clean deploy -Pgpg
 
 In case of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use 'mvn release:rollback', but that leaves ugly commits.)
 
