@@ -7,7 +7,283 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
+See https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.6.0...main for unrelease changes.
+
+## v2.6.0 - 2022-10-01 (Issue #621)
+
+* Remove wrong space from DYLD_FALLBACK_LIBRARY_PATH by @vorburger in https://github.com/vorburger/MariaDB4j/pull/561
+* Support using locally installed MariaDB (#560) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/565
+* Add documentation for using native MariaDB binaries by @mrdziuban in https://github.com/vorburger/MariaDB4j/pull/622
+* Add configurable tmpdir by @simonzkl in https://github.com/vorburger/MariaDB4j/pull/604
+* Support default character set configuration. by @agostop in https://github.com/vorburger/MariaDB4j/pull/533
+* Remove `setDefaultCharacterSet()` from DBConfiguration (but not DBConfigurationBuilder) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/564
+* Remove explict Log4j dependency (no longer needed now) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/553
+* Set source API default charset set to UTF-8 by @dassio in https://github.com/vorburger/MariaDB4j/pull/573
+* Switch Travis CI from Java 8 to 11 and Ubuntu Xenial 16.04 to Focal 20.04 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/566
+* Update pom.xml by @dev-fringe in https://github.com/vorburger/MariaDB4j/pull/515
+* Mechanical reformat of core classes (with Eclipse) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/562
+* Encore mechanical reformat by @vorburger in https://github.com/vorburger/MariaDB4j/pull/563
+
+### Dependency Upgrades
+
+* Bump springboot version to 2.7.4 by @mrdziuban in https://github.com/vorburger/MariaDB4j/pull/623
+* Bump assertj-core from 3.21.0 to 3.22.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/529
+* Bump assertj-core from 3.22.0 to 3.23.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/587
+* Bump checkstyle from 10.1 to 10.3 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/585
+* Bump checkstyle from 10.3 to 10.3.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/595
+* Bump checkstyle from 10.3.1 to 10.3.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/606
+* Bump checkstyle from 10.3.2 to 10.3.3 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/613
+* Bump checkstyle from 9.2 to 9.2.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/523
+* Bump checkstyle from 9.2.1 to 9.3 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/541
+* Bump checkstyle from 9.3 to 10.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/569
+* Bump log4j-api from 2.16.0 to 2.17.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/516
+* Bump log4j-api from 2.17.0 to 2.17.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/525
+* Bump log4j-api from 2.17.1 to 2.17.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/552
+* Bump log4j-core from 2.16.0 to 2.17.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/517
+* Bump log4j-core from 2.17.0 to 2.17.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/524
+* Bump log4j-to-slf4j from 2.16.0 to 2.17.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/518
+* Bump log4j-to-slf4j from 2.17.0 to 2.17.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/526
+* Bump log4j-to-slf4j from 2.17.1 to 2.17.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/550
+* Bump maven-checkstyle-plugin from 3.1.2 to 3.2.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/612
+* Bump maven-common-artifact-filters from 3.2.0 to 3.3.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/591
+* Bump maven-common-artifact-filters from 3.3.0 to 3.3.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/600
+* Bump maven-common-artifact-filters from 3.3.1 to 3.3.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/615
+* Bump maven-compat from 3.8.4 to 3.8.5 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/557
+* Bump maven-compat from 3.8.5 to 3.8.6 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/589
+* Bump maven-compiler-plugin from 3.10.0 to 3.10.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/555
+* Bump maven-compiler-plugin from 3.8.1 to 3.9.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/531
+* Bump maven-compiler-plugin from 3.9.0 to 3.10.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/546
+* Bump maven-invoker-plugin from 3.2.2 to 3.3.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/584
+* Bump maven-jar-plugin from 3.2.0 to 3.2.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/528
+* Bump maven-jar-plugin from 3.2.1 to 3.2.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/532
+* Bump maven-jar-plugin from 3.2.2 to 3.3.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/616
+* Bump maven-javadoc-plugin from 3.3.2 to 3.4.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/576
+* Bump maven-javadoc-plugin from 3.4.0 to 3.4.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/609
+* Bump maven-plugin-annotations from 3.6.2 to 3.6.4 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/537
+* Bump maven-plugin-plugin from 3.6.2 to 3.6.4 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/536
+* Bump maven-project-info-reports-plugin from 3.1.2 to 3.2.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/542
+* Bump maven-project-info-reports-plugin from 3.2.1 to 3.2.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/547
+* Bump maven-project-info-reports-plugin from 3.2.2 to 3.3.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/579
+* Bump maven-project-info-reports-plugin from 3.3.0 to 3.4.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/601
+* Bump maven-project-info-reports-plugin from 3.4.0 to 3.4.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/607
+* Bump maven-release-plugin from 3.0.0-M4 to 3.0.0-M5 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/527
+* Bump maven-release-plugin from 3.0.0-M5 to 3.0.0-M6 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/590
+* Bump maven-shade-plugin from 3.2.4 to 3.3.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/568
+* Bump maven-shade-plugin from 3.3.0 to 3.4.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/618
+* Bump maven.version from 3.8.4 to 3.8.5 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/556
+* Bump maven.version from 3.8.5 to 3.8.6 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/588
+* Bump mockito-core from 4.1.0 to 4.2.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/519
+* Bump mockito-core from 4.2.0 to 4.3.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/540
+* Bump mockito-core from 4.3.1 to 4.4.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/554
+* Bump mockito-core from 4.4.0 to 4.8.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/614
+* Bump mysql-connector-java from 8.0.16 to 8.0.28 in /mariaDB4j-maven-plugin/src/it/mariadb4j-maven-plugin-test-basic by @dependabot in https://github.com/vorburger/MariaDB4j/pull/592
+* Bump mysql-connector-java from 8.0.27 to 8.0.28 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/535
+* Bump mysql-connector-java from 8.0.28 to 8.0.29 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/580
+* Bump mysql-connector-java from 8.0.29 to 8.0.30 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/603
+* Bump slf4j-simple from 1.7.32 to 1.7.35 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/539
+* Bump slf4j-simple from 1.7.35 to 1.7.36 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/545
+* Bump slf4j-simple from 1.7.36 to 2.0.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/611
+* Bump slf4j-simple from 2.0.0 to 2.0.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/620
+* Bump springboot.version from 2.6.1 to 2.6.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/521
+* Bump springboot.version from 2.6.2 to 2.6.3 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/534
+* Bump springboot.version from 2.6.3 to 2.6.4 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/548
+* Bump springboot.version from 2.6.4 to 2.6.5 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/559
+* Bump springboot.version from 2.6.5 to 2.6.6 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/570
+* Bump version from 2.5.4 to 2.6.0 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/567
+
+## New Contributors
+* @dev-fringe made their first contribution in https://github.com/vorburger/MariaDB4j/pull/515
+* @agostop made their first contribution in https://github.com/vorburger/MariaDB4j/pull/533
+* @dassio made their first contribution in https://github.com/vorburger/MariaDB4j/pull/573
+* @simonzkl made their first contribution in https://github.com/vorburger/MariaDB4j/pull/604
+* @mrdziuban made their first contribution in https://github.com/vorburger/MariaDB4j/pull/622
+
+**Full Changelog**: https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.5.3...mariaDB4j-2.6.0
+
+## v2.5.0 - 2.5.3
+
+### New Features
+
+* Ability to pass an `InputStream` for initial sourcing by @asbachb in https://github.com/vorburger/MariaDB4j/pull/274 for #273
+* Rename installPreparation method to createMysqlInstallProcess and expose as protected by @Anthoknee in https://github.com/vorburger/MariaDB4j/pull/300
+* DB.run - Continue on error (Issue #259) by @glittle1972 in https://github.com/vorburger/MariaDB4j/pull/260
+* Add option to specify os user to the mysqld process by @m80592 in https://github.com/vorburger/MariaDB4j/pull/403
+* Dynamic package with direct download of mariadb by @srbala in https://github.com/vorburger/MariaDB4j/pull/235 for #230
+* Add option to run database scripts less verbose by @JD-CSTx in https://github.com/vorburger/MariaDB4j/pull/335
+
+### Improvements
+
+* Reduce file copying during classpath unpacking. by @tjni in https://github.com/vorburger/MariaDB4j/pull/285
+* Update README to include a section about the JUnit rule by @yiftizur in https://github.com/vorburger/MariaDB4j/pull/239
+* Disable ~/.m2 caching in .travis.yml (re. #262) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/263
+* Upgrade to GitHub-native Dependabot by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/433
+* Remove spring version by @mdindoffer in https://github.com/vorburger/MariaDB4j/pull/248 for issue #247
+* Fix build warnings - import order, resolves issue#236 by @srbala in https://github.com/vorburger/MariaDB4j/pull/240
+* Clean up mariaDB4j-maven-plugin by @vorburger in https://github.com/vorburger/MariaDB4j/pull/218
+* Remove un-used AssertJ by @vorburger in https://github.com/vorburger/MariaDB4j/pull/226
+* Use mvn package instead of install in .travis.yml by @vorburger in https://github.com/vorburger/MariaDB4j/pull/290
+* Enforce Checkstyle (fixes #264) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/500
+* Expose database URL as Maven Project property in `mariaDB4j-maven-plugin` by @robin-xyzt-ai in https://github.com/vorburger/MariaDB4j/pull/476
+* Enable Checkstyle for src/test by @vorburger in https://github.com/vorburger/MariaDB4j/pull/503
+
+### Bug Fixes
+
+* Fix windows datadir with spaces + maven-plugin tests by @vorburger in https://github.com/vorburger/MariaDB4j/pull/234
+* [MariaDB4jService] Do not recreate the DB if already running by @Tomlincoln in https://github.com/vorburger/MariaDB4j/pull/382
+* Add name to USERS.MD by @ROMVoid95 in https://github.com/vorburger/MariaDB4j/pull/220
+* Add jakarta.annotation-api to fix broken build on Java 11 (fixes #456) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/457
+* Add automatic module name to core by @jensli in https://github.com/vorburger/MariaDB4j/pull/387 for #372
+* Clean up dependabot.yml by @vorburger in https://github.com/vorburger/MariaDB4j/pull/486
+* Fix build warnings - javadoc, issue #237 by @srbala in https://github.com/vorburger/MariaDB4j/pull/242
+* Fixed typo: `caase` -> `case` by @asbachb in https://github.com/vorburger/MariaDB4j/pull/275
+* Added Visual Studio Code project files to .gitignore. by @glittle1972 in https://github.com/vorburger/MariaDB4j/pull/272
+* Fixes #257 - maven-checkstyle-plugin:3.1.0 by @glittle1972 in https://github.com/vorburger/MariaDB4j/pull/271
+* Fix indentation in pom.xml by @vorburger in https://github.com/vorburger/MariaDB4j/pull/291
+* Fixes #265 - clean more build warnings inc SQL SuppressWarnings by @glittle1972 in https://github.com/vorburger/MariaDB4j/pull/270
+* Fix dataDir is checked and not the baseDir by @shai125 in https://github.com/vorburger/MariaDB4j/pull/280
+* Maven Plugins: Fixing typo error by @sherrif10 in https://github.com/vorburger/MariaDB4j/pull/361
+* Add null safety check to mysqldProcess.  Fixes #103. by @vorburger in https://github.com/vorburger/MariaDB4j/pull/297
+* Clean comment. by @AdelDima in https://github.com/vorburger/MariaDB4j/pull/327
+* Run `mvn verify` instead of only `package` on Travis by @vorburger in https://github.com/vorburger/MariaDB4j/pull/490
+* Remove fixed version of commons-io from Maven plugin dependencies by @vorburger in https://github.com/vorburger/MariaDB4j/pull/491
+* Fix Maven plugin dependencies scope and remove commons-io dependency from Maven plugin (but it's still transitively inherited) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/492
+* Use magic <version>@project.version@ in Maven Plugin IT by @vorburger in https://github.com/vorburger/MariaDB4j/pull/494
+* Fixes #488 by @robin-xyzt-ai in https://github.com/vorburger/MariaDB4j/pull/499
+* When dumping the database, close the outputstream once the dump is done by @robin-xyzt-ai in https://github.com/vorburger/MariaDB4j/pull/502
+* Spaces in windows paths are no longer replaced by %20 by @Blanco27 in https://github.com/vorburger/MariaDB4j/pull/504
+* Replace DB's toWindowsPath() with inline File.getCanonicalFile() by @vorburger in https://github.com/vorburger/MariaDB4j/pull/505
+* Fix failing release due to Checkstyle in generated-sources (fixes #511) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/512
+
+
+### Dependency Upgrades
+
+* Bump MariaDB from 10.3.13 to 10.3.16 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/294
+* Bump ch.vorburger.exec to 3.1.3 (fixes #501) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/506
+* Bump log4j dependencyManagement to 2.15.0 instead of 2.14.1 (#509) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/510
+* Bump maven.version from 3.5.4 to 3.6.1 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/295
+* Bump maven-release-plugin from 2.5.3 to 3.0.0-M4 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/496
+* Bump mockito-core from 3.5.15 to 4.1.0 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/487
+* Bump maven-common-artifact-filters & maven-project-info-reports-plugin by @vorburger in https://github.com/vorburger/MariaDB4j/pull/489
+* Maven plugin upgrade 3.5.4 by @duttonw in https://github.com/vorburger/MariaDB4j/pull/175
+* Bump assertj-core from 3.11.1 to 3.12.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/216
+* Bump assertj-core from 3.11.1 to 3.13.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/302
+* Bump assertj-core from 3.13.2 to 3.14.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/312
+* Bump assertj-core from 3.14.0 to 3.15.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/329
+* Bump assertj-core from 3.15.0 to 3.16.1 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/349
+* Bump assertj-core from 3.16.1 to 3.17.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/370
+* Bump assertj-core from 3.17.0 to 3.17.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/376
+* Bump assertj-core from 3.17.2 to 3.21.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/469
+* Bump commons-io from 2.10.0 to 2.11.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/459
+* Bump commons-io from 2.6 to 2.7 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/352
+* Bump commons-io from 2.7 to 2.8.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/378
+* Bump commons-io from 2.8.0 to 2.10.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/447
+* Bump junit from 4.12 to 4.13 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/323
+* Bump junit from 4.12 to 4.13.1 in /mariaDB4j-maven-plugin/src/it/mariadb4j-maven-plugin-test-basic by @dependabot in https://github.com/vorburger/MariaDB4j/pull/386
+* Bump junit from 4.13 to 4.13.1 in /mariaDB4j-maven-plugin by @dependabot in https://github.com/vorburger/MariaDB4j/pull/385
+* Bump junit from 4.13.1 to 4.13.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/431
+* Bump license-maven-plugin from 1.17 to 1.19 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/224
+* Bump license-maven-plugin from 1.19 to 1.20 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/252
+* Bump license-maven-plugin from 1.20 to 2.0.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/268
+* Bump maven-checkstyle-plugin from 3.0.0 to 3.1.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/257
+* Bump maven-common-artifact-filters from 1.4 to 3.1.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/196
+* Bump maven-compat from 3.1.0 to 3.6.1 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/250
+* Bump maven-compat from 3.6.1 to 3.6.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/301
+* Bump maven-compat from 3.6.2 to 3.6.3 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/316
+* Bump maven-compat from 3.6.3 to 3.8.4 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/478
+* Bump maven-compiler-plugin from 3.8.0 to 3.8.1 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/254
+* Bump maven-invoker-plugin from 3.2.0 to 3.2.1 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/306
+* Bump maven-invoker-plugin from 3.2.1 to 3.2.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/422
+* Bump maven-jar-plugin from 3.1.1 to 3.1.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/255
+* Bump maven-jar-plugin from 3.1.2 to 3.2.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/314
+* Bump maven-plugin-annotations from 3.2 to 3.6.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/185
+* Bump maven-plugin-annotations from 3.6.0 to 3.6.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/482
+* Bump maven-plugin-plugin from 3.5.2 to 3.6.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/186
+* Bump maven-plugin-plugin from 3.6.0 to 3.6.2 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/483
+* Bump maven-project-info-reports-plugin from 3.0.0 to 3.1.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/353
+* Bump maven-project-info-reports-plugin from 3.1.0 to 3.1.1 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/377
+* Bump maven-shade-plugin from 3.2.1 to 3.2.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/331
+* Bump maven-shade-plugin from 3.2.2 to 3.2.3 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/345
+* Bump maven-shade-plugin from 3.2.3 to 3.2.4 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/354
+* Bump maven.version from 3.6.1 to 3.6.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/303
+* Bump maven.version from 3.6.2 to 3.6.3 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/315
+* Bump maven.version from 3.6.3 to 3.8.4 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/477
+* Bump mockito-core from 2.24.0 to 2.24.5 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/222
+* Bump mockito-core from 2.24.5 to 2.25.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/232
+* Bump mockito-core from 2.25.0 to 2.28.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/258
+* Bump mockito-core from 2.28.2 to 3.0.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/276
+* Bump mockito-core from 3.0.0 to 3.1.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/308
+* Bump mockito-core from 3.1.0 to 3.2.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/317
+* Bump mockito-core from 3.2.0 to 3.2.4 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/319
+* Bump mockito-core from 3.2.4 to 3.3.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/337
+* Bump mockito-core from 3.3.0 to 3.3.3 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/341
+* Bump mockito-core from 3.3.3 to 3.4.4 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/360
+* Bump mockito-core from 3.4.4 to 3.4.6 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/365
+* Bump mockito-core from 3.4.6 to 3.5.0 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/368
+* Bump mockito-core from 3.5.0 to 3.5.5 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/371
+* Bump mockito-core from 3.5.10 to 3.5.11 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/379
+* Bump mockito-core from 3.5.11 to 3.5.13 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/381
+* Bump mockito-core from 3.5.13 to 3.5.15 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/399
+* Bump mockito-core from 3.5.5 to 3.5.7 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/373
+* Bump mockito-core from 3.5.7 to 3.5.10 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/375
+* Bump mysql-connector-java from 8.0.12 to 8.0.16 in /mariaDB4j-maven-plugin/src/it/mariadb4j-maven-plugin-test-basic by @dependabot in https://github.com/vorburger/MariaDB4j/pull/356
+* Bump mysql-connector-java from 8.0.13 to 8.0.17 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/305
+* Bump mysql-connector-java from 8.0.15 to 8.0.16 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/253
+* Bump mysql-connector-java from 8.0.16 to 8.0.17 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/277
+* Bump mysql-connector-java from 8.0.17 to 8.0.18 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/309
+* Bump mysql-connector-java from 8.0.18 to 8.0.19 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/326
+* Bump mysql-connector-java from 8.0.19 to 8.0.20 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/347
+* Bump mysql-connector-java from 8.0.20 to 8.0.21 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/359
+* Bump mysql-connector-java from 8.0.21 to 8.0.22 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/388
+* Bump mysql-connector-java from 8.0.22 to 8.0.27 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/474
+* Bump slf4j-simple from 1.7.25 to 1.7.26 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/221
+* Bump slf4j-simple from 1.7.26 to 1.7.28 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/282
+* Bump slf4j-simple from 1.7.28 to 1.7.29 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/311
+* Bump slf4j-simple from 1.7.29 to 1.7.30 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/320
+* Bump slf4j-simple from 1.7.30 to 1.7.31 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/445
+* Bump slf4j-simple from 1.7.31 to 1.7.32 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/462
+* Bump springboot.version from 2.1.2.RELEASE to 2.1.3.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/215
+* Bump springboot.version from 2.1.3.RELEASE to 2.1.5.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/256
+* Bump springboot.version from 2.1.5.RELEASE to 2.1.6.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/266
+* Bump springboot.version from 2.1.6.RELEASE to 2.1.7.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/283
+* Bump springboot.version from 2.1.7.RELEASE to 2.1.9.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/307
+* Bump springboot.version from 2.1.9.RELEASE to 2.2.1.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/313
+* Bump springboot.version from 2.2.1.RELEASE to 2.2.2.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/318
+* Bump springboot.version from 2.2.2.RELEASE to 2.2.4.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/328
+* Bump springboot.version from 2.2.4.RELEASE to 2.2.5.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/338
+* Bump springboot.version from 2.2.5.RELEASE to 2.3.0.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/351
+* Bump springboot.version from 2.3.0.RELEASE to 2.3.1.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/355
+* Bump springboot.version from 2.3.1.RELEASE to 2.3.2.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/362
+* Bump springboot.version from 2.3.2.RELEASE to 2.3.3.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/369
+* Bump springboot.version from 2.3.3.RELEASE to 2.3.4.RELEASE by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/380
+* Bump springboot.version from 2.3.4.RELEASE to 2.4.4 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/426
+* Bump springboot.version from 2.4.4 to 2.5.2 by @dependabot-preview in https://github.com/vorburger/MariaDB4j/pull/449
+* Bump springboot.version from 2.5.2 to 2.6.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/479
+* Bump springboot.version from 2.6.0 to 2.6.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/507
+
+## New Contributors
+* @ROMVoid95 made their first contribution in https://github.com/vorburger/MariaDB4j/pull/220
+* @mdindoffer made their first contribution in https://github.com/vorburger/MariaDB4j/pull/248
+* @srbala made their first contribution in https://github.com/vorburger/MariaDB4j/pull/240
+* @glittle1972 made their first contribution in https://github.com/vorburger/MariaDB4j/pull/260
+* @asbachb made their first contribution in https://github.com/vorburger/MariaDB4j/pull/275
+* @tjni made their first contribution in https://github.com/vorburger/MariaDB4j/pull/285
+* @shai125 made their first contribution in https://github.com/vorburger/MariaDB4j/pull/280
+* @Anthoknee made their first contribution in https://github.com/vorburger/MariaDB4j/pull/300
+* @AdelDima made their first contribution in https://github.com/vorburger/MariaDB4j/pull/327
+* @JD-CSTx made their first contribution in https://github.com/vorburger/MariaDB4j/pull/335
+* @sherrif10 made their first contribution in https://github.com/vorburger/MariaDB4j/pull/361
+* @Tomlincoln made their first contribution in https://github.com/vorburger/MariaDB4j/pull/382
+* @m80592 made their first contribution in https://github.com/vorburger/MariaDB4j/pull/403
+* @jensli made their first contribution in https://github.com/vorburger/MariaDB4j/pull/387
+* @robin-xyzt-ai made their first contribution in https://github.com/vorburger/MariaDB4j/pull/499
+* @Blanco27 made their first contribution in https://github.com/vorburger/MariaDB4j/pull/504
+
+**Full Changelog**: https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.4.0...mariaDB4j-2.5.3
+
+  
 ## v2.4.0 - 2019-02-11
+
+see also [the 2.4.0 release page on GitHub](https://github.com/vorburger/MariaDB4j/releases/tag/mariaDB4j-2.4.0)
 
 ### Added
 
