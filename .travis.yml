@@ -21,4 +21,4 @@ before_install:
 #  - mvn -f DBs/pom.xml clean install
 
 # Run verify, not just package, to catch any failures of mariaDB4j-maven-plugin's integration test
-script: mvn verify -B -V
+script: mvn --show-version --batch-mode --strict-checksums verify
