@@ -1,9 +1,14 @@
 name: Java CI
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ main ]
 
 jobs:
-  test:
+  testOnWindows:
     runs-on: windows-latest
 
     steps:
@@ -15,7 +20,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots verify
+        run: mvn --show-version --batch-mode --strict-checksums verify
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if previous step failed
