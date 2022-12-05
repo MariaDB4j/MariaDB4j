@@ -114,7 +114,6 @@ public class DB {
         builder.setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
             builder.addFileArgument("--datadir", dataDir);
-            builder.addFileArgument("--tmpdir", tmpDir);
             builder.addFileArgument("--basedir", baseDir);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
@@ -122,7 +121,6 @@ public class DB {
             // builder.addArgument("--verbose");
         } else {
             builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
-            builder.addFileArgument("--tmpdir", tmpDir.getCanonicalFile());
         }
         return builder.build();
     }
