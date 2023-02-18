@@ -52,6 +52,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String LIB_DIR = "mariaDB4j.libDir";
     public final static String UNPACK = "mariaDB4j.unpack";
     public final static String OS_USER = "mariaDB4j.osUser";
+    public final static String DATA_CHARSET = "mariaDB4j.dbCharset";
 
     protected ManagedProcessException lastException;
 
@@ -96,11 +97,17 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
         if (unpack != null)
             getConfiguration().setUnpackingFromClasspath(unpack);
     }
-    
+
     @Value("${" + OS_USER + ":NA}")
     public void setDefaultOsUser(String osUser) {
         if (!"NA".equals(osUser))
             getConfiguration().addArg("--user=" + osUser);
+    }
+
+    @Value("${" + DATA_CHARSET + ":NA}")
+    public void setDefaultCharacterSet(String charset) {
+        if (!"NA".equals(charset))
+            getConfiguration().setDefaultCharacterSet(charset);
     }
 
     @Override
