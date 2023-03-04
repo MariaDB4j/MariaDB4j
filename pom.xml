@@ -1,31 +1,33 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>ch.vorburger.mariaDB4j</groupId>
-        <artifactId>mariaDB4j-pom-lite</artifactId>
-        <!-- Do NOT depend on a SNAPSHOT here!
+	<parent>
+		<groupId>ch.vorburger.mariaDB4j</groupId>
+		<artifactId>mariaDB4j-pom-lite</artifactId>
+		<!-- Do NOT depend on a SNAPSHOT here!
              Note that this parent version and the version below are, intentionally, completely unrelated. -->
-        <version>2.2.2</version>
-        <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
-    </parent>
+		<version>2.2.2</version>
+		<relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
+	</parent>
 
 	<artifactId>mariaDB4j-pom</artifactId>
 	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-    <scm>
-        <!-- The <connection> and <url> are specified in the <parent> but the
+	<scm>
+		<!-- The <connection> and <url> are specified in the <parent> but the
              <developerConnection> and the <tag> must be here, for the maven-release-plugin
              to work correctly, if the <parent> is not a SNAPSHOT;
              see https://github.com/vorburger/MariaDB4j/issues/43.
          -->
-        <developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
+		<developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 
 	<modules>
-        <!-- We do NOT include <module> for the mariaDB4j-pom-lite, nor for the DBs/mariaDB4j-db-* here!
+		<!-- We do NOT include <module> for the mariaDB4j-pom-lite, nor the DBs/mariaDB4j-db-* here!
 
              This is because those are NOT version'd the same way as this artifact and the ones below.
              Therefore the mvn release:* and mvn depoy is done separately for this (below)
@@ -39,11 +41,11 @@
 	</modules>
 
 	<properties>
-		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		 <springboot.version>2.7.5</springboot.version>
-		 <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
-		 <maven.compiler.source>11</maven.compiler.source>
-		 <maven.compiler.target>11</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<springboot.version>2.7.5</springboot.version>
+		<jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<build>
@@ -58,34 +60,35 @@
 				</configuration>
 			</plugin>
 
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
-                <configuration>
-                    <quiet>true</quiet>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.5.0</version>
+				<configuration>
+					<quiet>true</quiet>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>3.0.0-M7</version>
 				<configuration>
-				    <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>release</releaseProfiles>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
+					<useReleaseProfile>false</useReleaseProfile>
+					<releaseProfiles>release</releaseProfiles>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
 						http://jira.codehaus.org/browse/MGPG-9 & http://jira.codehaus.org/browse/MRELEASE-263 -->
 					<mavenExecutorId>forked-path</mavenExecutorId>
-					<!-- Following is required because artifactId is (now) mariaDB4j-pom, but we want mariaDB4j -->
+					<!-- Following is required because artifactId is (now) mariaDB4j-pom, but we
+					want mariaDB4j -->
 					<tagNameFormat>mariaDB4j-@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
@@ -94,23 +97,23 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<version>2.0.0</version>
-                <configuration>
-                    <licenseName>apache_v2</licenseName>
-                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-                    <failOnMissingHeader>true</failOnMissingHeader>
-                    <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
-                    <roots>
-                        <root>src/main/java</root>
-                        <root>src/test/java</root>
-                    </roots>
-                </configuration>
+				<configuration>
+					<licenseName>apache_v2</licenseName>
+					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+					<failOnMissingHeader>true</failOnMissingHeader>
+					<failOnNotUptodateHeader>true</failOnNotUptodateHeader>
+					<roots>
+						<root>src/main/java</root>
+						<root>src/test/java</root>
+					</roots>
+				</configuration>
 				<executions>
-				    <execution>
-				        <phase>validate</phase>
-				        <goals>
-				            <goal>check-file-header</goal>
-				        </goals>
-				    </execution>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>check-file-header</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -119,12 +122,12 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.2.1</version>
 				<dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>10.8.0</version>
-                    </dependency>
-                </dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>10.8.0</version>
+					</dependency>
+				</dependencies>
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
 					<!-- https://github.com/vorburger/MariaDB4j/issues/511 -->
@@ -148,36 +151,36 @@
 	</build>
 
 	<dependencyManagement>
-	     <dependencies>
-	        <dependency>
-	            <groupId>org.springframework.boot</groupId>
-	            <artifactId>spring-boot-dependencies</artifactId>
-	            <version>${springboot.version}</version>
-	            <type>pom</type>
-	            <scope>import</scope>
-	        </dependency>
-	        <dependency>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${springboot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-simple</artifactId>
-	            <version>2.0.6</version>
-	            <scope>test</scope>
+				<version>2.0.6</version>
+				<scope>test</scope>
 			</dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.11.0</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-dbutils</groupId>
-                <artifactId>commons-dbutils</artifactId>
-                <version>1.7</version>
-                <scope>test</scope>
-            </dependency>
 			<dependency>
-			    <groupId>jakarta.annotation</groupId>
-			    <artifactId>jakarta.annotation-api</artifactId>
-			    <version>${jakarta.annotation-api.version}</version>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.11.0</version>
 			</dependency>
-	    </dependencies>
+			<dependency>
+				<groupId>commons-dbutils</groupId>
+				<artifactId>commons-dbutils</artifactId>
+				<version>1.7</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.annotation</groupId>
+				<artifactId>jakarta.annotation-api</artifactId>
+				<version>${jakarta.annotation-api.version}</version>
+			</dependency>
+		</dependencies>
 	</dependencyManagement>
 </project>
