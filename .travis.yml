@@ -4,7 +4,7 @@ language: java
 # We use OpenJDK instead of Oracle JDK because ya all should only
 # ever use OpenJDK!  (And get Red Hat's support for it, if
 # you use it professionally.)
-jdk: 
+jdk:
   - openjdk11
 
 # Do *NOT* cache, see https://github.com/vorburger/MariaDB4j/issues/262
@@ -18,7 +18,7 @@ before_install:
   - sudo apt remove mysql-server mysql-common
   - sudo apt install libncurses5 mariadb-server
 # TODO uncomment this when raising a PR to fix https://github.com/vorburger/MariaDB4j/issues/484
-#  - mvn -f DBs/pom.xml clean install
+#  - ./mvnw -f DBs/pom.xml clean install
 
 # Run verify, not just package, to catch any failures of mariaDB4j-maven-plugin's integration test
-script: mvn --show-version --batch-mode --strict-checksums verify
+script: ./mvnw --show-version --batch-mode --strict-checksums verify
