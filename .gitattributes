@@ -1,0 +1,5 @@
+# Use Linux line endings by default for all files in this repo
+* text=auto eol=lf
+
+# Except Windows scripts
+mvnw.cmd text eol=crlf
