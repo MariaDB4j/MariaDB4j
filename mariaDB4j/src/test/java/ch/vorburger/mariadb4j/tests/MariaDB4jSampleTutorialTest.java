@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2012 - 2014 Michael Vorburger
+ * Copyright (C) 2012 - 2023 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -36,7 +37,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests the functioning of MariaDB4j Sample / Tutorial illustrating how to use MariaDB4j.
+ * Tests the functioning of MariaDB4j Sample / Tutorial illustrating how to use
+ * MariaDB4j.
  *
  * @author Michael Vorburger
  * @author Michael Seaton
@@ -44,10 +46,14 @@ import org.junit.Test;
 public class MariaDB4jSampleTutorialTest {
 
     /**
-     * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on the host,
+     * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on
+     * the host,
      * instead of one that was bundled with and extracted from a MariaDB4j JAR.
      */
-    @Test public void testLocalMariaDB() throws Exception {
+    @Test
+    public void testLocalMariaDB() throws Exception {
+        assertExecutable("/usr/sbin/mysqld");
+
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         config.setUnpackingFromClasspath(false);
@@ -57,10 +63,19 @@ public class MariaDB4jSampleTutorialTest {
         check(config);
     }
 
+    private void assertExecutable(String path) {
+        if (!(new File(path).canExecute())) {
+            throw new IllegalStateException(path
+                    + " not found/executable, but required for (only) this test; try e.g. sudo apt install mariadb-server ?");
+        }
+    }
+
     /**
-     * Illustrates how to use a mysqld binary that is extracted from "embedded" binaries in JAR on classpath.
+     * Illustrates how to use a mysqld binary that is extracted from "embedded"
+     * binaries in JAR on classpath.
      */
-    @Test public void testEmbeddedMariaDB4j() throws Exception {
+    @Test
+    public void testEmbeddedMariaDB4j() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         check(config);
@@ -106,7 +121,8 @@ public class MariaDB4jSampleTutorialTest {
         }
     }
 
-    @Test public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
+    @Test
+    public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         config.setSecurityDisabled(false);
@@ -147,5 +163,4 @@ public class MariaDB4jSampleTutorialTest {
             DbUtils.closeQuietly(conn);
         }
     }
-
 }
