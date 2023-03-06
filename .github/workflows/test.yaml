@@ -22,8 +22,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          # TODO Replace java-version with java-version-file: '.java-version' when adopting https://github.com/jenv/jenv.
-          java-version: '11'
+          java-version-file: '.java-version'
           cache: 'maven'
       # Run verify, not just package, to catch any failures of mariaDB4j-maven-plugin's integration test
       - run: ./mvnw --show-version --batch-mode --strict-checksums verify
