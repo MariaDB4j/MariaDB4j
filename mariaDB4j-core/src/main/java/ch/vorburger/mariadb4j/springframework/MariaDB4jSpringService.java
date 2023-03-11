@@ -21,7 +21,7 @@ package ch.vorburger.mariadb4j.springframework;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.MariaDB4jService;
-import com.google.common.base.Objects;
+import import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Configuration;
