@@ -105,7 +105,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
             getConfiguration().addArg("--user=" + osUser);
     }
 
-    @Value("${" + DATA_CHARSET + ":NA}")
+    @Value("${" + DEFAULT_CHARSET + ":NA}")
     public void setDefaultCharacterSet(String charset) {
         if (!Objects.equals(charset, "NA"))
             getConfiguration().setDefaultCharacterSet(charset);
