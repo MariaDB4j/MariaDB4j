@@ -53,7 +53,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String LIB_DIR = "mariaDB4j.libDir";
     public final static String UNPACK = "mariaDB4j.unpack";
     public final static String OS_USER = "mariaDB4j.osUser";
-    public final static String DATA_CHARSET = "mariaDB4j.defaultCharset";
+    public final static String DEFAULT_CHARSET = "mariaDB4j.defaultCharset";
 
     protected ManagedProcessException lastException;
 
