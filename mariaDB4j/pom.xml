@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>ch.vorburger.mariaDB4j</groupId>
 		<artifactId>mariaDB4j-pom</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>2.7.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -23,18 +23,14 @@
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-linux64</artifactId>
-			<version>10.2.11</version>
+			<version>10.6.12</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
-			<artifactId>mariaDB4j-db-win32</artifactId>
-			<version>10.2.11</version>
+			<artifactId>mariaDB4j-db-winx64</artifactId>
+			<version>10.6.12</version>
 		</dependency>
-		<dependency>
-			<groupId>ch.vorburger.mariaDB4j</groupId>
-			<artifactId>mariaDB4j-db-mac64</artifactId>
-			<version>10.2.11</version>
-		</dependency>
+		<!-- no support for osx, see PR commentary -->
 		<dependency>
 			<!-- For MariaDB4jSpringService, only. This has to be repeated from mariaDB4j-core here
 			due to the optional true below -->

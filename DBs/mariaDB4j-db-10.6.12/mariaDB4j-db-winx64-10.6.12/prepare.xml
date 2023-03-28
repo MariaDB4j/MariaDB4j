@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<project name="MariaDB4J" default="extract" >
+    <description>
+        Ant task to download file from internet and extract during maven package
+    </description>
+
+    <target name="env">
+        <echo message="Project path   : ${project.basedir}"/>
+        <echo message="Output location: ${project.build.directory}"/>
+        <echo message="Cache location : ${cacheDir}"/>
+        <echo message="MariaDB version: ${mariaDB.version}"/>
+        <mkdir dir="${cacheDir}" />
+        <mkdir dir="${cacheDir}/input" />
+    </target>
+
+    <target name="download" depends="env"
+        description="Download Windows zip file from mariadb.com">
+        <echo message="Downloading Windows MariaDB ${mariaDB.version} file ..." />
+        <get src="https://dlm.mariadb.com/2830119/MariaDB/mariadb-${mariaDB.version}/winx64-packages/mariadb-${mariaDB.version}-winx64.zip"
+            skipexisting="true" 
+            dest="${cacheDir}/input/mariadb-${mariaDB.version}-winx64.zip" />
+    </target>
+
+    <!--- As of MariaDB 10.5.2, the original mysql* bins are sym links to mariadb equivalents.
+    Sym links do not work in jar files as they are not platform independent
+    We copy over the mariadb* names and the code has been updated to use these new binaries
+    https://jira.mariadb.org/browse/MDEV-21303
+    -->
+    <target name="extract" depends="env,download"
+        description="Extract project files">
+        <echo message="Extracting zip file" />
+        <unzip src="${cacheDir}/input/mariadb-${mariaDB.version}-winx64.zip" 
+                dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/winx64"
+                overwrite="true">
+            <patternset>
+                <include name="mariadb-${mariaDB.version}-winx64/bin/mariadb.exe"/>
+                <include name="mariadb-${mariaDB.version}-winx64/bin/mariadbd.exe"/>
+                <include name="mariadb-${mariaDB.version}-winx64/bin/mariadb-check.exe"/>
+                <include name="mariadb-${mariaDB.version}-winx64/bin/mariadb-dump.exe"/>
+                <include name="mariadb-${mariaDB.version}-winx64/bin/mariadb-install-db.exe"/>
+                <include name="mariadb-${mariaDB.version}-winx64/bin/my_print_defaults.exe"/>
+                <include name="mariadb-${mariaDB.version}-winx64/share/**/*"/>
+            </patternset>
+            <mapper>
+                <globmapper from="mariadb-${mariaDB.version}-winx64/*" to="*"/>
+            </mapper>
+        </unzip>
+    </target>
+</project>

@@ -183,7 +183,7 @@ public class DBConfigurationBuilderTest {
     @Test public void defaultExecutables() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
-        assertTrue(config.getExecutable(Executable.Server).toString().contains("MariaDB4j/base/bin/mysqld"));
+        assertTrue(config.getExecutable(Executable.Server).toString().contains("MariaDB4j/base/bin/mariadbd"));
     }
 
     @Test public void customExecutables() {

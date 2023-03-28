@@ -13,30 +13,15 @@
         <relativePath>../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
-    <artifactId>mariaDB4j-binaries</artifactId>
-    <name>mariaDB4j Platform binaries</name>
+    <artifactId>mariaDB4j-10.6.12-binaries</artifactId>
+    <name>mariaDB4j 10.6.12 binaries</name>
     <!-- This artefact is never released, and just used in ../.travis.yml, so let's use a special marker version to make that clear -->
     <version>0.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-<!--        <module>mariaDB4j-db-win32-10.6.12</module>-->
-        <module>mariaDB4j-db-win32-10.2.11</module>
-        <module>mariaDB4j-db-win32-10.1.23</module>
-        <module>mariaDB4j-db-win32-10.1.20</module>
-        <module>mariaDB4j-db-win32-10.0.13</module>
-
-<!--        <module>mariaDB4j-db-mac64-10.6.12</module>-->
-	    <module>mariaDB4j-db-mac64-10.2.11</module>
-        <module>mariaDB4j-db-mac64-10.1.23</module>
-        <module>mariaDB4j-db-mac64-10.1.9</module>
-        <module>mariaDB4j-db-mac64-5.5.34</module>
-
-<!--        <module>mariaDB4j-db-linux64-10.6.12</module>-->
-        <module>mariaDB4j-db-linux64-10.2.11</module>
-        <module>mariaDB4j-db-linux64-10.1.23</module>
-        <module>mariaDB4j-db-linux64-10.1.13</module>
-
-	<module>mariaDB4j-db-10.3</module>
+        <module>mariaDB4j-db-linux64-10.6.12</module>
+        <!-- no support for osx, see PR commentary -->
+        <module>mariaDB4j-db-win64-10.6.12</module>
     </modules>
 </project>

@@ -109,7 +109,7 @@ public class DB {
         logger.info("Installing a new embedded database to: " + baseDir);
         File installDbCmdFile = configuration.getExecutable(Executable.InstallDB);
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
-        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mariadb-install-db"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.setWorkingDirectory(baseDir);
         if (!configuration.isWindows()) {
@@ -155,7 +155,7 @@ public class DB {
             mysqldProcess = startPreparation();
             ready = mysqldProcess.startAndWaitForConsoleMessageMaxMs(getReadyForConnectionsTag(), dbStartMaxWaitInMS);
         } catch (Exception e) {
-            logger.error("failed to start mysqld", e);
+            logger.error("failed to start mariadbd", e);
             throw new ManagedProcessException("An error occurred while starting the database", e);
         }
         if (!ready) {
@@ -174,7 +174,7 @@ public class DB {
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
         ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Server));
-        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqld"));
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mariadbd"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
@@ -203,7 +203,7 @@ public class DB {
         // because cleanupOnExit() just installed our (class DB) own
         // Shutdown hook, we don't need the one from ManagedProcess:
         builder.setDestroyOnShutdown(false);
-        logger.info("mysqld executable: " + builder.getExecutable());
+        logger.info("mariadbd executable: " + builder.getExecutable());
         return builder.build();
     }
 
@@ -342,7 +342,7 @@ public class DB {
         logger.info("Running a " + logInfoText);
         try {
             ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Client));
-            builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
+            builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mariadb"));
             builder.setWorkingDirectory(baseDir);
             builder.addArgument("--default-character-set=utf8");
             if (username != null && !username.isEmpty()) {
@@ -485,7 +485,7 @@ public class DB {
 
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
         builder.addStdOut(outputStream);
-        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqldump"));
+        builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mariadb-dump"));
         builder.addArgument("--port=" + configuration.getPort());
         if (!configuration.isWindows()) {
             builder.addFileArgument("--socket", getAbsoluteSocketFile());

@@ -43,7 +43,7 @@ import org.apache.commons.lang3.SystemUtils;
  */
 public class DBConfigurationBuilder {
 
-    protected static final String WIN32 = "win32";
+    protected static final String WINX64 = "winx64";
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
 
@@ -54,7 +54,7 @@ public class DBConfigurationBuilder {
     private String databaseVersion = null;
 
     // all these are just some defaults
-    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WIN32 : SystemUtils.IS_OS_MAC ? OSX : LINUX;
+    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WINX64 : SystemUtils.IS_OS_MAC ? OSX : LINUX;
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
     protected String libDir = null;
 
@@ -289,11 +289,11 @@ public class DBConfigurationBuilder {
     protected String _getDatabaseVersion() {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
-            if (!OSX.equals(getOS()) && !LINUX.equals(getOS()) && !WIN32.equals(getOS())) {
+            if (!OSX.equals(getOS()) && !LINUX.equals(getOS()) && !WINX64.equals(getOS())) {
                 throw new IllegalStateException("OS not directly supported, please use setDatabaseVersion() to set the name "
                         + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
             }
-            databaseVersion = "mariadb-10.2.11";
+            databaseVersion = "mariadb-10.6.12";
         }
         return databaseVersion;
     }
@@ -368,23 +368,23 @@ public class DBConfigurationBuilder {
     }
 
     protected Map<Executable, Supplier<File>> _getExecutables() {
-        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/mysqld" + getExtension()));
-        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/mysql" + getExtension()));
-        executables.putIfAbsent(Dump, () -> new File(baseDir, "bin/mysqldump" + getExtension()));
+        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/mariadbd" + getExtension()));
+        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/mariadb" + getExtension()));
+        executables.putIfAbsent(Dump, () -> new File(baseDir, "bin/mariadb-dump" + getExtension()));
         executables.putIfAbsent(PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
         executables.putIfAbsent(InstallDB, () -> {
-            File bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
+            File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
             if (bin.exists()) {
                 return bin;
             }
-            return new File(baseDir, "scripts/mysql_install_db" + getExtension());
+            return new File(baseDir, "scripts/mariadb-install-db" + getExtension());
         });
 
         return executables;
     }
 
     public boolean isWindows() {
-        return WIN32.equals(getOS());
+        return WINX64.equals(getOS());
     }
 
     protected String getExtension() {

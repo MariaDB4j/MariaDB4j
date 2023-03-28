@@ -52,14 +52,14 @@ public class MariaDB4jSampleTutorialTest {
      */
     @Test
     public void testLocalMariaDB() throws Exception {
-        assertExecutable("/usr/sbin/mysqld");
+        assertExecutable("/usr/sbin/mariadbd");
 
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         config.setUnpackingFromClasspath(false);
         config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
         config.setBaseDir("/usr");
-        config.setExecutable(Server, "/usr/sbin/mysqld");
+        config.setExecutable(Server, "/usr/sbin/mariadbd");
         check(config);
     }
 
@@ -71,7 +71,7 @@ public class MariaDB4jSampleTutorialTest {
     }
 
     /**
-     * Illustrates how to use a mysqld binary that is extracted from "embedded"
+     * Illustrates how to use a mariadbd binary that is extracted from "embedded"
      * binaries in JAR on classpath.
      */
     @Test
@@ -86,15 +86,13 @@ public class MariaDB4jSampleTutorialTest {
         db.start();
 
         String dbName = "mariaDB4jTest"; // or just "test"
-        if (!dbName.equals("test")) {
-            // mysqld out-of-the-box already has a DB named "test"
-            // in case we need another DB, here's how to create it first
-            db.createDB(dbName);
-        }
+        // mariadbd out-of-the-box already has a DB named "test"
+        // in case we need another DB, here's how to create it first
+        db.createDB(dbName);
 
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "");
+            conn = DriverManager.getConnection(db.getConfiguration().getURL(dbName), System.getProperty("user.name"), "");
             QueryRunner qr = new QueryRunner();
 
             // Should be able to create a new table
@@ -130,15 +128,19 @@ public class MariaDB4jSampleTutorialTest {
         db.start();
 
         String dbName = "mariaDB4jTestWSecurity"; // or just "test"
-        if (!dbName.equals("test")) {
-            // mysqld out-of-the-box already has a DB named "test"
-            // in case we need another DB, here's how to create it first
-            db.createDB(dbName, "root", "");
-        }
+        // mariadbd out-of-the-box already has a DB named "test"
+        // in case we need another DB, here's how to create it first
+        // Starting with MariaDB 10.4, the root user has an invalid password
+        // we will modify the root user password back to an empty string
+        // Using the user that owns the data directory / uid we can execute this initial bootstrapping command
+        // to give us pre 10.4 behavior for the purposes of this test
+        db.run("SET PASSWORD FOR 'root'@'localhost' = PASSWORD('root');", System.getProperty("user.name"), "");
+        db.createDB(dbName, "root", "root");
+
 
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(config.getURL(dbName), "root", "");
+            conn = DriverManager.getConnection(config.getURL(dbName), "root", "root");
             QueryRunner qr = new QueryRunner();
 
             // Should be able to create a new table
