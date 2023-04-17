@@ -47,20 +47,24 @@ public class MariaDB4jSampleTutorialTest {
 
     /**
      * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on
-     * the host,
-     * instead of one that was bundled with and extracted from a MariaDB4j JAR.
+     * the host, instead of one that was bundled with and extracted from a MariaDB4j JAR.
      */
     @Test
     public void testLocalMariaDB() throws Exception {
-        assertExecutable("/usr/sbin/mysqld");
-
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-        config.setPort(0); // 0 => autom. detect free port
-        config.setUnpackingFromClasspath(false);
-        config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
-        config.setBaseDir("/usr");
-        config.setExecutable(Server, "/usr/sbin/mysqld");
-        check(config);
+        // TODO rm isWindows() after making this test work on Windows, see https://github.com/vorburger/MariaDB4j/issues/713
+        if (!config.isWindows()) {
+            assertExecutable("/usr/sbin/mysqld");
+
+            config.setPort(0); // 0 => autom. detect free port
+            config.setUnpackingFromClasspath(false);
+            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
+            config.setBaseDir("/usr");
+            config.setExecutable(Server, "/usr/sbin/mysqld");
+            check(config);
+        } else {
+            System.out.println("testLocalMariaDB() SKIPPED because isWindows()");
+        }
     }
 
     private void assertExecutable(String path) {
@@ -86,7 +90,7 @@ public class MariaDB4jSampleTutorialTest {
         db.start();
 
         String dbName = "mariaDB4jTest"; // or just "test"
-        if (!dbName.equals("test")) {
+        if (!"test".equals(dbName)) {
             // mysqld out-of-the-box already has a DB named "test"
             // in case we need another DB, here's how to create it first
             db.createDB(dbName);
@@ -130,7 +134,7 @@ public class MariaDB4jSampleTutorialTest {
         db.start();
 
         String dbName = "mariaDB4jTestWSecurity"; // or just "test"
-        if (!dbName.equals("test")) {
+        if (!"test".equals(dbName)) {
             // mysqld out-of-the-box already has a DB named "test"
             // in case we need another DB, here's how to create it first
             db.createDB(dbName, "root", "");
