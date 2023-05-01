@@ -101,7 +101,7 @@ The DataSource initialization have to wait until MariaDB is ready to receive con
 
 ```
 dependencies {
-   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:3.0.0")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:3.0.1")
 }
 ```
 
@@ -127,35 +127,33 @@ MariaDB4j JAR binaries are available from:
 
 1. Maven central:
 
-```xml
-<dependency>
-    <groupId>ch.vorburger.mariaDB4j</groupId>
-    <artifactId>mariaDB4j</artifactId>
-    <version>3.0.0</version>
-</dependency>
-```
+   ```xml
+   <dependency>
+       <groupId>ch.vorburger.mariaDB4j</groupId>
+       <artifactId>mariaDB4j</artifactId>
+       <version>3.0.1</version>
+   </dependency>
+   ```
 
-2. <https://jitpack.io>: [main-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/main-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
+1. <https://jitpack.io>: [main-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/main-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
 
-Up to version 2.1.3 MariaDB4j was on bintray.  Starting with version 2.2.1 we’re only using Maven central  The 2.2.1 that is on Bintray is broken.
+1. Not Bintray! (Up to version 2.1.3 MariaDB4j was on Bintray.  Starting with version 2.2.1 we’re only using Maven central.  The 2.2.1 that is on Bintray is broken.)
 
-For bleeding edge SNAPSHOT versions, you (or your build server) can easily build it yourself from
-source; just git clone this and then ./mvnw install or deploy. -- MariaDB4j's Maven then coordinates are:
+1. Local build: For bleeding edge `-SNAPSHOT` versions, you (or your build server) can easily build it yourself from
+source; just `git clone` this repo, and then `./mvnw install` (or `deploy`) it. -- MariaDB4j's Maven then coordinates are:
 
-```xml
-<dependency>
-    <groupId>ch.vorburger.mariaDB4j</groupId>
-    <artifactId>mariaDB4j</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-</dependency>
-```
+Database Maven Artifacts
+------------------------
 
-If you use your own packaged versions of MariaDB native binaries, then the mariaDB4j-core artifact JAR,
+If you use your own packaged versions of MariaDB native binaries, then the `mariaDB4j-core` artifact JAR,
 which contains only the launcher Java code but no embedded native binaries, will be more suitable for you.
 
-Similarly, you could also exclude one of artifacts of the currently 3 packaged OS platform to save download if your project / community is mono-platform.
+You can also exclude one of artifacts of the currently 3 packaged OS platform to save download if your project / community is mono-platform.
 
-You could also override the version(s) of the respective (transitive) mariaDB4j-db dependency to downgrade it, and should so be able to use the latest mariaDB4j-core & app artifact JARs even with older versions of the JAR archives containing the native mariaDB executables etc. if your project for some reason is stuck on a fixed DB version, but wants to get the latest MariaDB4j.
+You could also override the version(s) of the respective (transitive) `mariaDB4j-db-*` dependency to downgrade it, and should so be able to use the latest `mariaDB4j-core` artifact JARs, even with older`versions of the JAR archives containing the native mariaDB executables etc. This may be useful if your project for some reason needs a fixed older DB version, but wants to get the latest MariaDB4j launcher Java code.
+
+Release Notes
+-------------
 
 [Release Notes are in CHANGES.md](CHANGES.md).
 
