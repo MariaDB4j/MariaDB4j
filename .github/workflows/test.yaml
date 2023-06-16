@@ -3,10 +3,10 @@ name: "Maven Test"
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -21,9 +21,9 @@ jobs:
           version: 1.0
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version-file: '.java-version'
-          cache: 'maven'
+          distribution: "temurin"
+          java-version-file: ".java-version"
+          cache: "maven"
       # Run verify, not just package, to catch any failures of mariaDB4j-maven-plugin's integration test
       - run: ./mvnw --show-version --batch-mode --strict-checksums verify
       # When contrib. new DB version, then ./mvnw -f DBs/pom.xml clean install
