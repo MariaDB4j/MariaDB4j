@@ -27,3 +27,7 @@ jobs:
       # Run verify, not just package, to catch any failures of mariaDB4j-maven-plugin's integration test
       - run: ./mvnw --show-version --batch-mode --strict-checksums verify
       # When contrib. new DB version, then ./mvnw -f DBs/pom.xml clean install
+
+      # https://github.com/marketplace/actions/maven-dependency-tree-dependency-submission
+      - name: Maven Dependency Tree Dependency Submission
+        uses: advanced-security/maven-dependency-submission-action@v3.0.2
