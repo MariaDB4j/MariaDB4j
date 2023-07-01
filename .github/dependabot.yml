@@ -24,3 +24,11 @@ updates:
   - dependency-name: org.apache.maven.plugins:maven-checkstyle-plugin
     versions:
     - 3.1.1
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: sunday
+    time: "04:00"
+  open-pull-requests-limit: 99
