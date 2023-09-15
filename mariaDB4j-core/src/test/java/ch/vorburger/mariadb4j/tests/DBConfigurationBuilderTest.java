@@ -184,7 +184,7 @@ public class DBConfigurationBuilderTest {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
         var pathSeparator = System.getProperty("file.separator");
-        var expectedString = "MariaDB4j/base/bin/mysqld".replace("/", pathSeparator);
+        var expectedString = "MariaDB4j/base/bin/mariadbd".replace("/", pathSeparator);
         assertTrue(config.getExecutable(Executable.Server).toString().contains(expectedString));
     }
 
