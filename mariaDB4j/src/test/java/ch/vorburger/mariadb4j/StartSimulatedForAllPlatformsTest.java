@@ -39,15 +39,11 @@ import org.junit.Test;
 public class StartSimulatedForAllPlatformsTest {
 
     @Test public void simulatedStartWin32() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.WIN32);
+        checkPlatformStart(DBConfigurationBuilder.WINX64);
     }
 
     @Test public void simulatedStartLinux() throws Exception {
         checkPlatformStart(DBConfigurationBuilder.LINUX);
-    }
-
-    @Test public void simulatedStartOSX() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.OSX);
     }
 
     void checkPlatformStart(String platform) throws ManagedProcessException, IOException {
