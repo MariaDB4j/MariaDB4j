@@ -133,6 +133,15 @@ public class MariaDB4jSampleTutorialTest {
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
 
+        // Starting with MariaDB 10.4, the root user has an invalid password.
+        // We will modify the root user password back to an empty string.
+        // Using the user that owns the data directory / uid, we can execute this initial bootstrapping command
+        // to give us pre 10.4 behavior for the purposes of this test.
+        // Windows does not implement this auth (it's not documented anywhere), so we can just use the root user.
+        // Windows behavior still uses empty string password for the root user.
+        db.run("SET PASSWORD FOR 'root'@'localhost' = PASSWORD('');", 
+                (config.isWindows()) ? "root" : System.getProperty("user.name"), "");
+
         String dbName = "mariaDB4jTestWSecurity"; // or just "test"
         if (!"test".equals(dbName)) {
             // mysqld out-of-the-box already has a DB named "test"
