@@ -49,20 +49,25 @@ public class StopMojoTest {
 
     StopMojo stopMojo;
 
-    @Mock Log mockLog;
+    @Mock
+    Log mockLog;
 
-    @Mock DB mockDb;
+    @Mock
+    DB mockDb;
 
-    @Captor ArgumentCaptor<String> logCaptor;
+    @Captor
+    ArgumentCaptor<String> logCaptor;
 
-    @Before public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    @Before
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
         DBSingleton.setDB(mockDb);
         stopMojo = new StopMojo();
         stopMojo.setLog(mockLog);
     }
 
-    @Test public void stopWithSkipEnabledDoesNotStopDatabase() throws Exception {
+    @Test
+    public void stopWithSkipEnabledDoesNotStopDatabase() throws Exception {
         stopMojo.setSkip(true);
         stopMojo.execute();
 
@@ -73,7 +78,8 @@ public class StopMojoTest {
         assertEquals("skipping stop as per configuration.", logCaptor.getValue());
     }
 
-    @Test public void stopCallsDbSingleton() throws Exception {
+    @Test
+    public void stopCallsDbSingleton() throws Exception {
         stopMojo.execute();
 
         verify(mockDb).stop();
@@ -83,7 +89,8 @@ public class StopMojoTest {
         assertEquals("Stopping MariaDB4j...", logCaptor.getValue());
     }
 
-    @Test public void stopCallsDbSingletonAndHandlesManagedProcessException() throws Exception {
+    @Test
+    public void stopCallsDbSingletonAndHandlesManagedProcessException() throws Exception {
         DB mockDb = mock(DB.class);
         DBSingleton.setDB(mockDb);
 

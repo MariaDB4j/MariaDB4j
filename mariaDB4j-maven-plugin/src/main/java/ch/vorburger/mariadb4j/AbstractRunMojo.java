@@ -61,8 +61,6 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     private int port = -1;
     @Parameter()
     private String socket;
-    @Parameter()
-    private String binariesClassPathLocation;
 
     @Parameter
     private String[] args;
@@ -85,7 +83,6 @@ public abstract class AbstractRunMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "test")
     protected String databaseName;
-
 
     /**
      * scriptCharset set this if you scripts are not UTF-8.

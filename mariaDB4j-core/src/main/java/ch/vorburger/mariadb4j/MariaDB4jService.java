@@ -26,6 +26,7 @@ import jakarta.annotation.PreDestroy;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * MariaDB4j starter "Service". This is basically just "sugar" - you can of course also use the DB
@@ -114,7 +115,7 @@ public class MariaDB4jService {
         // NOTE: In Eclipse, System.console() is not available.. so: (@see
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=122429)
         System.out.println("\n\nHit Enter to quit...");
-        BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader d = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.US_ASCII));
         d.readLine();
     }
 }
