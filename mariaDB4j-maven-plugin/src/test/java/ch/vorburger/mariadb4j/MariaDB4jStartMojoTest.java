@@ -86,6 +86,9 @@ public class MariaDB4jStartMojoTest {
     }
 
     @Test public void basicUsage() throws Exception {
+        // NB: This is a mess... after an rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j,
+        // this test fails at first, until after the 2nd (!) "mvn install" it passes.
+        // It only works on CI because ~/.m2/** is cached there.
         File pom = new File(getClass().getResource("/basic-usage/pom.xml").toURI());
         assertThat(pom.isFile()).overridingErrorMessage("not found: %s", pom).isTrue();
         assertThat(pom.exists()).isTrue();
