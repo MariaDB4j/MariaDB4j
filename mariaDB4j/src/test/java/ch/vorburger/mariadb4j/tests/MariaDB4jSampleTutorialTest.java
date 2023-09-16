@@ -68,7 +68,7 @@ public class MariaDB4jSampleTutorialTest {
     }
 
     private void assertExecutable(String path) {
-        if (!(new File(path).canExecute())) {
+        if (!new File(path).canExecute()) {
             throw new IllegalStateException(path
                     + " not found/executable, but required for (only) this test; try e.g. sudo apt install mariadb-server ?");
         }

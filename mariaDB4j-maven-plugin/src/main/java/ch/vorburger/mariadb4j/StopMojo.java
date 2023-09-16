@@ -27,8 +27,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
 
 /**
  * Stop a MariaDB4j database that has been started by the "start" goal.
@@ -39,14 +37,6 @@ import org.apache.maven.project.MavenProject;
  */
 @Mojo(name = "stop", requiresProject = true, defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class StopMojo extends AbstractMojo {
-
-    /**
-     * The Maven project.
-     *
-     * @since 1.4.1
-     */
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
 
     /**
      * Skip the execution.
