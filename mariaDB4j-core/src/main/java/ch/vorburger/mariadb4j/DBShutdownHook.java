@@ -70,7 +70,8 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
     private final DBConfiguration configuration;
     private final LinkOption[] linkOptions = {};
 
-    public DBShutdownHook(String threadName, DB db, Supplier<ManagedProcess> mysqldProcessSupplier, Supplier<File> baseDirSupplier,
+    public DBShutdownHook(String threadName, DB db, Supplier<ManagedProcess> mysqldProcessSupplier,
+            Supplier<File> baseDirSupplier,
             Supplier<File> tmpDirSupplier, Supplier<File> dataDirSupplier, DBConfiguration configuration) {
         super(threadName);
         this.db = db;
@@ -154,7 +155,8 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
 
     private Path setReadOnly(Path path, boolean readOnly) throws IOException {
         List<Exception> causeList = new ArrayList<>(2);
-        DosFileAttributeView fileAttributeView = Files.getFileAttributeView(path, DosFileAttributeView.class, linkOptions);
+        DosFileAttributeView fileAttributeView = Files.getFileAttributeView(path, DosFileAttributeView.class,
+                linkOptions);
         if (fileAttributeView != null) {
             try {
                 fileAttributeView.setReadOnly(readOnly);
@@ -164,7 +166,8 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
             }
         }
 
-        PosixFileAttributeView posixFileAttributeView = Files.getFileAttributeView(path, PosixFileAttributeView.class, linkOptions);
+        PosixFileAttributeView posixFileAttributeView = Files.getFileAttributeView(path, PosixFileAttributeView.class,
+                linkOptions);
         if (posixFileAttributeView != null) {
             PosixFileAttributes readAttributes = posixFileAttributeView.readAttributes();
             Set<PosixFilePermission> permissions = readAttributes.permissions();
@@ -184,8 +187,9 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
             causeList.forEach(ioException::addSuppressed);
             throw ioException;
         }
-        throw new IOException(String.format("No DosFileAttributeView or PosixFileAttributeView for '%s' (linkOptions=%s)", path,
-                Arrays.toString(linkOptions)));
+        throw new IOException(
+                String.format("No DosFileAttributeView or PosixFileAttributeView for '%s' (linkOptions=%s)", path,
+                        Arrays.toString(linkOptions)));
     }
 
     private File[] listFiles(File directory, FileFilter fileFilter) throws IOException {
@@ -206,7 +210,8 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
     private File requireExists(File file, String fileParamName) {
         Objects.requireNonNull(file, fileParamName);
         if (!file.exists()) {
-            throw new IllegalArgumentException("File system element for parameter '" + fileParamName + "' does not exist: '" + file + "'");
+            throw new IllegalArgumentException(
+                    "File system element for parameter '" + fileParamName + "' does not exist: '" + file + "'");
         }
         return file;
     }
@@ -247,11 +252,13 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         return hasNext;
     }
 
-    @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+    @Override
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         return FileVisitResult.CONTINUE;
     }
 
-    @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (Files.exists(file, linkOptions)) {
             setReadOnly(file, false);
             Files.deleteIfExists(file);
@@ -267,12 +274,14 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    @Override public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+    @Override
+    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
         Objects.requireNonNull(file);
         throw exc;
     }
 
-    @Override public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+    @Override
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         if (isEmptyDirectory(dir)) {
             Files.deleteIfExists(dir);
         }
@@ -283,7 +292,8 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         ManagedProcess mysqldProcess = mysqldProcessSupplier.get();
         // ManagedProcess DestroyOnShutdown ProcessDestroyer does
         // something similar, but it shouldn't hurt to better be save
