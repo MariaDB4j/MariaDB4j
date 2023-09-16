@@ -1,7 +1,7 @@
+_Please :star: Star on GitHub and **💸 support [on OpenCollective](https://opencollective.com/mariadb4j), via [GitHub Sponsoring](https://github.com/sponsors/vorburger) or through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance of this project [used by hundreds](https://github.com/MariaDB4j/MariaDB4j/network/dependents), since 2011! 🫶_
+
 What?
 =====
-
-_Please :star: Star on GitHub and **support me 🫶 through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance!_
 
 MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backward compatible, drop-in replacement of the MySQL® Database Server", see [Wikipedia](http://en.wikipedia.org/wiki/MariaDB)), allowing you to use MariaDB (MySQL®) from Java without ANY installation / external dependencies.  Read again: You do NOT have to have MariaDB binaries installed on your system to use MariaDB4j!
 
