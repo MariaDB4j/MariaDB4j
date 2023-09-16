@@ -28,7 +28,7 @@
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
       <artifactId>mariaDB4j-db-winx64</artifactId>
-      <version>10.11.5</version>
+      <version>10.11.5.1</version>
     </dependency>
     <dependency>
       <!-- For MariaDB4jSpringService, only. This has to be repeated from mariaDB4j-core here

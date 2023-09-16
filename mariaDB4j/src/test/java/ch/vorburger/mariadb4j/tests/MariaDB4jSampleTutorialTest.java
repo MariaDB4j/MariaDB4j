@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -134,24 +135,24 @@ public class MariaDB4jSampleTutorialTest {
         db.start();
 
         // Starting with MariaDB 10.4, the root user has an invalid password.
-        // We will modify the root user password back to an empty string.
-        // Using the user that owns the data directory / uid, we can execute this initial bootstrapping command
-        // to give us pre 10.4 behavior for the purposes of this test.
-        // Windows does not implement this auth (it's not documented anywhere), so we can just use the root user.
-        // Windows behavior still uses empty string password for the root user.
-        db.run("SET PASSWORD FOR 'root'@'localhost' = PASSWORD('');", 
-                (config.isWindows()) ? "root" : System.getProperty("user.name"), "");
+        // We will therefore modify the root user password to a secure random string (a security best practice).
+        // Using the UID of the user that owns the data directory, we can execute this initial bootstrapping command:
+        // Note that on Windows MariaDB apparently does not implement this, still uses empty string password for the
+        // root user, so we can just use the root user.
+        var randomRootPassword = RandomStringUtils.random(69, 97, 122, true, true);
+        db.run("SET PASSWORD FOR 'root'@'localhost' = PASSWORD('" + randomRootPassword + "');",
+                config.isWindows() ? "root" : System.getProperty("user.name"), "");
 
         String dbName = "mariaDB4jTestWSecurity"; // or just "test"
         if (!"test".equals(dbName)) {
             // mysqld out-of-the-box already has a DB named "test"
             // in case we need another DB, here's how to create it first
-            db.createDB(dbName, "root", "");
+            db.createDB(dbName, "root", randomRootPassword);
         }
 
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(config.getURL(dbName), "root", "");
+            conn = DriverManager.getConnection(config.getURL(dbName), "root", randomRootPassword);
             QueryRunner qr = new QueryRunner();
 
             // Should be able to create a new table

@@ -9,6 +9,7 @@
     <echo message="Output location: ${project.build.directory}" />
     <echo message="Cache location : ${cacheDir}" />
     <echo message="MariaDB version: ${mariaDB.version}" />
+    <echo message="Project version: ${project.version}" />
     <mkdir dir="${cacheDir}" />
     <mkdir dir="${cacheDir}/input" />
   </target>
@@ -34,7 +35,7 @@
     description="Extract project files">
     <echo message="Extracting zip file" />
     <unzip src="${cacheDir}/input/mariadb-${mariaDB.version}-winx64.zip"
-      dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/winx64"
+      dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${project.version}/winx64"
       overwrite="true">
       <patternset>
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysql.exe" />

@@ -28,6 +28,7 @@
     <untar src="${cacheDir}/input/mariadb-${mariaDB.version}-linux-x86_64.tar.gz"
       dest="${project.build.directory}"
       compression="gzip" />
+
     <echo message="Copying share folders and files" />
     <copy
       todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux">
@@ -35,6 +36,7 @@
         <include name="share/**/*" />
       </fileset>
     </copy>
+
     <echo message="Copying lib files" />
     <copy
       todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/libs">
@@ -44,6 +46,7 @@
         <include name="libmysql*" />
       </fileset>
     </copy>
+
     <!--
        As of MariaDB 10.5.2, the original mysql* bins are sym links to mariadb equivalents.
        Sym links do not work in jar files as they are not platform independent
@@ -51,7 +54,6 @@
        https://jira.mariadb.org/browse/MDEV-21303
         -->
     <echo message="Copying bin files" />
-
     <copy
       todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin">
       <fileset dir="${project.build.directory}/mariadb-${mariaDB.version}-linux-systemd-x86_64/bin">

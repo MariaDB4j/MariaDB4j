@@ -26,6 +26,7 @@ import ch.vorburger.exec.ManagedProcessException;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -44,6 +45,11 @@ public class StartSimulatedForAllPlatformsTest {
 
     @Test public void simulatedStartLinux() throws Exception {
         checkPlatformStart(DBConfigurationBuilder.LINUX);
+    }
+
+    @Ignore // TODO https://github.com/MariaDB4j/MariaDB4j/issues/497
+    @Test public void simulatedStartOSX() throws Exception {
+        checkPlatformStart(DBConfigurationBuilder.OSX);
     }
 
     void checkPlatformStart(String platform) throws ManagedProcessException, IOException {

@@ -204,10 +204,10 @@ public class DBConfigurationBuilder {
 
     public DBConfiguration build() {
         frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(), getLibDir(), _getDataDir(),
-                _getTmpDir(), isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(), isSecurityDisabled(),
-                isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL, getDefaultCharacterSet(), _getExecutables(),
-                getProcessListener());
+        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(),
+                getLibDir(), _getDataDir(), _getTmpDir(), isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(),
+                isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
+                getDefaultCharacterSet(), _getExecutables(), getProcessListener());
     }
 
     /**
@@ -251,7 +251,7 @@ public class DBConfigurationBuilder {
             return true;
         }
         String trim = string.trim();
-        if (trim.length() == 0 || trim.equalsIgnoreCase("null")) {
+        if (trim.length() == 0 || "null".equalsIgnoreCase(trim)) {
             return true;
         }
         return false;
@@ -290,10 +290,12 @@ public class DBConfigurationBuilder {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
             if (!OSX.equals(getOS()) && !LINUX.equals(getOS()) && !WINX64.equals(getOS())) {
-                throw new IllegalStateException("OS not directly supported, please use setDatabaseVersion() to set the name "
-                        + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
+                throw new IllegalStateException(
+                        "OS not directly supported, please use setDatabaseVersion() to set the name "
+                                + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
             }
-            databaseVersion = "mariadb-10.11.5";
+            // see https://github.com/MariaDB4j/MariaDB4j/pull/771#issuecomment-1724082593 why 10.11.5.1 on Windows:
+            databaseVersion = !WINX64.equals(getOS()) ? "mariadb-10.11.5" : "mariadb-10.11.5.1";
         }
         return databaseVersion;
     }
@@ -317,7 +319,8 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getOSLibraryEnvironmentVarName() {
-        return SystemUtils.IS_OS_WINDOWS ? "PATH" : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
+        return SystemUtils.IS_OS_WINDOWS ? "PATH"
+                : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
     }
 
     protected String _getBinariesClassPathLocation() {

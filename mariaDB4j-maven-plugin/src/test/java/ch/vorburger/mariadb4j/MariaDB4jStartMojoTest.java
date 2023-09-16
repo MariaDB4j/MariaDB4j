@@ -86,6 +86,7 @@ public class MariaDB4jStartMojoTest {
     }
 
     @Test public void basicUsage() throws Exception {
+        // NB: This may (?) fail for "mvn verify" on a fresh ~/.m2/repository; it only works for "mvn install", or verify after install?
         File pom = new File(getClass().getResource("/basic-usage/pom.xml").toURI());
         assertThat(pom.isFile()).overridingErrorMessage("not found: %s", pom).isTrue();
         assertThat(pom.exists()).isTrue();
