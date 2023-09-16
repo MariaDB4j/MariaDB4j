@@ -7,9 +7,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
-See https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.6.0...main for unrelease changes.
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.1...main for unreleased changes.
 
-## v2.6.0 - 2022-10-01 (Issue #621)
+## v3.0.1 - 2023-05-01 (Issue #[696](https://github.com/MariaDB4j/MariaDB4j/issues/696))
+
+* feat: Switch from Java 11 to Java 17
+* feat: Expose Configuration defaultCharacterSet on MariaDB4jSpringService (#674)
+* feat: Replace javax.annotation with jakarta.annotation (fixes #648)
+* feat: Removing tmpdir argument from mysql_install_db execution
+* feat: Rename master branch to main
+* docs: Add https://tidelift.com/security link to SECURITY.md
+* docs: Change mvn to ./mvnw on README
+* build: Add Maven Wrapper
+* build: Add workflow for a maven verify on windows-runner
+* build: Add GitHub Action (instead of TravisCI; fixes #680)
+* build: Move Java Version from GH WF YAML into .java-version from jenv
+* build: Remove dorny/test-reporter GitHub Action (see #715)
+* build: Remove .travis.yml (see #680)
+* build: Replace fixed java-version: '17' in Windows Action with .java-version (like Linux)
+* test: Skip testLocalMariaDB() if isWindows()
+* test: Improve testLocalMariaDB() failure (fixes #681)
+
+### Dependency Upgrades
+
+* Bump assertj-core from 3.23.1 to 3.24.1
+* Bump assertj-core from 3.24.1 to 3.24.2
+* Bump checkstyle from 10.3.3 to 10.3.4
+* Bump checkstyle from 10.3.4 to 10.4
+* Bump checkstyle from 10.4 to 10.5.0
+* Bump checkstyle from 10.5.0 to 10.6.0
+* Bump checkstyle from 10.6.0 to 10.8.0
+* Bump checkstyle from 10.8.0 to 10.8.1
+* Bump checkstyle from 10.8.1 to 10.9.3
+* Bump checkstyle from 10.9.3 to 10.10.0
+* Bump ch.vorburger.exec to 3.1.4 (fixes #233)
+* Bump codeql-action (fixes #685)
+* Bump maven-checkstyle-plugin from 3.2.0 to 3.2.1
+* Bump maven-checkstyle-plugin from 3.2.1 to 3.2.2
+* Bump maven-compat from 3.8.6 to 3.8.7
+* Bump maven-compat from 3.8.7 to 3.9.0
+* Bump maven-compat from 3.9.0 to 3.9.1
+* Bump maven-compiler-plugin from 3.10.1 to 3.11.0
+* Bump maven-invoker-plugin from 3.3.0 to 3.4.0
+* Bump maven-invoker-plugin from 3.4.0 to 3.5.0
+* Bump maven-invoker-plugin from 3.5.0 to 3.5.1
+* Bump maven-javadoc-plugin from 3.4.1 to 3.5.0
+* Bump maven-plugin-annotations from 3.6.4 to 3.7.0
+* Bump maven-plugin-annotations from 3.7.0 to 3.8.1
+* Bump maven-plugin-annotations from 3.8.1 to 3.8.2
+* Bump maven-plugin-plugin from 3.6.4 to 3.7.0
+* Bump maven-plugin-plugin from 3.7.0 to 3.8.1
+* Bump maven-plugin-plugin from 3.8.1 to 3.8.2
+* Bump maven-project-info-reports-plugin from 3.4.1 to 3.4.2
+* Bump maven-project-info-reports-plugin from 3.4.2 to 3.4.3
+* Bump maven-release-plugin from 3.0.0-M6 to 3.0.0-M7
+* Bump maven-release-plugin from 3.0.0-M7 to 3.0.0
+* Bump maven-shade-plugin from 3.4.0 to 3.4.1
+* Bump maven.version from 3.8.6 to 3.8.7
+* Bump maven.version from 3.8.7 to 3.9.0
+* Bump maven.version from 3.9.0 to 3.9.1
+* Bump mockito-core from 4.11.0 to 5.1.1
+* Bump mockito-core from 4.8.0 to 4.8.1
+* Bump mockito-core from 4.8.1 to 4.9.0
+* Bump mockito-core from 4.9.0 to 4.11.0
+* Bump mockito-core from 5.1.1 to 5.2.0
+* Bump mockito-core from 5.2.0 to 5.3.0
+* Bump mockito-core from 5.3.0 to 5.3.1
+* Bump slf4j-simple from 2.0.2 to 2.0.3
+* Bump slf4j-simple from 2.0.3 to 2.0.5
+* Bump slf4j-simple from 2.0.5 to 2.0.6
+* Bump slf4j-simple from 2.0.6 to 2.0.7
+* Bump Spring Boot from 2.7.5 to 3.0.4 (fixes #669)
+* Bump springboot.version from 2.7.4 to 2.7.5
+* Bump springboot.version from 3.0.4 to 3.0.5
+* Bump springboot.version from 3.0.5 to 3.0.6
+
+This Changelog was manually written by the maintainer, based on: `git log --no-merges --pretty=format:"%s" mariaDB4j-2.6.0..mariaDB4j-3.0.1 | sort | grep -v "\[maven-release-plugin\]" | sed 's/.*/\* &/' > CHANGELOG-git.md` (TODO: Write a thing which "collapses" Dependency Upgrades).
+
+**Full Changelog**: https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-2.6.0...mariaDB4j-3.0.1
+
+## v2.6.0 - 2022-10-01 (Issue #[621](https://github.com/MariaDB4j/MariaDB4j/issues/621))
 
 * Remove wrong space from DYLD_FALLBACK_LIBRARY_PATH by @vorburger in https://github.com/vorburger/MariaDB4j/pull/561
 * Support using locally installed MariaDB (#560) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/565
@@ -91,7 +168,8 @@ See https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.6.0...main for un
 * Bump springboot.version from 2.6.5 to 2.6.6 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/570
 * Bump version from 2.5.4 to 2.6.0 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/567
 
-## New Contributors
+### New Contributors
+
 * @dev-fringe made their first contribution in https://github.com/vorburger/MariaDB4j/pull/515
 * @agostop made their first contribution in https://github.com/vorburger/MariaDB4j/pull/533
 * @dassio made their first contribution in https://github.com/vorburger/MariaDB4j/pull/573
@@ -153,7 +231,6 @@ See https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.6.0...main for un
 * Spaces in windows paths are no longer replaced by %20 by @Blanco27 in https://github.com/vorburger/MariaDB4j/pull/504
 * Replace DB's toWindowsPath() with inline File.getCanonicalFile() by @vorburger in https://github.com/vorburger/MariaDB4j/pull/505
 * Fix failing release due to Checkstyle in generated-sources (fixes #511) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/512
-
 
 ### Dependency Upgrades
 
@@ -260,7 +337,8 @@ See https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.6.0...main for un
 * Bump springboot.version from 2.5.2 to 2.6.0 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/479
 * Bump springboot.version from 2.6.0 to 2.6.1 by @dependabot in https://github.com/vorburger/MariaDB4j/pull/507
 
-## New Contributors
+### New Contributors
+
 * @ROMVoid95 made their first contribution in https://github.com/vorburger/MariaDB4j/pull/220
 * @mdindoffer made their first contribution in https://github.com/vorburger/MariaDB4j/pull/248
 * @srbala made their first contribution in https://github.com/vorburger/MariaDB4j/pull/240
@@ -280,7 +358,6 @@ See https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.6.0...main for un
 
 **Full Changelog**: https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.4.0...mariaDB4j-2.5.3
 
-  
 ## v2.4.0 - 2019-02-11
 
 see also [the 2.4.0 release page on GitHub](https://github.com/vorburger/MariaDB4j/releases/tag/mariaDB4j-2.4.0)
@@ -303,7 +380,6 @@ see also [the 2.4.0 release page on GitHub](https://github.com/vorburger/MariaDB
 
 * No bug fixes, because... it has no more bugs?! ;-)
 
-
 ## v2.3.0 - 2018-05-15
 
 * @cortiz added dumpXML and dumpSQL
@@ -316,20 +392,17 @@ see also [the 2.4.0 release page on GitHub](https://github.com/vorburger/MariaDB
 * @vorburger now compiles MariaDB4j with Java 8 instead of 6
 * @vorburger fixed bug #88 running MariaDb4j on Glassfish
 
-
 ## v2.2.3 - 2017-02-10
 
 * @lpearson05 contributed upgrade of older commons-collections with CVE-2011-2092 vulnerability to commons-collections 4.1 (https://issues.apache.org/jira/browse/COLLECTIONS-580)
 * @clfsoft contributed [issue #49](https://github.com/vorburger/MariaDB4j/issues/49) upgrade of MariaDB Win 32 version from 10.0.13 to 10.1.20
 * @vorburger bumped mariadb-java-client from version 1.4.6 to 1.5.5, and Spring Boot from 1.4.0 to 1.5.1
 
-
 ## v2.2.2 - 2016-08-20
 
 * @hanklank contributed [issue #37](https://github.com/vorburger/MariaDB4j/issues/37) upgrade of MariaDB Mac OS X version from 5.5.34 to 10.1.9 (tested by @brendonanderson)
 * Fixed [issue #27](https://github.com/vorburger/MariaDB4j/issues/27) Do not log info messages as errors
 * Upgrade version of Spring Boot from 1.3.6 to 1.4.0
-
 
 ## v2.2.1 - 2016-07-24
 
@@ -343,7 +416,6 @@ see also [the 2.4.0 release page on GitHub](https://github.com/vorburger/MariaDB
 * NOTICE file https://github.com/vorburger/MariaDB4j/issues/14
 * Fedora 24 related build test failure and README doc update
 
-
 ## v2.2.0 - 2016-05-05
 
 * MAJOR Distribution and project org. split up formerly monolithic MariaDB4j into separate core, exec and binaries artifacts; separately versioned
@@ -355,11 +427,9 @@ see also [the 2.4.0 release page on GitHub](https://github.com/vorburger/MariaDB
 * Bumped (upgraded) versions of some 3rd-party Java libraries; thanks https://www.versioneye.com/java/ch.vorburger.mariadb4j:mariadb4j/
 * Src: Tabs to Spaces, and enforced by Checkstyle running in Build
 
-
 ## v2.1.3 - 2014-12-27
 
 * FIXED Windows package, now tested; it was completely broken in 2.1.1 (but worked in the original 2.1.0)
-
 
 ## v2.1.1 - 2014-12-03
 
@@ -367,7 +437,6 @@ see also [the 2.4.0 release page on GitHub](https://github.com/vorburger/MariaDB
 * Upgraded commons-exec v1.2 => v1.3 & Spring Boot v1.1.6 => v1.1.9
 * Less annoyingly verbose logging now
 * minor code clean-ups etc.
-
 
 ## v2.1.0 - 2014-09-21
 
