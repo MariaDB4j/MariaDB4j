@@ -101,7 +101,7 @@ The DataSource initialization have to wait until MariaDB is ready to receive con
 
 ```
 dependencies {
-   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:3.0.1")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:3.0.2")
 }
 ```
 
@@ -131,7 +131,7 @@ MariaDB4j JAR binaries are available from:
    <dependency>
        <groupId>ch.vorburger.mariaDB4j</groupId>
        <artifactId>mariaDB4j</artifactId>
-       <version>3.0.1</version>
+       <version>3.0.2</version>
    </dependency>
    ```
 
@@ -349,7 +349,7 @@ A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-em
 Release?
 --------
 
-Remember that mariaDB4j-pom-lite & DBs/mariaDB4j-db-*are now versioned non SNAPSHOT, always fixed; VS the rest that continues to be a 2.2.x-SNAPSHOT (as before).  All the steps below except the last one only apply at the root pom.xml (=mariaDB4j-pom) with is mariaDB4j-core, mariaDB4j & mariaDB4j-app <modules>.  The mariaDB4j-pom-lite & DBs/mariaDB4j-db-* with their manually maintained fixed <version> however are simply deployed manually with a direct ./mvnw deploy as shown in the last step.
+Remember that `mariaDB4j-pom-lite` & `DBs/mariaDB4j-db-*` are now versioned non SNAPSHOT, always fixed; VS the rest that continues to be a 2.2.x-SNAPSHOT (as before).  All the steps below except the last one only apply at the root pom.xml (=mariaDB4j-pom) with is mariaDB4j-core, mariaDB4j & mariaDB4j-app `<modules>`.  The `mariaDB4j-pom-lite` & `DBs/mariaDB4j-db-*` with their manually maintained fixed `<version>` however are simply deployed manually with a direct ./mvnw deploy as shown in the last step.
 
 When doing a release, here are a few things to do every time:
 

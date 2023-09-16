@@ -7,7 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
-See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.1...main for unreleased changes.
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.2...main for unreleased changes.
+
+## v3.0.2 - 2023-09-16
+
+* chore: Add github-actions ecosystem to Dependabot
+* build: Add Maven Dependency Tree Dependency Submission
+* build: Do not run Maven Dependency Submission Action on PRs
+* build: Merge Linux & Windows CI GitHub Action into 1 single YAML file
+
+### Dependency Upgrades
+
+* Bump checkstyle from 10.10.0 to 10.11.0
+* Bump checkstyle from 10.11.0 to 10.12.0
+* Bump ch.vorburger.exec to 3.1.5
+* Bump commons-io from 2.11.0 to 2.13.0
+* Bump license-maven-plugin from 2.0.0 to 2.0.1
+* Bump license-maven-plugin from 2.0.1 to 2.1.0
+* Bump maven-checkstyle-plugin from 3.2.2 to 3.3.0
+* Bump maven-compat from 3.9.1 to 3.9.2
+* Bump maven-gpg-plugin from 3.0.1 to 3.1.0
+* Bump maven-plugin-annotations from 3.8.2 to 3.9.0
+* Bump maven-plugin-plugin from 3.8.2 to 3.9.0
+* Bump maven-project-info-reports-plugin from 3.4.3 to 3.4.5
+* Bump maven-release-plugin from 3.0.0 to 3.0.1
+* Bump maven-source-plugin from 3.2.1 to 3.3.0
+* Bump maven.version from 3.9.1 to 3.9.2
+* Bump springboot.version from 3.0.6 to 3.1.0
+* build(deps): Bump actions/checkout from 3 to 4
+* build(deps): Bump checkstyle from 10.12.0 to 10.12.1
+* build(deps): Bump commons-dbutils:commons-dbutils from 1.7 to 1.8.0
+* build(deps): Bump com.puppycrawl.tools:checkstyle
+* build(deps): Bump license-maven-plugin from 2.1.0 to 2.2.0
+* build(deps): Bump maven-compat from 3.9.2 to 3.9.3
+* build(deps): Bump maven-invoker-plugin from 3.5.1 to 3.6.0
+* build(deps): Bump maven-shade-plugin from 3.4.1 to 3.5.0
+* build(deps): Bump maven.version from 3.9.2 to 3.9.3
+* build(deps): Bump maven.version from 3.9.3 to 3.9.4
+* build(deps): Bump mockito-core from 5.3.1 to 5.4.0
+* build(deps): Bump org.apache.maven:maven-compat from 3.9.3 to 3.9.4
+* build(deps): Bump org.mockito:mockito-core from 5.4.0 to 5.5.0
+* build(deps): Bump org.slf4j:slf4j-simple from 2.0.7 to 2.0.9
+* build(deps): Bump springboot.version from 3.1.0 to 3.1.1
+* build(deps): Bump springboot.version from 3.1.1 to 3.1.2
+* build(deps): Bump springboot.version from 3.1.2 to 3.1.3
+
+This Changelog was manually written by the maintainer, based on: `git log --no-merges --pretty=format:"%s" mariaDB4j-3.0.1..main | sort | grep -v "\[maven-release-plugin\]" | sed 's/.*/\* &/' > CHANGELOG-git.md` (TODO: Write a thing which "collapses" Dependency Upgrades).
+
+**Full Changelog**: https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.1...mariaDB4j-3.0.2
 
 ## v3.0.1 - 2023-05-01 (Issue #[696](https://github.com/MariaDB4j/MariaDB4j/issues/696))
 
