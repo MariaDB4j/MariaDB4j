@@ -11,10 +11,10 @@
   </parent>
 
   <artifactId>mariaDB4j-db-winx64</artifactId>
-  <version>10.11.5</version>
+  <version>10.11.5-fix1</version>
 
   <properties>
-    <mariaDB.version>${project.version}</mariaDB.version>
+    <mariaDB.version>10.11.5</mariaDB.version>
     <cacheDir>${project.basedir}/../../../tmpDir</cacheDir>
   </properties>
 
@@ -38,6 +38,7 @@
                 <property name="project.basedir" value="${project.basedir}" />
                 <property name="project.build.directory" value="${project.build.directory}" />
                 <property name="cacheDir" value="${cacheDir}" />
+                <property name="project.version" value="${project.version}" />
                 <property name="mariaDB.version" value="${mariaDB.version}" />
                 <ant antfile="${project.basedir}/prepare.xml">
                 </ant>
