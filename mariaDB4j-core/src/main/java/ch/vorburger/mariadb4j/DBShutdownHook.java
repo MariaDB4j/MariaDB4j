@@ -225,31 +225,9 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
     }
 
     private boolean isEmptyDirectory(Path directory) throws IOException {
-        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory);
-        Throwable throwable = null;
-
-        boolean hasNext;
-        try {
-            hasNext = !directoryStream.iterator().hasNext();
-        } catch (Throwable exception) {
-            throwable = exception;
-            throw exception;
-        } finally {
-            if (directoryStream != null) {
-                if (throwable != null) {
-                    try {
-                        directoryStream.close();
-                    } catch (Throwable exception) {
-                        throwable.addSuppressed(exception);
-                    }
-                } else {
-                    directoryStream.close();
-                }
-            }
-
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+            return !directoryStream.iterator().hasNext();
         }
-
-        return hasNext;
     }
 
     @Override
