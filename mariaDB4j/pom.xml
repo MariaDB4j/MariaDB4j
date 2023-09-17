@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
 			<artifactId>mariaDB4j-db-linux64</artifactId>
-			<version>10.2.11</version>
+			<version>10.11.5</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.vorburger.mariaDB4j</groupId>
