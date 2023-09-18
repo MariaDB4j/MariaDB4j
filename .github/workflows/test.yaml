@@ -25,7 +25,8 @@ jobs:
           java-version-file: .java-version
           cache: maven
       # Run verify, not just package, to catch any failures of mariaDB4j-maven-plugin's integration test
-      - run: ./mvnw --show-version --batch-mode --strict-checksums verify
+      # TODO The install is temporary and will be removed after it's deployed!
+      - run: ./mvnw install -f DBs/mariaDB4j-db-10.11.5/mariaDB4j-db-winx64-10.11.5/ && ./mvnw --show-version --batch-mode --strict-checksums verify
       # When contrib. new DB version, then ./mvnw -f DBs/pom.xml clean install
 
       # https://github.com/marketplace/actions/maven-dependency-tree-dependency-submission
@@ -44,4 +45,5 @@ jobs:
           java-version-file: .java-version
           cache: maven
       - name: Build with Maven
-        run: ./mvnw.cmd --show-version --batch-mode --strict-checksums verify
+        # TODO The install is temporary and will be removed after it's deployed!
+        run: ./mvnw.cmd install -f DBs/mariaDB4j-db-10.11.5/mariaDB4j-db-winx64-10.11.5/ && ./mvnw.cmd --show-version --batch-mode --strict-checksums verify
