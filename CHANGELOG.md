@@ -5,9 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED
+## UNRELEASED v3.1.0
 
-See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.2...main for unreleased changes.
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.2...main for unreleased changes; it will include:
+
+* docs: Add 💸 OpenCollective etc. to README
+* feat: Upgrade MariaDB binaries for Linux & Mac from 10.2.11 to 10.11.5 by @TheKnowles in https://github.com/vorburger/MariaDB4j/pull/771
+* fix: Resource Leak from DirectoryStream in DBShutdownHook
+* build: Add ErrorProne Code Quality Tool (fixes #736)
+* build(deps): Bump commons-dbutils:commons-dbutils from 1.8.0 to 1.8.1
+* build(deps): Bump org.apache.maven.plugins:maven-javadoc-plugin
 
 ## v3.0.2 - 2023-09-16
 
