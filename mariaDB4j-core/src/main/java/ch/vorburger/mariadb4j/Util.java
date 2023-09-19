@@ -50,7 +50,7 @@ public class Util {
      * @param path directory(ies, can include parent directories) names, as forward slash ('/')
      *             separated String
      * @return safe File object representing that path name
-     * @throws IllegalArgumentException If it is not a directory, or it is not readable
+     * @throws java.lang.IllegalArgumentException If it is not a directory, or it is not readable
      */
     public static File getDirectory(String path) {
         boolean log = false;
@@ -144,7 +144,8 @@ public class Util {
         return counter;
     }
 
-    @SuppressWarnings("null") private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
+    @SuppressWarnings("null")
+    private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
         IOException lastIOException = null;
         int numAttempts = 0;
         while (numAttempts++ < n) {

@@ -1,26 +1,5 @@
 package ch.vorburger.mariadb4j;
 
-/*
- * #%L
- * MariaDB4j
- * %%
- * Copyright (C) 2012 - 2021 Michael Vorburger
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-import ch.vorburger.exec.ManagedProcess;
-import ch.vorburger.exec.ManagedProcessException;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -42,8 +21,31 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/*
+ * #%L
+ * MariaDB4j
+ * %%
+ * Copyright (C) 2012 - 2021 Michael Vorburger
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+import ch.vorburger.exec.ManagedProcess;
+import ch.vorburger.exec.ManagedProcessException;
 
 /**
  * During shutdown, the classloader doesn't provide access to the majority of the classes.
@@ -70,6 +72,17 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
     private final DBConfiguration configuration;
     private final LinkOption[] linkOptions = {};
 
+    /**
+     * Constructor.
+     *
+     * @param threadName a {@link java.lang.String} object
+     * @param db a {@link ch.vorburger.mariadb4j.DB} object
+     * @param mysqldProcessSupplier a {@link java.util.function.Supplier} object
+     * @param baseDirSupplier a {@link java.util.function.Supplier} object
+     * @param tmpDirSupplier a {@link java.util.function.Supplier} object
+     * @param dataDirSupplier a {@link java.util.function.Supplier} object
+     * @param configuration a {@link ch.vorburger.mariadb4j.DBConfiguration} object
+     */
     public DBShutdownHook(String threadName, DB db, Supplier<ManagedProcess> mysqldProcessSupplier,
             Supplier<File> baseDirSupplier,
             Supplier<File> tmpDirSupplier, Supplier<File> dataDirSupplier, DBConfiguration configuration) {
@@ -230,11 +243,13 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         return FileVisitResult.CONTINUE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (Files.exists(file, linkOptions)) {
@@ -252,12 +267,14 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
         Objects.requireNonNull(file);
         throw exc;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         if (isEmptyDirectory(dir)) {
@@ -270,6 +287,7 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void run() {
         ManagedProcess mysqldProcess = mysqldProcessSupplier.get();

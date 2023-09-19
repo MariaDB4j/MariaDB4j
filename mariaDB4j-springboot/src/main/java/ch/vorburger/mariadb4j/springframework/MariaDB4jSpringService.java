@@ -29,19 +29,46 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-
-
+/**
+ * MariaDB4jService extension suitable for use in Spring Framework-based applications.
+ *
+ * It lets end-users override configuration via the Spring Values mariaDB4j.port,
+ * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot)
+ * main() command line arguments.
+ *
+ * @author Michael Vorburger
+ */
 @Configuration
 public class MariaDB4jSpringService implements Lifecycle {
+
+    /** Constant <code>PORT="mariaDB4j.port"</code>. */
     public final static String PORT = "mariaDB4j.port";
+
+    /** Constant <code>SOCKET="mariaDB4j.socket"</code>. */
     public final static String SOCKET = "mariaDB4j.socket";
+
+    /** Constant <code>DATA_DIR="mariaDB4j.dataDir"</code>. */
     public final static String DATA_DIR = "mariaDB4j.dataDir";
+
+    /** Constant <code>TMP_DIR="mariaDB4j.tmpDir"</code>. */
     public final static String TMP_DIR = "mariaDB4j.tmpDir";
+
+    /** Constant <code>BASE_DIR="mariaDB4j.baseDir"</code>. */
     public final static String BASE_DIR = "mariaDB4j.baseDir";
+
+    /** Constant <code>LIB_DIR="mariaDB4j.libDir"</code>. */
     public final static String LIB_DIR = "mariaDB4j.libDir";
+
+    /** Constant <code>UNPACK="mariaDB4j.unpack"</code>. */
     public final static String UNPACK = "mariaDB4j.unpack";
+
+    /** Constant <code>OS_USER="mariaDB4j.osUser"</code>. */
     public final static String OS_USER = "mariaDB4j.osUser";
+
+    /** Constant <code>DEFAULT_CHARSET="mariaDB4j.defaultCharset"</code>. */
     public final static String DEFAULT_CHARSET = "mariaDB4j.defaultCharset";
 
     private final DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
@@ -116,6 +143,7 @@ public class MariaDB4jSpringService implements Lifecycle {
         return db;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() {
         try {
@@ -126,6 +154,7 @@ public class MariaDB4jSpringService implements Lifecycle {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() {
         try {
