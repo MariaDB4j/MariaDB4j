@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,35 +24,49 @@ import ch.vorburger.mariadb4j.MariaDB4jService;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.Lifecycle;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 /**
  * MariaDB4jService extension suitable for use in Spring Framework-based applications.
- * 
- * <p>Other than implementing {@link Lifecycle} to get auto-started, this class allows applications
+ *
+ * <p>Other than implementing {@link org.springframework.context.Lifecycle} to get auto-started, this class allows applications
  * using it to programmatically set a default port/socket/data- &amp; base directory in their
- * {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
+ * {@link org.springframework.context.annotation.Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
  * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot)
  * main() command line arguments.
  *
- * <p>This Service is intentionally NOT annotated as a {@link Service} {@link Component}, because we
- * don't want it to be auto-started by component scan without explicit declaration in a @Configuration
- * (or XML)
- * 
+ * <p>This Service is intentionally NOT annotated as a {@link org.springframework.stereotype.Service}
+ * {@link org.springframework.stereotype.Component}, because we don't want it to be auto-started
+ * by component scan without explicit declaration in a @Configuration (or XML).
+ *
  * @author Michael Vorburger
  */
 public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycle {
 
+    /** Constant <code>PORT="mariaDB4j.port"</code>. */
     public final static String PORT = "mariaDB4j.port";
+
+    /** Constant <code>SOCKET="mariaDB4j.socket"</code>. */
     public final static String SOCKET = "mariaDB4j.socket";
+
+    /** Constant <code>DATA_DIR="mariaDB4j.dataDir"</code>. */
     public final static String DATA_DIR = "mariaDB4j.dataDir";
+
+    /** Constant <code>TMP_DIR="mariaDB4j.tmpDir"</code>. */
     public final static String TMP_DIR = "mariaDB4j.tmpDir";
+
+    /** Constant <code>BASE_DIR="mariaDB4j.baseDir"</code>. */
     public final static String BASE_DIR = "mariaDB4j.baseDir";
+
+    /** Constant <code>LIB_DIR="mariaDB4j.libDir"</code>. */
     public final static String LIB_DIR = "mariaDB4j.libDir";
+
+    /** Constant <code>UNPACK="mariaDB4j.unpack"</code>. */
     public final static String UNPACK = "mariaDB4j.unpack";
+
+    /** Constant <code>OS_USER="mariaDB4j.osUser"</code>. */
     public final static String OS_USER = "mariaDB4j.osUser";
+
+    /** Constant <code>DEFAULT_CHARSET="mariaDB4j.defaultCharset"</code>. */
     public final static String DEFAULT_CHARSET = "mariaDB4j.defaultCharset";
 
     protected ManagedProcessException lastException;
@@ -111,6 +125,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
             getConfiguration().setDefaultCharacterSet(charset);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void start() { // no throws ManagedProcessException
         try {
@@ -121,6 +136,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop() { // no throws ManagedProcessException
         try {
@@ -134,5 +150,4 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public ManagedProcessException getLastException() {
         return lastException;
     }
-
 }

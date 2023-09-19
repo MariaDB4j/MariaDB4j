@@ -40,6 +40,8 @@ import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Builder for DBConfiguration. Has lot's of sensible default conventions etc.
+ *
+ * @author Michael Vorburger
  */
 public class DBConfigurationBuilder {
 

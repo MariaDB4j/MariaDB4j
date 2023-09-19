@@ -70,6 +70,11 @@ public class DB {
         configuration = config;
     }
 
+    /**
+     * <p>Getter for the field <code>configuration</code>.</p>
+     *
+     * @return a {@link ch.vorburger.mariadb4j.DBConfiguration} object
+     */
     public DBConfiguration getConfiguration() {
         return configuration;
     }
@@ -80,7 +85,7 @@ public class DB {
      *
      * @param config Configuration of the embedded instance
      * @return a new DB instance
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     public static DB newEmbeddedDB(DBConfiguration config) throws ManagedProcessException {
         DB db = new DB(config);
@@ -97,7 +102,7 @@ public class DB {
      *
      * @param port the port to start the embedded database on
      * @return a new DB instance
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     public static DB newEmbeddedDB(int port) throws ManagedProcessException {
         DBConfigurationBuilder config = new DBConfigurationBuilder();
@@ -144,7 +149,7 @@ public class DB {
     /**
      * Starts up the database, using the data directory and port specified in the configuration.
      *
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     public synchronized void start() throws ManagedProcessException {
         logger.info("Starting up the database...");
@@ -160,8 +165,10 @@ public class DB {
             if (mysqldProcess != null && mysqldProcess.isAlive()) {
                 mysqldProcess.destroy();
             }
-            throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
-                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
+            throw new ManagedProcessException(
+                    "Database does not seem to have started up correctly? Magic string not seen in "
+                            + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag()
+                            + mysqldProcess.getLastConsoleLines());
         }
         logger.info("Database startup complete.");
     }
@@ -242,32 +249,59 @@ public class DB {
         return socketFile.getAbsoluteFile();
     }
 
+    /**
+     * <p>source.</p>
+     *
+     * @param resource a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void source(String resource) throws ManagedProcessException {
         source(resource, null, null, null);
     }
 
+    /**
+     * <p>source.</p>
+     *
+     * @param resource a {@link java.io.InputStream} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void source(InputStream resource) throws ManagedProcessException {
         source(resource, null, null, null);
     }
 
+    /**
+     * <p>source.</p>
+     *
+     * @param resource a {@link java.lang.String} object
+     * @param dbName a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void source(String resource, String dbName) throws ManagedProcessException {
         source(resource, null, null, dbName);
     }
 
+    /**
+     * <p>source.</p>
+     *
+     * @param resource a {@link java.io.InputStream} object
+     * @param dbName a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void source(InputStream resource, String dbName) throws ManagedProcessException {
         source(resource, null, null, dbName);
     }
 
     /**
-     * Takes in a {@link InputStream} and sources it via the mysql command line tool.
+     * Takes in a {@link java.io.InputStream} and sources it via the mysql command line tool.
      *
-     * @param resource an {@link InputStream} InputStream to source
+     * @param resource an {@link java.io.InputStream} InputStream to source
      * @param username the username used to login to the database
      * @param password the password used to login to the database
      * @param dbName   the name of the database (schema) to source into
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
-    public void source(InputStream resource, String username, String password, String dbName) throws ManagedProcessException {
+    public void source(InputStream resource, String username, String password, String dbName)
+            throws ManagedProcessException {
         run("script file sourced from an InputStream", resource, username, password, dbName, false);
     }
 
@@ -279,9 +313,10 @@ public class DB {
      * @param username the username used to login to the database
      * @param password the password used to login to the database
      * @param dbName   the name of the database (schema) to source into
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
-    public void source(String resource, String username, String password, String dbName) throws ManagedProcessException {
+    public void source(String resource, String username, String password, String dbName)
+            throws ManagedProcessException {
         source(resource, username, password, dbName, false);
     }
 
@@ -294,9 +329,10 @@ public class DB {
      * @param password the password used to login to the database
      * @param dbName   the name of the database (schema) to source into
      * @param force    if true then continue on error (mysql --force)
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
-    public void source(String resource, String username, String password, String dbName, boolean force) throws ManagedProcessException {
+    public void source(String resource, String username, String password, String dbName, boolean force)
+            throws ManagedProcessException {
         try (InputStream from = getClass().getClassLoader().getResourceAsStream(resource)) {
             if (from == null) {
                 throw new IllegalArgumentException("Could not find script file on the classpath at: " + resource);
@@ -307,35 +343,82 @@ public class DB {
         }
     }
 
+    /**
+     * <p>run.</p>
+     *
+     * @param command a {@link java.lang.String} object
+     * @param username a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @param dbName a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void run(String command, String username, String password, String dbName) throws ManagedProcessException {
         run(command, username, password, dbName, false, true);
     }
 
+    /**
+     * <p>run.</p>
+     *
+     * @param command a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void run(String command) throws ManagedProcessException {
         run(command, null, null, null);
     }
 
+    /**
+     * <p>run.</p>
+     *
+     * @param command a {@link java.lang.String} object
+     * @param username a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void run(String command, String username, String password) throws ManagedProcessException {
         run(command, username, password, null);
     }
 
-    public void run(String command, String username, String password, String dbName, boolean force) throws ManagedProcessException {
+    /**
+     * <p>run.</p>
+     *
+     * @param command a {@link java.lang.String} object
+     * @param username a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @param dbName a {@link java.lang.String} object
+     * @param force a boolean
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
+    public void run(String command, String username, String password, String dbName, boolean force)
+            throws ManagedProcessException {
         run(command, username, password, dbName, force, true);
     }
 
+    /**
+     * <p>run.</p>
+     *
+     * @param command a {@link java.lang.String} object
+     * @param username a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @param dbName a {@link java.lang.String} object
+     * @param force a boolean
+     * @param verbose a boolean
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void run(String command, String username, String password, String dbName, boolean force, boolean verbose)
             throws ManagedProcessException {
         // If resource is created here, it should probably be released here also (as opposed to in protected run method)
         // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
         try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {
-            final String logInfoText = verbose ? "command: " + command : "command (" + command.length() / 1_024 + " KiB long)";
+            final String logInfoText = verbose ? "command: " + command
+                    : "command (" + command.length() / 1_024 + " KiB long)";
             run(logInfoText, from, username, password, dbName, force);
         } catch (IOException ioe) {
             logger.warn("Issue trying to close source InputStream. Raise warning and continue.", ioe);
         }
     }
 
-    protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName, boolean force)
+    protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName,
+            boolean force)
             throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
         try {
@@ -375,10 +458,24 @@ public class DB {
         logger.info("Successfully ran the " + logInfoText);
     }
 
+    /**
+     * <p>createDB.</p>
+     *
+     * @param dbName a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void createDB(String dbName) throws ManagedProcessException {
         this.run("create database if not exists `" + dbName + "`;");
     }
 
+    /**
+     * <p>createDB.</p>
+     *
+     * @param dbName a {@link java.lang.String} object
+     * @param username a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public void createDB(String dbName, String username, String password) throws ManagedProcessException {
         this.run("create database if not exists `" + dbName + "`;", username, password);
     }
@@ -390,7 +487,7 @@ public class DB {
     /**
      * Stops the database.
      *
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     public synchronized void stop() throws ManagedProcessException {
         if (mysqldProcess != null && mysqldProcess.isAlive()) {
@@ -455,8 +552,8 @@ public class DB {
         String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + dataDir.toString();
         final DB db = this;
         Runtime.getRuntime().addShutdownHook(
-            new DBShutdownHook(threadName, db, () -> mysqldProcess, () -> baseDir, () -> dataDir, () -> tmpDir, configuration)
-        );
+                new DBShutdownHook(threadName, db, () -> mysqldProcess, () -> baseDir, () -> dataDir, () -> tmpDir,
+                        configuration));
     }
 
     // The dump*() methods are intentionally *NOT* made "synchronized",
@@ -466,17 +563,40 @@ public class DB {
     // concurrently (and if she does, it just fails, which is much better than an
     // unexpected deadlock).
 
+    /**
+     * <p>dumpXML.</p>
+     *
+     * @param outputFile a {@link java.io.File} object
+     * @param dbName a {@link java.lang.String} object
+     * @param user a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @return a {@link ch.vorburger.exec.ManagedProcess} object
+     * @throws java.io.IOException if any.
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public ManagedProcess dumpXML(File outputFile, String dbName, String user, String password)
             throws IOException, ManagedProcessException {
         return dump(outputFile, Arrays.asList(dbName), true, true, true, user, password);
     }
 
+    /**
+     * <p>dumpSQL.</p>
+     *
+     * @param outputFile a {@link java.io.File} object
+     * @param dbName a {@link java.lang.String} object
+     * @param user a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @return a {@link ch.vorburger.exec.ManagedProcess} object
+     * @throws java.io.IOException if any.
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     */
     public ManagedProcess dumpSQL(File outputFile, String dbName, String user, String password)
             throws IOException, ManagedProcessException {
         return dump(outputFile, Arrays.asList(dbName), true, true, false, user, password);
     }
 
-    protected ManagedProcess dump(File outputFile, List<String> dbNamesToDump, boolean compactDump, boolean lockTables, boolean asXml,
+    protected ManagedProcess dump(File outputFile, List<String> dbNamesToDump, boolean compactDump, boolean lockTables,
+            boolean asXml,
             String user, String password) throws ManagedProcessException, IOException {
 
         ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Dump));
@@ -508,11 +628,13 @@ public class DB {
         builder.addArgument(StringUtils.join(dbNamesToDump, StringUtils.SPACE));
         builder.setDestroyOnShutdown(true);
         builder.setProcessListener(new ManagedProcessListener() {
-            @Override public void onProcessComplete(int i) {
+            @Override
+            public void onProcessComplete(int i) {
                 closeOutputStream();
             }
 
-            @Override public void onProcessFailed(int i, Throwable throwable) {
+            @Override
+            public void onProcessFailed(int i, Throwable throwable) {
                 closeOutputStream();
             }
 
@@ -520,7 +642,8 @@ public class DB {
                 try {
                     outputStream.close();
                 } catch (IOException exception) {
-                    logger.error("Problem while trying to close the stream to the file containing the DB dump", exception);
+                    logger.error("Problem while trying to close the stream to the file containing the DB dump",
+                            exception);
                 }
             }
         });

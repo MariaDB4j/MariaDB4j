@@ -70,6 +70,17 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
     private final DBConfiguration configuration;
     private final LinkOption[] linkOptions = {};
 
+    /**
+     * <p>Constructor for DBShutdownHook.</p>
+     *
+     * @param threadName a {@link java.lang.String} object
+     * @param db a {@link ch.vorburger.mariadb4j.DB} object
+     * @param mysqldProcessSupplier a {@link java.util.function.Supplier} object
+     * @param baseDirSupplier a {@link java.util.function.Supplier} object
+     * @param tmpDirSupplier a {@link java.util.function.Supplier} object
+     * @param dataDirSupplier a {@link java.util.function.Supplier} object
+     * @param configuration a {@link ch.vorburger.mariadb4j.DBConfiguration} object
+     */
     public DBShutdownHook(String threadName, DB db, Supplier<ManagedProcess> mysqldProcessSupplier,
             Supplier<File> baseDirSupplier,
             Supplier<File> tmpDirSupplier, Supplier<File> dataDirSupplier, DBConfiguration configuration) {
@@ -230,11 +241,13 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         return FileVisitResult.CONTINUE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (Files.exists(file, linkOptions)) {
@@ -252,12 +265,14 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
         Objects.requireNonNull(file);
         throw exc;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         if (isEmptyDirectory(dir)) {
@@ -270,6 +285,7 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void run() {
         ManagedProcess mysqldProcess = mysqldProcessSupplier.get();
