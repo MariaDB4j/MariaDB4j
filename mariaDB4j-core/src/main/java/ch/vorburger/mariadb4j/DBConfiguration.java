@@ -29,6 +29,8 @@ import java.util.function.Supplier;
 /**
  * Enables passing in custom options when starting up the database server.
  * This is similar to MySQL/MariaDB's my.cnf configuration file.
+ *
+ * @author Michael Vorburger
  */
 public interface DBConfiguration {
 
@@ -121,7 +123,7 @@ public interface DBConfiguration {
         InstallDB, Server, Client, Dump, PrintDefaults
     }
 
-    static class Impl implements DBConfiguration {
+    class Impl implements DBConfiguration {
 
         private final int port;
         private final String socket;
@@ -140,9 +142,11 @@ public interface DBConfiguration {
         private final Function<String, String> getURL;
         private final Map<Executable, Supplier<File>> executables;
 
-        Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir, String tmpDir,
+        Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir,
+                String tmpDir,
                 boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
-                boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, String defaultCharacterSet,
+                boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL,
+                String defaultCharacterSet,
                 Map<Executable, Supplier<File>> executables, ManagedProcessListener listener) {
             this.port = port;
             this.socket = socket;
@@ -162,67 +166,83 @@ public interface DBConfiguration {
             this.executables = executables;
         }
 
-        @Override public int getPort() {
+        @Override
+        public int getPort() {
             return port;
         }
 
-        @Override public String getSocket() {
+        @Override
+        public String getSocket() {
             return socket;
         }
 
-        @Override public String getBinariesClassPathLocation() {
+        @Override
+        public String getBinariesClassPathLocation() {
             return binariesClassPathLocation;
         }
 
-        @Override public String getBaseDir() {
+        @Override
+        public String getBaseDir() {
             return baseDir;
         }
 
-        @Override public String getLibDir() {
+        @Override
+        public String getLibDir() {
             return libDir;
         }
 
-        @Override public String getDataDir() {
+        @Override
+        public String getDataDir() {
             return dataDir;
         }
 
-        @Override public String getTmpDir() {
+        @Override
+        public String getTmpDir() {
             return tmpDir;
         }
 
-        @Override public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
+        @Override
+        public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
             return isDeletingTemporaryBaseAndDataDirsOnShutdown;
         }
 
-        @Override public boolean isWindows() {
+        @Override
+        public boolean isWindows() {
             return isWindows;
         }
 
-        @Override public List<String> getArgs() {
+        @Override
+        public List<String> getArgs() {
             return args;
         }
 
-        @Override public String getOSLibraryEnvironmentVarName() {
+        @Override
+        public String getOSLibraryEnvironmentVarName() {
             return osLibraryEnvironmentVarName;
         }
 
-        @Override public boolean isSecurityDisabled() {
+        @Override
+        public boolean isSecurityDisabled() {
             return isSecurityDisabled;
         }
 
-        @Override public String getURL(String dbName) {
+        @Override
+        public String getURL(String dbName) {
             return getURL.apply(dbName);
         }
 
-        @Override public ManagedProcessListener getProcessListener() {
+        @Override
+        public ManagedProcessListener getProcessListener() {
             return listener;
         }
 
-        @Override public String getDefaultCharacterSet() {
+        @Override
+        public String getDefaultCharacterSet() {
             return defaultCharacterSet;
         }
 
-        @Override public File getExecutable(Executable executable) {
+        @Override
+        public File getExecutable(Executable executable) {
             return executables.getOrDefault(executable, () -> {
                 throw new IllegalArgumentException(executable.name());
             }).get();

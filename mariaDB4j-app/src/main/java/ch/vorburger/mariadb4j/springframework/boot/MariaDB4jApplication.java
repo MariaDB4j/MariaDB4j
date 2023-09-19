@@ -45,10 +45,21 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
     private final MariaDB4jSpringService mariaDB4j;
 
     @Autowired
+    /**
+     * <p>Constructor for MariaDB4jApplication.</p>
+     *
+     * @param mariaDB4j a {@link ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService} object
+     */
     public MariaDB4jApplication(MariaDB4jSpringService mariaDB4j) {
         this.mariaDB4j = mariaDB4j;
     }
 
+    /**
+     * <p>main.</p>
+     *
+     * @param args an array of {@link java.lang.String} objects
+     * @throws java.lang.Exception if any.
+     */
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(MariaDB4jApplication.class);
         app.setBannerMode(Mode.OFF);
@@ -60,6 +71,7 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
         ctx.close();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getExitCode() {
         return mariaDB4j.getLastException() == null ? 0 : -1;
