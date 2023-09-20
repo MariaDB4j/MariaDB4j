@@ -43,5 +43,8 @@ jobs:
           distribution: adopt
           java-version-file: .java-version
           cache: maven
+      - uses: ankane/setup-mariadb@v1
+        with:
+          mariadb-version: "10.11"
       - name: Build with Maven
         run: ./mvnw.cmd --show-version --batch-mode --strict-checksums verify

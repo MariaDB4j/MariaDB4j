@@ -52,20 +52,26 @@ public class MariaDB4jSampleTutorialTest {
      */
     @Test
     public void testLocalMariaDB() throws Exception {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-        // TODO rm isWindows() after making this test work on Windows, see https://github.com/vorburger/MariaDB4j/issues/713
-        if (!config.isWindows()) {
-            assertExecutable("/usr/sbin/mysqld");
+        final String LINUX_EXECUTABLE = "/usr/sbin/mysqld";
+        final String WINDOWS_EXECUTABLE = "C:\\Program Files\\MariaDB 10.11\\bin\\mysqld.exe";
 
-            config.setPort(0); // 0 => autom. detect free port
-            config.setUnpackingFromClasspath(false);
+        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+
+        config.setPort(0); // 0 => autom. detect free port
+        config.setUnpackingFromClasspath(false);
+
+        if (!config.isWindows()) {
+            assertExecutable(LINUX_EXECUTABLE);
             config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
             config.setBaseDir("/usr");
-            config.setExecutable(Server, "/usr/sbin/mysqld");
-            check(config);
+            config.setExecutable(Server, LINUX_EXECUTABLE);
         } else {
-            System.out.println("testLocalMariaDB() SKIPPED because isWindows()");
+            assertExecutable(WINDOWS_EXECUTABLE);
+            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs");
+            config.setBaseDir("C:\\Program Files\\MariaDB 10.11");
+            config.setExecutable(Server, WINDOWS_EXECUTABLE);
         }
+        check(config);
     }
 
     private void assertExecutable(String path) {
