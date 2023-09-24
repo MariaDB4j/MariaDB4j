@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public class MariaDB4jSampleOtherTest {
 
     /**
      * Reproduces issue #30 re. Exception if there are spaces in the data directory path #30.
-     * 
+     *
      * @see <a href="https://github.com/vorburger/MariaDB4j/issues/30">MariaDB4j issue #30</a>
      */
     @Test public void dataDirWithSpace() throws Exception {
@@ -72,11 +72,11 @@ public class MariaDB4jSampleOtherTest {
     /**
      * Reproduces issue #39 re. libDir having to be correctly sate "late" and not on DBConfigurationBuilder constructor in case of a
      * non-default baseDir.
-     * 
+     *
      * <p>This test passes even without the bug fix if another test "left over" a base dir with a libs/ directory in JAVA_IO_TMPDIR. The two
      * tests above does clean up after themselves directly. The default behaviour is for the class DB to do this only in a Shutdown hook,
      * which is too late for what this test wants to ensure.
-     * 
+     *
      * @see <a href="https://github.com/vorburger/MariaDB4j/issues/39">MariaDB4j issue #39</a>
      */
     @Test public void customBaseDir() throws Exception {

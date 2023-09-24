@@ -8,12 +8,12 @@ If you too use MariaDB4j, please show your support for the project by adding you
 - http://openmrs.org project
 - Kris Bloe @chrisbloe; for https://en.wikipedia.org/wiki/Costcutter
 - Florian Léger @fleger; for http://crystalrec.com by http://www.enovea.net
-- nyo @lc-nyovchev; at http://relay42.com  
+- nyo @lc-nyovchev; at http://relay42.com
 - Brendon Anderson @brendonanderson; at https://objectpartners.com
 - [`spwrap`](https://github.com/mhewedy/spwrap): Simple Stored Procedure call wrapper with no framework dependencies.
-- [ROMVoid](https://github.com/ROMVoid95): Discord Bot Developer. 
+- [ROMVoid](https://github.com/ROMVoid95): Discord Bot Developer.
 
 
-Also see the [CONTRIBUTORS.md](CONTRIBUTORS.md) file for a list of contributors which presumably all are users too! 
+Also see the [CONTRIBUTORS.md](CONTRIBUTORS.md) file for a list of contributors which presumably all are users too!
 
 also see https://github.com/vorburger/MariaDB4j/issues/21 for how this list started.

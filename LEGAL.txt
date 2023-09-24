@@ -1,4 +1,4 @@
-IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL 
+IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL
 AKA: "This section is not a substitute for professional legal advice. It is intended to
 provide general guidance to developers, but it was not prepared by an attorney nor is
 it in any way legal advice."
@@ -9,8 +9,8 @@ The ASL and EPL licenses, instead of GPL, have been chosen so that non-GPL Java 
 can use this.
 
 As such, note that this library must never "combine" with GPL licensed code.
-The pure "distribution" of the GPL licensed MariaDB binaries with this JAR is OK, as 
-this Java library never "links" to those binaries, but merely "launches" 
+The pure "distribution" of the GPL licensed MariaDB binaries with this JAR is OK, as
+this Java library never "links" to those binaries, but merely "launches"
 them a separate OS process (non shared address space).
 
 Here is a link to MariaDB's GPL license:
@@ -28,8 +28,8 @@ from <https://downloads.mariadb.org/client-java/> may be of interest to you in t
 
 http://kb.askmonty.org/en/mariadb-faq-is-there-any-java-connector-for-mariadb-than-the-one-from-mysql
 says that For most cases there is no license requirement for using the JDBC connector as the GPL for
-the connector will not affect your application because you have the JDBC manager in between. 
+the connector will not affect your application because you have the JDBC manager in between.
 See the Licensing FAQ <http://kb.askmonty.org/en/licensing-faq> for details.
 
 -----------------------------------------------------------------------------------------------
-IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL 
+IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL IANAL
