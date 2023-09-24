@@ -42,7 +42,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <springboot.version>3.1.3</springboot.version>
+    <springboot.version>3.1.4</springboot.version>
     <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
     <errorprone.version>2.21.1</errorprone.version>
     <maven.compiler.source>17</maven.compiler.source>
