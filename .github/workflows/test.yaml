@@ -12,14 +12,19 @@ jobs:
     name: Maven Verify (Build & Test) on Linux
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Harden Runner
+        uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       # https://github.com/marketplace/actions/cache-apt-packages
-      - uses: awalsh128/cache-apt-pkgs-action@latest
+      - uses: awalsh128/cache-apt-pkgs-action@1850ee53f6e706525805321a3f2f863dcf73c962 # latest
         with:
           packages: libncurses5 mariadb-server
           version: 1.0
       # https://github.com/marketplace/actions/setup-java-jdk
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
         with:
           distribution: temurin
           java-version-file: .java-version
@@ -31,19 +36,24 @@ jobs:
       # https://github.com/marketplace/actions/maven-dependency-tree-dependency-submission
       - name: Maven Dependency Tree Dependency Submission
         if: ${{ github.event_name == 'push' }}
-        uses: advanced-security/maven-dependency-submission-action@v3.0.2
+        uses: advanced-security/maven-dependency-submission-action@c5ad0fd6b977364190852883b46728f25a9617c3 # v3.0.2
 
   testOnWindows:
     runs-on: windows-latest
     name: Maven Verify (Build & Test) on Windows
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v3
+      - name: Harden Runner
+        uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
         with:
           distribution: adopt
           java-version-file: .java-version
           cache: maven
-      - uses: ankane/setup-mariadb@v1
+      - uses: ankane/setup-mariadb@14ea302aa8c921b5a55450add91abb724369d40b # v1
         with:
           mariadb-version: "10.11"
       - name: Build with Maven
