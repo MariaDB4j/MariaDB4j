@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * MariaDB4jService extension suitable for use in Spring Framework-based applications.
- * 
+ *
  * <p>Other than implementing {@link Lifecycle} to get auto-started, this class allows applications
  * using it to programmatically set a default port/socket/data- &amp; base directory in their
  * {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
  * <p>This Service is intentionally NOT annotated as a {@link Service} {@link Component}, because we
  * don't want it to be auto-started by component scan without explicit declaration in a @Configuration
  * (or XML)
- * 
+ *
  * @author Michael Vorburger
  */
 public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycle {
