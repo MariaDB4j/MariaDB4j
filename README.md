@@ -13,7 +13,7 @@ MariaDB4j is a Java (!) "launcher" for [MariaDB](http://mariadb.org) (the "backw
 [![Build Status](https://app.travis-ci.com/vorburger/MariaDB4j.svg?branch=main)](https://app.travis-ci.com/vorburger/MariaDB4j)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MariaDB4j/MariaDB4j/main.svg)](https://results.pre-commit.ci/latest/github/MariaDB4j/MariaDB4j/main)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/MariaDB4j/MariaDB4j/badge)](https://securityscorecards.dev/viewer/?uri=github.com/MariaDB4j/MariaDB4j)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7865/badge)](https://www.bestpractices.dev/projects/7865) 
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7865/badge)](https://www.bestpractices.dev/projects/7865)
 
 How? (Java)
 ----
