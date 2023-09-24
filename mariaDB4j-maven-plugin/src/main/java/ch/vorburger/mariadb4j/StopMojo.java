@@ -46,6 +46,7 @@ public class StopMojo extends AbstractMojo {
     @Parameter(property = "mariadb4j.stop.skip", defaultValue = "false")
     private boolean skip;
 
+    /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException {
         if (this.skip) {

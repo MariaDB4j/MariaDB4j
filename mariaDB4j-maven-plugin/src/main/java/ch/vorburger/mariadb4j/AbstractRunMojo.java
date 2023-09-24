@@ -102,6 +102,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     @Parameter(defaultValue = "false")
     private boolean skip;
 
+    /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (this.skip) {
@@ -147,6 +148,14 @@ public abstract class AbstractRunMojo extends AbstractMojo {
         return Optional.ofNullable(scriptCharset).map(Charset::forName).orElse(StandardCharsets.UTF_8);
     }
 
+    /**
+     * <p>runScripts.</p>
+     *
+     * @param db a {@link ch.vorburger.mariadb4j.DB} object
+     * @param dbName a {@link java.lang.String} object
+     * @throws ch.vorburger.exec.ManagedProcessException if any.
+     * @throws java.io.IOException if any.
+     */
     public void runScripts(DB db, String dbName) throws ManagedProcessException, IOException {
         if (this.scripts != null) {
             if (getLog().isInfoEnabled()) {

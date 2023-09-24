@@ -85,6 +85,8 @@
         <version>3.6.0</version>
         <configuration>
           <quiet>true</quiet>
+          <show>public</show>
+          <failOnWarnings>true</failOnWarnings>
         </configuration>
         <executions>
           <execution>

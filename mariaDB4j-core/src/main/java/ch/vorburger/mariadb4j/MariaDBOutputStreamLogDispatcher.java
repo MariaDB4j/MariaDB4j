@@ -30,7 +30,9 @@ import org.slf4j.event.Level;
  */
 public class MariaDBOutputStreamLogDispatcher extends OutputStreamLogDispatcher {
 
-    @Override public Level dispatch(OutputStreamType type, String line) {
+    /** {@inheritDoc} */
+    @Override
+    public Level dispatch(OutputStreamType type, String line) {
         if (type == OutputStreamType.STDOUT) {
             return Level.INFO;
         }

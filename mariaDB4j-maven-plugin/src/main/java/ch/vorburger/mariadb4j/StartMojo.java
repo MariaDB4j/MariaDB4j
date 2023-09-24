@@ -27,7 +27,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-
 /**
  * Start a MariaDBj4 database. Contrary to the {@code run} goal, this does not block and
  * allows other goal to operate on the application. This goal is typically used in
@@ -38,9 +37,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @since 1.0.0
  * @see StopMojo
  */
-@Mojo(name = "start", requiresProject = true,
-        defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST,
-        requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "start", requiresProject = true, defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST)
 public class StartMojo extends AbstractRunMojo {
 
     private static final String PROPNAME_DATABASE_URL = "mariadb4j.databaseurl";
@@ -52,8 +49,7 @@ public class StartMojo extends AbstractRunMojo {
             DBSingleton.setDB(db);
             db.start();
 
-
-            if (!databaseName.equals("test")) {
+            if (!"test".equals(databaseName)) {
                 // mysqld out-of-the-box already has a DB named "test"
                 // in case we need another DB, here's how to create it first
                 db.createDB(databaseName);
@@ -72,5 +68,4 @@ public class StartMojo extends AbstractRunMojo {
                     "Could execute scripts after database started", ex);
         }
     }
-
 }
