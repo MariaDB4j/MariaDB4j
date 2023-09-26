@@ -8,13 +8,15 @@ on:
     branches: [main]
 
 permissions:
-  # maven-dependency-submission-action needs write
-  contents: write
+  contents: read
 
 jobs:
   testOnLinux:
     name: Maven Verify (Build & Test) on Linux
     runs-on: ubuntu-latest
+    permissions:
+      # maven-dependency-submission-action needs write
+      contents: write
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
