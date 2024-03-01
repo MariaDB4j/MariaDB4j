@@ -19,20 +19,19 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.Util;
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class DBConfigurationBuilderTest {
 
@@ -50,6 +49,7 @@ public class DBConfigurationBuilderTest {
         builder.setPort(12345);
         DBConfiguration config = builder.build();
         String defaultDataDir = config.getDataDir();
+
         assertTrue(Util.isTemporaryDirectory(defaultDataDir));
         assertTrue(defaultDataDir.contains(Integer.toString(12345)));
     }
@@ -59,6 +59,7 @@ public class DBConfigurationBuilderTest {
         builder.setDataDir("db/data");
         DBConfiguration config = builder.build();
         String defaultDataDir = config.getDataDir();
+
         assertEquals("db/data", defaultDataDir);
         assertFalse(Util.isTemporaryDirectory(defaultDataDir));
     }
@@ -81,8 +82,10 @@ public class DBConfigurationBuilderTest {
     @Test public void defaultTmpDirIsTemporaryAndIncludesPortNumber() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
+
         String defaultTmpDir = config.getTmpDir();
         assertTrue(Util.isTemporaryDirectory(defaultTmpDir));
+
         int port = config.getPort();
         assertTrue(defaultTmpDir.contains(Integer.toString(port)));
     }
