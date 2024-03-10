@@ -25,7 +25,7 @@ jobs:
 
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       # https://github.com/marketplace/actions/cache-apt-packages
-      - uses: awalsh128/cache-apt-pkgs-action@2555a377dfb0ca4763693499998da808e8d5afa0 # latest
+      - uses: awalsh128/cache-apt-pkgs-action@a6c3917cc929dd0345bfb2d3feaf9101823370ad # latest
         with:
           packages: libncurses5 mariadb-server
           version: 1.0
