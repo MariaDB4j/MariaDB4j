@@ -5,16 +5,85 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED v3.1.0
+## UNRELEASED v3.1.1 or v3.2.0 (TBC)
 
-See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.2...main for unreleased changes; it will include:
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.1.0...main for unreleased future changes; it will include:
 
-* docs: Add 💸 OpenCollective etc. to README
+* TBD
+
+## v3.1.0 - 2024-03-27
+
 * feat: Upgrade MariaDB binaries for Linux & Mac from 10.2.11 to 10.11.5 by @TheKnowles in https://github.com/vorburger/MariaDB4j/pull/771
+* fix: Upgrade ch.vorburger.exec [from 3.1.5 to 3.2.0](https://github.com/vorburger/ch.vorburger.exec/compare/exec-3.1.5...exec-3.2.0); fixes e.g. [exec#9](https://github.com/vorburger/ch.vorburger.exec/issues/9)
 * fix: Resource Leak from DirectoryStream in DBShutdownHook
+* docs: Add 💸 OpenCollective etc. to README
+
+### Chore & Cleanup etc.
+
 * build: Add ErrorProne Code Quality Tool (fixes #736)
-* build(deps): Bump commons-dbutils:commons-dbutils from 1.8.0 to 1.8.1
+* chore: Apply StepSecurity best practices (see #785 for #661 and#786)
+* chore: Create scorecard.yml (see #661)
+* chore: Better Workflow Action Permissions (fixes #791)
+* chore: Limit Workflow Action Permissions (fixes #791)
+* chore: Remove Checkstyle from Pre-Commit (see #786)
+* chore: Remove old DBs/ binaries (for #661)
+* chore: Remove shellcheck from Pre-Commit (see #786)
+* chore: Switch 3.0.3-SNAPSHOT to 3.1.0-SNAPSHOT
+* docs: Add OpenSSF Best Practices badge to README (fixes #661)
+* docs: Add libcrypt.so.1 tip to README (fixes #916)
+* docs: Add Pre-Commit Hooks badge to README (see #786)
+* fix: Remove trailing whitespaces from many files (for #786)
+* fix: Reproducible Builds (re. #661)
+* fix: Use JEP 247 to fix broken build under Java 21 (fixes #903)
+* test: Added Windows MariaDB install action & enabled local mariadb test for Windows (#781 fixes #713)
+
+### Dependency Upgrades
+
+* build: Bump Maven from 3.9.0 to 3.9.6 (and Wrapper from 3.1.1 to 3.2.0)
+* build(deps): Bump actions/checkout from 3.1.0 to 4.1.2
+* build(deps): Bump actions/dependency-review-action from 2.5.1 to 4.2.3
+* build(deps): Bump actions/setup-java from 3.13.0 to 4.2.1
+* build(deps): Bump actions/upload-artifact from 3.1.0 to 4.3.1
+* build(deps): Bump advanced-security/maven-dependency-submission-action
+* build(deps): Bump actions/checkout from 3.1.0 to 4.1.2
+* build(deps): Bump actions/dependency-review-action from 2.5.1 to 4.2.3
+* build(deps): Bump actions/setup-java from 3.13.0 to 4.2.1
+* build(deps): Bump actions/upload-artifact from 3.1.0 to 4.3.1
+* build(deps): Bump advanced-security/maven-dependency-submission-action
+* build(deps): Bump awalsh128/cache-apt-pkgs-action from 1.3.0 to 1.8.1
+* build(deps): Bump commons-io:commons-io from 2.13.0 to 2.15.1
+* build(deps): Bump com.puppycrawl.tools:checkstyle
+* build(deps): Bump errorprone.version from 2.21.1 to 2.26.1
+* build(deps): Bump github/codeql-action from 2.22.0 to 3.24.9
+* build(deps): Bump maven.version from 3.9.4 to 3.9.6
+* build(deps): Bump org.apache.maven:maven-compat from 3.9.4 to 3.9.6
+* build(deps): Bump advanced-security/maven-dependency-submission-action
+* build(deps): Bump awalsh128/cache-apt-pkgs-action from 1.3.0 to 1.8.1
+* build(deps): Bump commons-io:commons-io from 2.13.0 to 2.15.1
+* build(deps): Bump com.puppycrawl.tools:checkstyle
+* build(deps): Bump errorprone.version from 2.21.1 to 2.26.1
+* build(deps): Bump github/codeql-action from 2.22.0 to 3.24.9
+* build(deps): Bump maven.version from 3.9.4 to 3.9.6
+* build(deps): Bump org.apache.maven:maven-compat from 3.9.4 to 3.9.6
+* build(deps): Bump org.apache.maven.plugins:maven-checkstyle-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-compiler-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-gpg-plugin
 * build(deps): Bump org.apache.maven.plugins:maven-javadoc-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-plugin-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-project-info-reports-plugin
+* build(deps): Bump org.apache.maven.plugins:maven-shade-plugin
+* build(deps): Bump org.apache.maven.plugin-tools:maven-plugin-annotations
+* build(deps): Bump org.assertj:assertj-core from 3.24.2 to 3.25.3
+* build(deps): Bump org.codehaus.mojo:license-maven-plugin
+* build(deps): Bump org.mockito:mockito-core from 5.5.0 to 5.11.0
+* build(deps): Bump org.slf4j:slf4j-simple from 2.0.9 to 2.0.12
+* build(deps): Bump ossf/scorecard-action from 2.1.2 to 2.3.1
+* build(deps): Bump springboot.version from 3.1.3 to 3.2.4
+* build(deps): Bump step-security/harden-runner from 2.5.1 to 2.7.0
+
+This Changelog was manually written by the maintainer, based on: `git log --no-merges --pretty=format:"%s" mariaDB4j-3.0.2..main | sort | grep -v "\[maven-release-plugin\]" | sed 's/.*/\* &/' > CHANGELOG-git.md` (TODO: Write a thing which "collapses" Dependency Upgrades, instead of doing it by hand).
+
+**Full Changelog**: https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.2...mariaDB4j-3.1.0
 
 ## v3.0.2 - 2023-09-16
 
