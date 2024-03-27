@@ -104,7 +104,7 @@ The DataSource initialization have to wait until MariaDB is ready to receive con
 
 ```
 dependencies {
-   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:3.0.2")
+   testCompile("ch.vorburger.mariaDB4j:mariaDB4j-springboot:3.1.0")
 }
 ```
 
@@ -134,7 +134,7 @@ MariaDB4j JAR binaries are available from:
    <dependency>
        <groupId>ch.vorburger.mariaDB4j</groupId>
        <artifactId>mariaDB4j</artifactId>
-       <version>3.0.2</version>
+       <version>3.1.0</version>
    </dependency>
    ```
 
