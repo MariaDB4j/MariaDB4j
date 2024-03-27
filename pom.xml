@@ -47,8 +47,6 @@
     <springboot.version>3.2.4</springboot.version>
     <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
     <errorprone.version>2.26.1</errorprone.version>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
   <build>
@@ -58,8 +56,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
         <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
+          <release>17</release>
           <encoding>UTF-8</encoding>
           <compilerArgs>
             <arg>-Werror</arg>
