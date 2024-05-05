@@ -42,7 +42,7 @@ jobs:
       # https://github.com/marketplace/actions/maven-dependency-tree-dependency-submission
       - name: Maven Dependency Tree Dependency Submission
         if: ${{ github.event_name == 'push' }}
-        uses: advanced-security/maven-dependency-submission-action@bfd2106013da0957cdede0b6c39fb5ca25ae375e # v4.0.2
+        uses: advanced-security/maven-dependency-submission-action@5d0f9011b55d6268922128af45275986303459c3 # v4.0.3
 
   testOnWindows:
     runs-on: windows-latest
