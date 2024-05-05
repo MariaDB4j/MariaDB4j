@@ -44,7 +44,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <springboot.version>3.2.4</springboot.version>
     <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
-    <errorprone.version>2.26.1</errorprone.version>
+    <errorprone.version>2.27.1</errorprone.version>
   </properties>
 
   <build>
