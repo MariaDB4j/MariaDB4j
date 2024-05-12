@@ -38,7 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-public class MariaDB4jSpringServiceNewDefaultsOverridenBySpringValueTest {
+public class MariaDB4jSpringServiceNewDefaultsOverriddenBySpringValueTest {
 
     @Configuration
     public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {

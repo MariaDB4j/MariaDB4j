@@ -89,7 +89,7 @@ public class MariaDB4jSampleDumpTest {
         assertEquals(0, dumpProcess.waitForExit());
         assertTrue(outputDumpFile.exists() || outputDumpFile.isDirectory());
         assertTrue(FileUtils.sizeOf(outputDumpFile) > 0);
-        // We just want to check that the file is a valid XML, output of it is mysqldump's responsability
+        // We just want to check that the file is a valid XML, output of it is mysqldump's responsibility
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         dBuilder.parse(outputDumpFile);

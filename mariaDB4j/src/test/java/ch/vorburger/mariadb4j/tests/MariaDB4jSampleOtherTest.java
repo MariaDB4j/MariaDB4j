@@ -56,7 +56,7 @@ public class MariaDB4jSampleOtherTest {
     /**
      * Reproduces issue #30 re. Exception if there are spaces in the data directory path #30.
      *
-     * @see <a href="https://github.com/vorburger/MariaDB4j/issues/30">MariaDB4j issue #30</a>
+     * @see <a href="https://github.com/MariaDB4j/MariaDB4j/issues/30">MariaDB4j issue #30</a>
      */
     @Test public void dataDirWithSpace() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();

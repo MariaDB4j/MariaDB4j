@@ -170,7 +170,7 @@ This Changelog was manually written by the maintainer, based on: `git log --no-m
 * Add configurable tmpdir by @simonzkl in https://github.com/vorburger/MariaDB4j/pull/604
 * Support default character set configuration. by @agostop in https://github.com/vorburger/MariaDB4j/pull/533
 * Remove `setDefaultCharacterSet()` from DBConfiguration (but not DBConfigurationBuilder) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/564
-* Remove explict Log4j dependency (no longer needed now) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/553
+* Remove explicit Log4j dependency (no longer needed now) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/553
 * Set source API default charset set to UTF-8 by @dassio in https://github.com/vorburger/MariaDB4j/pull/573
 * Switch Travis CI from Java 8 to 11 and Ubuntu Xenial 16.04 to Focal 20.04 by @vorburger in https://github.com/vorburger/MariaDB4j/pull/566
 * Update pom.xml by @dev-fringe in https://github.com/vorburger/MariaDB4j/pull/515
