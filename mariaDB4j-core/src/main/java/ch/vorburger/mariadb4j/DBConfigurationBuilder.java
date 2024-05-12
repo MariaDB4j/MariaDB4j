@@ -170,7 +170,7 @@ public class DBConfigurationBuilder {
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
      * then they'll also never get deleted anyway.
      *
-     * @param doDelete Default valule is true, set false to override
+     * @param doDelete Default value is true, set false to override
      * @return returns this
      */
     public DBConfigurationBuilder setDeletingTemporaryBaseAndDataDirsOnShutdown(boolean doDelete) {

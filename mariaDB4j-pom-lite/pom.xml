@@ -23,7 +23,7 @@
     <inceptionYear>2012</inceptionYear>
 
     <scm>
-        <connection>scm:git:https://github.com/vorburger/MariaDB4j.git</connection>
+        <connection>scm:git:https://github.com/MariaDB4j/MariaDB4j.git</connection>
 
         <url>https://github.com/vorburger/MariaDB4j</url>
         <!-- Do NOT specify developerConnection & tag here, as those are only used
@@ -107,7 +107,7 @@
                      <configuration>
                        <script>
                          // BeanShell is 2005-ish and thus doesn't support generics, varargs, try-with-resources or lambdas, so:
-                         // (If we do this kind of inline code in pom.xml more often, we shold have a new simple module in
+                         // (If we do this kind of inline code in pom.xml more often, we should have a new simple module in
                          //  odl-parent, which has *.java that we compile, and then just depend on it here and call one-line
                          //  static class methods only - it will be MUCH easier to write!)
                          void copy(File root, String glob, File target) {

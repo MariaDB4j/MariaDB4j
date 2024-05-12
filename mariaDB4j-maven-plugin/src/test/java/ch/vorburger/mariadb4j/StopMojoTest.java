@@ -102,7 +102,7 @@ public class StopMojoTest {
             fail("Should have thrown exception");
         } catch (MojoExecutionException e) {
             // expected
-            assertTrue(e.getMessage().contains("MariaDB4j Database. Could not stop gracefull"));
+            assertTrue(e.getMessage().contains("MariaDB4j Database. Could not stop gracefully"));
         }
 
         verify(mockDb).stop();

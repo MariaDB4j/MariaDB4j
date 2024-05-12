@@ -20,7 +20,7 @@ How? (Java)
 
 The MariaDB native binaries are in the MariaDB4j-DB-win*/linux*/mac*.JARs on which the main MariaDB4j JAR depends on by Maven transitive dependencies and, by default, are extracted from the classpath to a temporary base directory on the fly, then started by Java.
 
-An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/vorburger/MariaDB4j/blob/main/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).  Basically, you can simply:
+An example of this can be found in the source tree, in [`MariaDB4jSampleTutorialTest.java`](https://github.com/MariaDB4j/MariaDB4j/blob/main/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/MariaDB4jSampleTutorialTest.java).  Basically, you can simply:
 
 1. Install the database with a particular configuration, using short-cut:
 
@@ -73,7 +73,7 @@ How (using existing native MariaDB binaries)
 ----
 
 MariaDB4j supports using existing native MariaDB binaries on the host system rather than unpacking MariaDB from the
-classpath. This is useful if you need a newer version than is currently distributed, [or e.g. for Mac M1/M2](https://github.com/vorburger/MariaDB4j/issues/497). You can control this via the `DBConfigurationBuilder`:
+classpath. This is useful if you need a newer version than is currently distributed, [or e.g. for Mac M1/M2](https://github.com/MariaDB4j/MariaDB4j/issues/497). You can control this via the `DBConfigurationBuilder`:
 
 ```java
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
@@ -98,7 +98,7 @@ How (Spring)
 
 MariaDB4j can be used in any Java Application on its own. It is not dependent on dependency injection or the Spring Framework (the dependency to the spring-core*.jar is for a utility, and is unrelated to DI).
 
-If you want to use MariaDB4j with Spring-boot the opinionated presets for spring applications, then you can easily use this the ready-made MariaDB4jSpringService to reduce your coding/configuration to get you going, we have an example application ([mariaDB4j-app](<https://github.com/vorburger/MariaDB4j/blob/main/mariaDB4j-app/>)) which illustrates how to wire it up or as an alternative approach via the [MariaDB4jSpringServiceTestSpringConfiguration](<https://github.com/vorburger/MariaDB4j/blob/main/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/springframework/MariaDB4jSpringServiceTestSpringConfiguration.java>).
+If you want to use MariaDB4j with Spring-boot the opinionated presets for spring applications, then you can easily use this the ready-made MariaDB4jSpringService to reduce your coding/configuration to get you going, we have an example application ([mariaDB4j-app](<https://github.com/MariaDB4j/MariaDB4j/blob/main/mariaDB4j-app/>)) which illustrates how to wire it up or as an alternative approach via the [MariaDB4jSpringServiceTestSpringConfiguration](<https://github.com/MariaDB4j/MariaDB4j/blob/main/mariaDB4j/src/test/java/ch/vorburger/mariadb4j/tests/springframework/MariaDB4jSpringServiceTestSpringConfiguration.java>).
 
 The DataSource initialization have to wait until MariaDB is ready to receive connections, so we provide `mariaDB4j-springboot` to implement it. You can use it by :
 
@@ -110,7 +110,7 @@ dependencies {
 
 In the module, bean name of MariaDB4jSpringService is mariaDB4j, and dataSource depends on it by name. So if you want to customize your mariaDB4j, please make sure the name is correctly.
 
-In [issue #64](<https://github.com/vorburger/MariaDB4j/issues/64>) there is also a discussion about it and pointing to a TestDbConfig.java gist.
+In [issue #64](<https://github.com/MariaDB4j/MariaDB4j/issues/64>) there is also a discussion about it and pointing to a TestDbConfig.java gist.
 
 How (CLI)
 ----
@@ -138,7 +138,7 @@ MariaDB4j JAR binaries are available from:
    </dependency>
    ```
 
-1. <https://jitpack.io>: [main-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/main-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/vorburger/MariaDB4j/issues/41)
+1. <https://jitpack.io>: [main-SNAPSHOT](https://jitpack.io/#vorburger/MariaDB4j/main-SNAPSHOT), [releases](https://jitpack.io/#vorburger/MariaDB4j), see also [issue #41 discussion](https://github.com/MariaDB4j/MariaDB4j/issues/41)
 
 1. Not Bintray! (Up to version 2.1.3 MariaDB4j was on Bintray.  Starting with version 2.2.1 we’re only using Maven central.  The 2.2.1 that is on Bintray is broken.)
 
@@ -176,7 +176,7 @@ This library brings the advantage of the installation-free DB approach, while ma
 Who's using it?
 ---------------
 
-MariaDB4j was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see <http://mifos.org>. Coincidentally, OpenMRS the "Open Source Medical Records System" (see <http://openmrs.org>), another Humanitarian Open Source (HFOSS) project, also uses MariaDB4j (see <https://github.com/vorburger/MariaDB4j/pull/1>).
+MariaDB4j was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see <http://mifos.org>. Coincidentally, OpenMRS the "Open Source Medical Records System" (see <http://openmrs.org>), another Humanitarian Open Source (HFOSS) project, also uses MariaDB4j (see <https://github.com/MariaDB4j/MariaDB4j/pull/1>).
 
 See the [`USERS.md`](USERS.md) file (also included in each built JAR!) for a list of publicly known users.
 
@@ -189,10 +189,10 @@ Maven Plugin Info (mariadb4j-maven-plugin)
 
 Maven plugin that starts and stops a MariaDB instance for the integration test phase.
 
-This is a Maven plugin wrapper around <https://github.com/vorburger/MariaDB4j>, a
+This is a Maven plugin wrapper around <https://github.com/MariaDB4j/MariaDB4j>, a
 helpful tool for launching MariaDB from Java.
 
-See pom and integration test in <https://github.com/vorburger/MariaDB4j/tree/mariaDB4j-maven-plugin/mariaDB4j-maven-plugin/src/it/mariadb4j-maven-plugin-test-basic>  for usage example.
+See pom and integration test in <https://github.com/MariaDB4j/MariaDB4j/tree/mariaDB4j-maven-plugin/mariaDB4j-maven-plugin/src/it/mariadb4j-maven-plugin-test-basic>  for usage example.
 
 #### Example usage
 
@@ -331,7 +331,7 @@ Any issues raised in the GitHub bug tracker about requesting new versions of Mar
 
 Note that the Maven <version> number of the core/app/pom artifacts versus the db artifacts, while originally the same, are now intentionally decoupled for this reason.  So your new DBs/mariaDB4j-db-(linux/mac/win)(64/32)-VERSION/pom.xml should have its Maven <version> matching the new mariadb binary you are contributing (probably like 10.1.x or so), and not the MariaDB4j launcher (which is like 2.x.y).
 
-In addition to the new directory, you then need to correspondingly increase: 1. the `version` of the `dependency` in the mariaDB4j/pom.xml (non-root)  &  2. the databaseVersion in the DBConfigurationBuilder class.  Please have a look for contributions made by others in the git log if in doubt; e.g. [issue 37](https://github.com/vorburger/MariaDB4j/issues/37).   Please TEST your pull request on your platform!  @vorburger will only only run the build on Linux, not Windows and Mac OS X.  As the DBs jars are separated from the main project, one needs to build the DB JAR so it ends it up in your local repo first: cd down the DBs subfolder and do a ./mvnw clean install for the DB you want to build i.e. mariaDB4j-db-mac64-10.1.9/ . After that, up again to the project root repository and ./mvnw clean install should work fine.
+In addition to the new directory, you then need to correspondingly increase: 1. the `version` of the `dependency` in the mariaDB4j/pom.xml (non-root)  &  2. the databaseVersion in the DBConfigurationBuilder class.  Please have a look for contributions made by others in the git log if in doubt; e.g. [issue 37](https://github.com/MariaDB4j/MariaDB4j/issues/37).   Please TEST your pull request on your platform!  @vorburger will only only run the build on Linux, not Windows and Mac OS X.  As the DBs jars are separated from the main project, one needs to build the DB JAR so it ends it up in your local repo first: cd down the DBs subfolder and do a ./mvnw clean install for the DB you want to build i.e. mariaDB4j-db-mac64-10.1.9/ . After that, up again to the project root repository and ./mvnw clean install should work fine.
 
 So when you contribute new MariaDB native binaries versions, place them in a new directory named mariaDB4j-db-PLATFORM-VERSION under the DBs/ directory - next to the existing ones.  This is better than renaming an existing one and replacing files, because (in theory) if someone wanted to they could then easily still depend on earlier released database binary versions just by changing the <dependency> of the mariaDB4j-db* artifactId in their own project's pom.xml, even with using later version of MariaDB4j Java classes (mariadb4j core & app).
 
@@ -395,6 +395,6 @@ Who?
 
 See the [CONTRIBUTORS.md](CONTRIBUTORS.md) file (also included in each built JAR!) for a list of contributors.
 
-Latest/current also on <https://github.com/vorburger/MariaDB4j/graphs/contributors>:
+Latest/current also on <https://github.com/MariaDB4j/MariaDB4j/graphs/contributors>:
 
 Contributions, patches, forks more than welcome - hack it, and add your name! ;-)
