@@ -1,4 +1,4 @@
-_Please :star: Star on GitHub and **💸 support [on OpenCollective](https://opencollective.com/mariadb4j), via [GitHub Sponsoring](https://github.com/sponsors/vorburger) or through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance of this project [used by hundreds](https://github.com/MariaDB4j/MariaDB4j/network/dependents), since 2011! 🫶_
+_Please :star: Star on GitHub and **💸 support [on OpenCollective](https://opencollective.com/mariadb4j), via [GitHub Sponsoring](https://github.com/sponsors/vorburger) or through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance of this project [used by hundreds](https://github.com/MariaDB4j/MariaDB4j/network/dependents), since [2011](#star-history)! 🫶_
 
 What?
 =====
@@ -389,6 +389,11 @@ When doing a release, here are a few things to do every time:
        ./mvnw clean deploy -Pgpg
 
 In case of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use './mvnw release:rollback', but that leaves ugly commits.)
+
+Star History
+------------
+
+[![Star History Chart](https://api.star-history.com/svg?repos=MariaDB4j/MariaDB4j&type=Date)](https://star-history.com/#MariaDB4j/MariaDB4j&Date)
 
 Who?
 ----
