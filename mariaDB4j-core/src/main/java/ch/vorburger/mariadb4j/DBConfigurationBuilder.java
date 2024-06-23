@@ -19,10 +19,15 @@
  */
 package ch.vorburger.mariadb4j;
 
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Client;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.PrintDefaults;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+import static java.util.Objects.requireNonNull;
+
 import ch.vorburger.exec.ManagedProcessListener;
 import ch.vorburger.mariadb4j.DBConfiguration.Executable;
-import org.apache.commons.lang3.SystemUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -31,9 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import static ch.vorburger.mariadb4j.DBConfiguration.Executable.*;
-import static java.util.Objects.requireNonNull;
+import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Builder for DBConfiguration. Has lot's of sensible default conventions etc.
