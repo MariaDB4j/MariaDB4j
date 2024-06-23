@@ -70,8 +70,8 @@ public class DBConfigurationBuilder {
     private boolean frozen = false;
     private ManagedProcessListener listener;
 
-    private String path() {
-        return SystemUtils.JAVA_IO_TMPDIR + this.hashCode();
+    protected String path() {
+        return SystemUtils.JAVA_IO_TMPDIR + "/" + this.hashCode();
     }
 
     protected String defaultCharacterSet = null;
