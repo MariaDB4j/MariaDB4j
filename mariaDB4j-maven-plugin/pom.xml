@@ -187,7 +187,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.13.1</version>
+        <version>3.15.0</version>
         <configuration>
           <goalPrefix>mariaDB4j</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -390,7 +390,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-plugin-plugin</artifactId>
-            <version>3.13.1</version>
+            <version>3.15.0</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
