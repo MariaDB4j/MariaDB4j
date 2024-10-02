@@ -29,7 +29,7 @@ jobs:
         with:
           packages: mariadb-server
           version: 1.0
-      - run: apt-get install libncurses5
+      - run: sudo apt-get install libncurses5
         shell: bash
       # https://github.com/marketplace/actions/setup-java-jdk
       - uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
