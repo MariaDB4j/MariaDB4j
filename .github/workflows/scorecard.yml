@@ -17,6 +17,11 @@ on:
 # Declare default permissions as read only.
 permissions: read-all
 
+# Cancel any in-progress job or run if there is a newer commit
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   analysis:
     name: Scorecard analysis
