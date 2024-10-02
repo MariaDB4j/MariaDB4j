@@ -19,7 +19,7 @@ permissions: read-all
 
 # Cancel any in-progress job or run if there is a newer commit
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.ref }}-scorecard
   cancel-in-progress: true
 
 jobs:
