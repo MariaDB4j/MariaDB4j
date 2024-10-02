@@ -14,7 +14,7 @@ permissions:
 
 # Cancel any in-progress job or run if there is a newer commit
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.ref }}-dependency-review
   cancel-in-progress: true
 
 jobs:
