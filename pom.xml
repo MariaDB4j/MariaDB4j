@@ -42,7 +42,7 @@
     <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
     <project.build.outputTimestamp>2024-03-27T22:39:07Z</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <springboot.version>3.3.4</springboot.version>
+    <springboot.version>3.3.5</springboot.version>
     <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
     <errorprone.version>2.33.0</errorprone.version>
   </properties>
