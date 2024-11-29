@@ -56,6 +56,8 @@ public class DB {
 
     private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
+    private static final String homebrewInstallationPath = "/opt/homebrew/bin/brew";
+
     protected final DBConfiguration configuration;
 
     private File baseDir;
@@ -407,22 +409,35 @@ public class DB {
      * on the configuration.
      */
     protected void unpackEmbeddedDb() {
-        if (configuration.getBinariesClassPathLocation() == null) {
-            logger.info("Not unpacking any embedded database (as BinariesClassPathLocation configuration is null)");
-            return;
+        // Check for Homebrew, before doing anything else
+        // If HomeBrew is not installed, then throw a runtime error, similar to how the below extraction method
+        // does below for other operating systems
+        if(configuration.isMacOs() && !Util.doesExecutableExistAndIsExecutable(new File(homebrewInstallationPath)))
+        {
+            throw new RuntimeException("Homebrew must be installed on the system before using this library");
+        }
+        else {
+            // All other OS except macOS needs to have a place where the binaries are to be extracted
+            if (configuration.getBinariesClassPathLocation() == null) {
+                logger.info("Not unpacking any embedded database (as BinariesClassPathLocation configuration is null)");
+                return;
+            }
         }
 
-        try {
-            Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
-            if (!configuration.isWindows()) {
-                Util.forceExecutable(configuration.getExecutable(PrintDefaults));
-                Util.forceExecutable(configuration.getExecutable(InstallDB));
-                Util.forceExecutable(configuration.getExecutable(Server));
-                Util.forceExecutable(configuration.getExecutable(Dump));
-                Util.forceExecutable(configuration.getExecutable(Client));
+        // Windows, Linux, and any other supported OS can have their binaries extracted as normal
+        else if(!configuration.isMacOs()) {
+            try {
+                Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
+                if (!configuration.isWindows()) {
+                    Util.forceExecutable(configuration.getExecutable(PrintDefaults));
+                    Util.forceExecutable(configuration.getExecutable(InstallDB));
+                    Util.forceExecutable(configuration.getExecutable(Server));
+                    Util.forceExecutable(configuration.getExecutable(Dump));
+                    Util.forceExecutable(configuration.getExecutable(Client));
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Error unpacking embedded DB", e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Error unpacking embedded DB", e);
         }
     }
 

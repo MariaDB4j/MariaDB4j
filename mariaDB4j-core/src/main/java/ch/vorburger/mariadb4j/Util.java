@@ -89,6 +89,16 @@ public class Util {
         return directory.startsWith(SystemUtils.JAVA_IO_TMPDIR);
     }
 
+    /**
+     * Method to check for the existence of a prerequisite executable, like Homebrew on macOS,
+     * and determine if it is executable
+     * @param executableFile file that is being checked for
+     * @return boolean if the file exists and is executable
+     */
+    public static boolean doesExecutableExistAndIsExecutable(File executableFile){
+        return executableFile.exists() && executableFile.canExecute();
+    }
+
     public static void forceExecutable(File executableFile) throws IOException {
         if (executableFile.exists()) {
             if (!executableFile.canExecute()) {

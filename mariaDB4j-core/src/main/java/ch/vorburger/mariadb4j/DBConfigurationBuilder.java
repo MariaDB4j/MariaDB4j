@@ -206,7 +206,7 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(),
-                getLibDir(), _getDataDir(), _getTmpDir(), isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(),
+                getLibDir(), _getDataDir(), _getTmpDir(), isWindows(), isMacOs(), _getArgs(), _getOSLibraryEnvironmentVarName(),
                 isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
                 getDefaultCharacterSet(), _getExecutables(), getProcessListener());
     }
@@ -393,6 +393,10 @@ public class DBConfigurationBuilder {
 
     public boolean isWindows() {
         return WINX64.equals(getOS());
+    }
+
+    public boolean isMacOs(){
+        return OSX.equals(getOS());
     }
 
     protected String getExtension() {
