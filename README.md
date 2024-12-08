@@ -349,8 +349,16 @@ A: This could happen e.g. on Fedora 24 if you have not previous installed any ot
 Q: `/tmp/MariaDB4j/base/bin/mariadbd: error while loading shared libraries: libcrypt.so.1: cannot open shared object file: No such file or directory`
 A: Similar to above, and using e.g. https://pkgs.org/search/?q=libcrypt.so.1 we can see that e.g. `sudo dnf install libxcrypt-compat` does the trick for Fedora 39.
 
-Q: Is there another project that does something similar to this one?
-A: Indeed there is, check out [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql)! The world is big enough for both of us, and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118).  [Testcontainers' has something similar which we recommend you use](https://www.testcontainers.org/modules/databases/mariadb/) if you can run containers (Docker).  Also OpenMRS' [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) build on MariaDB4j.
+Related Projects 
+----------------
+
+* [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) from OpenMRS builds on MariaDB4j
+* [embedded-mariadb-clj](https://github.com/ruroru/embedded-mariadb-clj) is a Clojure 🌯 wrapper of MariaDB4j
+
+The "world is big enough" also for:
+
+* [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql), and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118)
+* [Testcontainers' has something similar which we recommend you use](https://www.testcontainers.org/modules/databases/mariadb/) if you can run 🫙 containers (Docker)
 
 Release?
 --------
