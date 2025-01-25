@@ -51,12 +51,11 @@ import org.slf4j.LoggerFactory;
  * @author Michael Vorburger
  * @author Michael Seaton
  * @author Gordon Little
+ * @author Adam Brousseau
  */
 public class DB {
 
     private static final Logger logger = LoggerFactory.getLogger(DB.class);
-
-    private static final String homebrewInstallationPath = "/opt/homebrew/bin/brew";
 
     protected final DBConfiguration configuration;
 
@@ -412,7 +411,7 @@ public class DB {
         // Check for Homebrew, before doing anything else
         // If HomeBrew is not installed, then throw a runtime error, similar to how the below extraction method
         // does below for other operating systems
-        if(configuration.isMacOs() && !Util.doesExecutableExistAndIsExecutable(new File(homebrewInstallationPath)))
+        if(configuration.isMacOs() && !Util.doesExecutableExistAndIsExecutable(new File(Util.homebrewInstallationPath)))
         {
             throw new RuntimeException("Homebrew must be installed on the system before using this library");
         }
@@ -425,7 +424,7 @@ public class DB {
         }
 
         // Windows, Linux, and any other supported OS can have their binaries extracted as normal
-        else if(!configuration.isMacOs()) {
+        if(!configuration.isMacOs()) {
             try {
                 Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
                 if (!configuration.isWindows()) {
@@ -438,6 +437,10 @@ public class DB {
             } catch (IOException e) {
                 throw new RuntimeException("Error unpacking embedded DB", e);
             }
+        }
+        else{
+            if(!Util.installMariaDbFromHomebrew())
+                throw new RuntimeException("Error installing MariaDB from Homebrew");
         }
     }
 

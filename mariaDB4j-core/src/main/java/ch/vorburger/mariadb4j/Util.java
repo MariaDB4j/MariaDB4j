@@ -22,6 +22,9 @@ package ch.vorburger.mariadb4j;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -37,6 +40,10 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * @author Michael Seaton
  */
 public class Util {
+
+    public static final String homebrewInstallationPath = "/opt/homebrew/bin/brew";
+
+    private static final String mariadbNotInstalledMessage = "No such keg: /opt/homebrew/Cellar/mariadb";
 
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
@@ -152,6 +159,56 @@ public class Util {
             logger.info("Unpacked {} files from {} to {}", info);
         }
         return counter;
+    }
+
+    /**
+     * Method to check for the MariaDb installation on the system and then install if not installed
+     * @return @{@link boolean} representing whether MariaDb has been installed on the system
+     */
+    public static boolean installMariaDbFromHomebrew(){
+        boolean mariadbIsInstalled = false;
+
+        ProcessBuilder pb = new ProcessBuilder(homebrewInstallationPath + " list mariadb");
+        pb.redirectErrorStream(true);
+        try {
+            Process brewCheckMariadbIsInstalled = pb.start();
+            String checkOutput = new String(brewCheckMariadbIsInstalled.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+            if(checkOutput.contains(mariadbNotInstalledMessage)){
+                brewCheckMariadbIsInstalled.destroy();
+
+                ProcessBuilder brewInstallMariaDb = new ProcessBuilder(homebrewInstallationPath + " install mariadb");
+                brewInstallMariaDb.redirectErrorStream(true);
+
+                Process brewInstall = brewInstallMariaDb.start();
+
+                // Wait until Homebrew installs the latest MariaDb
+                do {
+                    brewInstall.waitFor(15, TimeUnit.SECONDS);
+                } while (brewInstall.isAlive());
+
+                String checkInstallOutput = new String(brewInstall.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+                if(checkInstallOutput.toLowerCase().contains("error")){
+                    throw new IllegalStateException("Failed to install mariadb with Homebrew - see " + checkInstallOutput);
+                }
+
+                // Cause it to clean up once it has installed
+                brewInstall.destroy();
+
+                mariadbIsInstalled = true;
+            } else{
+                mariadbIsInstalled = true;
+            }
+        } catch (IOException ioException) {
+            logger.error("Attempted to check the installation status of MariaDb and executing Homebrew failed", ioException);
+            throw new RuntimeException("Attempted to check the installation status of MariaDb and executing Homebrew failed");
+        } catch (InterruptedException interruptedException) {
+            logger.error("The thread process was interrupted while waiting for MariaDb to finish installation", interruptedException);
+            throw new RuntimeException("The thread process was interrupted while waiting for MariaDb to finish installation");
+        }
+
+        return mariadbIsInstalled;
     }
 
     @SuppressWarnings("null") private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
