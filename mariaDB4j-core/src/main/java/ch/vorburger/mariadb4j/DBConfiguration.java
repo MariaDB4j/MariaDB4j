@@ -93,6 +93,13 @@ public interface DBConfiguration {
      **/
     boolean isWindows();
 
+    /**
+     * Whether running on macOS (this is used to determine whether or not to check for Homebrew)
+     *
+     * @return returns boolean isMacOs
+     */
+    boolean isMacOs();
+
     List<String> getArgs();
 
     String getOSLibraryEnvironmentVarName();
@@ -132,6 +139,8 @@ public interface DBConfiguration {
         private final String tmpDir;
         private final boolean isDeletingTemporaryBaseAndDataDirsOnShutdown;
         private final boolean isWindows;
+
+        private final boolean isMacOs;
         private final List<String> args;
         private final String osLibraryEnvironmentVarName;
         private final String defaultCharacterSet;
@@ -141,7 +150,7 @@ public interface DBConfiguration {
         private final Map<Executable, Supplier<File>> executables;
 
         Impl(int port, String socket, String binariesClassPathLocation, String baseDir, String libDir, String dataDir, String tmpDir,
-                boolean isWindows, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
+                boolean isWindows, boolean isMacOs, List<String> args, String osLibraryEnvironmentVarName, boolean isSecurityDisabled,
                 boolean isDeletingTemporaryBaseAndDataDirsOnShutdown, Function<String, String> getURL, String defaultCharacterSet,
                 Map<Executable, Supplier<File>> executables, ManagedProcessListener listener) {
             this.port = port;
@@ -153,6 +162,7 @@ public interface DBConfiguration {
             this.tmpDir = tmpDir;
             this.isDeletingTemporaryBaseAndDataDirsOnShutdown = isDeletingTemporaryBaseAndDataDirsOnShutdown;
             this.isWindows = isWindows;
+            this.isMacOs = isMacOs;
             this.args = args;
             this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
             this.isSecurityDisabled = isSecurityDisabled;
@@ -197,6 +207,8 @@ public interface DBConfiguration {
         @Override public boolean isWindows() {
             return isWindows;
         }
+
+        @Override public boolean isMacOs() { return isMacOs; };
 
         @Override public List<String> getArgs() {
             return args;
