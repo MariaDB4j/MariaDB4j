@@ -21,6 +21,7 @@ package ch.vorburger.mariadb4j.tests.springframework;
 
 import static org.junit.Assert.assertEquals;
 
+import ch.vorburger.mariadb4j.springframework.DBFactory;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,7 @@ public class MariaDB4jSpringServiceOverrideBySetTest {
     @Configuration
     public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
 
-        @Override protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
+        @Override protected void configureMariaDB4jSpringService(DBFactory s) {
             s.setDefaultPort(5677);
             s.setDefaultBaseDir("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir");
             // do NOT s.setDefaultLibDir() - it will (should) default to "baseDir/libs"; see issue #39
@@ -49,7 +50,7 @@ public class MariaDB4jSpringServiceOverrideBySetTest {
         }
     }
 
-    @Autowired MariaDB4jSpringService s;
+    @Autowired DBFactory s;
 
     @Test public void testOverrideBySet() {
         assertEquals(5677, s.getConfiguration().getPort());

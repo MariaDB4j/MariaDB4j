@@ -19,16 +19,17 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import static org.junit.Assert.assertEquals;
-
-import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+import ch.vorburger.mariadb4j.springframework.DBFactory;
 import java.util.Properties;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+
 
 /**
  * Tests overriding the default configuration of a MariaDB4jSpringService set in a
@@ -43,19 +44,19 @@ public class MariaDB4jSpringServiceNewDefaultsOverriddenBySpringValueTest {
     @Configuration
     public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
 
-        @Override protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
+        @Override protected void configureMariaDB4jSpringService(DBFactory s) {
             s.setDefaultPort(1234);
         }
 
         @Override protected void configureProperties(Properties properties) {
-            properties.setProperty(MariaDB4jSpringService.PORT, "5678");
+            properties.setProperty(DBFactory.PORT, "5678");
         }
     }
 
-    @Autowired MariaDB4jSpringService s;
+    @Autowired DBFactory s;
 
     @Test public void testNewDefaults() {
-        assertEquals(5678, s.getConfiguration().getPort());
+        Assert.assertEquals(5678, s.getConfiguration().getPort());
     }
 
 }

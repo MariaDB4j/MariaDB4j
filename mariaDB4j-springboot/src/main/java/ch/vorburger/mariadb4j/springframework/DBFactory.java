@@ -21,32 +21,35 @@ package ch.vorburger.mariadb4j.springframework;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
+
 @Configuration
-@ConfigurationProperties(prefix = DBFactory.PREFIX)
-public class DBFactory {
-    public final static String PREFIX = "mariadb4j";
-    public final static String PORT = "port";
-    public final static String SOCKET = "socket";
-    public final static String DATA_DIR = "dataDir";
-    public final static String TMP_DIR = "tmpDir";
-    public final static String BASE_DIR = "baseDir";
-    public final static String LIB_DIR = "libDir";
-    public final static String UNPACK = "unpack";
-    public final static String OS_USER = "osUser";
-    public final static String DEFAULT_CHARSET = "defaultCharset";
+public class DBFactory implements Lifecycle {
+    public final static String PORT = "mariaDB4j.port";
+    public final static String SOCKET = "mariaDB4j.socket";
+    public final static String DATA_DIR = "mariaDB4j.dataDir";
+    public final static String TMP_DIR = "mariaDB4j.tmpDir";
+    public final static String BASE_DIR = "mariaDB4j.baseDir";
+    public final static String LIB_DIR = "mariaDB4j.libDir";
+    public final static String UNPACK = "mariaDB4j.unpack";
+    public final static String OS_USER = "mariaDB4j.osUser";
+    public final static String DEFAULT_CHARSET = "mariaDB4j.defaultCharset";
 
     private final DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
 
     private DB db = null;
+
+    private DBConfiguration configuration = null;
+    private ManagedProcessException lastException;
 
     @Value("${" + DBFactory.PORT + ":-1}")
     public void setDefaultPort(int port) {
@@ -104,11 +107,46 @@ public class DBFactory {
 
     @Bean
     @ConditionalOnMissingBean
-    public DB getDB() throws ManagedProcessException {
+    public DB mariaDB4j() throws ManagedProcessException {
         if (db == null) {
-            db = DB.newEmbeddedDB(builder.build());
+            configuration = builder.build();
+            db = DB.newEmbeddedDB(configuration);
             db.start();
         }
         return db;
+    }
+
+    @Override
+    public void start() {
+        try {
+            mariaDB4j();
+        } catch (ManagedProcessException e) {
+            lastException = e;
+            throw new IllegalStateException("MariaDB4jSpringService start() failed", e);
+        }
+    }
+
+    @Override
+    public void stop() {
+        try {
+            db.stop();
+            db = null;
+        } catch (ManagedProcessException e) {
+            lastException = e;
+            throw new IllegalStateException("MariaDB4jSpringService stop() failed", e);
+        }
+    }
+
+    @Override
+    public boolean isRunning() {
+        return db != null;
+    }
+
+    public ManagedProcessException getLastException() {
+        return lastException;
+    }
+
+    public DBConfiguration getConfiguration() {
+        return configuration;
     }
 }

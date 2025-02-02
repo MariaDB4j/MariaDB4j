@@ -21,6 +21,7 @@ package ch.vorburger.mariadb4j.tests.springframework;
 
 import static org.junit.Assert.assertEquals;
 
+import ch.vorburger.mariadb4j.springframework.DBFactory;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import java.util.Properties;
 import org.junit.Test;
@@ -43,16 +44,16 @@ public class MariaDB4jSpringServiceOverrideBySpringValueTest {
     public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
         @Override
         protected void configureProperties(Properties properties) {
-            properties.setProperty(MariaDB4jSpringService.PORT, "5679");
-            properties.setProperty(MariaDB4jSpringService.BASE_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir");
-            properties.setProperty(MariaDB4jSpringService.LIB_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs");
-            properties.setProperty(MariaDB4jSpringService.DATA_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir");
-            properties.setProperty(MariaDB4jSpringService.TMP_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir");
+            properties.setProperty(DBFactory.PORT, "5679");
+            properties.setProperty(DBFactory.BASE_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir");
+            properties.setProperty(DBFactory.LIB_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs");
+            properties.setProperty(DBFactory.DATA_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir");
+            properties.setProperty(DBFactory.TMP_DIR, "target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir");
         }
     }
 
     @Autowired
-    MariaDB4jSpringService s;
+    DBFactory s;
 
     @Test
     public void testOverrideBySpringValue() {

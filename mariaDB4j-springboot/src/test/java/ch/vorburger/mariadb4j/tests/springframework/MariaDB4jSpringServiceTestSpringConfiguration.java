@@ -19,6 +19,7 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
+import ch.vorburger.mariadb4j.springframework.DBFactory;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import java.util.Properties;
 import org.springframework.context.annotation.Bean;
@@ -26,17 +27,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-public class MariaDB4jSpringServiceTestSpringConfiguration {
+public class MariaDB4jSpringServiceTestSpringConfiguration extends DBFactory {
 
-    @Bean
-    public MariaDB4jSpringService mariaDB4jSpringService() {
-        MariaDB4jSpringService mariaDB4jSpringService = new MariaDB4jSpringService();
-        configureMariaDB4jSpringService(mariaDB4jSpringService);
-        return mariaDB4jSpringService;
-    }
 
     protected void configureMariaDB4jSpringService(
-            @SuppressWarnings("unused") MariaDB4jSpringService mariaDB4jSpringService) {
+            @SuppressWarnings("unused") DBFactory mariaDB4jSpringService) {
     }
 
     @Bean
