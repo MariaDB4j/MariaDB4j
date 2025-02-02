@@ -28,8 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertNotEquals;
-
 /**
  * Tests the default configuration of a MariaDB4jSpringService.
  *
@@ -44,7 +42,7 @@ public class MariaDB4jSpringServiceStandardDefaultsTest {
 
     @Test
     public void testStandardDefaults() {
-        assertNotEquals(3306, s.getConfiguration().getPort());
+        Assert.assertNotEquals(3306, s.getConfiguration().getPort());
         Assert.assertTrue(s.getConfiguration().getBaseDir().contains(SystemUtils.JAVA_IO_TMPDIR));
         Assert.assertTrue(s.getConfiguration().getDataDir().contains(SystemUtils.JAVA_IO_TMPDIR));
         Assert.assertTrue(s.getConfiguration().getTmpDir().contains(SystemUtils.JAVA_IO_TMPDIR));
