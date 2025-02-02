@@ -19,11 +19,9 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +42,10 @@ public class MariaDB4jSpringServiceStandardDefaultsTest {
 
     @Test
     public void testStandardDefaults() {
-        assertNotEquals(3306, s.getConfiguration().getPort());
-        assertTrue(s.getConfiguration().getBaseDir().contains(SystemUtils.JAVA_IO_TMPDIR));
-        assertTrue(s.getConfiguration().getDataDir().contains(SystemUtils.JAVA_IO_TMPDIR));
-        assertTrue(s.getConfiguration().getTmpDir().contains(SystemUtils.JAVA_IO_TMPDIR));
+        Assert.assertNotEquals(3306, s.getConfiguration().getPort());
+        Assert.assertTrue(s.getConfiguration().getBaseDir().contains(SystemUtils.JAVA_IO_TMPDIR));
+        Assert.assertTrue(s.getConfiguration().getDataDir().contains(SystemUtils.JAVA_IO_TMPDIR));
+        Assert.assertTrue(s.getConfiguration().getTmpDir().contains(SystemUtils.JAVA_IO_TMPDIR));
     }
 
 }
