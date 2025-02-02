@@ -19,7 +19,6 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import ch.vorburger.mariadb4j.springframework.DBFactory;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
@@ -39,7 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class MariaDB4jSpringServiceStandardDefaultsTest {
 
     @Autowired
-    DBFactory s;
+    MariaDB4jSpringService s;
 
     @Test
     public void testStandardDefaults() {

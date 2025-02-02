@@ -20,31 +20,20 @@
 package ch.vorburger.mariadb4j.springframework;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.MariaDB4jService;
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfiguration;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.Lifecycle;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-/**
- * MariaDB4jService extension suitable for use in Spring Framework-based applications.
- *
- * <p>Other than implementing {@link Lifecycle} to get auto-started, this class allows applications
- * using it to programmatically set a default port/socket/data- &amp; base directory in their
- * {@link Configuration}, yet let end-users override those via the Spring Values mariaDB4j.port,
- * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot)
- * main() command line arguments.
- *
- * <p>This Service is intentionally NOT annotated as a {@link Service} {@link Component}, because we
- * don't want it to be auto-started by component scan without explicit declaration in a @Configuration
- * (or XML)
- *
- * @author Michael Vorburger
- */
-public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycle {
 
+
+@Configuration
+public class MariaDB4jSpringService implements Lifecycle {
     public final static String PORT = "mariaDB4j.port";
     public final static String SOCKET = "mariaDB4j.socket";
     public final static String DATA_DIR = "mariaDB4j.dataDir";
@@ -55,66 +44,82 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String OS_USER = "mariaDB4j.osUser";
     public final static String DEFAULT_CHARSET = "mariaDB4j.defaultCharset";
 
-    protected ManagedProcessException lastException;
+    private final DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
 
-    @Value("${" + PORT + ":-1}")
+    private DB db = null;
+
+    private DBConfiguration configuration = null;
+    private ManagedProcessException lastException;
+
+    @Value("${" + MariaDB4jSpringService.PORT + ":-1}")
     public void setDefaultPort(int port) {
         if (port != -1)
-            getConfiguration().setPort(port);
+            builder.setPort(port);
     }
 
-    @Value("${" + SOCKET + ":NA}")
+    @Value("${" + MariaDB4jSpringService.SOCKET + ":NA}")
     public void setDefaultSocket(String socket) {
         if (!"NA".equals(socket))
-            getConfiguration().setSocket(socket);
+            builder.setSocket(socket);
     }
 
-    @Value("${" + DATA_DIR + ":NA}")
+    @Value("${" + MariaDB4jSpringService.DATA_DIR + ":NA}")
     public void setDefaultDataDir(String dataDir) {
         if (!"NA".equals(dataDir))
-            getConfiguration().setDataDir(dataDir);
+            builder.setDataDir(dataDir);
     }
 
-    @Value("${" + TMP_DIR + ":NA}")
+    @Value("${" + MariaDB4jSpringService.TMP_DIR + ":NA}")
     public void setDefaultTmpDir(String tmpDir) {
         if (!"NA".equals(tmpDir))
-            getConfiguration().setTmpDir(tmpDir);
+            builder.setTmpDir(tmpDir);
     }
 
-    @Value("${" + BASE_DIR + ":NA}")
+    @Value("${" + MariaDB4jSpringService.BASE_DIR + ":NA}")
     public void setDefaultBaseDir(String baseDir) {
         if (!"NA".equals(baseDir))
-            getConfiguration().setBaseDir(baseDir);
+            builder.setBaseDir(baseDir);
     }
 
-    @Value("${" + LIB_DIR + ":NA}")
+    @Value("${" + MariaDB4jSpringService.LIB_DIR + ":NA}")
     public void setDefaultLibDir(String libDir) {
         if (!"NA".equals(libDir))
-            getConfiguration().setLibDir(libDir);
+            builder.setLibDir(libDir);
     }
 
-    @Value("${" + UNPACK + ":#{null}}")
+    @Value("${" + MariaDB4jSpringService.UNPACK + ":#{null}}")
     public void setDefaultIsUnpackingFromClasspath(Boolean unpack) {
         if (unpack != null)
-            getConfiguration().setUnpackingFromClasspath(unpack);
+            builder.setUnpackingFromClasspath(unpack);
     }
 
-    @Value("${" + OS_USER + ":NA}")
+    @Value("${" + MariaDB4jSpringService.OS_USER + ":NA}")
     public void setDefaultOsUser(String osUser) {
         if (!"NA".equals(osUser))
-            getConfiguration().addArg("--user=" + osUser);
+            builder.addArg("--user=" + osUser);
     }
 
-    @Value("${" + DEFAULT_CHARSET + ":NA}")
+    @Value("${" + MariaDB4jSpringService.DEFAULT_CHARSET + ":NA}")
     public void setDefaultCharacterSet(String charset) {
         if (!Objects.equals(charset, "NA"))
-            getConfiguration().setDefaultCharacterSet(charset);
+            builder.setDefaultCharacterSet(charset);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DB mariaDB4j() throws ManagedProcessException {
+        if (db == null) {
+            configuration = builder.build();
+            db = DB.newEmbeddedDB(configuration);
+            db.start();
+        }
+        return db;
     }
 
     @Override
-    public void start() { // no throws ManagedProcessException
+    public void start() {
         try {
-            super.start();
+            mariaDB4j();
         } catch (ManagedProcessException e) {
             lastException = e;
             throw new IllegalStateException("MariaDB4jSpringService start() failed", e);
@@ -122,17 +127,26 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     }
 
     @Override
-    public void stop() { // no throws ManagedProcessException
+    public void stop() {
         try {
-            super.stop();
+            db.stop();
+            db = null;
         } catch (ManagedProcessException e) {
             lastException = e;
             throw new IllegalStateException("MariaDB4jSpringService stop() failed", e);
         }
     }
 
+    @Override
+    public boolean isRunning() {
+        return db != null;
+    }
+
     public ManagedProcessException getLastException() {
         return lastException;
     }
 
+    public DBConfiguration getConfiguration() {
+        return configuration;
+    }
 }

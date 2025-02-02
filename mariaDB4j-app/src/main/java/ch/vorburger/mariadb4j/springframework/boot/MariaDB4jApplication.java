@@ -21,7 +21,7 @@ package ch.vorburger.mariadb4j.springframework.boot;
 
 import ch.vorburger.mariadb4j.MariaDB4jService;
 import ch.vorburger.mariadb4j.springboot.autoconfigure.DataSourceAutoConfiguration;
-import ch.vorburger.mariadb4j.springframework.DBFactory;
+import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.ExitCodeGenerator;
@@ -35,17 +35,17 @@ import org.springframework.context.annotation.Import;
  * Spring Boot based MariaDB4j main() "Application" launcher.
  *
  * @author Michael Vorburger
- * @see DBFactory
+ * @see MariaDB4jSpringService
  */
 @Configuration
 @EnableAutoConfiguration
-@Import({ DataSourceAutoConfiguration.class, DBFactory.class })
+@Import({ DataSourceAutoConfiguration.class, MariaDB4jSpringService.class })
 public class MariaDB4jApplication implements ExitCodeGenerator {
 
-    private final DBFactory mariaDB4j;
+    private final MariaDB4jSpringService mariaDB4j;
 
     @Autowired
-    public MariaDB4jApplication(DBFactory mariaDB4j) {
+    public MariaDB4jApplication(MariaDB4jSpringService mariaDB4j) {
         this.mariaDB4j = mariaDB4j;
     }
 
