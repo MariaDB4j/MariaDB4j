@@ -1,0 +1,11 @@
+{
+  // https://hub.docker.com/r/microsoft/devcontainers-java
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "features": {
+     "ghcr.io/devcontainers/features/java:1": {
+        "version": "none",
+        "installGradle": "false",
+        "installMaven": "true"
+    }
+  }
+}
