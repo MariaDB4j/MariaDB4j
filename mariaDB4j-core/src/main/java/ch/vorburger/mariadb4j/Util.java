@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -164,7 +165,7 @@ public class Util {
     /**
      * Method to check for the MariaDB installation on the system and then install if not installed.
      *
-     * @return @{@link boolean} representing whether MariaDB has been installed on the system
+     * @return whether MariaDB has been installed on the system
      */
     public static boolean installMariaDbFromHomebrew() {
         boolean mariadbIsInstalled = false;
@@ -191,7 +192,7 @@ public class Util {
 
                 String checkInstallOutput = new String(brewInstall.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
-                if (checkInstallOutput.toLowerCase().contains("error")) {
+                if (checkInstallOutput.toLowerCase(Locale.ROOT).contains("error")) {
                     throw new IllegalStateException("Failed to install mariadb with Homebrew - see " + checkInstallOutput);
                 }
 
