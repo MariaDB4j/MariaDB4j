@@ -53,6 +53,7 @@ public class MariaDB4jSampleTutorialTest {
     @Test
     public void testLocalMariaDB() throws Exception {
         final String LINUX_EXECUTABLE = "/usr/sbin/mysqld";
+        final String MACOS_EXECUTABLE = "/opt/homebrew/opt/mariadb@11.4/bin/mariadbd";
         final String WINDOWS_EXECUTABLE = "C:\\Program Files\\MariaDB 10.11\\bin\\mysqld.exe";
 
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
@@ -60,25 +61,26 @@ public class MariaDB4jSampleTutorialTest {
         config.setPort(0); // 0 => autom. detect free port
         config.setUnpackingFromClasspath(false);
 
-        if (!config.isWindows()) {
-            assertExecutable(LINUX_EXECUTABLE);
+        if (config.isMacOS()) {
             config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
-            config.setBaseDir("/usr");
-            config.setExecutable(Server, LINUX_EXECUTABLE);
-        } else {
-            assertExecutable(WINDOWS_EXECUTABLE);
+            config.setBaseDir("/opt/homebrew/opt/mariadb@11.4/");
+            config.setExecutable(Server, MACOS_EXECUTABLE);
+        } else if (config.isWindows()) {
             config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs");
             config.setBaseDir("C:\\Program Files\\MariaDB 10.11");
             config.setExecutable(Server, WINDOWS_EXECUTABLE);
+        } else { // Linux
+            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
+            config.setBaseDir("/usr");
+            config.setExecutable(Server, LINUX_EXECUTABLE);
         }
-        check(config);
-    }
 
-    private void assertExecutable(String path) {
-        if (!new File(path).canExecute()) {
-            throw new IllegalStateException(path
-                    + " not found/executable, but required for (only) this test; try e.g. sudo apt install mariadb-server ?");
-        }
+        // Only actually run this test if the binary is available
+        File executable = config.getExecutable(Server);
+        if (executable.canExecute())
+            check(config);
+        else
+            System.err.println("MariaDB4jSampleTutorialTest: Skipping testLocalMariaDB(), because " + executable + " is not executable");
     }
 
     /**

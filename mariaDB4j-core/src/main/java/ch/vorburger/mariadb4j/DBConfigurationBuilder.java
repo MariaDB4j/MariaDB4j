@@ -391,8 +391,16 @@ public class DBConfigurationBuilder {
         return executables;
     }
 
+    public File getExecutable(Executable executable) {
+        return _getExecutables().get(executable).get();
+    }
+
     public boolean isWindows() {
         return WINX64.equals(getOS());
+    }
+
+    public boolean isMacOS() {
+        return OSX.equals(getOS());
     }
 
     protected String getExtension() {
