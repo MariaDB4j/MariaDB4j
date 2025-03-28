@@ -343,6 +343,9 @@ FAQ
 Q: Is MariaDB4j stable enough for production? I need the data to be safe, and performant.
 A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
 
+Q: `dyld[23092]: Library not loaded: /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib Referenced from: <F56C2AF5-D763-3960-A454-40591B10F714> /Users/flow/MariaDB4j/mariaDB4j/target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/bin/mariadbd Reason: tried: '/opt/homebrew/opt/openssl@3/lib/libssl.3.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/openssl@3/lib/libssl.3.dylib' (no such file), '/opt/homebrew/opt/openssl@3/lib/libssl.3.dylib' (no such file)`
+A: This can happen on MacOS, and can be fixed by [installing Homebrew](https://brew.sh), and then (one time) doing `brew install openssl@3`. (See [issue #497](https://github.com/MariaDB4j/MariaDB4j/issues/497#issuecomment-2762820549) for technical background.)
+
 Q: `ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory`
 A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`. On Ubuntu Focal 20.04, you need to `sudo apt update && sudo apt install libncurses5`.
 (This is fixed if you use the 11.4.5 instead of 10.11.5 binaries, which are [will be] released with 3.2.0.)
@@ -398,6 +401,8 @@ When doing a release, here are a few things to do every time:
        ./mvnw clean deploy -Pgpg
 
 In case of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use './mvnw release:rollback', but that leaves ugly commits.)
+
+PS: The `~/.m2/settings.xml` needs to have a `<server>` [with valid credentials](https://github.com/vorburger/ch.vorburger.exec/issues/105), of course; see `P/m2/settings.xml`.
 
 Star History
 ------------
