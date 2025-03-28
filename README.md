@@ -345,6 +345,7 @@ A: Try it out, and if you do find any problem, raise an issue here and let's see
 
 Q: `ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory`
 A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`. On Ubuntu Focal 20.04, you need to `sudo apt update && sudo apt install libncurses5`.
+(This is fixed if you use the 11.4.5 instead of 10.11.5 binaries, which are [will be] released with 3.2.0.)
 
 Q: `/tmp/MariaDB4j/base/bin/mariadbd: error while loading shared libraries: libcrypt.so.1: cannot open shared object file: No such file or directory`
 A: Similar to above, and using e.g. https://pkgs.org/search/?q=libcrypt.so.1 we can see that e.g. `sudo dnf install libxcrypt-compat` does the trick for Fedora 39.
