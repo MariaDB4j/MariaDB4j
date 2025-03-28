@@ -165,7 +165,8 @@ public class DBConfigurationBuilder {
     }
 
     /**
-     * Defines if the configured data and base directories should be deleted on shutdown.
+     * Defines if the configured data and base directories should be deleted on
+     * shutdown.
      * If you've set the base and data directories to non temporary directories
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
      * then they'll also never get deleted anyway.
@@ -294,8 +295,12 @@ public class DBConfigurationBuilder {
                         "OS not directly supported, please use setDatabaseVersion() to set the name "
                                 + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
             }
-            // see https://github.com/MariaDB4j/MariaDB4j/pull/771 about why 10.11.5-fix1 on Windows:
-            databaseVersion = !WINX64.equals(getOS()) ? "mariadb-10.11.5" : "mariadb-10.11.5-fix1";
+            // see https://github.com/MariaDB4j/MariaDB4j/pull/771 about why 10.11.5-fix1 on
+            // Windows:
+            if (WINX64.equals(getOS()))
+                databaseVersion = "mariadb-10.11.5-fix1";
+            else
+                return "mariadb-11.4.5";
         }
         return databaseVersion;
     }
