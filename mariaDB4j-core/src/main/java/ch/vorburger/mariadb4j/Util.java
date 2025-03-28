@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -98,11 +97,12 @@ public class Util {
 
     /**
      * Method to check for the existence of a prerequisite executable, like Homebrew on macOS,
-     * and determine if it is executable
+     * and determine if it is executable.
+     *
      * @param executableFile file that is being checked for
      * @return boolean if the file exists and is executable
      */
-    public static boolean doesExecutableExistAndIsExecutable(File executableFile){
+    public static boolean doesExecutableExistAndIsExecutable(File executableFile) {
         return executableFile.exists() && executableFile.canExecute();
     }
 
@@ -112,7 +112,7 @@ public class Util {
                 boolean succeeded = executableFile.setExecutable(true);
                 if (!succeeded) {
                     throw new IOException("Failed to do chmod +x " + executableFile.toString()
-                            + " using java.io.File.setExecutable, which will be a problem on *NIX...");
+                        + " using java.io.File.setExecutable, which will be a problem on *NIX...");
                 }
                 logger.info("chmod +x {} (using java.io.File.setExecutable)", executableFile);
             }
@@ -155,17 +155,18 @@ public class Util {
             }
         }
         if (counter > 0) {
-            Object[] info = { counter, locationPattern, toDir };
+            Object[] info = {counter, locationPattern, toDir};
             logger.info("Unpacked {} files from {} to {}", info);
         }
         return counter;
     }
 
     /**
-     * Method to check for the MariaDb installation on the system and then install if not installed
-     * @return @{@link boolean} representing whether MariaDb has been installed on the system
+     * Method to check for the MariaDB installation on the system and then install if not installed.
+     *
+     * @return @{@link boolean} representing whether MariaDB has been installed on the system
      */
-    public static boolean installMariaDbFromHomebrew(){
+    public static boolean installMariaDbFromHomebrew() {
         boolean mariadbIsInstalled = false;
 
         ProcessBuilder pb = new ProcessBuilder(homebrewInstallationPath + " list mariadb");
@@ -174,7 +175,7 @@ public class Util {
             Process brewCheckMariadbIsInstalled = pb.start();
             String checkOutput = new String(brewCheckMariadbIsInstalled.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
-            if(checkOutput.contains(mariadbNotInstalledMessage)){
+            if (checkOutput.contains(mariadbNotInstalledMessage)) {
                 brewCheckMariadbIsInstalled.destroy();
 
                 ProcessBuilder brewInstallMariaDb = new ProcessBuilder(homebrewInstallationPath + " install mariadb");
@@ -185,11 +186,12 @@ public class Util {
                 // Wait until Homebrew installs the latest MariaDb
                 do {
                     brewInstall.waitFor(15, TimeUnit.SECONDS);
-                } while (brewInstall.isAlive());
+                }
+                while (brewInstall.isAlive());
 
                 String checkInstallOutput = new String(brewInstall.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
-                if(checkInstallOutput.toLowerCase().contains("error")){
+                if (checkInstallOutput.toLowerCase().contains("error")) {
                     throw new IllegalStateException("Failed to install mariadb with Homebrew - see " + checkInstallOutput);
                 }
 
@@ -197,7 +199,7 @@ public class Util {
                 brewInstall.destroy();
 
                 mariadbIsInstalled = true;
-            } else{
+            } else {
                 mariadbIsInstalled = true;
             }
         } catch (IOException ioException) {
@@ -211,7 +213,8 @@ public class Util {
         return mariadbIsInstalled;
     }
 
-    @SuppressWarnings("null") private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
+    @SuppressWarnings("null")
+    private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
         IOException lastIOException = null;
         int numAttempts = 0;
         while (numAttempts++ < n) {

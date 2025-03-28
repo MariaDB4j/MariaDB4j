@@ -206,9 +206,9 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(),
-                getLibDir(), _getDataDir(), _getTmpDir(), isWindows(), isMacOs(), _getArgs(), _getOSLibraryEnvironmentVarName(),
-                isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
-                getDefaultCharacterSet(), _getExecutables(), getProcessListener());
+            getLibDir(), _getDataDir(), _getTmpDir(), isWindows(), isMacOs(), _getArgs(), _getOSLibraryEnvironmentVarName(),
+            isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
+            getDefaultCharacterSet(), _getExecutables(), getProcessListener());
     }
 
     /**
@@ -292,8 +292,8 @@ public class DBConfigurationBuilder {
         if (databaseVersion == null) {
             if (!OSX.equals(getOS()) && !LINUX.equals(getOS()) && !WINX64.equals(getOS())) {
                 throw new IllegalStateException(
-                        "OS not directly supported, please use setDatabaseVersion() to set the name "
-                                + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
+                    "OS not directly supported, please use setDatabaseVersion() to set the name "
+                        + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
             }
             // see https://github.com/MariaDB4j/MariaDB4j/pull/771 about why 10.11.5-fix1 on
             // Windows:
@@ -325,7 +325,7 @@ public class DBConfigurationBuilder {
 
     protected String _getOSLibraryEnvironmentVarName() {
         return SystemUtils.IS_OS_WINDOWS ? "PATH"
-                : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
+            : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
     }
 
     protected String _getBinariesClassPathLocation() {
@@ -395,7 +395,7 @@ public class DBConfigurationBuilder {
         return WINX64.equals(getOS());
     }
 
-    public boolean isMacOs(){
+    public boolean isMacOs() {
         return OSX.equals(getOS());
     }
 

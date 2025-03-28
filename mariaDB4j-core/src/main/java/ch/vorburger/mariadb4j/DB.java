@@ -162,7 +162,7 @@ public class DB {
                 mysqldProcess.destroy();
             }
             throw new ManagedProcessException("Database does not seem to have started up correctly? Magic string not seen in "
-                    + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
+                + dbStartMaxWaitInMS + "ms: " + getReadyForConnectionsTag() + mysqldProcess.getLastConsoleLines());
         }
         logger.info("Database startup complete.");
     }
@@ -325,7 +325,7 @@ public class DB {
     }
 
     public void run(String command, String username, String password, String dbName, boolean force, boolean verbose)
-            throws ManagedProcessException {
+        throws ManagedProcessException {
         // If resource is created here, it should probably be released here also (as opposed to in protected run method)
         // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
         try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {
@@ -337,7 +337,7 @@ public class DB {
     }
 
     protected void run(String logInfoText, InputStream fromIS, String username, String password, String dbName, boolean force)
-            throws ManagedProcessException {
+        throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
         try {
             ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Client));
@@ -411,11 +411,9 @@ public class DB {
         // Check for Homebrew, before doing anything else
         // If HomeBrew is not installed, then throw a runtime error, similar to how the below extraction method
         // does below for other operating systems
-        if(configuration.isMacOs() && !Util.doesExecutableExistAndIsExecutable(new File(Util.homebrewInstallationPath)))
-        {
+        if (configuration.isMacOs() && !Util.doesExecutableExistAndIsExecutable(new File(Util.homebrewInstallationPath))) {
             throw new RuntimeException("Homebrew must be installed on the system before using this library");
-        }
-        else {
+        } else {
             // All other OS except macOS needs to have a place where the binaries are to be extracted
             if (configuration.getBinariesClassPathLocation() == null) {
                 logger.info("Not unpacking any embedded database (as BinariesClassPathLocation configuration is null)");
@@ -424,7 +422,7 @@ public class DB {
         }
 
         // Windows, Linux, and any other supported OS can have their binaries extracted as normal
-        if(!configuration.isMacOs()) {
+        if (!configuration.isMacOs()) {
             try {
                 Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
                 if (!configuration.isWindows()) {
@@ -437,9 +435,8 @@ public class DB {
             } catch (IOException e) {
                 throw new RuntimeException("Error unpacking embedded DB", e);
             }
-        }
-        else{
-            if(!Util.installMariaDbFromHomebrew())
+        } else {
+            if (!Util.installMariaDbFromHomebrew())
                 throw new RuntimeException("Error installing MariaDB from Homebrew");
         }
     }
@@ -485,17 +482,17 @@ public class DB {
     // unexpected deadlock).
 
     public ManagedProcess dumpXML(File outputFile, String dbName, String user, String password)
-            throws IOException, ManagedProcessException {
+        throws IOException, ManagedProcessException {
         return dump(outputFile, Arrays.asList(dbName), true, true, true, user, password);
     }
 
     public ManagedProcess dumpSQL(File outputFile, String dbName, String user, String password)
-            throws IOException, ManagedProcessException {
+        throws IOException, ManagedProcessException {
         return dump(outputFile, Arrays.asList(dbName), true, true, false, user, password);
     }
 
     protected ManagedProcess dump(File outputFile, List<String> dbNamesToDump, boolean compactDump, boolean lockTables, boolean asXml,
-            String user, String password) throws ManagedProcessException, IOException {
+                                  String user, String password) throws ManagedProcessException, IOException {
 
         ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Dump));
 
@@ -526,11 +523,13 @@ public class DB {
         builder.addArgument(StringUtils.join(dbNamesToDump, StringUtils.SPACE));
         builder.setDestroyOnShutdown(true);
         builder.setProcessListener(new ManagedProcessListener() {
-            @Override public void onProcessComplete(int i) {
+            @Override
+            public void onProcessComplete(int i) {
                 closeOutputStream();
             }
 
-            @Override public void onProcessFailed(int i, Throwable throwable) {
+            @Override
+            public void onProcessFailed(int i, Throwable throwable) {
                 closeOutputStream();
             }
 
