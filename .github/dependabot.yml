@@ -32,3 +32,10 @@ updates:
     day: sunday
     time: "04:00"
   open-pull-requests-limit: 99
+
+- package-ecosystem: "devcontainers"
+  directory: "/"
+  schedule:
+    interval: monthly
+    day: sunday
+    time: "04:00"
