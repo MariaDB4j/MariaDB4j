@@ -59,6 +59,9 @@ jobs:
           java-version-file: ".java-version"
           cache: "maven"
 
+      - name: Build windows artifact temporary
+        run: ./mvnw -f DBs/mariaDB4j-db-11.4.5/mariaDB4j-db-winx64-11.4.5/pom.xml install
+        
       # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
       # If this step fails, then you should remove it and run the build manually (see below)
       - name: Autobuild
