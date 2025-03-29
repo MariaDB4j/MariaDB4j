@@ -1,6 +1,6 @@
 # MariaDB4j <span class="badge-paypal"><a href="https://www.paypal.me/MichaelVorburgerCH?locale.x=en_US" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg" alt="PayPal donate button" /></a></span> [![Patreon me!](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/vorburger) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.vorburger.mariaDB4j/mariaDB4j) [![Javadocs](http://www.javadoc.io/badge/ch.vorburger.mariaDB4j/mariaDB4j-core.svg)](http://www.javadoc.io/doc/ch.vorburger.mariaDB4j/mariaDB4j-core) [![JitPack](https://jitpack.io/v/vorburger/MariaDB4j.svg)](https://jitpack.io/#vorburger/MariaDB4j) [![Build Status](https://app.travis-ci.com/vorburger/MariaDB4j.svg?branch=main)](https://app.travis-ci.com/vorburger/MariaDB4j) [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/MariaDB4j/MariaDB4j/main.svg)](https://results.pre-commit.ci/latest/github/MariaDB4j/MariaDB4j/main) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/MariaDB4j/MariaDB4j/badge)](https://securityscorecards.dev/viewer/?uri=github.com/MariaDB4j/MariaDB4j) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7865/badge)](https://www.bestpractices.dev/projects/7865)
 
-_Please :star: Star on GitHub and **💸 support [on OpenCollective](https://opencollective.com/mariadb4j), via [GitHub Sponsoring](https://github.com/sponsors/vorburger) or through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance of this project [used by hundreds](https://github.com/MariaDB4j/MariaDB4j/network/dependents), since [2011](#star-history)! 🫶_
+_Please :star: Star on GitHub and **💸 support [on OpenCollective](https://opencollective.com/mariadb4j), via [GitHub Sponsoring](https://github.com/sponsors/vorburger) or through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance of this project [used by hundreds](https://github.com/MariaDB4j/MariaDB4j/network/dependents), since [2011](#stars--history)! 🫶_
 
 - [What?](#what)
 - [Usage](#usage)
@@ -18,7 +18,7 @@ _Please :star: Star on GitHub and **💸 support [on OpenCollective](https://ope
 - [Related Projects](#related-projects)
 - [Release Notes](#release-notes)
 - [Stars 🌟 History](#stars--history)
-- [Who?](#who)
+- [Contributors](#contributors)
 
 ## What?
 
@@ -321,7 +321,7 @@ The "world is big enough" also for:
 
 [![Star History Chart](https://api.star-history.com/svg?repos=MariaDB4j/MariaDB4j&type=Date)](https://star-history.com/#MariaDB4j/MariaDB4j&Date)
 
-## Who?
+## Contributors
 
 See the [CONTRIBUTORS.md](CONTRIBUTORS.md) file (also included in each built JAR!) for a list of contributors.
 
@@ -330,3 +330,12 @@ Latest/current also on <https://github.com/MariaDB4j/MariaDB4j/graphs/contributo
 Contributions, patches, forks more than welcome - hack it, and add your name! ;-)
 
 [`docs/contrib.md`](docs/contrib.md) has more tech info on how to contribute.
+
+## Sponsors
+
+Please consider sponsoring the ongoing maintenance of this library!
+
+- [Airbnb](https://www.airbnb.com) sponsors MariaDB4j via [OpenCollective](https://opencollective.com/mariadb4j)
+- Various companies sponsor MariaDB4j via [Tidelift](https://tidelift.com/)
+
+Please contact [@vorburger](https://github.com/vorburger/) for consulting requests.
