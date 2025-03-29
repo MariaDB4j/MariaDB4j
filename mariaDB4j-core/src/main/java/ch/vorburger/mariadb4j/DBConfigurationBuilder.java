@@ -295,12 +295,7 @@ public class DBConfigurationBuilder {
                         "OS not directly supported, please use setDatabaseVersion() to set the name "
                                 + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
             }
-            // see https://github.com/MariaDB4j/MariaDB4j/pull/771 about why 10.11.5-fix1 on
-            // Windows:
-            if (WINX64.equals(getOS()))
-                databaseVersion = "mariadb-10.11.5-fix1";
-            else
-                return "mariadb-11.4.5";
+            return "mariadb-11.4.5";
         }
         return databaseVersion;
     }

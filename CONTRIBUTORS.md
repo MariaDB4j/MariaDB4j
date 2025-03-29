@@ -26,7 +26,7 @@ MariaDB4j CONTRIBUTORS
 - Gordon Little [@glittle1972](https://github.com/glittle1972), Jun 2019 Add option to force continue-on-error for sourcing SQL scripts
 - Theodore Ni [@tjni](https://github.com/tjni), Aug 2019 Reduce file copying during classpath unpacking
 - Tamas Gaspar [@tomlincoln](https://github.com/tomlincoln), Oct 2020 Make MariaDB4jService start method do not recreate the DB when already started
-- Knowles Atchison, Jr [@TheKnowles](https://github.com/TheKnowles), September 2023 Added MariaDB 10.11.5 to build
+- Knowles Atchison, Jr [@TheKnowles](https://github.com/TheKnowles), September 2023 Added MariaDB 10.11.5 to build, March 2025 Windows MariaDB 11.4.5
 - also see https://github.com/MariaDB4j/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
