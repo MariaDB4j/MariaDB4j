@@ -63,7 +63,7 @@ jobs:
           distribution: adopt
           java-version-file: .java-version
           cache: maven
-      - uses: ankane/setup-mariadb@v1
+      - uses: ankane/setup-mariadb@ed858ebb43d738ad5a93c7cfe3c2d914e066c988 # v1 as of 2025-03-17
         with:
           mariadb-version: "11.4"
       - name: Build with Maven
