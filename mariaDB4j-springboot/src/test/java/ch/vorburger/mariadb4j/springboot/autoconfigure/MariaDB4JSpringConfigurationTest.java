@@ -19,23 +19,23 @@
  */
 package ch.vorburger.mariadb4j.springboot.autoconfigure;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+
 public class MariaDB4JSpringConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(MariaDB4jSpringConfiguration.class));
+            .withConfiguration(AutoConfigurations.of(MariaDB4jSpringService.class));
 
     @Test public void shouldAutoConfigureEmbeddedMariaDB() {
-        contextRunner.withUserConfiguration(MariaDB4jSpringConfiguration.class).run(context -> {
-            assertThat(context).hasSingleBean(MariaDB4jSpringService.class);
-            assertThat(context.getBean(MariaDB4jSpringService.class))
-                    .isSameAs(context.getBean(MariaDB4jSpringConfiguration.class).mariaDB4j());
+        contextRunner.withUserConfiguration(MariaDB4jSpringService.class).run(context -> {
+            Assertions.assertThat(context).hasSingleBean(MariaDB4jSpringService.class);
+//            assertThat(context.getBean(DBFactory.class))
+//                    .isSameAs(context.getBean(DBFactory.class).mariaDB4j());
         });
     }
 

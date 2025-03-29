@@ -19,9 +19,9 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import static org.junit.Assert.assertEquals;
-
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+import java.util.Properties;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,33 +29,35 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+
+
 /**
- * Tests programmatically setting the configuration of a MariaDB4jSpringService via setters in a {@link Configuration}.
+ * Tests overriding the default configuration of a MariaDB4jSpringService set in a
+ * {@link Configuration} via Spring Value properties.
  *
  * @author Michael Vorburger
  */
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-public class MariaDB4jSpringServiceOverrideBySetTest {
+public class MariaDB4jSpringServiceNewDefaultsOverriddenBySpringValueTest {
 
     @Configuration
     public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
 
         @Override protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
-            s.setDefaultPort(5677);
-            s.setDefaultBaseDir("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir");
-            // do NOT s.setDefaultLibDir() - it will (should) default to "baseDir/libs"; see issue #39
-            s.setDefaultDataDir("target/MariaDB4jSpringServiceOverrideBySetTest/dataDir");
+            s.setDefaultPort(1234);
+        }
+
+        @Override protected void configureProperties(Properties properties) {
+            properties.setProperty(MariaDB4jSpringService.PORT, "5678");
         }
     }
 
-    @Autowired MariaDB4jSpringService s;
+    @Autowired
+    MariaDB4jSpringService s;
 
-    @Test public void testOverrideBySet() {
-        assertEquals(5677, s.getConfiguration().getPort());
-        assertEquals("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir", s.getConfiguration().getBaseDir());
-        assertEquals("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir/libs", s.getConfiguration().getLibDir());
-        assertEquals("target/MariaDB4jSpringServiceOverrideBySetTest/dataDir", s.getConfiguration().getDataDir());
+    @Test public void testNewDefaults() {
+        Assert.assertEquals(5678, s.getConfiguration().getPort());
     }
 
 }

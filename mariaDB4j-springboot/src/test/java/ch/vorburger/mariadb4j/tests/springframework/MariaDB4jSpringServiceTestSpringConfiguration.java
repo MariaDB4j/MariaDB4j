@@ -26,14 +26,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-public class MariaDB4jSpringServiceTestSpringConfiguration {
+public class MariaDB4jSpringServiceTestSpringConfiguration extends MariaDB4jSpringService {
 
-    @Bean
-    public MariaDB4jSpringService mariaDB4jSpringService() {
-        MariaDB4jSpringService mariaDB4jSpringService = new MariaDB4jSpringService();
-        configureMariaDB4jSpringService(mariaDB4jSpringService);
-        return mariaDB4jSpringService;
-    }
 
     protected void configureMariaDB4jSpringService(
             @SuppressWarnings("unused") MariaDB4jSpringService mariaDB4jSpringService) {
