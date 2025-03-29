@@ -40,6 +40,7 @@ import java.nio.charset.StandardCharsets;
  * @see MariaDB4jSpringService
  *
  * @author Michael Vorburger
+ * @author Luis Trigueiros
  */
 public class MariaDB4jService {
 
