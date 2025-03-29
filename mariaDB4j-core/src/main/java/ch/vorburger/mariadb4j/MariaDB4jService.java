@@ -37,7 +37,6 @@ import java.nio.charset.StandardCharsets;
  *
  * <p>The main() could be used typically from an IDE (waits for CR to shutdown..).
  *
- * @see MariaDB4jSpringService
  *
  * @author Michael Vorburger
  * @author Luis Trigueiros
