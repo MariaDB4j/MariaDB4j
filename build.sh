@@ -2,8 +2,7 @@
 
 #this does what .travis.yml does
 
-set -v
-set -e
+set -euxo pipefail
 
 #before_install:
 #  - mvn -f DBs/pom.xml clean install
@@ -13,5 +12,5 @@ set -e
 #if machine is behind a proxy don't forget to set it so that mvn/ant can work
 #export MAVEN_OPTS="-Dhttps.proxyHost=localhost -Dhttps.proxyPort=3128"
 
-mvn -f DBs/pom.xml clean install
-mvn package -B -V
+#./mvnw -f DBs/pom.xml clean install
+./mvnw package -B -V
