@@ -53,8 +53,12 @@ public class DBConfigurationBuilder {
 
     private String databaseVersion = null;
 
-    // all these are just some defaults
-    protected String osDirectoryName = SystemUtils.IS_OS_WINDOWS ? WINX64 : SystemUtils.IS_OS_MAC ? OSX : LINUX;
+    // All of the following are just the defaults, which can be overridden
+    protected String osDirectoryName = switch (Platform.get()) {
+        case LINUX -> LINUX;
+        case MAC -> OSX;
+        case WINDOWS -> WINX64;
+    };
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
     protected String libDir = null;
 
@@ -319,8 +323,11 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getOSLibraryEnvironmentVarName() {
-        return SystemUtils.IS_OS_WINDOWS ? "PATH"
-                : SystemUtils.IS_OS_MAC ? "DYLD_FALLBACK_LIBRARY_PATH" : "LD_LIBRARY_PATH";
+        return switch ( Platform.get()) {
+            case LINUX -> "LD_LIBRARY_PATH";
+            case MAC -> "DYLD_FALLBACK_LIBRARY_PATH";
+            case WINDOWS -> "PATH";
+        };
     }
 
     protected String _getBinariesClassPathLocation() {
@@ -377,10 +384,19 @@ public class DBConfigurationBuilder {
         executables.putIfAbsent(PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
         executables.putIfAbsent(InstallDB, () -> {
             File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
-            if (bin.exists()) {
+            if (bin.exists())
                 return bin;
-            }
-            return new File(baseDir, "scripts/mariadb-install-db" + getExtension());
+
+            // It's mysql_install_db.exe (but mariadb-install-db.exe - watch out!) on Windows...
+            bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
+            if (bin.exists())
+                return bin;
+
+            bin = new File(baseDir, "scripts/mariadb-install-db" + getExtension());
+            if (bin.exists())
+                return bin;
+
+            throw new IllegalStateException("Could not find installDB tool...");
         });
 
         return executables;
@@ -391,11 +407,11 @@ public class DBConfigurationBuilder {
     }
 
     public boolean isWindows() {
-        return WINX64.equals(getOS());
+        return Platform.get().equals(Platform.OS.WINDOWS);
     }
 
     public boolean isMacOS() {
-        return OSX.equals(getOS());
+        return Platform.get().equals(Platform.OS.MAC);
     }
 
     protected String getExtension() {

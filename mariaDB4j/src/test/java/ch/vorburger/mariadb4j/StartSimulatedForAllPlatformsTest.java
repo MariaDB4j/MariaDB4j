@@ -39,17 +39,25 @@ import org.junit.Test;
  */
 public class StartSimulatedForAllPlatformsTest {
 
+    @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
     @Test public void simulatedStartWin64() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.WINX64);
+        try (var platform = new Platform(Platform.OS.WINDOWS)) {
+            checkPlatformStart(DBConfigurationBuilder.WINX64);
+        }
     }
 
+    @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
     @Test public void simulatedStartLinux() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.LINUX);
+        try (var platform = new Platform(Platform.OS.LINUX)) {
+            checkPlatformStart(DBConfigurationBuilder.LINUX);
+        }
     }
 
-    @Ignore // TODO https://github.com/MariaDB4j/MariaDB4j/issues/497
+    @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
     @Test public void simulatedStartOSX() throws Exception {
-        checkPlatformStart(DBConfigurationBuilder.OSX);
+        try (var platform = new Platform(Platform.OS.MAC)) {
+            checkPlatformStart(DBConfigurationBuilder.OSX);
+        }
     }
 
     void checkPlatformStart(String platform) throws ManagedProcessException, IOException {
