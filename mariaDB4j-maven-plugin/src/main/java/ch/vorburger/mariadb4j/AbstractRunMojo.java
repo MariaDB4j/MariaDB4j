@@ -36,16 +36,18 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Base class to run a MariaDB4j
- * Based on https://raw.githubusercontent.com/spring-projects/spring-boot/master/spring-boot-project/spring-boot-tools/spring-boot-maven-plugin/src/main/java/org/springframework/boot/maven/AbstractRunMojo.java
+ * Base class to run a MariaDB4j.
+ * Based on <a href="https://raw.githubusercontent.com/spring-projects/spring-boot/master/spring-boot-project/spring-boot-tools/spring-boot-maven-plugin/src/main/java/org/springframework/boot/maven/AbstractRunMojo.java">Spring Framework</a>.
  *
  * @author Phillip Webb
  * @author Stephane Nicoll
  * @author David Liu
  * @author Daniel Young
  * @author Dmytro Nosan
+ *
  * @author William Dutton
  * @author mike10004
+ *
  * @see StartMojo
  */
 public abstract class AbstractRunMojo extends AbstractMojo {
@@ -66,17 +68,19 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     private String[] args;
 
     /**
-     * if baseDir is set outside java.io.tmpdir, it won't be deleted.
+     * If baseDir is set outside java.io.tmpdir, it won't be deleted.
      */
     @Parameter()
     private String baseDir;
+
     /**
-     * if libDir is set outside java.io.tmpdir, it won't be deleted
+     * If libDir is set outside java.io.tmpdir, it won't be deleted.
      */
     @Parameter()
     private String libDir;
+
     /**
-     * if dataDir is set outside java.io.tmpdir, it won't be deleted.
+     * If dataDir is set outside java.io.tmpdir, it won't be deleted.
      */
     @Parameter()
     private String dataDir;
@@ -85,7 +89,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     protected String databaseName;
 
     /**
-     * scriptCharset set this if you scripts are not UTF-8.
+     * Set this if your scripts are not UTF-8.
      */
     @Parameter(defaultValue = "UTF-8")
     private String scriptCharset;

@@ -25,7 +25,7 @@ import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
 /**
- * Holds the database and configuration data for MariaDB4j
+ * Holds the database and configuration data for MariaDB4j.
  *
  * <p>Future option:
  * If possible change serilized data and pid pointer to db and store in target/MariaDB4j/MariaDB4j.state
