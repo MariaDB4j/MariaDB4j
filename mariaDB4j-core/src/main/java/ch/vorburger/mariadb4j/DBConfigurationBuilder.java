@@ -210,9 +210,9 @@ public class DBConfigurationBuilder {
     public DBConfiguration build() {
         frozen = true;
         return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(),
-                getLibDir(), _getDataDir(), _getTmpDir(), isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(),
-                isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
-                getDefaultCharacterSet(), _getExecutables(), getProcessListener());
+            getLibDir(), _getDataDir(), _getTmpDir(), isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(),
+            isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
+            getDefaultCharacterSet(), _getExecutables(), getProcessListener());
     }
 
     /**
@@ -296,8 +296,8 @@ public class DBConfigurationBuilder {
         if (databaseVersion == null) {
             if (!OSX.equals(getOS()) && !LINUX.equals(getOS()) && !WINX64.equals(getOS())) {
                 throw new IllegalStateException(
-                        "OS not directly supported, please use setDatabaseVersion() to set the name "
-                                + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
+                    "OS not directly supported, please use setDatabaseVersion() to set the name "
+                        + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
             }
             return "mariadb-11.4.5";
         }
@@ -323,7 +323,7 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getOSLibraryEnvironmentVarName() {
-        return switch ( Platform.get()) {
+        return switch (Platform.get()) {
             case LINUX -> "LD_LIBRARY_PATH";
             case MAC -> "DYLD_FALLBACK_LIBRARY_PATH";
             case WINDOWS -> "PATH";
@@ -378,21 +378,29 @@ public class DBConfigurationBuilder {
     }
 
     protected Map<Executable, Supplier<File>> _getExecutables() {
-        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/mariadbd" + getExtension()));
-        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/mariadb" + getExtension()));
-        executables.putIfAbsent(Dump, () -> new File(baseDir, "bin/mariadb-dump" + getExtension()));
         executables.putIfAbsent(PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
+
+        // See https://github.com/MariaDB4j/MariaDB4j/pull/1126/files#r2019771660
+        //   re. why we're keeping mysql*.exe but not packaging mariadb*.exe ...
+
+        executables.putIfAbsent(Dump, () -> isWindows()
+            ? new File(baseDir, "bin/mysqldump.exe")
+            : new File(baseDir, "bin/mariadb-dump"));
+
+        String name = isWindows() ? "mysql" : "mariadb";
+        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/" + name + "d" + getExtension()));
+        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/" + name + getExtension()));
         executables.putIfAbsent(InstallDB, () -> {
+            // It's mysql_install_db.exe (but mariadb-install-db.exe - watch out!) on Windows...
             File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
             if (bin.exists())
                 return bin;
 
-            // It's mysql_install_db.exe (but mariadb-install-db.exe - watch out!) on Windows...
             bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
             if (bin.exists())
                 return bin;
 
-            bin = new File(baseDir, "scripts/mariadb-install-db" + getExtension());
+            bin = new File(baseDir, "scripts/" + name + "-install-db" + getExtension());
             if (bin.exists())
                 return bin;
 

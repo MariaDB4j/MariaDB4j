@@ -23,14 +23,6 @@
       dest="${cacheDir}/input/mariadb-${mariaDB.version}-winx64.zip" />
   </target>
 
-  <!--
-    As of MariaDB 10.5.2, the original mysql* bins are sym links to mariadb equivalents.
-    Sym links do not work in jar files as they are not platform independent
-    We copy over the mariadb* names and the code has been updated to use these new binaries
-    https://jira.mariadb.org/browse/MDEV-21303
-
-    Windows internally calls the original mysql* binaries.
-    -->
   <target name="extract" depends="env,download"
     description="Extract project files">
     <echo message="Extracting zip file" />
@@ -38,16 +30,14 @@
       dest="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${project.version}/winx64"
       overwrite="true">
       <patternset>
+        <!-- See https://github.com/MariaDB4j/MariaDB4j/pull/1126/files#r2019771660
+               re. why we're keeping mysql*.exe but not packaging mariadb*.exe; and note DBConfigurationBuilder with:
+               String name = isWindows() ? "mysql" : "mariadb"; -->
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysql.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqld.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqlcheck.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqldump.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysql_install_db.exe" />
-        <include name="mariadb-${mariaDB.version}-winx64/bin/mariadb.exe" />
-        <include name="mariadb-${mariaDB.version}-winx64/bin/mariadbd.exe" />
-        <include name="mariadb-${mariaDB.version}-winx64/bin/mariadb-check.exe" />
-        <include name="mariadb-${mariaDB.version}-winx64/bin/mariadb-dump.exe" />
-        <include name="mariadb-${mariaDB.version}-winx64/bin/mariadb-install-db.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/my_print_defaults.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/server.dll" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/server.lib" />
