@@ -19,6 +19,7 @@ _Please :star: Star on GitHub and **💸 support [on OpenCollective](https://ope
 - [Release Notes](#release-notes)
 - [Stars 🌟 History](#stars--history)
 - [Contributors](#contributors)
+- [Sponsors](#sponsors)
 
 ## What?
 
@@ -308,10 +309,9 @@ A: Similar to above, and using e.g. https://pkgs.org/search/?q=libcrypt.so.1 we 
 - [liquibase-maven-plugin](https://github.com/openmrs/openmrs-contrib-liquibase-maven-plugin) from OpenMRS builds on MariaDB4j
 - [embedded-mariadb-clj](https://github.com/ruroru/embedded-mariadb-clj) is a Clojure 🌯 wrapper of MariaDB4j
 
-The "world is big enough" also for:
+- [Testcontainers'](https://www.testcontainers.org/modules/databases/mariadb/) is a somewhat similar solution,  which you could use if you can run 🫙 containers _("Docker")_ - which MariaDB4j does not require. The "world 🌍 is big enough" for both projects!
 
-- [Testcontainers' has something similar which we recommend you use](https://www.testcontainers.org/modules/databases/mariadb/) if you can run 🫙 containers (Docker)
-- [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql), and [we cross link](https://github.com/wix/wix-embedded-mysql/pull/118)
+- [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql) was yet another take on this space (but it's no longer maintained).
 
 ## Release Notes
 
@@ -335,7 +335,8 @@ Contributions, patches, forks more than welcome - hack it, and add your name! ;-
 
 Please consider sponsoring the ongoing maintenance of this library!
 
-- [Airbnb](https://www.airbnb.com) sponsors MariaDB4j via [OpenCollective](https://opencollective.com/mariadb4j)
+- [Flow.swiss](https://flow.swiss/mac-bare-metal) 🇨🇭 "Maas" _(Macs 🍏 as a Service!)_ sponsors macOS support
 - Various companies sponsor MariaDB4j via [Tidelift](https://tidelift.com/)
+- [Airbnb](https://www.airbnb.com) sponsors MariaDB4j on [OpenCollective](https://opencollective.com/mariadb4j)
 
-Please contact [@vorburger](https://github.com/vorburger/) for consulting requests.
+Please contact [@vorburger](https://github.com/vorburger/) for consulting support requests.
