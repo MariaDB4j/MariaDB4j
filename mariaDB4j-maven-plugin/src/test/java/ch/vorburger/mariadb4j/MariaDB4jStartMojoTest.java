@@ -96,7 +96,8 @@ public class MariaDB4jStartMojoTest {
         assertThat(mojo).isNotNull();
         pluginContext = mojo.getPluginContext();
         if (pluginContext == null) {
-            mojo.setPluginContext(pluginContext = new HashMap<>());
+            pluginContext = new HashMap<>();
+            mojo.setPluginContext(pluginContext);
         }
         mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
         String databaseName = mojo.getDatabaseName();
@@ -149,7 +150,8 @@ public class MariaDB4jStartMojoTest {
         assertThat(mojo).isNotNull();
         pluginContext = mojo.getPluginContext();
         if (pluginContext == null) {
-            mojo.setPluginContext(pluginContext = new HashMap<>());
+            pluginContext = new HashMap<>();
+            mojo.setPluginContext(pluginContext);
         }
         mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
         mojo.execute();
