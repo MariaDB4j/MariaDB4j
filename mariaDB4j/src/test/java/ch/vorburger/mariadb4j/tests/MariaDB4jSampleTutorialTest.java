@@ -54,7 +54,7 @@ public class MariaDB4jSampleTutorialTest {
     public void testLocalMariaDB() throws Exception {
         final String LINUX_EXECUTABLE = "/usr/sbin/mysqld";
         final String MACOS_EXECUTABLE = "/opt/homebrew/opt/mariadb@11.4/bin/mariadbd";
-        final String WINDOWS_EXECUTABLE = "C:\\Program Files\\MariaDB 10.11\\bin\\mysqld.exe";
+        final String WINDOWS_EXECUTABLE = "C:\\Program Files\\MariaDB 11.4\\bin\\mysqld.exe";
 
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
 
@@ -67,7 +67,7 @@ public class MariaDB4jSampleTutorialTest {
             config.setExecutable(Server, MACOS_EXECUTABLE);
         } else if (config.isWindows()) {
             config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs");
-            config.setBaseDir("C:\\Program Files\\MariaDB 10.11");
+            config.setBaseDir("C:\\Program Files\\MariaDB 11.4");
             config.setExecutable(Server, WINDOWS_EXECUTABLE);
         } else { // Linux
             config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
