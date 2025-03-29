@@ -60,6 +60,7 @@
             <arg>-Werror</arg>
             <arg>-Xlint:all</arg>
             <arg>-XDcompilePolicy=simple</arg>
+            <arg>--should-stop=ifError=FLOW</arg>
             <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode
               -XepExcludedPaths:.*/target/generated-sources/.*</arg>
           </compilerArgs>
