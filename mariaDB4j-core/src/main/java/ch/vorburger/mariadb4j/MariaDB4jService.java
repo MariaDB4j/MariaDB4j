@@ -20,7 +20,6 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.io.BufferedReader;
@@ -38,9 +37,9 @@ import java.nio.charset.StandardCharsets;
  *
  * <p>The main() could be used typically from an IDE (waits for CR to shutdown..).
  *
- * @see MariaDB4jSpringService
  *
  * @author Michael Vorburger
+ * @author Luis Trigueiros
  */
 public class MariaDB4jService {
 
