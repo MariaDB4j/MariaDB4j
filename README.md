@@ -12,13 +12,11 @@ _Please :star: Star on GitHub and **💸 support [on OpenCollective](https://ope
   - [Maven Artifacts](#maven-artifacts)
   - [Binaries](#binaries)
 - [Why?](#why)
-- [Users](#users)
-- [Security](#security)
 - [FAQ](#faq)
 - [Related Projects](#related-projects)
 - [Release Notes](#release-notes)
-- [Stars 🌟 History](#stars--history)
 - [Contributors](#contributors)
+- [End Users](#users)
 - [Sponsors](#sponsors)
 
 ## What?
@@ -274,22 +272,13 @@ as the MariaDB4j API explicitly support this.
 Java developers frequently use pure Java databases such as H2, hsqldb (HyperSQL), Derby / JavaDB for this purpose.
 This library brings the advantage of the installation-free DB approach, while maintaining MariaDB (and thus MySQL) compatibility.
 
-## Users
-
-MariaDB4j was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see <http://mifos.org>. Coincidentally, OpenMRS the "Open Source Medical Records System" (see <http://openmrs.org>), another Humanitarian Open Source (HFOSS) project, also uses MariaDB4j (see <https://github.com/MariaDB4j/MariaDB4j/pull/1>).
-
-See the [`USERS.md`](USERS.md) file (also included in each built JAR!) for a list of publicly known users.
-
-Do send a PR adding your name/organization to `USERS.md` to show your appreciation for this free project!
-
-## Security
-
-Security nota bene: Per default, the MariaDB4j `install()` creates a new DB with a 'root' user without a password.
-It also creates a database called "test".
-
-More generally, note that if you are using the provided MariaDB database Maven artifacts, then you are pulling platform specific native binaries which will be executed on your system from a remote repository, not just regular Java JARs with classes running in the JVM, through this project.  If you are completely security paranoid, this may worry you (or someone else in your organization).  If that is the case, note that you could still use only the mariadb4j-core artifact from this project, but use a JAR file containing the binaries which you have created and deployed to your organization's Maven repository yourself.  Alternatively, you also use `mariadb4j-core` to launch and control MariaDB binaries installed by other means, e.g. an OS package manager, or perhaps in a (Docker) Container image.  This project's sweet spot and main original intended usage scenario is for integration tests, development environments, and possibly simple all-in-one evaluation kind of packages. It's NOT recommended for serious production environments with security awareness and hot fix patch-ability requirements.
-
 ## FAQ
+
+Q: Is MariaDB4j _"secure"?_
+A: It's a Java wrapper around MariaDB, so it's kind of as secure as MariaDB. But nota bene that, per default it creates a database called `test`, and the `install()` method creates a new DB with a 'root' user without a password. This may be changed in the future, watch [issue #819](https://github.com/MariaDB4j/MariaDB4j/issues/819). In the meantime, see the `MariaDB4jSampleTutorialTest.testEmbeddedMariaDB4jWithSecurity()` for how to programmatically set a password.
+
+Q: Does MariaDB4j install additional binary non-Java software?
+A: If you are using the provided MariaDB database Maven artifacts, then you are pulling platform specific native binaries which will be executed on your system from a remote repository, not just regular Java JARs with classes running in the JVM, through this project.  If you are completely security paranoid, this may worry you (or someone else in your organization).  If that is the case, note that you could still use only the mariadb4j-core artifact from this project, but use a JAR file containing the binaries which you have created and deployed to your organization's Maven repository yourself.  Alternatively, you also use `mariadb4j-core` to launch and control MariaDB binaries installed by other means, e.g. an OS package manager, or perhaps in a (Docker) Container image.  This project's sweet spot and main original intended usage scenario is for integration tests, development environments, and possibly simple all-in-one evaluation kind of packages. It's NOT recommended for serious production environments with security awareness and hot fix patch-ability requirements.
 
 Q: Is MariaDB4j stable enough for production? I need the data to be safe, and performant.
 A: Try it out, and if you do find any problem, raise an issue here and let's see if we can fix it. You probably don't risk much in terms of data to be safe and performance - remember MariaDB4j is just a wrapper launching MariaDB (which is a MySQL(R) fork) - so it's as safe and performant as the underlying native DB it uses.
@@ -317,10 +306,6 @@ A: Similar to above, and using e.g. https://pkgs.org/search/?q=libcrypt.so.1 we 
 
 [Release Notes are in CHANGELOG.md](CHANGELOG.md).
 
-## Stars 🌟 History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=MariaDB4j/MariaDB4j&type=Date)](https://star-history.com/#MariaDB4j/MariaDB4j&Date)
-
 ## Contributors
 
 See the [CONTRIBUTORS.md](CONTRIBUTORS.md) file (also included in each built JAR!) for a list of contributors.
@@ -331,9 +316,22 @@ Contributions, patches, forks more than welcome - hack it, and add your name! ;-
 
 [`docs/contrib.md`](docs/contrib.md) has more tech info on how to contribute.
 
+## Users
+
+MariaDB4j was initially developed for use in Mifos, the "Open Source Technology that accelerates Microfinance", see <http://mifos.org>. Coincidentally, OpenMRS the "Open Source Medical Records System" (see <http://openmrs.org>), another Humanitarian Open Source (HFOSS) project, also uses MariaDB4j (see <https://github.com/MariaDB4j/MariaDB4j/pull/1>).
+
+See the [`USERS.md`](USERS.md) file (also included in each built JAR!) for a list of publicly known users.
+Do send a PR adding your name/organization to `USERS.md` to show your appreciation for this free project!
+
+As of April 2025, [630 other GitHub Repositories 🔗 depend on MariaDB4j](https://github.com/MariaDB4j/MariaDB4j/network/dependents).
+
+We have 870 🌟 stars - Thank 🙏 You!
+
+[![Star History Chart](https://api.star-history.com/svg?repos=MariaDB4j/MariaDB4j&type=Date)](https://star-history.com/#MariaDB4j/MariaDB4j&Date)
+
 ## Sponsors
 
-Please consider sponsoring the ongoing maintenance of this library!
+_Please support this library **[on 💸 OpenCollective](https://opencollective.com/mariadb4j), via [GitHub Sponsoring](https://github.com/sponsors/vorburger) or through [a Tidelift subscription](https://tidelift.com)** to ensure active maintenance (since 🕰️ 2011!) of this project! 🫶_
 
 - [Flow.swiss](https://flow.swiss/mac-bare-metal) 🇨🇭 "Maas" _(Macs 🍏 as a Service!)_ sponsors macOS support
 - Various companies sponsor MariaDB4j via [Tidelift](https://tidelift.com/)
