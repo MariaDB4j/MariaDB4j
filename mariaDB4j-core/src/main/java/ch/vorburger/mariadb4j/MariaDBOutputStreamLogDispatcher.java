@@ -21,10 +21,12 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.OutputStreamLogDispatcher;
 import ch.vorburger.exec.OutputStreamType;
+
 import org.slf4j.event.Level;
 
 /**
- * OutputStreamLogDispatcher for MariaDB. See <a href="https://github.com/vorburger/MariaDB4j/issues/27">issue #27</a>.
+ * OutputStreamLogDispatcher for MariaDB. See <a
+ * href="https://github.com/vorburger/MariaDB4j/issues/27">issue #27</a>.
  *
  * @author Michael Vorburger
  */
@@ -41,5 +43,4 @@ public class MariaDBOutputStreamLogDispatcher extends OutputStreamLogDispatcher 
         }
         return Level.INFO;
     }
-
 }

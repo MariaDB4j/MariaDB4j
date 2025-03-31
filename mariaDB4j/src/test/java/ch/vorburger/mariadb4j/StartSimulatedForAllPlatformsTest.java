@@ -23,38 +23,42 @@ import static org.junit.Assert.assertTrue;
 
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
-import org.junit.Test;
 
 /**
  * Simulating starting MariaDB4j on all supported platforms.
  *
- * <p>This detects the recurring issue of some mariaDB startup script not being where it's expected to
- * be and breaking a platform when upgrading the binaries or making code changes.
+ * <p>This detects the recurring issue of some mariaDB startup script not being where it's expected
+ * to be and breaking a platform when upgrading the binaries or making code changes.
  *
  * @author Michael Vorburger
  */
 public class StartSimulatedForAllPlatformsTest {
 
     @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
-    @Test public void simulatedStartWin64() throws Exception {
+    @Test
+    public void simulatedStartWin64() throws Exception {
         try (var platform = new Platform(Platform.OS.WINDOWS)) {
             checkPlatformStart(DBConfigurationBuilder.WINX64);
         }
     }
 
     @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
-    @Test public void simulatedStartLinux() throws Exception {
+    @Test
+    public void simulatedStartLinux() throws Exception {
         try (var platform = new Platform(Platform.OS.LINUX)) {
             checkPlatformStart(DBConfigurationBuilder.LINUX);
         }
     }
 
     @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
-    @Test public void simulatedStartOSX() throws Exception {
+    @Test
+    public void simulatedStartOSX() throws Exception {
         try (var platform = new Platform(Platform.OS.MAC)) {
             checkPlatformStart(DBConfigurationBuilder.OSX);
         }

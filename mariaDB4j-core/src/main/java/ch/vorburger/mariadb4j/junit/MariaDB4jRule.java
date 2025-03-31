@@ -23,6 +23,7 @@ import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.rules.ExternalResource;
 
@@ -53,8 +54,7 @@ public class MariaDB4jRule extends ExternalResource {
     protected void initDB() throws ManagedProcessException {
         if (!StringUtils.isEmpty(dbName)) {
             db.createDB(dbName);
-            if (!StringUtils.isEmpty(resource))
-                db.source(resource, dbName);
+            if (!StringUtils.isEmpty(resource)) db.source(resource, dbName);
         }
     }
 

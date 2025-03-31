@@ -24,10 +24,14 @@ import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.PrintDefaults;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+
 import static java.util.Objects.requireNonNull;
 
 import ch.vorburger.exec.ManagedProcessListener;
 import ch.vorburger.mariadb4j.DBConfiguration.Executable;
+
+import org.apache.commons.lang3.SystemUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -36,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Builder for DBConfiguration. Has lot's of sensible default conventions etc.
@@ -56,11 +59,12 @@ public class DBConfigurationBuilder {
     private String databaseVersion = null;
 
     // All of the following are just the defaults, which can be overridden
-    protected String osDirectoryName = switch (Platform.get()) {
-        case LINUX -> LINUX;
-        case MAC -> OSX;
-        case WINDOWS -> WINX64;
-    };
+    protected String osDirectoryName =
+            switch (Platform.get()) {
+                case LINUX -> LINUX;
+                case MAC -> OSX;
+                case WINDOWS -> WINX64;
+            };
     protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
     protected String libDir = null;
 
@@ -83,8 +87,7 @@ public class DBConfigurationBuilder {
         return new DBConfigurationBuilder();
     }
 
-    protected DBConfigurationBuilder() {
-    }
+    protected DBConfigurationBuilder() {}
 
     protected void checkIfFrozen(String setterName) {
         if (frozen) {
@@ -171,11 +174,10 @@ public class DBConfigurationBuilder {
     }
 
     /**
-     * Defines if the configured data and base directories should be deleted on
-     * shutdown.
-     * If you've set the base and data directories to non temporary directories
-     * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
-     * then they'll also never get deleted anyway.
+     * Defines if the configured data and base directories should be deleted on shutdown. If you've
+     * set the base and data directories to non temporary directories using {@link
+     * #setBaseDir(String)} or {@link #setDataDir(String)}, then they'll also never get deleted
+     * anyway.
      *
      * @param doDelete Default value is true, set false to override
      * @return returns this
@@ -211,10 +213,23 @@ public class DBConfigurationBuilder {
 
     public DBConfiguration build() {
         frozen = true;
-        return new DBConfiguration.Impl(_getPort(), _getSocket(), _getBinariesClassPathLocation(), getBaseDir(),
-            getLibDir(), _getDataDir(), _getTmpDir(), isWindows(), _getArgs(), _getOSLibraryEnvironmentVarName(),
-            isSecurityDisabled(), isDeletingTemporaryBaseAndDataDirsOnShutdown(), this::getURL,
-            getDefaultCharacterSet(), _getExecutables(), getProcessListener());
+        return new DBConfiguration.Impl(
+                _getPort(),
+                _getSocket(),
+                _getBinariesClassPathLocation(),
+                getBaseDir(),
+                getLibDir(),
+                _getDataDir(),
+                _getTmpDir(),
+                isWindows(),
+                _getArgs(),
+                _getOSLibraryEnvironmentVarName(),
+                isSecurityDisabled(),
+                isDeletingTemporaryBaseAndDataDirsOnShutdown(),
+                this::getURL,
+                getDefaultCharacterSet(),
+                _getExecutables(),
+                getProcessListener());
     }
 
     /**
@@ -298,8 +313,9 @@ public class DBConfigurationBuilder {
         if (databaseVersion == null) {
             if (!OSX.equals(getOS()) && !LINUX.equals(getOS()) && !WINX64.equals(getOS())) {
                 throw new IllegalStateException(
-                    "OS not directly supported, please use setDatabaseVersion() to set the name "
-                        + "of the package that the binaries are in, for: " + SystemUtils.OS_VERSION);
+                        "OS not directly supported, please use setDatabaseVersion() to set the name "
+                                + "of the package that the binaries are in, for: "
+                                + SystemUtils.OS_VERSION);
             }
             return "mariadb-11.4.5";
         }
@@ -369,45 +385,55 @@ public class DBConfigurationBuilder {
 
     public DBConfigurationBuilder setExecutable(Executable executable, String path) {
         checkIfFrozen("setExecutable");
-        executables.put(requireNonNull(executable, "executable"), () -> new File(requireNonNull(path, "path")));
+        executables.put(
+                requireNonNull(executable, "executable"),
+                () -> new File(requireNonNull(path, "path")));
         return this;
     }
 
-    public DBConfigurationBuilder setExecutable(Executable executable, Supplier<File> pathSupplier) {
+    public DBConfigurationBuilder setExecutable(
+            Executable executable, Supplier<File> pathSupplier) {
         checkIfFrozen("setExecutable");
-        executables.put(requireNonNull(executable, "executable"), requireNonNull(pathSupplier, "pathSupplier"));
+        executables.put(
+                requireNonNull(executable, "executable"),
+                requireNonNull(pathSupplier, "pathSupplier"));
         return this;
     }
 
     protected Map<Executable, Supplier<File>> _getExecutables() {
-        executables.putIfAbsent(PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
+        executables.putIfAbsent(
+                PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
 
         // See https://github.com/MariaDB4j/MariaDB4j/pull/1126/files#r2019771660
         //   re. why we're keeping mysql*.exe but not packaging mariadb*.exe ...
 
-        executables.putIfAbsent(Dump, () -> isWindows()
-            ? new File(baseDir, "bin/mysqldump.exe")
-            : new File(baseDir, "bin/mariadb-dump"));
+        executables.putIfAbsent(
+                Dump,
+                () ->
+                        isWindows()
+                                ? new File(baseDir, "bin/mysqldump.exe")
+                                : new File(baseDir, "bin/mariadb-dump"));
 
         String name = isWindows() ? "mysql" : "mariadb";
-        executables.putIfAbsent(Server, () -> new File(baseDir, "bin/" + name + "d" + getExtension()));
+        executables.putIfAbsent(
+                Server, () -> new File(baseDir, "bin/" + name + "d" + getExtension()));
         executables.putIfAbsent(Client, () -> new File(baseDir, "bin/" + name + getExtension()));
-        executables.putIfAbsent(InstallDB, () -> {
-            // It's mysql_install_db.exe (but mariadb-install-db.exe - watch out!) on Windows...
-            File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
-            if (bin.exists())
-                return bin;
+        executables.putIfAbsent(
+                InstallDB,
+                () -> {
+                    // It's mysql_install_db.exe (but mariadb-install-db.exe - watch out!) on
+                    // Windows...
+                    File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
+                    if (bin.exists()) return bin;
 
-            bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
-            if (bin.exists())
-                return bin;
+                    bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
+                    if (bin.exists()) return bin;
 
-            bin = new File(baseDir, "scripts/" + name + "-install-db" + getExtension());
-            if (bin.exists())
-                return bin;
+                    bin = new File(baseDir, "scripts/" + name + "-install-db" + getExtension());
+                    if (bin.exists()) return bin;
 
-            throw new IllegalStateException("Could not find installDB tool...");
-        });
+                    throw new IllegalStateException("Could not find installDB tool...");
+                });
 
         return executables;
     }

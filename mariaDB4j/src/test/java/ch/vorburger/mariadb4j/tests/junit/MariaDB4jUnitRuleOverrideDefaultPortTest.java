@@ -22,13 +22,13 @@ package ch.vorburger.mariadb4j.tests.junit;
 import static org.junit.Assert.assertEquals;
 
 import ch.vorburger.mariadb4j.junit.MariaDB4jRule;
+
 import org.junit.Rule;
 import org.junit.Test;
 
 public class MariaDB4jUnitRuleOverrideDefaultPortTest {
 
-    @Rule
-    public MariaDB4jRule dbRule = new MariaDB4jRule(3307);
+    @Rule public MariaDB4jRule dbRule = new MariaDB4jRule(3307);
 
     @Test
     public void validatePort() {

@@ -20,12 +20,14 @@
 package ch.vorburger.mariadb4j.tests;
 
 import ch.vorburger.mariadb4j.Util;
-import java.io.File;
-import java.io.IOException;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Test for ClasspathUnpacker.
@@ -34,7 +36,8 @@ import org.junit.Test;
  */
 public class ClasspathUnpackerTest {
 
-    @Test public void testClasspathUnpackerFromUniqueClasspath() throws IOException {
+    @Test
+    public void testClasspathUnpackerFromUniqueClasspath() throws IOException {
         File toDir = new File("target/testUnpack1");
         FileUtils.deleteDirectory(toDir);
         Util.extractFromClasspathToFile("org/apache/commons/exec", toDir);
@@ -50,7 +53,8 @@ public class ClasspathUnpackerTest {
         Util.extractFromClasspathToFile("META-INF/maven", toDir);
     }
 
-    @Test public void testClasspathUnpackerFromFilesystem() throws IOException {
+    @Test
+    public void testClasspathUnpackerFromFilesystem() throws IOException {
         File toDir = new File("target/testUnpack3");
         FileUtils.deleteDirectory(toDir);
         int c1 = Util.extractFromClasspathToFile("test", toDir);
@@ -64,16 +68,17 @@ public class ClasspathUnpackerTest {
         Assert.assertEquals(0, c2);
     }
 
-    @Test(expected = IOException.class) public void testClasspathUnpackerPathDoesNotExist() throws IOException {
+    @Test(expected = IOException.class)
+    public void testClasspathUnpackerPathDoesNotExist() throws IOException {
         File toDir = new File("target/testUnpack4");
         FileUtils.deleteDirectory(toDir);
         Util.extractFromClasspathToFile("does/not/exist", toDir);
     }
 
-    @Test(expected = IOException.class) public void testClasspathUnpackerPackageExistsButIsEmpty() throws IOException {
+    @Test(expected = IOException.class)
+    public void testClasspathUnpackerPackageExistsButIsEmpty() throws IOException {
         File toDir = new File("target/testUnpack4");
         FileUtils.deleteDirectory(toDir);
         Util.extractFromClasspathToFile("test/empty", toDir);
     }
-
 }

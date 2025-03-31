@@ -21,29 +21,35 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
-import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+import java.io.IOException;
+
 /**
- * Start a MariaDBj4 database. Contrary to the {@code run} goal, this does not block and
- * allows other goal to operate on the application. This goal is typically used in
- * integration test scenario where the application is started before a test suite and
- * stopped after.
+ * Start a MariaDBj4 database. Contrary to the {@code run} goal, this does not block and allows
+ * other goal to operate on the application. This goal is typically used in integration test
+ * scenario where the application is started before a test suite and stopped after.
  *
  * @author William Dutton
  * @since 1.0.0
  * @see StopMojo
  */
-@Mojo(name = "start", requiresProject = true, defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(
+        name = "start",
+        requiresProject = true,
+        defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST,
+        requiresDependencyResolution = ResolutionScope.TEST)
 public class StartMojo extends AbstractRunMojo {
 
     private static final String PROPNAME_DATABASE_URL = "mariadb4j.databaseurl";
 
     @Override
-    protected void runWithMavenJvm(DBConfigurationBuilder configurationBuilder) throws MojoExecutionException {
+    protected void runWithMavenJvm(DBConfigurationBuilder configurationBuilder)
+            throws MojoExecutionException {
         try {
             DB db = DB.newEmbeddedDB(configurationBuilder.build());
             DBSingleton.setDB(db);
@@ -61,11 +67,9 @@ public class StartMojo extends AbstractRunMojo {
 
             getLog().warn("Database started and is configured on " + databaseURL);
         } catch (ManagedProcessException ex) {
-            throw new MojoExecutionException(
-                    "Could not setup, start database", ex);
+            throw new MojoExecutionException("Could not setup, start database", ex);
         } catch (IOException ex) {
-            throw new MojoExecutionException(
-                    "Could execute scripts after database started", ex);
+            throw new MojoExecutionException("Could execute scripts after database started", ex);
         }
     }
 }

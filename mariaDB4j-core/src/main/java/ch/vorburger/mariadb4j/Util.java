@@ -19,9 +19,6 @@
  */
 package ch.vorburger.mariadb4j;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -29,6 +26,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * File utilities.
@@ -40,15 +41,14 @@ public class Util {
 
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
-    private Util() {
-    }
+    private Util() {}
 
     /**
      * Retrieve the directory located at the given path. Checks that path indeed is a reabable
      * directory. If this does not exist, create it (and log having done so).
      *
      * @param path directory(ies, can include parent directories) names, as forward slash ('/')
-     *             separated String
+     *     separated String
      * @return safe File object representing that path name
      * @throws java.lang.IllegalArgumentException If it is not a directory, or it is not readable
      */
@@ -60,7 +60,8 @@ public class Util {
             try {
                 FileUtils.forceMkdir(dir);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Unable to create new directory at path: " + path, e);
+                throw new IllegalArgumentException(
+                        "Unable to create new directory at path: " + path, e);
             }
         }
         String absPath = dir.getAbsolutePath();
@@ -94,8 +95,10 @@ public class Util {
             if (!executableFile.canExecute()) {
                 boolean succeeded = executableFile.setExecutable(true);
                 if (!succeeded) {
-                    throw new IOException("Failed to do chmod +x " + executableFile.toString()
-                            + " using java.io.File.setExecutable, which will be a problem on *NIX...");
+                    throw new IOException(
+                            "Failed to do chmod +x "
+                                    + executableFile.toString()
+                                    + " using java.io.File.setExecutable, which will be a problem on *NIX...");
                 }
                 logger.info("chmod +x {} (using java.io.File.setExecutable)", executableFile);
             }
@@ -108,12 +111,13 @@ public class Util {
      * Extract files from a package on the classpath into a directory.
      *
      * @param packagePath e.g. "com/stuff" (always forward slash not backslash, never dot)
-     * @param toDir       directory to extract to
+     * @param toDir directory to extract to
      * @return int the number of files copied
      * @throws java.io.IOException if something goes wrong, including if nothing was found on
-     *                             classpath
+     *     classpath
      */
-    public static int extractFromClasspathToFile(String packagePath, File toDir) throws IOException {
+    public static int extractFromClasspathToFile(String packagePath, File toDir)
+            throws IOException {
         String locationPattern = "classpath*:" + packagePath + "/**";
         ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resourcePatternResolver.getResources(locationPattern);
@@ -138,14 +142,15 @@ public class Util {
             }
         }
         if (counter > 0) {
-            Object[] info = { counter, locationPattern, toDir };
+            Object[] info = {counter, locationPattern, toDir};
             logger.info("Unpacked {} files from {} to {}", info);
         }
         return counter;
     }
 
     @SuppressWarnings("null")
-    private static void tryN(int n, long msToWait, Procedure<IOException> procedure) throws IOException {
+    private static void tryN(int n, long msToWait, Procedure<IOException> procedure)
+            throws IOException {
         IOException lastIOException = null;
         int numAttempts = 0;
         while (numAttempts++ < n) {
@@ -154,7 +159,8 @@ public class Util {
                 return;
             } catch (IOException e) {
                 lastIOException = e;
-                logger.warn("Failure {} of {}, retrying again in {}ms", numAttempts, n, msToWait, e);
+                logger.warn(
+                        "Failure {} of {}, retrying again in {}ms", numAttempts, n, msToWait, e);
                 try {
                     Thread.sleep(msToWait);
                 } catch (InterruptedException interruptedException) {

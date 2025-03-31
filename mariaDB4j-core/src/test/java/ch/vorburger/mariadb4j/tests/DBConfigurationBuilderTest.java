@@ -28,11 +28,13 @@ import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.Util;
+
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.Test;
 
 public class DBConfigurationBuilderTest {
 
@@ -203,7 +205,9 @@ public class DBConfigurationBuilderTest {
         var expectedMariaDBString = "MariaDB4j/base/bin/mariadbd".replace("/", pathSeparator);
         var expectedMySqlString = "MariaDB4j/base/bin/mysqld".replace("/", pathSeparator);
         String executable = config.getExecutable(Executable.Server).toString();
-        assertTrue(executable.contains(expectedMariaDBString) || executable.contains(expectedMySqlString));
+        assertTrue(
+                executable.contains(expectedMariaDBString)
+                        || executable.contains(expectedMySqlString));
     }
 
     @Test
