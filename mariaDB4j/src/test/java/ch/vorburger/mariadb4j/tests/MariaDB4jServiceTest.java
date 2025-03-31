@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j.tests;
 
 import ch.vorburger.mariadb4j.MariaDB4jService;
+
 import org.junit.Test;
 
 public class MariaDB4jServiceTest {
@@ -31,5 +32,4 @@ public class MariaDB4jServiceTest {
         service.start();
         service.stop();
     }
-
 }

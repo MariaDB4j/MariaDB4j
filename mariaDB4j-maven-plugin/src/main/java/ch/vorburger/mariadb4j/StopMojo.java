@@ -22,6 +22,7 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -29,8 +30,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Stop a MariaDB4j database that has been started by the "start" goal.
- * Typically invoked once a test suite has completed.
+ * Stop a MariaDB4j database that has been started by the "start" goal. Typically invoked once a
+ * test suite has completed.
  *
  * @author William Dutton
  * @since 1.0.0
@@ -66,9 +67,7 @@ public class StopMojo extends AbstractMojo {
         try {
             DBSingleton.shutdownDB();
         } catch (ManagedProcessException ex) {
-            throw new MojoExecutionException(
-                    "MariaDB4j Database. Could not stop gracefully",
-                    ex);
+            throw new MojoExecutionException("MariaDB4j Database. Could not stop gracefully", ex);
         }
     }
 

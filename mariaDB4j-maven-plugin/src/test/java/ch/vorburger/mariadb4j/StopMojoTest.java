@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
-import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
@@ -39,6 +39,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.List;
 
 /**
  * StopMojoTest mocking database testing function.
@@ -49,14 +51,11 @@ public class StopMojoTest {
 
     StopMojo stopMojo;
 
-    @Mock
-    Log mockLog;
+    @Mock Log mockLog;
 
-    @Mock
-    DB mockDb;
+    @Mock DB mockDb;
 
-    @Captor
-    ArgumentCaptor<String> logCaptor;
+    @Captor ArgumentCaptor<String> logCaptor;
 
     @Before
     public void setUp() {

@@ -20,6 +20,7 @@
 package ch.vorburger.mariadb4j.tests.springframework;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,8 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
 public class MariaDB4jSpringServiceStandardDefaultsTest {
 
-    @Autowired
-    MariaDB4jSpringService s;
+    @Autowired MariaDB4jSpringService s;
 
     @Test
     public void testStandardDefaults() {
@@ -47,5 +47,4 @@ public class MariaDB4jSpringServiceStandardDefaultsTest {
         Assert.assertTrue(s.getConfiguration().getDataDir().contains(SystemUtils.JAVA_IO_TMPDIR));
         Assert.assertTrue(s.getConfiguration().getTmpDir().contains(SystemUtils.JAVA_IO_TMPDIR));
     }
-
 }

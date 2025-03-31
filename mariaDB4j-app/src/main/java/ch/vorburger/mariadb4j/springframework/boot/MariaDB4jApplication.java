@@ -22,6 +22,7 @@ package ch.vorburger.mariadb4j.springframework.boot;
 import ch.vorburger.mariadb4j.MariaDB4jService;
 import ch.vorburger.mariadb4j.springboot.autoconfigure.DataSourceAutoConfiguration;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.ExitCodeGenerator;
@@ -39,23 +40,24 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @EnableAutoConfiguration
-@Import({ DataSourceAutoConfiguration.class, MariaDB4jSpringService.class })
+@Import({DataSourceAutoConfiguration.class, MariaDB4jSpringService.class})
 public class MariaDB4jApplication implements ExitCodeGenerator {
 
     private final MariaDB4jSpringService mariaDB4j;
 
-    @Autowired
     /**
-     * <p>Constructor for MariaDB4jApplication.</p>
+     * Constructor.
      *
-     * @param mariaDB4j a {@link ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService} object
+     * @param mariaDB4j a {@link ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService}
+     *     object
      */
+    @Autowired
     public MariaDB4jApplication(MariaDB4jSpringService mariaDB4j) {
         this.mariaDB4j = mariaDB4j;
     }
 
     /**
-     * <p>main.</p>
+     * Main.
      *
      * @param args an array of {@link java.lang.String} objects
      * @throws java.lang.Exception if any.
@@ -76,5 +78,4 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
     public int getExitCode() {
         return mariaDB4j.getLastException() == null ? 0 : -1;
     }
-
 }

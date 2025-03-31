@@ -28,7 +28,6 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
  * Reproduces issue #10.
  *
  * @see <a href="https://github.com/vorburger/MariaDB4j/issues/10">MariaDB4j issue #10</a>
- *
  * @author Michael Vorburger
  */
 public class StartManyTimes {
@@ -45,5 +44,4 @@ public class StartManyTimes {
             System.out.println("## " + i);
         }
     }
-
 }

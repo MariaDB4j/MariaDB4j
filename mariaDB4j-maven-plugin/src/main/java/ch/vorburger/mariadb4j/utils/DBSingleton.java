@@ -27,10 +27,9 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 /**
  * Holds the database and configuration data for MariaDB4j.
  *
- * <p>Future option:
- * If possible change serilized data and pid pointer to db and store in target/MariaDB4j/MariaDB4j.state
- * so database can be started with maven exiting and after some time mariaDB4j:stop can be called in a
- * new process to shut it down
+ * <p>Future option: If possible change serialized data and pid pointer to db and store in
+ * target/MariaDB4j/MariaDB4j.state so database can be started with maven exiting and after some
+ * time mariaDB4j:stop can be called in a new process to shut it down
  *
  * @author William Dutton
  * @since 1.0.0
@@ -41,12 +40,11 @@ public final class DBSingleton {
     private static DBConfigurationBuilder configurationBuilder;
 
     private DBSingleton() {
-        //static final singleton utiliy class
+        // static final singleton utility class
     }
 
     public static DB getDB() {
-        if (db == null)
-            throw new IllegalStateException("db not set");
+        if (db == null) throw new IllegalStateException("db not set");
         return db;
     }
 

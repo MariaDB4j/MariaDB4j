@@ -20,18 +20,18 @@
 package ch.vorburger.mariadb4j.tests.springframework;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
-import java.util.Properties;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
+import java.util.Properties;
+
 @Configuration
 public class MariaDB4jSpringServiceTestSpringConfiguration extends MariaDB4jSpringService {
 
-
     protected void configureMariaDB4jSpringService(
-            @SuppressWarnings("unused") MariaDB4jSpringService mariaDB4jSpringService) {
-    }
+            @SuppressWarnings("unused") MariaDB4jSpringService mariaDB4jSpringService) {}
 
     @Bean
     PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -42,6 +42,5 @@ public class MariaDB4jSpringServiceTestSpringConfiguration extends MariaDB4jSpri
         return ppc;
     }
 
-    protected void configureProperties(@SuppressWarnings("unused") Properties properties) {
-    }
+    protected void configureProperties(@SuppressWarnings("unused") Properties properties) {}
 }

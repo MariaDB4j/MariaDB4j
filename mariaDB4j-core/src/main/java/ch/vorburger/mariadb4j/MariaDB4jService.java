@@ -20,8 +20,10 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,12 +33,11 @@ import java.nio.charset.StandardCharsets;
  * MariaDB4j starter "Service". This is basically just "sugar" - you can of course also use the DB
  * class directly instead of this convenience utility.
  *
- * <p>This class does not depend on Spring, and is intended for direct "JavaBean" like usage, and may
- * be useful for DI containers such as Guice. When using Spring, then the MariaDB4jSpringService may
- * be of interest. If you're using Spring Boot, then have a look at the MariaDB4jApplication.
+ * <p>This class does not depend on Spring, and is intended for direct "JavaBean" like usage, and
+ * may be useful for DI containers such as Guice. When using Spring, then the MariaDB4jSpringService
+ * may be of interest. If you're using Spring Boot, then have a look at the MariaDB4jApplication.
  *
  * <p>The main() could be used typically from an IDE (waits for CR to shutdown..).
- *
  *
  * @author Michael Vorburger
  * @author Luis Trigueiros
@@ -114,7 +115,8 @@ public class MariaDB4jService {
         // NOTE: In Eclipse, System.console() is not available.. so: (@see
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=122429)
         System.out.println("\n\nHit Enter to quit...");
-        BufferedReader d = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.US_ASCII));
+        BufferedReader d =
+                new BufferedReader(new InputStreamReader(System.in, StandardCharsets.US_ASCII));
         d.readLine();
     }
 }
