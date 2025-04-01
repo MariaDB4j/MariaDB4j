@@ -52,9 +52,9 @@ public class DBConfigurationBuilder {
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
 
-    private static final String DEFAULT_DATA_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/data";
+    private static final String DEFAULT_DATA_DIR = "data";
 
-    private static final String DEFAULT_TMP_DIR = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/tmp";
+    private static final String DEFAULT_TMP_DIR = "tmp";
 
     private String databaseVersion = null;
 
@@ -65,11 +65,11 @@ public class DBConfigurationBuilder {
                 case MAC -> OSX;
                 case WINDOWS -> WINX64;
             };
-    protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
+    protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "MariaDB4j/base";
     protected String libDir = null;
 
-    protected String dataDir = DEFAULT_DATA_DIR;
-    protected String tmpDir = DEFAULT_TMP_DIR;
+    protected String dataDir = SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR;
+    protected String tmpDir = SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR;
     protected String socket = null; // see _getSocket()
     protected int port = 0;
     protected boolean isDeletingTemporaryBaseAndDataDirsOnShutdown = true;
@@ -99,6 +99,14 @@ public class DBConfigurationBuilder {
         return baseDir;
     }
 
+    public String path() {
+        return "MariaDB4j/" + this.hashCode() + "-" + port + "/";
+    }
+
+    public String pathHashCode() {
+        return String.valueOf(this.hashCode());
+    }
+
     public DBConfigurationBuilder setBaseDir(String baseDir) {
         checkIfFrozen("setBaseDir");
         this.baseDir = baseDir;
@@ -124,7 +132,10 @@ public class DBConfigurationBuilder {
 
     public DBConfigurationBuilder setDataDir(String dataDir) {
         checkIfFrozen("setDataDir");
-        this.dataDir = dataDir;
+        this.dataDir =
+                (dataDir == null)
+                        ? SystemUtils.JAVA_IO_TMPDIR + path() + DEFAULT_DATA_DIR
+                        : dataDir;
         return this;
     }
 
@@ -134,7 +145,8 @@ public class DBConfigurationBuilder {
 
     public DBConfigurationBuilder setTmpDir(String tmpDir) {
         checkIfFrozen("setTmpDir");
-        this.tmpDir = tmpDir;
+        this.tmpDir =
+                (tmpDir == null) ? SystemUtils.JAVA_IO_TMPDIR + path() + DEFAULT_TMP_DIR : tmpDir;
         return this;
     }
 
@@ -212,6 +224,14 @@ public class DBConfigurationBuilder {
     }
 
     public DBConfiguration build() {
+        if (dataDir == null || tmpDir == null) {
+            String p = SystemUtils.JAVA_IO_TMPDIR + path();
+
+            this.baseDir = p + "/base";
+            this.dataDir = p + DEFAULT_DATA_DIR;
+            this.tmpDir = p + DEFAULT_TMP_DIR;
+        }
+
         frozen = true;
         return new DBConfiguration.Impl(
                 _getPort(),
@@ -255,15 +275,17 @@ public class DBConfigurationBuilder {
     }
 
     protected String _getDataDir() {
-        if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR)) {
-            return DEFAULT_DATA_DIR + File.separator + getPort();
+        if (isNull(getDataDir())
+                || getDataDir().equals(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR)) {
+            return SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR + File.separator + getPort();
         }
         return getDataDir();
     }
 
     protected String _getTmpDir() {
-        if (isNull(getTmpDir()) || getTmpDir().equals(DEFAULT_TMP_DIR)) {
-            return DEFAULT_TMP_DIR + File.separator + getPort();
+        if (isNull(getTmpDir())
+                || getTmpDir().equals(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR)) {
+            return SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR + File.separator + getPort();
         }
         return getTmpDir();
     }

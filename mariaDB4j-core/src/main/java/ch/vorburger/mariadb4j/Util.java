@@ -87,7 +87,7 @@ public class Util {
      * @return true if the passed directory name starts with the system temporary directory name.
      */
     public static boolean isTemporaryDirectory(String directory) {
-        return directory.startsWith(SystemUtils.JAVA_IO_TMPDIR);
+        return directory != null && directory.startsWith(SystemUtils.JAVA_IO_TMPDIR);
     }
 
     public static void forceExecutable(File executableFile) throws IOException {

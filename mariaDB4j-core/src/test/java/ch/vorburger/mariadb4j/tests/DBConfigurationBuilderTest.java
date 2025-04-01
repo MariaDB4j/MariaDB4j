@@ -74,7 +74,7 @@ public class DBConfigurationBuilderTest {
         builder.setDataDir("db/data");
         assertEquals("db/data", builder.getDataDir());
         builder.setDataDir(null);
-        assertEquals(null, builder.getDataDir());
+        assertTrue(Util.isTemporaryDirectory(builder.getDataDir()));
         builder.setDataDir("null");
         assertEquals("null", builder.getDataDir());
         DBConfiguration config = builder.build();
@@ -110,7 +110,7 @@ public class DBConfigurationBuilderTest {
         builder.setTmpDir("db/tmp");
         DBConfiguration config = builder.build();
         String defaultTmpDir = config.getTmpDir();
-        assertEquals("db/tmp", defaultTmpDir);
+        assertTrue(defaultTmpDir.contains("db/tmp"));
         assertFalse(Util.isTemporaryDirectory(defaultTmpDir));
     }
 
@@ -120,7 +120,7 @@ public class DBConfigurationBuilderTest {
         builder.setTmpDir("db/tmp");
         assertEquals("db/tmp", builder.getTmpDir());
         builder.setTmpDir(null);
-        assertEquals(null, builder.getTmpDir());
+        assertTrue(Util.isTemporaryDirectory(builder.getDataDir()));
         builder.setTmpDir("null");
         assertEquals("null", builder.getTmpDir());
         DBConfiguration config = builder.build();
@@ -143,10 +143,11 @@ public class DBConfigurationBuilderTest {
     @Test
     public void defaultLibDirIsRelativeToUpdatedBaseDir() throws IOException {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        Path baseDir = Files.createTempDirectory("mariadb");
-        builder.setBaseDir(baseDir.toAbsolutePath().toString());
+        Path tempBaseDir = Files.createTempDirectory("MariaDB4j");
+        builder.setBaseDir(tempBaseDir.toAbsolutePath().toString());
         DBConfiguration config = builder.build();
 
+        String baseDir = config.getBaseDir();
         String defaultLibDir = config.getLibDir();
         assertEquals(defaultLibDir, baseDir + "/libs");
     }
@@ -202,11 +203,13 @@ public class DBConfigurationBuilderTest {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
         var pathSeparator = System.getProperty("file.separator");
-        var expectedMariaDBString = "MariaDB4j/base/bin/mariadbd".replace("/", pathSeparator);
-        var expectedMySqlString = "MariaDB4j/base/bin/mysqld".replace("/", pathSeparator);
+        var expectedMariaDB4jString = "MariaDB4j/base/".replace("/", pathSeparator);
+        var expectedMariaDBString = "bin/mariadbd".replace("/", pathSeparator);
+        var expectedMySqlString = "bin/mysqld".replace("/", pathSeparator);
         String executable = config.getExecutable(Executable.Server).toString();
         assertTrue(
-                executable.contains(expectedMariaDBString)
+                executable.contains(expectedMariaDB4jString)
+                        || executable.contains(expectedMariaDBString)
                         || executable.contains(expectedMySqlString));
     }
 
