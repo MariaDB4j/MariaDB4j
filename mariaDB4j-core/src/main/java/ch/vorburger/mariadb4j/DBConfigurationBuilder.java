@@ -52,9 +52,9 @@ public class DBConfigurationBuilder {
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
 
-    private static final String DEFAULT_DATA_DIR = "data";
+    private static final String DEFAULT_DATA_DIR = "/data";
 
-    private static final String DEFAULT_TMP_DIR = "tmp";
+    private static final String DEFAULT_TMP_DIR = "/tmp";
 
     private String databaseVersion = null;
 
