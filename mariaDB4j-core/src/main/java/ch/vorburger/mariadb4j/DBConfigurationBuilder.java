@@ -100,7 +100,11 @@ public class DBConfigurationBuilder {
     }
 
     public String path() {
-        return "MariaDB4j/" + this.hashCode() + "-" + port + "/";
+        String tmpDir = SystemUtils.JAVA_IO_TMPDIR;
+        if (!tmpDir.endsWith("/")) {
+            tmpDir += "/";
+        }
+        return tmpDir + "MariaDB4j/" + this.hashCode() + "-" + port + "/";
     }
 
     public String pathHashCode() {
