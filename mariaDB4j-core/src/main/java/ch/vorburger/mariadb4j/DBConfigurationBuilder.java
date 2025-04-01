@@ -65,7 +65,7 @@ public class DBConfigurationBuilder {
                 case MAC -> OSX;
                 case WINDOWS -> WINX64;
             };
-    protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "MariaDB4j/base";
+    protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
     protected String libDir = null;
 
     protected String dataDir = SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR;
@@ -100,11 +100,7 @@ public class DBConfigurationBuilder {
     }
 
     public String path() {
-        String tmpDir = SystemUtils.JAVA_IO_TMPDIR;
-        if (!tmpDir.endsWith("/")) {
-            tmpDir += "/";
-        }
-        return tmpDir + "MariaDB4j/" + this.hashCode() + "-" + port + "/";
+        return "MariaDB4j/" + this.hashCode() + "-" + port + "/";
     }
 
     public String pathHashCode() {
