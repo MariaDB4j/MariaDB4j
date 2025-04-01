@@ -120,7 +120,7 @@ public class DBConfigurationBuilderTest {
         builder.setTmpDir("db/tmp");
         assertEquals("db/tmp", builder.getTmpDir());
         builder.setTmpDir(null);
-        assertTrue(Util.isTemporaryDirectory(builder.getDataDir()));
+        assertTrue(Util.isTemporaryDirectory(builder.getTmpDir()));
         builder.setTmpDir("null");
         assertEquals("null", builder.getTmpDir());
         DBConfiguration config = builder.build();
@@ -143,8 +143,8 @@ public class DBConfigurationBuilderTest {
     @Test
     public void defaultLibDirIsRelativeToUpdatedBaseDir() throws IOException {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        Path tempBaseDir = Files.createTempDirectory("MariaDB4j");
-        builder.setBaseDir(tempBaseDir.toAbsolutePath().toString());
+        Path baseDirPath = Files.createTempDirectory("MariaDB4j");
+        builder.setBaseDir(baseDirPath.toAbsolutePath().toString());
         DBConfiguration config = builder.build();
 
         String baseDir = config.getBaseDir();
