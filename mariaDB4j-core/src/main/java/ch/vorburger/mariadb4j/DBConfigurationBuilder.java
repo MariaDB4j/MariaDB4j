@@ -103,10 +103,6 @@ public class DBConfigurationBuilder {
         return "MariaDB4j/" + this.hashCode() + "-" + port + "/";
     }
 
-    public String pathHashCode() {
-        return String.valueOf(this.hashCode());
-    }
-
     public DBConfigurationBuilder setBaseDir(String baseDir) {
         checkIfFrozen("setBaseDir");
         this.baseDir = baseDir;
