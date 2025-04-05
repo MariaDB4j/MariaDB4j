@@ -9,5 +9,5 @@
     }
   },
   // Required (only) by MariaDB4jSampleTutorialTest's testLocalMariaDB()
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y mariadb-server"
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y mariadb-server python3.11-venv"
 }
