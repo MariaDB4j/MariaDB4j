@@ -1,0 +1,9 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "[java]": {
+        // We're using the fmt-maven-plugin for google-java-format instead:
+        "editor.formatOnSave": false,
+        "editor.formatOnType": false
+    }
+}
