@@ -33,13 +33,13 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Objects;
 
 /**
- * MariaDB4j Lifecyle suitable for use in Spring Framework-based applications.
+ * MariaDB4j Lifecycle suitable for use in Spring Framework-based applications.
  *
  * <p>This lets end-users override configuration via the Spring Values mariaDB4j.port,
  * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot)
  * main() command line arguments.
  *
- * <p>See <tt>MariaDB4jService</tt> for a similar class which can be used outside of Spring.
+ * <p>See MariaDB4jService for a similar class which can be used outside of Spring.
  *
  * @author Michael Vorburger
  */
