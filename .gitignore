@@ -6,8 +6,6 @@ target/
 *.DS_Store
 .project
 .classpath
-.checkstyle
-.vscode/
 .factorypath
 .venv/
 
