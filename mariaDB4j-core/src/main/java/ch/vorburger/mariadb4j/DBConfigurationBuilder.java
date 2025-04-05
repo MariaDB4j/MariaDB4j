@@ -100,7 +100,7 @@ public class DBConfigurationBuilder {
     }
 
     public String path() {
-        return "MariaDB4j/" + this.hashCode() + "-" + port + "/";
+        return "MariaDB4j/" + java.util.UUID.randomUUID().toString() + "-" + port + "/";
     }
 
     public DBConfigurationBuilder setBaseDir(String baseDir) {
