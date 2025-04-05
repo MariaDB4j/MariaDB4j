@@ -17,6 +17,12 @@
       <artifactId>mariaDB4j-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mariaDB4j-junit</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>ch.vorburger.mariaDB4j</groupId>
