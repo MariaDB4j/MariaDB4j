@@ -33,11 +33,13 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Objects;
 
 /**
- * MariaDB4jService extension suitable for use in Spring Framework-based applications.
+ * MariaDB4j Lifecyle suitable for use in Spring Framework-based applications.
  *
- * <p>It lets end-users override configuration via the Spring Values mariaDB4j.port,
+ * <p>This lets end-users override configuration via the Spring Values mariaDB4j.port,
  * mariaDB4j.socket, mariaDB4j.dataDir, mariaDB4j.baseDir; so e.g. via -D or (if using Spring Boot)
  * main() command line arguments.
+ *
+ * <p>See <tt>MariaDB4jService</tt> for a similar class which can be used outside of Spring.
  *
  * @author Michael Vorburger
  */
@@ -74,7 +76,6 @@ public class MariaDB4jSpringService implements Lifecycle {
     private final DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
 
     private DB db = null;
-
     private DBConfiguration configuration = null;
     private ManagedProcessException lastException;
 
@@ -115,6 +116,7 @@ public class MariaDB4jSpringService implements Lifecycle {
 
     @Value("${" + MariaDB4jSpringService.OS_USER + ":NA}")
     public void setDefaultOsUser(String osUser) {
+        // TODO Support setDefaultOsUser() directly on Builder
         if (!"NA".equals(osUser)) builder.addArg("--user=" + osUser);
     }
 
@@ -167,6 +169,7 @@ public class MariaDB4jSpringService implements Lifecycle {
     }
 
     public DBConfiguration getConfiguration() {
+        if (configuration == null) throw new IllegalStateException("Not yet started!");
         return configuration;
     }
 }
