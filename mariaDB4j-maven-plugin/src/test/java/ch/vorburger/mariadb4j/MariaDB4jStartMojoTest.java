@@ -151,7 +151,7 @@ public class MariaDB4jStartMojoTest {
     private Connection openConnection(DB db, String databaseName) throws SQLException {
         assertThat(db).isNotNull();
         String jdbcUrl =
-                "jdbc:mysql://localhost:"
+                "jdbc:mariadb://localhost:"
                         + db.getConfiguration().getPort()
                         + "/"
                         + databaseName

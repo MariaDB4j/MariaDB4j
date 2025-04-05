@@ -60,7 +60,7 @@ to be used in any JDBC connection pool. MySQL uses a `test` database by default,
 and a `root` user with no password is also a default.
 
    ```java
-   Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/test", "root", "");
+   Connection conn = DriverManager.getConnection("jdbc:mariadb://localhost/test", "root", "");
    ```
 
    A similar suitable JDBC URL as String can normally also be directly obtained directly from the MariaDB4j API, if you prefer (this is especially useful for tests if you let MariaDB4j automatically choose a free port, in which case a hard-coded URL is problematic):
