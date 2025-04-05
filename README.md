@@ -292,6 +292,9 @@ A: You need a more recent Java version than the one you are running on to be abl
 Q: `dyld[23092]: Library not loaded: /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib Referenced from: <F56C2AF5-D763-3960-A454-40591B10F714> /Users/flow/MariaDB4j/mariaDB4j/target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/bin/mariadbd Reason: tried: '/opt/homebrew/opt/openssl@3/lib/libssl.3.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/openssl@3/lib/libssl.3.dylib' (no such file), '/opt/homebrew/opt/openssl@3/lib/libssl.3.dylib' (no such file)`
 A: This can happen on MacOS, and can be fixed by [installing Homebrew](https://brew.sh), and then (one time) doing `brew install openssl@3`. (See [issue #497](https://github.com/MariaDB4j/MariaDB4j/issues/497#issuecomment-2762820549) for technical background.)
 
+Q: `dyld[87026]: Symbol not found: (_vidattr$NCURSES60) Referenced from: '/private/var/folders/.../T/MariaDB4j/base/bin/mariadb'`
+A: This is a macOS Monterey specific issue. Please upgrade to a more recent version of macOS (like Sequoia v15.4, or later). See [Issue #1149](https://github.com/MariaDB4j/MariaDB4j/issues/1149) for background.
+
 Q: `ERROR ch.vorburger.exec.ManagedProcess - mysql: /tmp/MariaDB4j/base/bin/mysql: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory`
 A: This could happen e.g. on Fedora 24 if you have not previous installed any other software package which requires libncurses, and can be fixed by finding the RPM package which provides `libncurses.so.5` via `sudo dnf provides libncurses.so.5` and then install that via `sudo dnf install ncurses-compat-libs`. On Ubuntu Focal 20.04, you need to `sudo apt update && sudo apt install libncurses5`.
 (This is fixed if you use the 11.4.5 instead of 10.11.5 MariaDB binaries, which [are released](https://github.com/MariaDB4j/MariaDB4j/issues/1137) with MariaDB4j v3.2.0.)
