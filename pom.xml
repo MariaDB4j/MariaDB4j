@@ -84,6 +84,19 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.3</version>
+        <dependencies>
+          <!-- See https://github.com/MariaDB4j/MariaDB4j/issues/1150 -->
+          <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-junit47</artifactId>
+            <version>3.5.3</version>
+          </dependency>
+          <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.12.1</version>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <plugin>
@@ -172,6 +185,13 @@
         <version>${springboot.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <scope>test</scope>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <!-- See https://github.com/MariaDB4j/MariaDB4j/issues/1150 -->
+        <version>4.13.2</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>

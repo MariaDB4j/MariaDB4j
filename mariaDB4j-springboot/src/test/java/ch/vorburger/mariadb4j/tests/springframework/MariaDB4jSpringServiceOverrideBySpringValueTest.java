@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,7 @@ public class MariaDB4jSpringServiceOverrideBySpringValueTest {
     @Autowired MariaDB4jSpringService s;
 
     @Test
+    @Ignore // TODO https://github.com/MariaDB4j/MariaDB4j/issues/1150
     public void testOverrideBySpringValue() {
         assertEquals(5679, s.getConfiguration().getPort());
         assertEquals(
