@@ -23,49 +23,46 @@ import static org.junit.Assert.assertEquals;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.Properties;
 
 /**
  * Tests setting the configuration of a MariaDB4jSpringService via Spring Value properties.
  *
  * @author Michael Vorburger
  */
-@ContextConfiguration
+@ContextConfiguration(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource(
+        properties = {
+            MariaDB4jSpringService.PORT + "=5679",
+            MariaDB4jSpringService.BASE_DIR
+                    + "=target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir",
+            MariaDB4jSpringService.LIB_DIR
+                    + "=target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs",
+            MariaDB4jSpringService.DATA_DIR
+                    + "=target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir",
+            MariaDB4jSpringService.TMP_DIR
+                    + "=target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir"
+        })
 public class MariaDB4jSpringServiceOverrideBySpringValueTest {
-
-    @Configuration
-    public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
-        @Override
-        protected void configureProperties(Properties properties) {
-            properties.setProperty(MariaDB4jSpringService.PORT, "5679");
-            properties.setProperty(
-                    MariaDB4jSpringService.BASE_DIR,
-                    "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir");
-            properties.setProperty(
-                    MariaDB4jSpringService.LIB_DIR,
-                    "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs");
-            properties.setProperty(
-                    MariaDB4jSpringService.DATA_DIR,
-                    "target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir");
-            properties.setProperty(
-                    MariaDB4jSpringService.TMP_DIR,
-                    "target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir");
-        }
-    }
 
     @Autowired MariaDB4jSpringService s;
 
+    @Before
+    public void setUp() {
+        if (!s.isRunning()) {
+            s.start(); // Only start if not already running
+        }
+    }
+
     @Test
-    @Ignore // TODO https://github.com/MariaDB4j/MariaDB4j/issues/1150
     public void testOverrideBySpringValue() {
         assertEquals(5679, s.getConfiguration().getPort());
         assertEquals(
@@ -80,5 +77,12 @@ public class MariaDB4jSpringServiceOverrideBySpringValueTest {
         assertEquals(
                 "target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir",
                 s.getConfiguration().getTmpDir());
+    }
+
+    @After
+    public void tearDown() {
+        if (s.isRunning()) {
+            s.stop();
+        }
     }
 }
