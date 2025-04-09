@@ -23,12 +23,14 @@ import static org.junit.Assert.assertEquals;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -37,27 +39,28 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  * @author Michael Vorburger
  */
-@ContextConfiguration
+@ContextConfiguration(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource(
+        properties = {
+            MariaDB4jSpringService.PORT + "=5677",
+            MariaDB4jSpringService.BASE_DIR
+                    + "=target/MariaDB4jSpringServiceOverrideBySetTest/baseDir",
+            MariaDB4jSpringService.DATA_DIR
+                    + "=target/MariaDB4jSpringServiceOverrideBySetTest/dataDir",
+        })
 public class MariaDB4jSpringServiceOverrideBySetTest {
-
-    @Configuration
-    public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
-
-        @Override
-        protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
-            s.setDefaultPort(5677);
-            s.setDefaultBaseDir("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir");
-            // do NOT s.setDefaultLibDir() - it will (should) default to "baseDir/libs"; see issue
-            // #39
-            s.setDefaultDataDir("target/MariaDB4jSpringServiceOverrideBySetTest/dataDir");
-        }
-    }
 
     @Autowired MariaDB4jSpringService s;
 
+    @Before
+    public void setUp() {
+        if (!s.isRunning()) {
+            s.start(); // Only start if not already running
+        }
+    }
+
     @Test
-    @Ignore // TODO https://github.com/MariaDB4j/MariaDB4j/issues/1150
     public void testOverrideBySet() {
         assertEquals(5677, s.getConfiguration().getPort());
         assertEquals(
@@ -69,5 +72,12 @@ public class MariaDB4jSpringServiceOverrideBySetTest {
         assertEquals(
                 "target/MariaDB4jSpringServiceOverrideBySetTest/dataDir",
                 s.getConfiguration().getDataDir());
+    }
+
+    @After
+    public void tearDown() {
+        if (s.isRunning()) {
+            s.stop();
+        }
     }
 }

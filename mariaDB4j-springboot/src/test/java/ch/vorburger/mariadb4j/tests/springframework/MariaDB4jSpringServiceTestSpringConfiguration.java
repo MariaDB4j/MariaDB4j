@@ -28,19 +28,22 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import java.util.Properties;
 
 @Configuration
-public class MariaDB4jSpringServiceTestSpringConfiguration extends MariaDB4jSpringService {
-
-    protected void configureMariaDB4jSpringService(
-            @SuppressWarnings("unused") MariaDB4jSpringService mariaDB4jSpringService) {}
+public abstract class MariaDB4jSpringServiceTestSpringConfiguration {
 
     @Bean
-    PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+    public MariaDB4jSpringService mariaDB4jSpringService() {
+        return new MariaDB4jSpringService();
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer ppc = new PropertySourcesPlaceholderConfigurer();
         Properties properties = new Properties();
         configureProperties(properties);
         ppc.setProperties(properties);
+        ppc.setLocalOverride(true); // Ensure test properties override others
         return ppc;
     }
 
-    protected void configureProperties(@SuppressWarnings("unused") Properties properties) {}
+    protected static void configureProperties(Properties properties) {}
 }

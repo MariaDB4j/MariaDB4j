@@ -23,15 +23,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.Properties;
 
 /**
  * Tests overriding the default configuration of a MariaDB4jSpringService set in a {@link
@@ -39,29 +39,29 @@ import java.util.Properties;
  *
  * @author Michael Vorburger
  */
-@ContextConfiguration
+@ContextConfiguration(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource(properties = {MariaDB4jSpringService.PORT + "=5678"})
 public class MariaDB4jSpringServiceNewDefaultsOverriddenBySpringValueTest {
-
-    @Configuration
-    public static class TestConfiguration extends MariaDB4jSpringServiceTestSpringConfiguration {
-
-        @Override
-        protected void configureMariaDB4jSpringService(MariaDB4jSpringService s) {
-            s.setDefaultPort(1234);
-        }
-
-        @Override
-        protected void configureProperties(Properties properties) {
-            properties.setProperty(MariaDB4jSpringService.PORT, "5678");
-        }
-    }
 
     @Autowired MariaDB4jSpringService s;
 
+    @Before
+    public void setUp() {
+        if (!s.isRunning()) {
+            s.start(); // Only start if not already running
+        }
+    }
+
     @Test
-    @Ignore // TODO https://github.com/MariaDB4j/MariaDB4j/issues/1150
     public void testNewDefaults() {
         assertEquals(5678, s.getConfiguration().getPort());
+    }
+
+    @After
+    public void tearDown() {
+        if (s.isRunning()) {
+            s.stop();
+        }
     }
 }
