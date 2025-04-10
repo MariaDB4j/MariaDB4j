@@ -30,6 +30,7 @@ import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
 import java.util.Objects;
 
 /**
@@ -91,7 +92,7 @@ public class MariaDB4jSpringService implements Lifecycle {
 
     @Value("${" + MariaDB4jSpringService.DATA_DIR + ":NA}")
     public void setDefaultDataDir(String dataDir) {
-        if (!"NA".equals(dataDir)) builder.setDataDir(dataDir);
+        if (!"NA".equals(dataDir)) builder.setDataDir(new File(dataDir));
     }
 
     @Value("${" + MariaDB4jSpringService.TMP_DIR + ":NA}")
@@ -101,12 +102,12 @@ public class MariaDB4jSpringService implements Lifecycle {
 
     @Value("${" + MariaDB4jSpringService.BASE_DIR + ":NA}")
     public void setDefaultBaseDir(String baseDir) {
-        if (!"NA".equals(baseDir)) builder.setBaseDir(baseDir);
+        if (!"NA".equals(baseDir)) builder.setBaseDir(new File(baseDir));
     }
 
     @Value("${" + MariaDB4jSpringService.LIB_DIR + ":NA}")
     public void setDefaultLibDir(String libDir) {
-        if (!"NA".equals(libDir)) builder.setLibDir(libDir);
+        if (!"NA".equals(libDir)) builder.setLibDir(new File(libDir));
     }
 
     @Value("${" + MariaDB4jSpringService.UNPACK + ":#{null}}")

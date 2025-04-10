@@ -47,32 +47,31 @@ public class Util {
      * Retrieve the directory located at the given path. Checks that path indeed is a reabable
      * directory. If this does not exist, create it (and log having done so).
      *
-     * @param path directory(ies, can include parent directories) names, as forward slash ('/')
+     * @param dir directory(ies, can include parent directories) names, as forward slash ('/')
      *     separated String
      * @return safe File object representing that path name
      * @throws java.lang.IllegalArgumentException If it is not a directory, or it is not readable
      */
-    public static File getDirectory(String path) {
+    public static File getDirectory(File dir) {
         boolean log = false;
-        File dir = new File(path);
         if (!dir.exists()) {
             log = true;
             try {
                 FileUtils.forceMkdir(dir);
             } catch (IOException e) {
                 throw new IllegalArgumentException(
-                        "Unable to create new directory at path: " + path, e);
+                        "Unable to create new directory at path: " + dir, e);
             }
         }
         String absPath = dir.getAbsolutePath();
         if (absPath.trim().length() == 0) {
-            throw new IllegalArgumentException(path + " is empty");
+            throw new IllegalArgumentException(dir + " is empty");
         }
         if (!dir.isDirectory()) {
-            throw new IllegalArgumentException(path + " is not a directory");
+            throw new IllegalArgumentException(dir + " is not a directory");
         }
         if (!dir.canRead()) {
-            throw new IllegalArgumentException(path + " is not a readable directory");
+            throw new IllegalArgumentException(dir + " is not a readable directory");
         }
         if (log) {
             logger.info("Created directory: " + absPath);
@@ -86,8 +85,9 @@ public class Util {
      * @param directory directory name
      * @return true if the passed directory name starts with the system temporary directory name.
      */
-    public static boolean isTemporaryDirectory(String directory) {
-        return directory != null && directory.startsWith(SystemUtils.JAVA_IO_TMPDIR);
+    public static boolean isTemporaryDirectory(File directory) {
+        return directory != null
+                && directory.getAbsolutePath().startsWith(SystemUtils.JAVA_IO_TMPDIR);
     }
 
     public static void forceExecutable(File executableFile) throws IOException {

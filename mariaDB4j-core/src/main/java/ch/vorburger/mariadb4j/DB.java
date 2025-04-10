@@ -576,9 +576,9 @@ public class DB {
         libDir = Util.getDirectory(configuration.getLibDir());
         tmpDir = Util.getDirectory(configuration.getTmpDir());
         try {
-            String dataDirPath = configuration.getDataDir();
+            File dataDirPath = configuration.getDataDir();
             if (Util.isTemporaryDirectory(dataDirPath)) {
-                FileUtils.deleteDirectory(new File(dataDirPath));
+                FileUtils.deleteDirectory(dataDirPath);
             }
             dataDir = Util.getDirectory(dataDirPath);
         } catch (Exception e) {

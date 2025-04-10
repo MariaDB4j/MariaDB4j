@@ -52,9 +52,12 @@ public class MariaDB4jSpringServiceStandardDefaultsTest {
     @Test
     public void testStandardDefaults() {
         Assert.assertNotEquals(3306, s.getConfiguration().getPort());
-        Assert.assertTrue(s.getConfiguration().getBaseDir().contains(SystemUtils.JAVA_IO_TMPDIR));
-        Assert.assertTrue(s.getConfiguration().getDataDir().contains(SystemUtils.JAVA_IO_TMPDIR));
-        Assert.assertTrue(s.getConfiguration().getTmpDir().contains(SystemUtils.JAVA_IO_TMPDIR));
+        Assert.assertTrue(
+                s.getConfiguration().getBaseDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
+        Assert.assertTrue(
+                s.getConfiguration().getDataDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
+        Assert.assertTrue(
+                s.getConfiguration().getTmpDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
     }
 
     @After

@@ -67,13 +67,13 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     @Parameter private String[] args;
 
     /** If baseDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter() private String baseDir;
+    @Parameter() private File baseDir;
 
     /** If libDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter() private String libDir;
+    @Parameter() private File libDir;
 
     /** If dataDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter() private String dataDir;
+    @Parameter() private File dataDir;
 
     @Parameter(defaultValue = "test")
     protected String databaseName;

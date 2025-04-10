@@ -43,7 +43,7 @@ public class MariaDB4jSampleOtherTest {
         db1.stop();
         db2.stop();
         // see below in customBaseDir() why we need this here
-        FileUtils.deleteQuietly(new File(db1.getConfiguration().getBaseDir()));
+        FileUtils.deleteQuietly(db1.getConfiguration().getBaseDir());
     }
 
     protected DB startNewDB() throws ManagedProcessException {
@@ -64,15 +64,16 @@ public class MariaDB4jSampleOtherTest {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         // Note that this dataDir intentionally contains a space before its last word
         config.setDataDir(
-                SystemUtils.JAVA_IO_TMPDIR
-                        + "/MariaDB4j/"
-                        + MariaDB4jSampleOtherTest.class.getName()
-                        + " dataDirWithSpace");
+                new File(
+                        SystemUtils.JAVA_IO_TMPDIR
+                                + "/MariaDB4j/"
+                                + MariaDB4jSampleOtherTest.class.getName()
+                                + " dataDirWithSpace"));
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
         db.stop();
         // see below in customBaseDir() why we need this here
-        FileUtils.deleteQuietly(new File(db.getConfiguration().getBaseDir()));
+        FileUtils.deleteQuietly(db.getConfiguration().getBaseDir());
     }
 
     /**
@@ -90,10 +91,11 @@ public class MariaDB4jSampleOtherTest {
     public void customBaseDir() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setBaseDir(
-                SystemUtils.JAVA_IO_TMPDIR
-                        + "/MariaDB4j/"
-                        + MariaDB4jSampleOtherTest.class.getName()
-                        + "customBaseDir");
+                new File(
+                        SystemUtils.JAVA_IO_TMPDIR
+                                + "/MariaDB4j/"
+                                + MariaDB4jSampleOtherTest.class.getName()
+                                + "customBaseDir"));
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
         db.stop();
@@ -103,10 +105,11 @@ public class MariaDB4jSampleOtherTest {
     public void customCharacterSet() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setBaseDir(
-                SystemUtils.JAVA_IO_TMPDIR
-                        + "/MariaDB4j/"
-                        + MariaDB4jSampleOtherTest.class.getName()
-                        + "customBaseDir");
+                new File(
+                        SystemUtils.JAVA_IO_TMPDIR
+                                + "/MariaDB4j/"
+                                + MariaDB4jSampleOtherTest.class.getName()
+                                + "customBaseDir"));
         config.setDefaultCharacterSet("utf8mb4");
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
