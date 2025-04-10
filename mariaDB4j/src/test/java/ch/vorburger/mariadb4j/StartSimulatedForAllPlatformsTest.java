@@ -67,7 +67,7 @@ public class StartSimulatedForAllPlatformsTest {
     void checkPlatformStart(String platform) throws ManagedProcessException, IOException {
         DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
         configBuilder.setOS(platform);
-        configBuilder.setBaseDir(configBuilder.getBaseDir() + "/" + platform);
+        configBuilder.setBaseDir(new File(configBuilder.getBaseDir() + "/" + platform));
         DBConfiguration config = configBuilder.build();
 
         DB db = new DB(config);
@@ -83,7 +83,7 @@ public class StartSimulatedForAllPlatformsTest {
         // This is super important.. without this, the test is useless,
         // as it will not catch platform specific problems, because the files
         // from previous platform test will still be available
-        FileUtils.deleteDirectory(new File(config.getBaseDir()));
+        FileUtils.deleteDirectory(config.getBaseDir());
     }
 
     void checkManagedProcessExists(ManagedProcess proc) {

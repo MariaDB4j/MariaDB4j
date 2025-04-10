@@ -61,23 +61,28 @@ public interface DBConfiguration {
      *
      * @return returns base directory value
      */
-    String getBaseDir();
+    File getBaseDir();
 
-    String getLibDir();
+    /**
+     * Base directory where DB binaries' linked libraries are expected to be found.
+     *
+     * @return returns lib directory value
+     */
+    File getLibDir();
 
     /**
      * Base directory for DB's actual data files.
      *
      * @return returns data directory value
      */
-    String getDataDir();
+    File getDataDir();
 
     /**
      * Directory for DB's temporary files.
      *
      * @return returns temporary directory value
      */
-    String getTmpDir();
+    File getTmpDir();
 
     /**
      * Whether to delete the base and data directory on shutdown, if it is in a temporary directory.
@@ -132,10 +137,10 @@ public interface DBConfiguration {
         private final int port;
         private final String socket;
         private final String binariesClassPathLocation;
-        private final String baseDir;
-        private final String libDir;
-        private final String dataDir;
-        private final String tmpDir;
+        private final File baseDir;
+        private final File libDir;
+        private final File dataDir;
+        private final File tmpDir;
         private final boolean isDeletingTemporaryBaseAndDataDirsOnShutdown;
         private final boolean isWindows;
         private final List<String> args;
@@ -150,10 +155,10 @@ public interface DBConfiguration {
                 int port,
                 String socket,
                 String binariesClassPathLocation,
-                String baseDir,
-                String libDir,
-                String dataDir,
-                String tmpDir,
+                File baseDir,
+                File libDir,
+                File dataDir,
+                File tmpDir,
                 boolean isWindows,
                 List<String> args,
                 String osLibraryEnvironmentVarName,
@@ -198,22 +203,22 @@ public interface DBConfiguration {
         }
 
         @Override
-        public String getBaseDir() {
+        public File getBaseDir() {
             return baseDir;
         }
 
         @Override
-        public String getLibDir() {
+        public File getLibDir() {
             return libDir;
         }
 
         @Override
-        public String getDataDir() {
+        public File getDataDir() {
             return dataDir;
         }
 
         @Override
-        public String getTmpDir() {
+        public File getTmpDir() {
             return tmpDir;
         }
 

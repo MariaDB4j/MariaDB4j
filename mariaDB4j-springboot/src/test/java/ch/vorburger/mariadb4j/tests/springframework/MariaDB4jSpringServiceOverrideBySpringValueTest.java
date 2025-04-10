@@ -32,6 +32,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.File;
+
 /**
  * Tests setting the configuration of a MariaDB4jSpringService via Spring Value properties.
  *
@@ -66,16 +68,16 @@ public class MariaDB4jSpringServiceOverrideBySpringValueTest {
     public void testOverrideBySpringValue() {
         assertEquals(5679, s.getConfiguration().getPort());
         assertEquals(
-                "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir",
+                new File("target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir"),
                 s.getConfiguration().getBaseDir());
         assertEquals(
-                "target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs",
+                new File("target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs"),
                 s.getConfiguration().getLibDir());
         assertEquals(
-                "target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir",
+                new File("target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir"),
                 s.getConfiguration().getDataDir());
         assertEquals(
-                "target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir",
+                new File("target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir"),
                 s.getConfiguration().getTmpDir());
     }
 

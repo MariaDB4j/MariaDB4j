@@ -48,6 +48,12 @@ import java.util.function.Supplier;
  */
 public class DBConfigurationBuilder {
 
+    // TODO The defaulting logic here is too convulted, and should be redone one day...
+    //   It should be simple: By default, a unique ephemeral directory should be used (not based on
+    // port);
+    //   unless the user explicitly sets another directory, in which case that should be used
+    // instead.
+
     protected static final String WINX64 = "winx64";
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
@@ -65,11 +71,11 @@ public class DBConfigurationBuilder {
                 case MAC -> OSX;
                 case WINDOWS -> WINX64;
             };
-    protected String baseDir = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base";
-    protected String libDir = null;
+    protected File baseDir = new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base");
+    protected File libDir = null;
 
-    protected String dataDir = SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR;
-    protected String tmpDir = SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR;
+    protected File dataDir = new File(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR);
+    protected File tmpDir = new File(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR);
     protected String socket = null; // see _getSocket()
     protected int port = 0;
     protected boolean isDeletingTemporaryBaseAndDataDirsOnShutdown = true;
@@ -95,7 +101,7 @@ public class DBConfigurationBuilder {
         }
     }
 
-    public String getBaseDir() {
+    public File getBaseDir() {
         return baseDir;
     }
 
@@ -103,46 +109,49 @@ public class DBConfigurationBuilder {
         return "MariaDB4j/" + java.util.UUID.randomUUID().toString() + "-" + port + "/";
     }
 
-    public DBConfigurationBuilder setBaseDir(String baseDir) {
+    public DBConfigurationBuilder setBaseDir(File baseDir) {
         checkIfFrozen("setBaseDir");
         this.baseDir = baseDir;
         return this;
     }
 
-    public String getLibDir() {
+    public File getLibDir() {
         if (libDir == null) {
-            return baseDir + "/libs";
+            libDir = new File(baseDir + "/libs");
         }
         return libDir;
     }
 
-    public DBConfigurationBuilder setLibDir(String libDir) {
+    public DBConfigurationBuilder setLibDir(File libDir) {
         checkIfFrozen("setLibDir");
         this.libDir = libDir;
         return this;
     }
 
-    public String getDataDir() {
+    public File getDataDir() {
         return dataDir;
     }
 
-    public DBConfigurationBuilder setDataDir(String dataDir) {
+    public DBConfigurationBuilder setDataDir(File dataDir) {
         checkIfFrozen("setDataDir");
-        this.dataDir =
-                (dataDir == null)
-                        ? SystemUtils.JAVA_IO_TMPDIR + path() + DEFAULT_DATA_DIR
-                        : dataDir;
+        this.dataDir = dataDir;
         return this;
     }
 
-    public String getTmpDir() {
+    public File getTmpDir() {
         return tmpDir;
     }
 
     public DBConfigurationBuilder setTmpDir(String tmpDir) {
         checkIfFrozen("setTmpDir");
         this.tmpDir =
-                (tmpDir == null) ? SystemUtils.JAVA_IO_TMPDIR + path() + DEFAULT_TMP_DIR : tmpDir;
+                new File(
+                        (tmpDir == null)
+                                ? SystemUtils.JAVA_IO_TMPDIR
+                                        + File.separator
+                                        + path()
+                                        + DEFAULT_TMP_DIR
+                                : tmpDir);
         return this;
     }
 
@@ -184,8 +193,7 @@ public class DBConfigurationBuilder {
     /**
      * Defines if the configured data and base directories should be deleted on shutdown. If you've
      * set the base and data directories to non temporary directories using {@link
-     * #setBaseDir(String)} or {@link #setDataDir(String)}, then they'll also never get deleted
-     * anyway.
+     * #setBaseDir(File)} or {@link #setDataDir(File)}, then they'll also never get deleted anyway.
      *
      * @param doDelete Default value is true, set false to override
      * @return returns this
@@ -221,11 +229,8 @@ public class DBConfigurationBuilder {
 
     public DBConfiguration build() {
         if (dataDir == null || tmpDir == null) {
-            String p = SystemUtils.JAVA_IO_TMPDIR + path();
-
-            this.baseDir = p + "/base";
-            this.dataDir = p + DEFAULT_DATA_DIR;
-            this.tmpDir = p + DEFAULT_TMP_DIR;
+            String p = SystemUtils.JAVA_IO_TMPDIR + "/" + path();
+            this.baseDir = new File(p + "/base");
         }
 
         frozen = true;
@@ -270,31 +275,34 @@ public class DBConfigurationBuilder {
         return this;
     }
 
-    protected String _getDataDir() {
+    protected File _getDataDir() {
         if (isNull(getDataDir())
-                || getDataDir().equals(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR)) {
-            return SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR + File.separator + getPort();
+                || getDataDir().equals(new File(SystemUtils.JAVA_IO_TMPDIR, DEFAULT_DATA_DIR))) {
+            return new File(
+                    SystemUtils.JAVA_IO_TMPDIR
+                            + File.separator
+                            + DEFAULT_DATA_DIR
+                            + File.separator
+                            + _getPort());
         }
         return getDataDir();
     }
 
-    protected String _getTmpDir() {
+    protected File _getTmpDir() {
         if (isNull(getTmpDir())
-                || getTmpDir().equals(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR)) {
-            return SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR + File.separator + getPort();
+                || getTmpDir().equals(new File(SystemUtils.JAVA_IO_TMPDIR, DEFAULT_TMP_DIR))) {
+            return new File(
+                    SystemUtils.JAVA_IO_TMPDIR
+                            + File.separator
+                            + DEFAULT_TMP_DIR
+                            + File.separator
+                            + getPort());
         }
         return getTmpDir();
     }
 
-    protected boolean isNull(String string) {
-        if (string == null) {
-            return true;
-        }
-        String trim = string.trim();
-        if (trim.length() == 0 || "null".equalsIgnoreCase(trim)) {
-            return true;
-        }
-        return false;
+    protected boolean isNull(File file) {
+        return file == null;
     }
 
     protected int _getPort() {

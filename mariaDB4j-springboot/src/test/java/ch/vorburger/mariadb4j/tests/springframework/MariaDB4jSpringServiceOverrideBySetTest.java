@@ -33,6 +33,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.File;
+
 /**
  * Tests programmatically setting the configuration of a MariaDB4jSpringService via setters in a
  * {@link Configuration}.
@@ -64,13 +66,13 @@ public class MariaDB4jSpringServiceOverrideBySetTest {
     public void testOverrideBySet() {
         assertEquals(5677, s.getConfiguration().getPort());
         assertEquals(
-                "target/MariaDB4jSpringServiceOverrideBySetTest/baseDir",
+                new File("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir"),
                 s.getConfiguration().getBaseDir());
         assertEquals(
-                "target/MariaDB4jSpringServiceOverrideBySetTest/baseDir/libs",
+                new File("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir/libs"),
                 s.getConfiguration().getLibDir());
         assertEquals(
-                "target/MariaDB4jSpringServiceOverrideBySetTest/dataDir",
+                new File("target/MariaDB4jSpringServiceOverrideBySetTest/dataDir"),
                 s.getConfiguration().getDataDir());
     }
 

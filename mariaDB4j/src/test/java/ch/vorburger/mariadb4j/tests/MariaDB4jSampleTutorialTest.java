@@ -63,16 +63,16 @@ public class MariaDB4jSampleTutorialTest {
         config.setUnpackingFromClasspath(false);
 
         if (config.isMacOS()) {
-            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
-            config.setBaseDir("/opt/homebrew/opt/mariadb@11.4/");
+            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs"));
+            config.setBaseDir(new File("/opt/homebrew/opt/mariadb@11.4/"));
             config.setExecutable(Server, MACOS_EXECUTABLE);
         } else if (config.isWindows()) {
-            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs");
-            config.setBaseDir("C:\\Program Files\\MariaDB 11.4");
+            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs"));
+            config.setBaseDir(new File("C:\\Program Files\\MariaDB 11.4"));
             config.setExecutable(Server, WINDOWS_EXECUTABLE);
         } else { // Linux
-            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
-            config.setBaseDir("/usr");
+            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs"));
+            config.setBaseDir(new File("/usr"));
             config.setExecutable(Server, LINUX_EXECUTABLE);
         }
 
