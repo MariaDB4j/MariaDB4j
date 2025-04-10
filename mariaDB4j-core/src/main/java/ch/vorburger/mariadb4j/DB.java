@@ -43,7 +43,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -436,7 +435,8 @@ public class DB {
         // If resource is created here, it should probably be released here also (as opposed to in
         // protected run method)
         // Also move to try-with-resource syntax to remove closeQuietly deprecation errors.
-        try (InputStream from = IOUtils.toInputStream(command, Charset.defaultCharset())) {
+        try (InputStream from =
+                IOUtils.toInputStream(command, configuration.getDefaultCharacterSet())) {
             final String logInfoText =
                     verbose
                             ? "command: " + command
