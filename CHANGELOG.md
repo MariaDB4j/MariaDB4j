@@ -5,11 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED v3.2.0 - 2024-04-xx
+## UNRELEASED future v3.2.1 or v3.3.0
 
-See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.1.0...main for unreleased future changes; it will include:
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.2.0...main for unreleased future changes; it will include:
 
-* Bumped MariaDB binaries from 10.11.5 to 11.4.5 (LTS)
+* TBD
+
+## v3.2.0 - 2024-04-10
+
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.1.0...3.2.0 for full details; the TL;DR is:
+
+* Bumped MariaDB binaries from 10.11.5 to 11.4.5 (LTS); incl. macOS!
+* Bumped ch.vorburger.exec [from 3.2.0 to 3.3.1](https://github.com/vorburger/ch.vorburger.exec/releases) (also released today)
+* Switched tests from mysql-connector-java to mariadb-java-client
+* Bumped many other external Maven dependencies
+* Fixed root causes of tests which never ran
+* Replaced Checkstyle with Google Code Format
+* README cleaned up
+* CI related chores
 
 ## v3.1.0 - 2024-03-27
 

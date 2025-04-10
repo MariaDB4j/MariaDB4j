@@ -39,7 +39,7 @@ When doing a release, here are a few things to do every time:
    ./mvnw -Dmaven.test.skip=true package
    ```
 
-5. Finalize [CHANGELOG.md](CHANGELOG.md) Release Notes, incl. set today's date, and update the version numbers in this README.
+5. Finalize [CHANGELOG.md](../CHANGELOG.md) Release Notes, incl. set today's date, and update the version numbers in this README.
 
 6. Preparing & performing the release (this INCLUDES an ./mvnw deploy):
 

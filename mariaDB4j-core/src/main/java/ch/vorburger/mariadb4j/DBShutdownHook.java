@@ -60,7 +60,7 @@ import java.util.function.Supplier;
  * <p>Everything outside the {@link #run()} method is a partial copy from {@link
  * org.apache.commons.io.FileUtils} implementation to delete files.
  *
- * <p>See <a href="https://github.com/vorburger/MariaDB4j/issues/488">Issue #488</a>.
+ * <p>See <a href="https://github.com/MariaDB4j/MariaDB4j/issues/488">Issue #488</a>.
  */
 class DBShutdownHook extends Thread implements FileVisitor<Path> {
 

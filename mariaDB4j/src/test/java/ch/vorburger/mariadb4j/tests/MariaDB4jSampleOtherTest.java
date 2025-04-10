@@ -85,7 +85,7 @@ public class MariaDB4jSampleOtherTest {
      * directly. The default behaviour is for the class DB to do this only in a Shutdown hook, which
      * is too late for what this test wants to ensure.
      *
-     * @see <a href="https://github.com/vorburger/MariaDB4j/issues/39">MariaDB4j issue #39</a>
+     * @see <a href="https://github.com/MariaDB4j/MariaDB4j/issues/39">MariaDB4j issue #39</a>
      */
     @Test
     public void customBaseDir() throws Exception {

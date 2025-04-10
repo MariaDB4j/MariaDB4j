@@ -23,7 +23,7 @@ import ch.vorburger.exec.ManagedProcessException;
 
 /**
  * Exception thrown when unexpected thing happen in {@link ch.vorburger.exec.ManagedProcess} and <a
- * href="https://github.com/vorburger/MariaDB4j/issues/88">caller needs an unchecked instead of a
+ * href="https://github.com/MariaDB4j/MariaDB4j/issues/88">caller needs an unchecked instead of a
  * checked exception</a>.
  *
  * @author Michael Vorburger.ch
