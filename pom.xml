@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -13,7 +11,7 @@
   </parent>
 
   <artifactId>mariaDB4j-pom</artifactId>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>3.2.0</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -23,7 +21,7 @@
              see https://github.com/MariaDB4j/MariaDB4j/issues/43.
          -->
     <developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
-    <tag>mariaDB4j-3.0.1</tag>
+    <tag>mariaDB4j-3.2.0</tag>
   </scm>
 
   <modules>
@@ -43,7 +41,7 @@
 
   <properties>
     <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-    <project.build.outputTimestamp>2024-03-27T22:39:07Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-04-10T20:37:48Z</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <springboot.version>3.4.4</springboot.version>
     <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
