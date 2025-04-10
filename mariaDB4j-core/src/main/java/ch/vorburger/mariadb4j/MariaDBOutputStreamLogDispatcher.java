@@ -26,7 +26,7 @@ import org.slf4j.event.Level;
 
 /**
  * OutputStreamLogDispatcher for MariaDB. See <a
- * href="https://github.com/vorburger/MariaDB4j/issues/27">issue #27</a>.
+ * href="https://github.com/MariaDB4j/MariaDB4j/issues/27">issue #27</a>.
  *
  * @author Michael Vorburger
  */
