@@ -211,7 +211,7 @@ Note the use of the special mariaDB4j-app*.jar for this use-case, its a fat/shad
 
 MariaDB4j JARs are available from:
 
-1. [Maven Central](https://repo.maven.apache.org/maven2/ch/vorburger/mariaDB4j/):
+1. [Maven Central](https://repo.maven.apache.org/maven2/ch/vorburger/mariaDB4j/); we're proud to be a [reproducible build](https://github.com/jvm-repo-rebuild/reproducible-central#rebuild-detailed-results):
 
    ```xml
    <dependency>
