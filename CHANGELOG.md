@@ -11,20 +11,24 @@ See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.2.0...main for un
 
 * TBD
 
-## v3.2.0 - 2024-04-10
+## v3.2.0 - 2024-04-10 (Issue #[1137](https://github.com/MariaDB4j/MariaDB4j/issues/1137))
 
-See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.1.0...3.2.0 for full details; the TL;DR is:
+See https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-3.2.0 for more details, but the TL;DR is:
 
 * Bumped MariaDB binaries from 10.11.5 to 11.4.5 (LTS); incl. macOS!
 * Bumped ch.vorburger.exec [from 3.2.0 to 3.3.1](https://github.com/vorburger/ch.vorburger.exec/releases) (also released today)
 * Switched tests from mysql-connector-java to mariadb-java-client
 * Bumped many other external Maven dependencies
-* Fixed root causes of tests which never ran
 * Replaced Checkstyle with Google Code Format
+* Fixed root causes of tests which never ran
 * README cleaned up
 * CI related chores
 
+See https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.1.0...3.2.0 for full diff.
+
 ## v3.1.0 - 2024-03-27
+
+See https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-3.1.0:
 
 * feat: Upgrade MariaDB binaries for Linux & Mac from 10.2.11 to 10.11.5 by @TheKnowles in https://github.com/vorburger/MariaDB4j/pull/771
 * fix: Upgrade ch.vorburger.exec [from 3.1.5 to 3.2.0](https://github.com/vorburger/ch.vorburger.exec/compare/exec-3.1.5...exec-3.2.0); fixes e.g. [exec#9](https://github.com/vorburger/ch.vorburger.exec/issues/9)
@@ -99,6 +103,8 @@ This Changelog was manually written by the maintainer, based on: `git log --no-m
 **Full Changelog**: https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.0.2...mariaDB4j-3.1.0
 
 ## v3.0.1 - 2023-05-01 (Issue #[696](https://github.com/MariaDB4j/MariaDB4j/issues/696))
+
+See https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-3.0.1:
 
 * feat: Switch from Java 11 to Java 17
 * feat: Expose Configuration defaultCharacterSet on MariaDB4jSpringService (#674)
@@ -176,6 +182,8 @@ This Changelog was manually written by the maintainer, based on: `git log --no-m
 **Full Changelog**: https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-2.6.0...mariaDB4j-3.0.1
 
 ## v2.6.0 - 2022-10-01 (Issue #[621](https://github.com/MariaDB4j/MariaDB4j/issues/621))
+
+https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-2.6.0:
 
 * Remove wrong space from DYLD_FALLBACK_LIBRARY_PATH by @vorburger in https://github.com/vorburger/MariaDB4j/pull/561
 * Support using locally installed MariaDB (#560) by @vorburger in https://github.com/vorburger/MariaDB4j/pull/565
@@ -268,6 +276,8 @@ This Changelog was manually written by the maintainer, based on: `git log --no-m
 **Full Changelog**: https://github.com/vorburger/MariaDB4j/compare/mariaDB4j-2.5.3...mariaDB4j-2.6.0
 
 ## v2.5.0 - 2.5.3
+
+https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-2.5.3:
 
 ### New Features
 
