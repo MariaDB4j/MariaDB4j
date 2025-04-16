@@ -109,7 +109,7 @@ public class DB {
         config.setPort(port);
         return openEmbeddedDB(config.build());
     }
-    
+
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use.
@@ -125,7 +125,7 @@ public class DB {
     	db.install();
     	return db;
     }
-    
+
     /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use with default
