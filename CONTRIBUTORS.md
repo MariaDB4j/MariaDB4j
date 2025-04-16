@@ -27,6 +27,7 @@ MariaDB4j CONTRIBUTORS
 - Theodore Ni [@tjni](https://github.com/tjni), Aug 2019 Reduce file copying during classpath unpacking
 - Tamas Gaspar [@tomlincoln](https://github.com/tomlincoln), Oct 2020 Make MariaDB4jService start method do not recreate the DB when already started
 - Knowles Atchison, Jr [@TheKnowles](https://github.com/TheKnowles), September 2023 Added MariaDB 10.11.5 to build, March 2025 Windows MariaDB 11.4.5
+- Cristian Ghezzi [@xtianus](https://github.com/xtianus), April 2025 Add reusing data folder on startup with DB.openEmbeddedDB()
 - also see https://github.com/MariaDB4j/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
