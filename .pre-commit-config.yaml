@@ -16,4 +16,11 @@ repos:
   - id: destroyed-symlinks
   - id: end-of-file-fixer
   - id: trailing-whitespace
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  # TODO https://github.com/macisamuele/language-formatters-pre-commit-hooks/issues/215 native
+  rev: v2.14.0
+  hooks:
+    - id: pretty-format-java
+      # Keep this version in sync with https://github.com/spotify/fmt-maven-plugin/blob/main/pom.xml#L90
+      args: [--autofix, --aosp, --google-java-formatter-version=1.24.0]
 exclude: ^DBs/|mvnw
