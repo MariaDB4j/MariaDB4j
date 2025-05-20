@@ -78,6 +78,11 @@ and a `root` user with no password is also a default.
 If you would like to / need to start a specific DB version you already have, instead of the version currently
 packaged in the JAR, you can use `DBConfigurationBuilder setUnpackingFromClasspath(false) & setBaseDir("/my/db/")` or `-DmariaDB4j.unpack=false -DmariaDB4j.baseDir=/home/you/stuff/myFavouritemMariadDBVersion`.   Similarly, you can also pack your own version in a JAR and put it on the classpath, and `@Override getBinariesClassPathLocation()` in `DBConfigurationBuilder` to return where to find it (check the source of the default implementation).
 
+To reopen a previously created database, use
+```java
+DB.openEmbeddedDB(configBuilder.build());
+```
+
 ### Spring
 
 MariaDB4j can be used in any Java Application on its own. It is not dependent on dependency injection or the Spring Framework (the dependency to the spring-core*.jar is for a utility, and is unrelated to DI).
