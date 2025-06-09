@@ -119,11 +119,11 @@ public class DB {
      * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     public static DB newEmbeddedDB(DBConfiguration config) throws ManagedProcessException {
-    	DB db = new DB(config);
-    	db.prepareDirectories();
-    	db.unpackEmbeddedDb();
-    	db.install();
-    	return db;
+        DB db = new DB(config);
+        db.prepareDirectories();
+        db.unpackEmbeddedDb();
+        db.install();
+        return db;
     }
 
     /**
@@ -136,9 +136,9 @@ public class DB {
      * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     public static DB newEmbeddedDB(int port) throws ManagedProcessException {
-    	DBConfigurationBuilder config = new DBConfigurationBuilder();
-    	config.setPort(port);
-    	return newEmbeddedDB(config.build());
+        DBConfigurationBuilder config = new DBConfigurationBuilder();
+        config.setPort(port);
+        return newEmbeddedDB(config.build());
     }
 
     protected ManagedProcess createDBInstallProcess() throws ManagedProcessException, IOException {
