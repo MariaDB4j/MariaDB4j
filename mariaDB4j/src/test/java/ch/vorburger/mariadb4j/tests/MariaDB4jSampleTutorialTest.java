@@ -28,6 +28,7 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
@@ -196,6 +197,47 @@ public class MariaDB4jSampleTutorialTest {
 
         } finally {
             DbUtils.closeQuietly(conn);
+        }
+    }
+
+    /**
+     * Tests & illustrates reopening an existing MariaDB4j database. This is useful for testing the
+     * persistence of data across restarts.
+     */
+    @Test
+    public void testEmbeddedMariaDB4jReopenExisting() throws Exception {
+        String dbName = "test";
+        File tempDir = new File("target/testEmbeddedMariaDB4jReopenExisting");
+        tempDir.mkdirs();
+        try {
+            DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+            config.setPort(0); // 0 => autom. detect free port
+            config.setDataDir(new File(tempDir, "data"));
+            config.setBaseDir(new File(tempDir, "base"));
+            // First create a bew DB instance with a new data directory
+            DB db = DB.newEmbeddedDB(config.build());
+            db.start();
+            db.createDB(dbName);
+            Connection conn =
+                    DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "");
+            QueryRunner qr = new QueryRunner();
+            qr.update(conn, "CREATE TABLE hello(world VARCHAR(100))");
+            qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
+            DbUtils.closeQuietly(conn);
+            db.stop();
+            // Now reopen the existing DB instance with the "open" method so that the existing data
+            // is preserved
+            DB reopenedDb = DB.openEmbeddedDB(config.build());
+            reopenedDb.start();
+            conn = DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "");
+            List<String> results =
+                    qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
+            Assert.assertEquals("Hello, world", results.get(0));
+            DbUtils.closeQuietly(conn);
+            reopenedDb.stop();
+        } finally {
+            // Clean up the temporary directory
+            FileUtils.deleteDirectory(tempDir);
         }
     }
 }
