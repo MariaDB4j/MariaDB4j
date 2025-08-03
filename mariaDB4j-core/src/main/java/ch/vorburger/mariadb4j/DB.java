@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2012 - 2017 Michael Vorburger
+ * Copyright (C) 2012 - 2025 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,21 +93,6 @@ public class DB {
         DB db = new DB(config);
         db.prepareDirectories();
         return db;
-    }
-
-    /**
-     * This factory method is the mechanism for opening an existing embedded database for use. This
-     * method assumes that the database has already been prepared for use with default
-     * configuration, allowing only for specifying port.
-     *
-     * @param port the port to start the embedded database on
-     * @return a new DB instance
-     * @throws ManagedProcessException if something fatal went wrong
-     */
-    public static DB openEmbeddedDB(int port) throws ManagedProcessException {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-        config.setPort(port);
-        return openEmbeddedDB(config.build());
     }
 
     /**
