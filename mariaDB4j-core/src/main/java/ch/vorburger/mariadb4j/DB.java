@@ -44,8 +44,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Provides capability to install, start, and use an embedded database.
@@ -82,37 +86,10 @@ public class DB {
     }
 
     /**
-     * This factory method is the mechanism for opening an existing embedded database for use. This
-     * method assumes that the database has already been prepared for use.
-     *
-     * @param config Configuration of the embedded instance
-     * @return a new DB instance
-     * @throws ManagedProcessException if something fatal went wrong
-     */
-    public static DB openEmbeddedDB(DBConfiguration config) throws ManagedProcessException {
-        DB db = new DB(config);
-        db.prepareDirectories();
-        return db;
-    }
-
-    /**
-     * This factory method is the mechanism for opening an existing embedded database for use. This
-     * method assumes that the database has already been prepared for use with default
-     * configuration, allowing only for specifying port.
-     *
-     * @param port the port to start the embedded database on
-     * @return a new DB instance
-     * @throws ManagedProcessException if something fatal went wrong
-     */
-    public static DB openEmbeddedDB(int port) throws ManagedProcessException {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-        config.setPort(port);
-        return openEmbeddedDB(config.build());
-    }
-
-    /**
      * This factory method is the mechanism for constructing a new embedded database for use. This
      * method automatically installs the database and prepares it for use.
+     *
+     * <p>If the data directory already exists for this DBConfiguration, it wil be reused.
      *
      * @param config Configuration of the embedded instance
      * @return a new DB instance
@@ -121,8 +98,23 @@ public class DB {
     public static DB newEmbeddedDB(DBConfiguration config) throws ManagedProcessException {
         DB db = new DB(config);
         db.prepareDirectories();
-        db.unpackEmbeddedDb();
-        db.install();
+        // If the data dir does not already exist and is empty, proceed to install normally.
+        // Otherwise, we will reuse the existing data directory.
+        try {
+            final Path absPath = Paths.get(config.getDataDir().getAbsolutePath());
+            if (Files.isDirectory(absPath)) {
+                try (Stream<Path> entries = Files.list(absPath)) {
+                    if (entries.findFirst().isEmpty()) {
+                        db.unpackEmbeddedDb();
+                        db.install();
+                    }
+                }
+            }
+
+        } catch (IOException e) { // do not change the method signature, catch, wrap, and re-throw
+            throw new ManagedProcessException(e.getMessage());
+        }
+
         return db;
     }
 

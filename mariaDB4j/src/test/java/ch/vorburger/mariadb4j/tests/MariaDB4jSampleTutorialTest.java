@@ -225,9 +225,8 @@ public class MariaDB4jSampleTutorialTest {
             qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
             DbUtils.closeQuietly(conn);
             db.stop();
-            // Now reopen the existing DB instance with the "open" method so that the existing data
-            // is preserved
-            DB reopenedDb = DB.openEmbeddedDB(config.build());
+            // Now reopen the existing DB instance so that the existing data is preserved
+            DB reopenedDb = DB.newEmbeddedDB(config.build());
             reopenedDb.start();
             conn = DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "");
             List<String> results =
