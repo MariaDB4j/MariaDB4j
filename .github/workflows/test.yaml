@@ -50,7 +50,7 @@ jobs:
         uses: advanced-security/maven-dependency-submission-action@b275d12641ac2d2108b2cbb7598b154ad2f2cee8 # v5.0.0
 
   testOnWindows:
-    runs-on: windows-latest
+    runs-on: windows-2025
     name: Maven Verify (Build & Test) on Windows
     steps:
       - name: Harden Runner
