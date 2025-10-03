@@ -43,7 +43,7 @@
 
   <properties>
     <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-    <project.build.outputTimestamp>2024-03-27T22:39:07Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-10-03T22:39:07Z</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <springboot.version>3.5.6</springboot.version>
     <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
@@ -64,7 +64,9 @@
             <arg>-Xlint:all</arg>
             <arg>-XDcompilePolicy=simple</arg>
             <arg>--should-stop=ifError=FLOW</arg>
+            <!-- Note bene: -XepAllDisabledChecksAsWarnings is not worth it! -->
             <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode
+              -Xep:IdentifierName:OFF -Xep:Java8ApiChecker:OFF
               -XepExcludedPaths:.*/target/generated-sources/.*</arg>
           </compilerArgs>
           <annotationProcessorPaths>
