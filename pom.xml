@@ -13,7 +13,7 @@
   </parent>
 
   <artifactId>mariaDB4j-pom</artifactId>
-  <version>3.3.0-SNAPSHOT</version>
+  <version>3.3.0</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -23,7 +23,7 @@
              see https://github.com/MariaDB4j/MariaDB4j/issues/43.
          -->
     <developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
-    <tag>mariaDB4j-3.0.1</tag>
+    <tag>mariaDB4j-3.3.0</tag>
   </scm>
 
   <modules>
