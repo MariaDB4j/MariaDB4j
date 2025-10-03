@@ -12,8 +12,7 @@
 
   <artifactId>mariaDB4j-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-
-  <name>mariaDB4j-maven-plugin</name>
+  <name>MariaDB4j Maven Plugin</name>
 
   <properties>
     <maven.version>3.9.11</maven.version>

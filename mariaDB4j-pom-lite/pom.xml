@@ -18,7 +18,7 @@
   <version>2.3.0</version>
   <packaging>pom</packaging>
 
-  <name>MariaDB4j</name>
+  <name>MariaDB4j POM Lite</name>
   <description>Java wrapper / launcher for MariaDB (or MySQL)</description>
   <url>https://github.com/vorburger/MariaDB4j</url>
   <inceptionYear>2012</inceptionYear>
