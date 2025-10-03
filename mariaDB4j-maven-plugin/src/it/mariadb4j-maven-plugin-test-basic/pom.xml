@@ -9,11 +9,6 @@
   <artifactId>mariadb4j-maven-plugin-test-basic</artifactId>
   <version>@project.version@</version>
 
-  <properties>
-    <checkstyle.skip>true</checkstyle.skip>
-    <license.skipCheckLicense>true</license.skipCheckLicense>
-  </properties>
-
   <build>
     <plugins>
       <plugin>
@@ -61,12 +56,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
       </plugin>
     </plugins>
   </build>
