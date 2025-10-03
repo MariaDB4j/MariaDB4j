@@ -15,6 +15,7 @@
   <artifactId>mariaDB4j-pom</artifactId>
   <version>3.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <name>MariaDB4j POM</name>
 
   <scm>
     <!-- The <connection> and <url> are specified in the <parent> but the
@@ -36,8 +37,8 @@
     <module>mariaDB4j-core</module>
     <module>mariaDB4j-junit</module>
     <module>mariaDB4j</module>
-    <module>mariaDB4j-app</module>
     <module>mariaDB4j-springboot</module>
+    <module>mariaDB4j-app</module>
     <module>mariaDB4j-maven-plugin</module>
   </modules>
 
