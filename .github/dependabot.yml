@@ -21,9 +21,6 @@ updates:
   - dependency-name: org.assertj:assertj-core
     versions:
     - 3.18.1
-  - dependency-name: org.apache.maven.plugins:maven-checkstyle-plugin
-    versions:
-    - 3.1.1
 
 - package-ecosystem: "github-actions"
   directory: "/"
