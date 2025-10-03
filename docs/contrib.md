@@ -37,10 +37,10 @@ When doing a normal release, here are a few things to do every time:
    git checkout main
    git pull origin
    git push vorburger
-   
+
    # TODO Next time, to save GPG during prepare, try: ./mvnw -DskipTests -Darguments=-DskipTests clean release:clean release:prepare && ./mvnw -DskipTests -Darguments=-DskipTests release:perform -Pgpg
    ./mvnw -DskipTests -Darguments=-DskipTests clean release:clean release:prepare release:perform -Pgpg
-   
+
    git push origin mariaDB4j-3.3.0
 
    gcob version-next
@@ -49,7 +49,7 @@ When doing a normal release, here are a few things to do every time:
    git pull
    git reset --hard origin/main
    ```
-   
+
    There is a bit of a mess between the `origin` and the `vorburger` remote; but like this,
    it actually works BETTER - because on the MariaDB4j org `main` there is push protection, which interferes.
    (I guess I could temporarily disable it for the occasional releases, but that having to do that seems a bit stupid.)
