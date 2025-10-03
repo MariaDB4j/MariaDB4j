@@ -61,19 +61,19 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
-    @Parameter() private int port = -1;
-    @Parameter() private String socket;
+    @Parameter private int port = -1;
+    @Parameter private String socket;
 
     @Parameter private String[] args;
 
     /** If baseDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter() private File baseDir;
+    @Parameter private File baseDir;
 
     /** If libDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter() private File libDir;
+    @Parameter private File libDir;
 
     /** If dataDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter() private File dataDir;
+    @Parameter private File dataDir;
 
     @Parameter(defaultValue = "test")
     protected String databaseName;
