@@ -15,7 +15,7 @@ if ! [ -e ".venv/bin/pre-commit" ]; then
   source .venv/bin/activate
 
   # .venv/bin/pip install -r requirements.txt
-  .venv/bin/pip install pre-commit==4.2.0
+  .venv/bin/pip install pre-commit==4.3.0
 
 else
   # shellcheck disable=SC1091
