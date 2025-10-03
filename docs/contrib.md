@@ -18,43 +18,58 @@ Of course, even if we would replace existing version with new binaries (like it 
 
 ## Release Process
 
-Remember that `mariaDB4j-pom-lite` & `DBs/mariaDB4j-db-*` are now versioned non SNAPSHOT, always fixed; VS the rest that continues to be a 2.2.x-SNAPSHOT (as before). All the steps below except the last one only apply at the root pom.xml (=mariaDB4j-pom) with is mariaDB4j-core, mariaDB4j & mariaDB4j-app `<modules>`. The `mariaDB4j-pom-lite` & `DBs/mariaDB4j-db-*` with their manually maintained fixed `<version>` however are simply deployed manually with a direct ./mvnw deploy as shown in the last step.
+To deploy the `mariaDB4j-pom-lite`, use:
 
-When doing a release, here are a few things to do every time:
+    ./mvnw deploy -Pgpg -f mariaDB4j-pom-lite/pom.xml
 
-1. update the Maven version numbers in this README
+When doing a normal release, here are a few things to do every time:
 
-2. update the dependencies to the latest 3rd-party libraries & Maven plug-in versions available.
-
-3. Make sure the project builds, without pulling anything which should be part of this build from outside:
-
-   ```shell
-   ./mvnw clean package && rm -rf ~/.m2/repository/ch/vorburger && ./mvnw clean package
-   ```
-
-4. Make to sure that the JavaDoc is clean. Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)):
+1. Make sure that the JavaDoc is clean. Check for both errors and any WARNING (until [MJAVADOC-401](http://jira.codehaus.org/browse/MJAVADOC-401)):
 
    ```shell
    ./mvnw license:update-file-header
    ./mvnw -Dmaven.test.skip=true package
    ```
 
-5. Finalize [CHANGELOG.md](../CHANGELOG.md) Release Notes, incl. set today's date, and update the version numbers in this README.
-
-6. Preparing & performing the release (this INCLUDES an ./mvnw deploy):
+2. Perform the release (this INCLUDES an `./mvnw deploy`), and **keep staring at Terminal, to remember when touch is required for signing:**
 
    ```shell
-   ./mvnw release:prepare
-   ./mvnw release:perform -Pgpg
+   git checkout main
+   git pull origin
+   git push vorburger
+   
+   # TODO Next time, to save GPG during prepare, try: ./mvnw -DskipTests -Darguments=-DskipTests clean release:clean release:prepare && ./mvnw -DskipTests -Darguments=-DskipTests release:perform -Pgpg
+   ./mvnw -DskipTests -Darguments=-DskipTests clean release:clean release:prepare release:perform -Pgpg
+   
+   git push origin mariaDB4j-3.3.0
+
+   gcob version-next
+   gpv
+   # Merge PR like https://github.com/MariaDB4j/MariaDB4j/pull/1266
+   git pull
+   git reset --hard origin/main
+   ```
+   
+   There is a bit of a mess between the `origin` and the `vorburger` remote; but like this,
+   it actually works BETTER - because on the MariaDB4j org `main` there is push protection, which interferes.
+   (I guess I could temporarily disable it for the occasional releases, but that having to do that seems a bit stupid.)
+
+4. Later go to e.g. https://github.com/MariaDB4j/MariaDB4j/releases/tag/mariaDB4j-3.3.0,
+   click _Create Release from tag,_ set the _Release title_ to a version number like `3.3.0`,
+   choose the PREVIOUS (!) tag and _Generate release notes,_ and at least briefly order it (like previous one),
+   then copy/paste that into [CHANGELOG.md](../CHANGELOG.md) Release Notes, incl. set today's date.
+
+BTW: https://central.sonatype.com/publishing/deployments shows deployment progress - it's SLOW!
+
+In case of any problems: Discard and go back to fix something and re-release:
+
+   ```shell
    ./mvnw release:clean
+   git reset --hard origin/main
+   git push vorburger --force
+   git tag -d mariaDB4j-3.3.0
+   git push vorburger :mariaDB4j-3.3.0
+   git push origin :mariaDB4j-3.3.0
    ```
 
-7. Deploy to Maven central, only for the mariaDB4j-pom-lite & DBs/mariaDB4j-db projects:
-
-   ```shell
-   ./mvnw clean deploy -Pgpg
-   ```
-
-In case of any problems: Discard and go back to fix something and re-release e.g. using EGit via Rebase Interactive on the commit before "prepare release" and skip the two commits made by the maven-release-plugin. Use git push --force to remote, and remove local tag using git tag -d mariaDB4j-2.x.y, and remote tag using 'git push origin :mariaDB4j-2.x.y'. (Alternatively try BEFORE release:clean use './mvnw release:rollback', but that leaves ugly commits.)
-
-PS: The `~/.m2/settings.xml` needs to have a `<server>` [with valid credentials](https://github.com/vorburger/ch.vorburger.exec/issues/105), of course; see `P/m2/settings.xml`.
+PS: The `~/.m2/settings.xml` needs to have a `<server>` [with valid credentials](https://central.sonatype.org/publish/publish-portal-maven/#credentials), of course; see `P/m2/settings.xml`.
