@@ -2,11 +2,9 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| `main`  | :white_check_mark: |
-| 3.2.0   | :white_check_mark: |
-| Older   | :x:                |
+:white_check_mark: `main` branch and the [latest release](https://github.com/MariaDB4j/MariaDB4j/releases) are supported for security updates.
+
+:x: any older releases are unsupported, unless you have a support contract with [Michael Vorburger](https://www.vorburger.ch).
 
 
 ## Reporting a Vulnerability
