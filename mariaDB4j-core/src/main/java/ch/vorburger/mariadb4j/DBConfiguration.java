@@ -149,6 +149,8 @@ public interface DBConfiguration {
         private final ManagedProcessListener listener;
         private final boolean isSecurityDisabled;
         private final Function<String, String> getURL;
+
+        @SuppressWarnings("ImmutableMemberCollection")
         private final Map<Executable, Supplier<File>> executables;
 
         Impl(
@@ -184,7 +186,7 @@ public interface DBConfiguration {
             this.getURL = getURL;
             this.defaultCharacterSet = defaultCharacterSet;
             this.listener = listener;
-            this.executables = executables;
+            this.executables = Map.copyOf(executables);
         }
 
         @Override
