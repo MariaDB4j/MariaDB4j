@@ -112,7 +112,7 @@ public class DB {
             }
 
         } catch (IOException e) { // do not change the method signature, catch, wrap, and re-throw
-            throw new ManagedProcessException(e.getMessage());
+            throw new ManagedProcessException(e.getMessage(), e);
         }
 
         return db;
