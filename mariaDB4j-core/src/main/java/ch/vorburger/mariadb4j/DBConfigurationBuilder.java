@@ -93,6 +93,28 @@ public class DBConfigurationBuilder {
         return new DBConfigurationBuilder();
     }
 
+    public static DBConfigurationBuilder newBuilder(DBConfigurationBuilder cloneFrom) {
+        DBConfigurationBuilder builder = new DBConfigurationBuilder();
+        builder.databaseVersion = cloneFrom.databaseVersion;
+        builder.osDirectoryName = cloneFrom.osDirectoryName;
+        builder.baseDir = cloneFrom.baseDir;
+        builder.libDir = cloneFrom.libDir;
+        builder.dataDir = cloneFrom.dataDir;
+        builder.tmpDir = cloneFrom.tmpDir;
+        builder.socket = cloneFrom.socket;
+        builder.port = cloneFrom.port;
+        builder.isDeletingTemporaryBaseAndDataDirsOnShutdown =
+                cloneFrom.isDeletingTemporaryBaseAndDataDirsOnShutdown;
+        builder.isUnpackingFromClasspath = cloneFrom.isUnpackingFromClasspath;
+        builder.args = new ArrayList<>(cloneFrom.args);
+        builder.isSecurityDisabled = cloneFrom.isSecurityDisabled;
+        builder.frozen = cloneFrom.frozen;
+        builder.listener = cloneFrom.listener;
+        builder.defaultCharacterSet = cloneFrom.defaultCharacterSet;
+        builder.executables = new HashMap<>(cloneFrom.executables);
+        return builder;
+    }
+
     protected DBConfigurationBuilder() {}
 
     protected void checkIfFrozen(String setterName) {
@@ -469,11 +491,11 @@ public class DBConfigurationBuilder {
     }
 
     public boolean isWindows() {
-        return Platform.get().equals(Platform.OS.WINDOWS);
+        return Platform.OS.WINDOWS.equals(Platform.get());
     }
 
     public boolean isMacOS() {
-        return Platform.get().equals(Platform.OS.MAC);
+        return Platform.OS.MAC.equals(Platform.get());
     }
 
     protected String getExtension() {
