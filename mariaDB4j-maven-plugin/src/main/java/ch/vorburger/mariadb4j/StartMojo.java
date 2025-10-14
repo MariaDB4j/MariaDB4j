@@ -40,12 +40,11 @@ import java.io.IOException;
  */
 @Mojo(
         name = "start",
-        requiresProject = true,
         defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST,
         requiresDependencyResolution = ResolutionScope.TEST)
 public class StartMojo extends AbstractRunMojo {
 
-    private static final String PROPNAME_DATABASE_URL = "mariadb4j.databaseurl";
+    private static final String PROPERTY_NAME_DATABASE_URL = "mariadb4j.databaseurl";
 
     @Override
     protected void runWithMavenJvm(DBConfigurationBuilder configurationBuilder)
@@ -55,21 +54,17 @@ public class StartMojo extends AbstractRunMojo {
             DBSingleton.setDB(db);
             db.start();
 
-            if (!"test".equals(databaseName)) {
-                // mysqld out-of-the-box already has a DB named "test"
-                // in case we need another DB, here's how to create it first
-                db.createDB(databaseName);
-            }
+            db.createDB(databaseName);
             this.runScripts(db, databaseName);
 
             String databaseURL = DBSingleton.getConfigurationBuilder().getURL(databaseName);
-            getProject().getProperties().setProperty(PROPNAME_DATABASE_URL, databaseURL);
+            getProject().getProperties().setProperty(PROPERTY_NAME_DATABASE_URL, databaseURL);
 
             getLog().warn("Database started and is configured on " + databaseURL);
         } catch (ManagedProcessException ex) {
             throw new MojoExecutionException("Could not setup, start database", ex);
         } catch (IOException ex) {
-            throw new MojoExecutionException("Could execute scripts after database started", ex);
+            throw new MojoExecutionException("Could execute scripts after database start", ex);
         }
     }
 }

@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2012 - 2014 Michael Vorburger
+ * Copyright (C) 2012 - 2025 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,11 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariadb4j.tests;
-
-import static ch.vorburger.mariadb4j.TestUtil.configureTempDBAndResolvePort;
+package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.MariaDB4jService;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import java.nio.file.Path;
-
-class MariaDB4jServiceTest {
-
-    @Test
-    void testStartStop(@TempDir Path tempDir) throws ManagedProcessException {
-        MariaDB4jService service = new MariaDB4jService(configureTempDBAndResolvePort(tempDir));
-        service.start();
-        service.stop();
-    }
+@FunctionalInterface
+public interface DBFactory {
+    DB create(DBConfiguration config) throws ManagedProcessException;
 }

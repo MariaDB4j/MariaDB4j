@@ -19,39 +19,42 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
+import static ch.vorburger.mariadb4j.TestUtil.buildTempDB;
+import static ch.vorburger.mariadb4j.TestUtil.configureTempDB;
+
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /** Tests more functionality of MariaDB4j. */
-public class MariaDB4jSampleOtherTest {
+class MariaDB4jSampleOtherTest {
+
+    private static DB startNewDB(Path tempDir) throws ManagedProcessException {
+        DB db = buildTempDB(tempDir, configureTempDB(tempDir));
+        db.start();
+        return db;
+    }
 
     /**
      * This test ensure that there is no conflict between sockets if two MariaDB4j run on the same
      * port.
      */
     @Test
-    public void startTwoMariaDB4j() throws Exception {
-        DB db1 = startNewDB();
-        DB db2 = startNewDB();
-        db1.stop();
-        db2.stop();
-        // see below in customBaseDir() why we need this here
-        FileUtils.deleteQuietly(db1.getConfiguration().getBaseDir());
-    }
-
-    protected DB startNewDB() throws ManagedProcessException {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-        config.setPort(0);
-        DB db = DB.newEmbeddedDB(config.build());
-        db.start();
-        return db;
+    void startTwoMariaDB4j(@TempDir Path tempDir) throws ManagedProcessException {
+        DB db1 = null;
+        DB db2 = null;
+        try {
+            db1 = startNewDB(tempDir);
+            db2 = startNewDB(tempDir);
+        } finally {
+            if (db1 != null) db1.stop();
+            if (db2 != null) db2.stop();
+        }
     }
 
     /**
@@ -60,61 +63,57 @@ public class MariaDB4jSampleOtherTest {
      * @see <a href="https://github.com/MariaDB4j/MariaDB4j/issues/30">MariaDB4j issue #30</a>
      */
     @Test
-    public void dataDirWithSpace() throws Exception {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+    void dataDirWithSpace(@TempDir Path tempDir) throws ManagedProcessException {
+        DBConfigurationBuilder config = configureTempDB(tempDir);
         // Note that this dataDir intentionally contains a space before its last word
         config.setDataDir(
-                new File(
-                        SystemUtils.JAVA_IO_TMPDIR
-                                + "/MariaDB4j/"
-                                + MariaDB4jSampleOtherTest.class.getName()
-                                + " dataDirWithSpace"));
-        DB db = DB.newEmbeddedDB(config.build());
-        db.start();
-        db.stop();
-        // see below in customBaseDir() why we need this here
-        FileUtils.deleteQuietly(db.getConfiguration().getBaseDir());
+                tempDir.resolve("MariaDB4j")
+                        .resolve(MariaDB4jSampleOtherTest.class.getName() + " dataDirWithSpace"));
+        DB db = null;
+        try {
+            db = buildTempDB(tempDir, config);
+            db.start();
+        } finally {
+            if (db != null) db.stop();
+        }
     }
 
     /**
      * Reproduces issue #39 re. libDir having to be correctly sate "late" and not on
      * DBConfigurationBuilder constructor in case of a non-default baseDir.
      *
-     * <p>This test passes even without the bug fix if another test "left over" a base dir with a
-     * libs/ directory in JAVA_IO_TMPDIR. The two tests above does clean up after themselves
-     * directly. The default behaviour is for the class DB to do this only in a Shutdown hook, which
-     * is too late for what this test wants to ensure.
-     *
      * @see <a href="https://github.com/MariaDB4j/MariaDB4j/issues/39">MariaDB4j issue #39</a>
      */
     @Test
-    public void customBaseDir() throws Exception {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+    void customBaseDir(@TempDir Path tempDir) throws ManagedProcessException {
+        DBConfigurationBuilder config = configureTempDB(tempDir);
         config.setBaseDir(
-                new File(
-                        SystemUtils.JAVA_IO_TMPDIR
-                                + "/MariaDB4j/"
-                                + MariaDB4jSampleOtherTest.class.getName()
-                                + "customBaseDir"));
-        DB db = DB.newEmbeddedDB(config.build());
-        db.start();
-        db.stop();
+                tempDir.resolve("MariaDB4j")
+                        .resolve(MariaDB4jSampleOtherTest.class.getName() + "customBaseDir"));
+        DB db = null;
+        try {
+            db = buildTempDB(tempDir, config);
+            db.start();
+        } finally {
+            if (db != null) db.stop();
+        }
     }
 
     @Test
-    public void customCharacterSet() throws Exception {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
+    void customCharacterSet(@TempDir Path tempDir) throws ManagedProcessException {
+        DBConfigurationBuilder config = configureTempDB(tempDir);
         config.setBaseDir(
-                new File(
-                        SystemUtils.JAVA_IO_TMPDIR
-                                + "/MariaDB4j/"
-                                + MariaDB4jSampleOtherTest.class.getName()
-                                + "customBaseDir"));
+                tempDir.resolve("MariaDB4j")
+                        .resolve(MariaDB4jSampleOtherTest.class.getName() + "customBaseDir"));
         config.setDefaultCharacterSet("utf8mb4");
-        DB db = DB.newEmbeddedDB(config.build());
-        db.start();
-        db.createDB("junittest");
-        db.source("ch/vorburger/mariadb4j/characterTest.sql");
-        db.stop();
+        DB db = null;
+        try {
+            db = buildTempDB(tempDir, config);
+            db.start();
+            db.createDB("junittest");
+            db.source("ch/vorburger/mariadb4j/characterTest.sql");
+        } finally {
+            if (db != null) db.stop();
+        }
     }
 }

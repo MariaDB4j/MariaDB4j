@@ -30,13 +30,13 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Stop a MariaDB4j database that has been started by the "start" goal. Typically invoked once a
+ * Stop a MariaDB4j database that has been started by the "start" goal. Typically, invoked once a
  * test suite has completed.
  *
  * @author William Dutton
  * @since 1.0.0
  */
-@Mojo(name = "stop", requiresProject = true, defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
+@Mojo(name = "stop", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class StopMojo extends AbstractMojo {
 
     /**

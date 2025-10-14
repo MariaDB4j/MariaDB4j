@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -17,6 +19,14 @@
       <artifactId>mariaDB4j-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mariaDB4j-core</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mariaDB4j-junit</artifactId>
@@ -41,16 +51,15 @@
     </dependency>
 
     <dependency>
-      <!-- For MariaDB4jSpringService, only. This has to be repeated from mariaDB4j-core here
-			due to the optional true below -->
+<!--  For MariaDB4jSpringService, only. This has to be repeated from mariaDB4j-core here due to the optional true below -->
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <optional>true</optional> <!-- !!! -->
     </dependency>
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -68,17 +77,16 @@
       <artifactId>mariadb-java-client</artifactId>
       <scope>test</scope>
     </dependency>
-    <!--   <dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.34</version>
-			<! - - For legal reasons (GPL with FOSS Exception story...), it's safest
-				if projects using mariaDB4j decide this dependency themselves. If we have
-				to use it in src/main/java instead of only src/test/java, then let's use
-				<scope>provided</scope> - - >
-			<scope>test</scope>
-		</dependency> -->
-
+<!--    <dependency>-->
+<!--      <groupId>mysql</groupId>-->
+<!--      <artifactId>mysql-connector-java</artifactId>-->
+<!--      <version>8.0.33</version>-->
+<!--&lt;!&ndash;  For legal reasons (GPL with FOSS Exception story...), it's safest &ndash;&gt;-->
+<!--&lt;!&ndash;  if projects using mariaDB4j decide this dependency themselves. If we have &ndash;&gt;-->
+<!--&lt;!&ndash;  to use it in src/main/java instead of only src/test/java, then let's use &ndash;&gt;-->
+<!--      <scope>provided</scope>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>

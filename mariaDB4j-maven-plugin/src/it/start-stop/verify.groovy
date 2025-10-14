@@ -1,5 +1,5 @@
-import static org.junit.Assert.assertTrue
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 def file = new File(basedir, "build.log")
-assertTrue 'MariaDB4j should have run', file.text.contains("Installing a new embedded database")
-assertTrue 'MariaDB4j Should attempt to stop', file.text.contains("Database stopped.")
+assertTrue(file.text.contains("Installing a new embedded database"), "MariaDB4j should have run")
+assertTrue(file.text.contains("Database stopped."), "MariaDB4j should attempt to stop")

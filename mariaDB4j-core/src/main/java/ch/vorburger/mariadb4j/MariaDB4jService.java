@@ -24,6 +24,9 @@ import ch.vorburger.exec.ManagedProcessException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,32 +41,36 @@ import java.nio.charset.StandardCharsets;
  * containers such as Guice. When using Spring, then the MariaDB4jSpringService may be of interest.
  * If you're using Spring Boot, then have a look at the MariaDB4jApplication.
  *
- * <p>The main() could be used typically from an IDE (waits for CR/LF input to shutdown..).
+ * <p>The main() could be used typically from an IDE (waits for CR/LF input to shut down.).
  *
  * @author Michael Vorburger
  * @author Luis Trigueiros
  */
 public class MariaDB4jService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MariaDB4jService.class);
+
     protected DB db;
     protected DBConfigurationBuilder configBuilder;
 
+    public MariaDB4jService() {}
+
+    public MariaDB4jService(DBConfigurationBuilder configBuilder) {
+        this.configBuilder = configBuilder;
+    }
+
     public DB getDB() {
-        if (!isRunning()) {
-            throw new IllegalStateException("start() me up first!");
-        }
+        if (!isRunning()) throw new IllegalStateException("start() me up first!");
         return db;
     }
 
     public DBConfigurationBuilder getConfiguration() {
-        if (configBuilder == null) {
-            configBuilder = DBConfigurationBuilder.newBuilder();
-        }
+        if (configBuilder == null) configBuilder = DBConfigurationBuilder.newBuilder();
         return configBuilder;
     }
 
     @PostConstruct // note this is from javax.annotation, not a Spring Framework dependency
-    public void postConstruct() throws ManagedProcessRuntimeException {
+    public void postConstruct() {
         try {
             start();
         } catch (ManagedProcessException e) {
@@ -72,15 +79,13 @@ public class MariaDB4jService {
     }
 
     public void start() throws ManagedProcessException {
-        if (isRunning()) {
-            return;
-        }
+        if (isRunning()) return;
         db = DB.newEmbeddedDB(getConfiguration().build());
         db.start();
     }
 
     @PreDestroy // note this is from javax.annotation, not a Spring Framework dependency
-    public void preDestroy() throws ManagedProcessRuntimeException {
+    public void preDestroy() {
         try {
             stop();
         } catch (ManagedProcessException e) {
@@ -89,9 +94,7 @@ public class MariaDB4jService {
     }
 
     public void stop() throws ManagedProcessException {
-        if (!isRunning()) {
-            return;
-        }
+        if (!isRunning()) return;
         db.stop();
         db = null;
         configBuilder = null;
@@ -101,23 +104,21 @@ public class MariaDB4jService {
         return db != null;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         MariaDB4jService service = new MariaDB4jService();
         service.start();
 
         waitForKeyPressToCleanlyExit();
 
         // NOTE: In Eclipse, the MariaDB4j Shutdown Hook is not invoked on
-        // exit.. so: (@see https://bugs.eclipse.org/bugs/show_bug.cgi?id=38016)
+        // exit. so: (@see https://bugs.eclipse.org/bugs/show_bug.cgi?id=38016)
         service.stop();
     }
 
     public static void waitForKeyPressToCleanlyExit() throws IOException {
         // NOTE: In Eclipse, System.console() is not available.. so: (@see
         // https://bugs.eclipse.org/bugs/show_bug.cgi?id=122429)
-        System.out.println("\n\nHit Enter to quit...");
-        BufferedReader d =
-                new BufferedReader(new InputStreamReader(System.in, StandardCharsets.US_ASCII));
-        d.readLine();
+        logger.info("\n\nHit Enter to quit...");
+        new BufferedReader(new InputStreamReader(System.in, StandardCharsets.US_ASCII)).readLine();
     }
 }

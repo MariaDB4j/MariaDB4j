@@ -19,66 +19,64 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import ch.vorburger.mariadb4j.Util;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Test for ClasspathUnpacker.
  *
  * @author Michael Vorburger
  */
-public class ClasspathUnpackerTest {
+class ClasspathUnpackerTest {
 
     @Test
-    public void testClasspathUnpackerFromUniqueClasspath() throws IOException {
-        File toDir = new File("target/testUnpack1");
-        FileUtils.deleteDirectory(toDir);
-        Util.extractFromClasspathToFile("org/apache/commons/exec", toDir);
-        Assert.assertTrue(new File(toDir, "CommandLine.class").exists());
-    }
-
-    @Test(expected = IOException.class)
-    @Ignore
-    // Not yet implemented... not really important
-    public void testClasspathUnpackerFromDuplicateClasspath() throws IOException {
-        File toDir = new File("target/testUnpack3");
-        FileUtils.deleteDirectory(toDir);
-        Util.extractFromClasspathToFile("META-INF/maven", toDir);
+    void testClasspathUnpackerFromUniqueClasspath(@TempDir Path tempDir) throws IOException {
+        Path toDir = tempDir.resolve("testUnpack1");
+        Util.extractFromClasspathToDir("org/apache/commons/exec", toDir);
+        assertTrue(Files.exists(toDir.resolve("CommandLine.class")));
     }
 
     @Test
-    public void testClasspathUnpackerFromFilesystem() throws IOException {
-        File toDir = new File("target/testUnpack3");
-        FileUtils.deleteDirectory(toDir);
-        int c1 = Util.extractFromClasspathToFile("test", toDir);
-        Assert.assertEquals(3, c1);
-        Assert.assertTrue(new File(toDir, "a.txt").exists());
-        Assert.assertTrue(new File(toDir, "b.txt").exists());
-        Assert.assertTrue(new File(toDir, "subdir/c.txt").exists());
+    @Disabled("Not implemented yet")
+    void testClasspathUnpackerFromDuplicateClasspath(@TempDir Path tempDir) {
+        Path toDir = tempDir.resolve("testUnpack3");
+        assertThrows(
+                IOException.class, () -> Util.extractFromClasspathToDir("META-INF/maven", toDir));
+    }
+
+    @Test
+    void testClasspathUnpackerFromFilesystem(@TempDir Path tempDir) throws IOException {
+        Path toDir = tempDir.resolve("testUnpack3");
+        int c1 = Util.extractFromClasspathToDir("test", toDir);
+        assertEquals(3, c1);
+        assertTrue(Files.exists(toDir.resolve("a.txt")));
+        assertTrue(Files.exists(toDir.resolve("b.txt")));
+        assertTrue(Files.exists(toDir.resolve("subdir").resolve("c.txt")));
 
         // Now try again - it shouldn't copy anything anymore (optimization)
-        int c2 = Util.extractFromClasspathToFile("test", toDir);
-        Assert.assertEquals(0, c2);
+        int c2 = Util.extractFromClasspathToDir("test", toDir);
+        assertEquals(0, c2);
     }
 
-    @Test(expected = IOException.class)
-    public void testClasspathUnpackerPathDoesNotExist() throws IOException {
-        File toDir = new File("target/testUnpack4");
-        FileUtils.deleteDirectory(toDir);
-        Util.extractFromClasspathToFile("does/not/exist", toDir);
+    @Test
+    void testClasspathUnpackerPathDoesNotExist(@TempDir Path tempDir) {
+        Path toDir = tempDir.resolve("testUnpack4");
+        assertThrows(
+                IOException.class, () -> Util.extractFromClasspathToDir("does/not/exist", toDir));
     }
 
-    @Test(expected = IOException.class)
-    public void testClasspathUnpackerPackageExistsButIsEmpty() throws IOException {
-        File toDir = new File("target/testUnpack4");
-        FileUtils.deleteDirectory(toDir);
-        Util.extractFromClasspathToFile("test/empty", toDir);
+    @Test
+    void testClasspathUnpackerPackageExistsButIsEmpty(@TempDir Path tempDir) {
+        Path toDir = tempDir.resolve("testUnpack4");
+        assertThrows(IOException.class, () -> Util.extractFromClasspathToDir("test/empty", toDir));
     }
 }

@@ -1,20 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ch.vorburger.mariaDB4j</groupId>
   <artifactId>mariaDB4j-pom-lite</artifactId>
-  <!-- This here is NOT a *-SNAPSHOT version, never!
+  <!--
+  This here is NOT a *-SNAPSHOT version, never!
 
-         Just manually increment this whenever you have to make a change to
-         this pom.xml - which should, normally, be relatively rare!
+  Just manually increment this whenever you have to make a change to
+  this pom.xml - which should, normally, be relatively rare!
 
-         If you do have to change this, remember to adjust the <version> of
-         the <parent> in the current mariaDB4j-pom SNAPSHOT, and in future
-         DBs/mariaDB4j-db-*/pom.xml versions (as those are also always
-         non-SNAPSHOT, existing ones do NOT get changed).
-     -->
+  If you do have to change this, remember to adjust the <version> of
+  the <parent> in the current mariaDB4j-pom SNAPSHOT, and in future
+  DBs/mariaDB4j-db-*/pom.xml versions (as those are also always
+  non-SNAPSHOT, existing ones do NOT get changed).
+  -->
   <version>2.3.0</version>
   <packaging>pom</packaging>
 
@@ -26,26 +27,26 @@
   <scm>
     <connection>scm:git:https://github.com/MariaDB4j/MariaDB4j.git</connection>
     <url>https://github.com/vorburger/MariaDB4j</url>
-    <!-- Do NOT specify developerConnection & tag here, as those are only used
-             by the maven-release-plugin, which we don't use here and in the db-*/pom.xml -->
+<!--Do NOT specify developerConnection & tag here, as those are only used -->
+<!--by the maven-release-plugin, which we don't use here and in the db-*/pom.xml -->
   </scm>
 
   <licenses>
     <license>
       <name>Apache 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
     <license>
       <name>Eclipse Public License v1.0</name>
-      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+      <url>https://www.eclipse.org/legal/epl-v10.html</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
   <organization>
     <name>Michael Vorburger</name>
-    <url>http://www.vorburger.ch</url>
+    <url>https://www.vorburger.ch</url>
   </organization>
 
   <developers>
@@ -53,7 +54,7 @@
       <id>vorburger</id>
       <name>Michael Vorburger</name>
       <email>mike@vorburger.ch</email>
-      <url>http://www.vorburger.ch</url>
+      <url>https://www.vorburger.ch</url>
     </developer>
   </developers>
   <contributors>
@@ -71,9 +72,9 @@
         <extensions>true</extensions>
         <configuration>
           <publishingServerId>central</publishingServerId>
-          <!-- https://central.sonatype.org/publish/publish-portal-maven/#automatic-publishing -->
+<!--      https://central.sonatype.org/publish/publish-portal-maven/#automatic-publishing -->
           <autoPublish>true</autoPublish>
-          <!-- https://central.sonatype.org/publish/publish-portal-maven/#wait-for-publishing -->
+<!--      https://central.sonatype.org/publish/publish-portal-maven/#wait-for-publishing -->
           <waitUntil>published</waitUntil>
         </configuration>
       </plugin>
@@ -82,7 +83,7 @@
         <artifactId>maven-source-plugin</artifactId>
         <version>3.3.1</version>
         <configuration>
-          <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
+<!--      This is super important (to avoid the binaries in the *-sources.jar) -->
           <excludeResources>true</excludeResources>
           <includePom>true</includePom>
         </configuration>
@@ -99,9 +100,8 @@
 
     <pluginManagement>
       <plugins>
-        <!--This
-        plugin's configuration is used to store Eclipse m2e settings only. It has no influence on
-        the Maven build itself.-->
+<!--    This plugin's configuration is used to store Eclipse m2e settings only. -->
+<!--    It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>

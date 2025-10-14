@@ -20,7 +20,6 @@
 
 package ch.vorburger.mariadb4j;
 
-import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -34,7 +33,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Arrays;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -61,33 +62,57 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
-    @Parameter private int port = -1;
-    @Parameter private String socket;
+    @Parameter(property = "mariaDB4j.port", defaultValue = "-1")
+    private int port;
 
-    @Parameter private String[] args;
+    @Parameter(property = "mariaDB4j.socket")
+    private String socket;
+
+    @Parameter(property = "mariaDB4j.args")
+    private List<String> args = new ArrayList<>();
 
     /** If baseDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter private File baseDir;
+    @Parameter(property = "mariaDB4j.baseDir")
+    private File baseDir;
 
     /** If libDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter private File libDir;
+    @Parameter(property = "mariaDB4j.libDir")
+    private File libDir;
 
     /** If dataDir is set outside java.io.tmpdir, it won't be deleted. */
-    @Parameter private File dataDir;
+    @Parameter(property = "mariaDB4j.dataDir")
+    private File dataDir;
 
-    @Parameter(defaultValue = "test")
+    @Parameter(property = "mariaDB4j.databaseName", defaultValue = "test")
     protected String databaseName;
 
     /** Set this if your scripts are not UTF-8. */
-    @Parameter(defaultValue = "UTF-8")
+    @Parameter(property = "mariaDB4j.scriptCharset", defaultValue = "UTF-8")
     private String scriptCharset;
 
     /** Path to scripts to run on the database once started. */
-    @Parameter private File[] scripts;
+    @Parameter(property = "mariaDB4j.scripts")
+    private List<File> scripts = new ArrayList<>();
 
     /** Skip the execution. */
-    @Parameter(defaultValue = "false")
+    @Parameter(property = "mariaDB4j.skip", defaultValue = "false")
     private boolean skip;
+
+    private Path getBaseDir() {
+        return baseDir != null ? baseDir.toPath() : null;
+    }
+
+    private Path getLibDir() {
+        return libDir != null ? libDir.toPath() : null;
+    }
+
+    private Path getDataDir() {
+        return dataDir != null ? dataDir.toPath() : null;
+    }
+
+    private List<Path> getScripts() {
+        return scripts.stream().map(File::toPath).toList();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -105,27 +130,15 @@ public abstract class AbstractRunMojo extends AbstractMojo {
 
     private DBConfigurationBuilder resolveConfigurationBuilder() {
         DBConfigurationBuilder configurationBuilder = DBConfigurationBuilder.newBuilder();
-
-        if (port != -1 && port != 0) {
-            configurationBuilder.setPort(port);
-        }
-        if (socket != null) {
-            configurationBuilder.setSocket(socket);
-        }
-        if (baseDir != null) {
-            configurationBuilder.setBaseDir(baseDir);
-        }
-        if (libDir != null) {
-            configurationBuilder.setLibDir(libDir);
-        }
-        if (dataDir != null) {
-            configurationBuilder.setDataDir(dataDir);
-        }
-        if (args != null && args.length != 0) {
-            for (String arg : args) {
-                configurationBuilder.addArg(arg);
-            }
-        }
+        if (port != -1 && port != 0) configurationBuilder.setPort(port);
+        if (socket != null && !socket.isBlank()) configurationBuilder.setSocket(socket);
+        Path modernBaseDir = getBaseDir();
+        if (modernBaseDir != null) configurationBuilder.setBaseDir(modernBaseDir);
+        Path modernLibDir = getLibDir();
+        if (modernLibDir != null) configurationBuilder.setLibDir(modernLibDir);
+        Path modernDataDir = getDataDir();
+        if (modernDataDir != null) configurationBuilder.setDataDir(modernDataDir);
+        if (!args.isEmpty()) args.forEach(configurationBuilder::addArg);
         DBSingleton.setConfigurationBuilder(configurationBuilder);
         return configurationBuilder;
     }
@@ -141,26 +154,21 @@ public abstract class AbstractRunMojo extends AbstractMojo {
      *
      * @param db a {@link ch.vorburger.mariadb4j.DB} object
      * @param dbName a {@link java.lang.String} object
-     * @throws ch.vorburger.exec.ManagedProcessException if any.
      * @throws java.io.IOException if any.
      */
-    public void runScripts(DB db, String dbName) throws ManagedProcessException, IOException {
-        if (this.scripts != null) {
-            if (getLog().isInfoEnabled()) {
-                getLog().info("Going to run scripts: " + Arrays.asList(this.scripts));
-            }
-            Charset charset = getScriptCharset();
-            for (File scriptFile : this.scripts) {
-                // awesome http://www.adam-bien.com/roller/abien/entry/java_8_reading_a_file
-                // Though we should have in db to pass a file or inputstream so we don't overload
-                // memory. So
-                // TODO: add new function to db public void source(File resource, String username,
-                // String password, String dbName)
-                String scriptText = new String(Files.readAllBytes(scriptFile.toPath()), charset);
-                db.run(scriptText, null, null, dbName);
-            }
-            getLog().info("Successfully run scripts");
+    public void runScripts(DB db, String dbName) throws IOException {
+        List<Path> modernScripts = getScripts();
+        if (modernScripts.isEmpty()) return;
+        if (getLog().isInfoEnabled()) getLog().info("Going to run scripts: " + modernScripts);
+        Charset charset = getScriptCharset();
+        for (Path scriptFile : modernScripts) {
+            // We should have it pass a file or InputStream so we don't overload memory.
+            // TODO: add new function to db public void source(File resource, String username,
+            //  String password, String dbName)
+            String scriptText = Files.readString(scriptFile, charset);
+            db.run(scriptText, null, null, dbName);
         }
+        getLog().info("Successfully run scripts");
     }
 
     /**

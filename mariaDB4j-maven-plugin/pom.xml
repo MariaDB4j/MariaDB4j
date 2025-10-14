@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -29,6 +31,11 @@
       <artifactId>maven-plugin-api</artifactId>
     </dependency>
     <dependency>
+      <scope>test</scope>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+    </dependency>
+    <dependency>
       <scope>provided</scope>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
@@ -38,11 +45,11 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
     </dependency>
-
     <dependency>
+      <groupId>io.takari.maven.plugins</groupId>
+      <artifactId>takari-plugin-testing</artifactId>
+      <version>3.1.1</version>
       <scope>test</scope>
-      <groupId>org.apache.maven.plugin-testing</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
     </dependency>
     <dependency>
       <scope>test</scope>
@@ -57,13 +64,36 @@
 
     <dependency>
       <scope>test</scope>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>4.0.4</version>
+    </dependency>
+    <dependency>
+      <scope>test</scope>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>4.0.6</version>
+    </dependency>
+    <dependency>
+      <scope>test</scope>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+      <version>3.20.8</version>
+    </dependency>
+    <dependency>
+      <scope>test</scope>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
     </dependency>
     <dependency>
       <scope>test</scope>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
+    </dependency>
+    <dependency>
+      <scope>test</scope>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
     </dependency>
     <dependency>
       <scope>test</scope>
@@ -137,12 +167,6 @@
       </dependency>
       <dependency>
         <scope>test</scope>
-        <groupId>org.apache.maven.plugin-testing</groupId>
-        <artifactId>maven-plugin-testing-harness</artifactId>
-        <version>3.3.0</version>
-      </dependency>
-      <dependency>
-        <scope>test</scope>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-compat</artifactId>
         <version>3.9.11</version>
@@ -154,12 +178,46 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <!-- required by src/main/resources/META-INF/m2e/lifecycle-mapping-metadata.xml -->
+<!--    required by src/main/resources/META-INF/m2e/lifecycle-mapping-metadata.xml -->
         <filtering>true</filtering>
       </resource>
     </resources>
 
     <plugins>
+      <plugin>
+        <groupId>io.takari.maven.plugins</groupId>
+        <artifactId>takari-lifecycle-plugin</artifactId>
+        <version>2.3.2</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>testProperties</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>testProperties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -193,11 +251,9 @@
         </executions>
       </plugin>
       <plugin>
-        <!-- Include slf4j-api in the plugin jar to ensure some versions of maven don't have
-                logging issues.
-                     Deprecate when min maven version is 3.3.9+ currently we allow 3.1.1+
-                     see https://issues.apache.org/jira/browse/MNG-5787 for details.
-                -->
+<!--    Include slf4j-api in the plugin jar to ensure some versions of maven don't have logging issues. -->
+<!--    Deprecate when min maven version is 3.3.9+ currently we allow 3.1.1+ -->
+<!--    see https://issues.apache.org/jira/browse/MNG-5787 for details. -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.6.1</version>
@@ -220,9 +276,8 @@
     </plugins>
     <pluginManagement>
       <plugins>
-        <!--This
-                plugin's configuration is used to store Eclipse m2e settings only. It has no
-                influence on the Maven build itself.-->
+<!--    This plugin's configuration is used to store Eclipse m2e settings only. -->
+<!--    It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>

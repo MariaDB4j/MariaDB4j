@@ -1,11 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>ch.vorburger.mariaDB4j</groupId>
     <artifactId>mariaDB4j-pom-lite</artifactId>
-    <!-- Do NOT depend on a SNAPSHOT here!
-             Note that this parent version and the version below are, intentionally, completely unrelated. -->
+<!--Do NOT depend on a SNAPSHOT here! -->
+<!--Note that this parent version and the version below are, intentionally, completely unrelated. -->
     <version>2.3.0</version>
     <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
   </parent>
@@ -16,22 +18,19 @@
   <name>MariaDB4j POM</name>
 
   <scm>
-    <!-- The <connection> and <url> are specified in the <parent> but the
-             <developerConnection> and the <tag> must be here, for the maven-release-plugin
-             to work correctly, if the <parent> is not a SNAPSHOT;
-             see https://github.com/MariaDB4j/MariaDB4j/issues/43.
-         -->
+<!--The <connection> and <url> are specified in the <parent> but the -->
+<!--<developerConnection> and the <tag> must be here, for the maven-release-plugin -->
+<!--to work correctly, if the <parent> is not a SNAPSHOT; -->
+<!--see https://github.com/MariaDB4j/MariaDB4j/issues/43. -->
     <developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
     <tag>mariaDB4j-3.0.1</tag>
   </scm>
 
   <modules>
-    <!-- We do NOT include <module> for the mariaDB4j-pom-lite, nor the DBs/mariaDB4j-db-* here!
-
-             This is because those are NOT version'd the same way as this artifact and the ones below.
-             Therefore the mvn release:* and mvn deploy is done separately for this (below)
-             and the mariaDB4j-pom-lite and DBs/mariaDB4j-db-*.
-         -->
+<!--We do NOT include <module> for the mariaDB4j-pom-lite, nor the DBs/mariaDB4j-db-* here! -->
+<!--This is because those are NOT versioned the same way as this artifact and the ones below. -->
+<!--Therefore, the mvn release:* and mvn deploy is done separately for this (below) -->
+<!--and the mariaDB4j-pom-lite and DBs/mariaDB4j-db-*. -->
     <module>mariaDB4j-core</module>
     <module>mariaDB4j-junit</module>
     <module>mariaDB4j</module>
@@ -41,7 +40,9 @@
   </modules>
 
   <properties>
-    <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
+<!--Needed for Mockito agent loading. -->
+    <argLine/>
+<!--https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
     <project.build.outputTimestamp>2025-10-03T21:17:04Z</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <springboot.version>3.5.6</springboot.version>
@@ -63,7 +64,7 @@
             <arg>-Xlint:all</arg>
             <arg>-XDcompilePolicy=simple</arg>
             <arg>--should-stop=ifError=FLOW</arg>
-            <!-- Note bene: -XepAllDisabledChecksAsWarnings is not worth it! -->
+<!--        Note bene: -XepAllDisabledChecksAsWarnings is not worth it! -->
             <arg>-Xplugin:ErrorProne -XepDisableWarningsInGeneratedCode
               -Xep:IdentifierName:OFF -Xep:Java8ApiChecker:OFF
               -XepExcludedPaths:.*/target/generated-sources/.*</arg>
@@ -74,10 +75,9 @@
               <artifactId>error_prone_core</artifactId>
               <version>${errorprone.version}</version>
             </path>
-            <!-- Other annotation processors go here.
-                 If 'annotationProcessorPaths' is set, processors will no longer be
-                 discovered on the regular -classpath; see also 'Using Error Prone
-                 together with other annotation processors' below. -->
+<!--        Other annotation processors go here. -->
+<!--        If 'annotationProcessorPaths' is set, processors will no longer be discovered on the regular -classpath; -->
+<!--        see also 'Using Error Prone together with other annotation processors' below. -->
           </annotationProcessorPaths>
         </configuration>
       </plugin>
@@ -86,19 +86,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.4</version>
-        <dependencies>
-          <!-- See https://github.com/MariaDB4j/MariaDB4j/issues/1150 -->
-          <dependency>
-            <groupId>org.apache.maven.surefire</groupId>
-            <artifactId>surefire-junit47</artifactId>
-            <version>3.5.4</version>
-          </dependency>
-          <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>6.0.0</version>
-          </dependency>
-        </dependencies>
       </plugin>
 
       <plugin>
@@ -107,7 +94,7 @@
         <configuration>
           <quiet>true</quiet>
           <show>public</show>
-          <!-- TODO <failOnWarnings>true</failOnWarnings> -->
+<!--      TODO <failOnWarnings>true</failOnWarnings> -->
         </configuration>
         <executions>
           <execution>
@@ -127,11 +114,11 @@
           <useReleaseProfile>false</useReleaseProfile>
           <releaseProfiles>release</releaseProfiles>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
-						http://jira.codehaus.org/browse/MGPG-9 & http://jira.codehaus.org/browse/MRELEASE-263 -->
+<!--      https://central.sonatype.org/publish/requirements/gpg/ -->
+<!--      https://issues.apache.org/jira/projects/MGPG/issues/MGPG-9 -->
+<!--      https://issues.apache.org/jira/projects/MRELEASE/issues/MRELEASE-263 -->
           <mavenExecutorId>forked-path</mavenExecutorId>
-          <!-- Following is required because artifactId is (now) mariaDB4j-pom, but we
-					want mariaDB4j -->
+<!--      Following is required because artifactId is (now) mariaDB4j-pom, but we want mariaDB4j -->
           <tagNameFormat>mariaDB4j-@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
@@ -190,10 +177,9 @@
       </dependency>
       <dependency>
         <scope>test</scope>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <!-- See https://github.com/MariaDB4j/MariaDB4j/issues/1150 -->
-        <version>4.13.2</version>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>6.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>

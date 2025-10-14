@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2012 - 2014 Michael Vorburger
+ * Copyright (C) 2014 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,22 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariadb4j.tests;
+package ch.vorburger.mariadb4j.tests.junit;
 
-import static ch.vorburger.mariadb4j.TestUtil.configureTempDBAndResolvePort;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.mariadb4j.MariaDB4jService;
+import ch.vorburger.mariadb4j.junit.MariaDB4jExtension;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.nio.file.Path;
+class MariaDB4jUnitExtensionOverrideDefaultPortTest {
 
-class MariaDB4jServiceTest {
+    @RegisterExtension
+    private static final MariaDB4jExtension dbRule = new MariaDB4jExtension(3307);
 
     @Test
-    void testStartStop(@TempDir Path tempDir) throws ManagedProcessException {
-        MariaDB4jService service = new MariaDB4jService(configureTempDBAndResolvePort(tempDir));
-        service.start();
-        service.stop();
+    void validatePort() {
+        assertEquals(3307, dbRule.getDBConfiguration().port());
     }
 }

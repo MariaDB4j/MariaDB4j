@@ -23,17 +23,14 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 import ch.vorburger.mariadb4j.springframework.boot.MariaDB4jApplication;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = MariaDB4jApplication.class, webEnvironment = NONE)
-public class MariaDB4jApplicationTest {
+class MariaDB4jApplicationTest {
 
     @Test
-    public void testMariaDB4jApplication() {
+    void testMariaDB4jApplication() {
         // We don't actually have to write anything here
     }
 }

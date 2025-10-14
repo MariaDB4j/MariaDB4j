@@ -22,6 +22,7 @@ package ch.vorburger.mariadb4j;
 import ch.vorburger.exec.OutputStreamLogDispatcher;
 import ch.vorburger.exec.OutputStreamType;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.event.Level;
 
 /**
@@ -34,7 +35,7 @@ public class MariaDBOutputStreamLogDispatcher extends OutputStreamLogDispatcher 
 
     /** {@inheritDoc} */
     @Override
-    public Level dispatch(OutputStreamType type, String line) {
+    public Level dispatch(@NonNull OutputStreamType type, @NonNull String line) {
         if (type == OutputStreamType.STDOUT) {
             return Level.INFO;
         }

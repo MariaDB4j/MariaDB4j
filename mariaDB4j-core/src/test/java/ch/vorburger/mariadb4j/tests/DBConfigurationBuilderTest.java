@@ -19,157 +19,150 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static ch.vorburger.mariadb4j.TestUtil.configureTempDB;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.Util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
-public class DBConfigurationBuilderTest {
+class DBConfigurationBuilderTest {
 
     @Test
-    public void defaultDataDirIsTemporaryAndIncludesPortNumber() {
+    void defaultDataDirIsTemporaryAndIncludesPortNumber() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
-        File defaultDataDir = config.getDataDir();
+        Path defaultDataDir = config.dataDir();
         assertTrue(Util.isTemporaryDirectory(defaultDataDir));
-        int port = config.getPort();
-        assertTrue(defaultDataDir.toString().contains(Integer.toString(port)));
+        assertEquals(String.valueOf(config.port()), defaultDataDir.getFileName().toString());
     }
 
     @Test
-    public void defaultDataDirIsTemporaryAndIncludesPortNumberEvenIfPortIsExplicitlySet() {
+    void defaultDataDirIsTemporaryAndIncludesPortNumberEvenIfPortIsExplicitlySet() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         builder.setPort(12345);
         DBConfiguration config = builder.build();
-        File defaultDataDir = config.getDataDir();
+        Path defaultDataDir = config.dataDir();
         assertTrue(Util.isTemporaryDirectory(defaultDataDir));
-        assertTrue(defaultDataDir.toString().contains(Integer.toString(12345)));
+        assertEquals(String.valueOf(config.port()), defaultDataDir.getFileName().toString());
     }
 
     @Test
-    public void dataDirDoesNotIncludePortNumberEvenItsExplicitlySet() {
+    void dataDirDoesNotIncludePortNumberEvenItsExplicitlySet() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        builder.setDataDir(new File("db/data"));
+        Path dataDir = Path.of("db").resolve("data");
+        builder.setDataDir(dataDir);
         DBConfiguration config = builder.build();
-        File defaultDataDir = config.getDataDir();
-        assertEquals(new File("db/data"), defaultDataDir);
+        Path defaultDataDir = config.dataDir();
+        assertEquals(dataDir, defaultDataDir);
         assertFalse(Util.isTemporaryDirectory(defaultDataDir));
     }
 
     @Test
-    public void resetDataDirToDefaultTemporary() {
+    void resetDataDirToDefaultTemporary() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        builder.setDataDir(new File("db/data"));
-        assertEquals(new File("db/data"), builder.getDataDir());
+        Path dataDir = Path.of("db").resolve("data");
+        builder.setDataDir(dataDir);
+        assertEquals(dataDir, builder.getDataDir());
         builder.setDataDir(null);
         DBConfiguration config = builder.build();
-        File defaultDataDir = config.getDataDir();
+        Path defaultDataDir = config.dataDir();
         assertTrue(Util.isTemporaryDirectory(defaultDataDir));
-        int port = config.getPort();
-        assertTrue(defaultDataDir.toString().contains(Integer.toString(port)));
+        assertEquals(String.valueOf(config.port()), defaultDataDir.getFileName().toString());
     }
 
     @Test
-    public void defaultTmpDirIsTemporaryAndIncludesPortNumber() {
-        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        DBConfiguration config = builder.build();
-        File defaultTmpDir = config.getTmpDir();
+    void defaultTmpDirIsTemporaryAndIncludesPortNumber() {
+        DBConfiguration config = DBConfigurationBuilder.newBuilder().build();
+        Path defaultTmpDir = config.tmpDir();
         assertTrue(Util.isTemporaryDirectory(defaultTmpDir));
-        int port = config.getPort();
-        assertTrue(defaultTmpDir.toString().contains(Integer.toString(port)));
+        assertEquals(String.valueOf(config.port()), defaultTmpDir.getFileName().toString());
     }
 
     @Test
-    public void defaultTmpDirIsTemporaryAndIncludesPortNumberEvenIfPortIsExplicitlySet() {
+    void defaultTmpDirIsTemporaryAndIncludesPortNumberEvenIfPortIsExplicitlySet() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         builder.setPort(12345);
         DBConfiguration config = builder.build();
-        File defaultTmpDir = config.getTmpDir();
+        Path defaultTmpDir = config.tmpDir();
         assertTrue(Util.isTemporaryDirectory(defaultTmpDir));
-        assertTrue(defaultTmpDir.toString().contains(Integer.toString(12345)));
+        assertEquals(String.valueOf(12345), defaultTmpDir.getFileName().toString());
     }
 
     @Test
-    public void tmpDirDoesNotIncludePortNumberEvenItsExplicitlySet() {
+    void tmpDirDoesNotIncludePortNumberEvenItsExplicitlySet() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        builder.setTmpDir("db/tmp");
+        Path tmpDir = Path.of("db").resolve("tmp");
+        builder.setTmpDir(tmpDir);
         DBConfiguration config = builder.build();
-        File defaultTmpDir = config.getTmpDir();
+        Path defaultTmpDir = config.tmpDir();
         assertFalse(Util.isTemporaryDirectory(defaultTmpDir));
-        var defaultTmpDirString = defaultTmpDir.toString();
-        assertTrue(
-                defaultTmpDirString, defaultTmpDirString.contains("db" + File.separator + "tmp"));
+        assertEquals(tmpDir, defaultTmpDir);
     }
 
     @Test
-    public void resetTmpDirToDefaultTemporary() {
+    void resetTmpDirToDefaultTemporary() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        builder.setTmpDir("db/tmp");
-        assertEquals(new File("db/tmp"), builder.getTmpDir());
+        Path tempDir = Path.of("db").resolve("tmp");
+        builder.setTmpDir(tempDir);
+        assertEquals(tempDir, builder.getTmpDir());
         builder.setTmpDir(null);
         assertTrue(Util.isTemporaryDirectory(builder.getTmpDir()));
-        builder.setTmpDir(null);
         DBConfiguration config = builder.build();
-        File defaultTmpDir = config.getTmpDir();
+        Path defaultTmpDir = config.tmpDir();
         assertTrue(Util.isTemporaryDirectory(defaultTmpDir));
     }
 
     @Test
-    public void defaultLibDirIsRelativeToBaseDir() {
+    void defaultLibDirIsRelativeToBaseDir() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
-        File defaultBaseDir = config.getBaseDir();
+        Path defaultBaseDir = config.baseDir();
         assertTrue(Util.isTemporaryDirectory(defaultBaseDir));
-        File defaultLibDir = config.getLibDir();
-        assertEquals(defaultLibDir, new File(defaultBaseDir, "libs"));
+        Path defaultLibDir = config.libDir();
+        assertEquals(defaultLibDir, defaultBaseDir.resolve("libs"));
     }
 
     @Test
-    public void defaultLibDirIsRelativeToUpdatedBaseDir() throws IOException {
-        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        Path baseDirPath = Files.createTempDirectory("MariaDB4j");
-        builder.setBaseDir(baseDirPath.toFile());
+    void defaultLibDirIsRelativeToUpdatedBaseDir(@TempDir Path tempDir) {
+        DBConfigurationBuilder builder = configureTempDB(tempDir);
+        builder.setBaseDir(tempDir.resolve("MariaDB4j"));
         DBConfiguration config = builder.build();
 
-        File baseDir = config.getBaseDir();
-        File defaultLibDir = config.getLibDir();
-        assertEquals(defaultLibDir, new File(baseDir, "/libs"));
+        Path baseDir = config.baseDir();
+        Path defaultLibDir = config.libDir();
+        assertEquals(defaultLibDir, baseDir.resolve("libs"));
     }
 
     @Test
-    public void modifiedLibDir() throws IOException {
-        DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        Path libDir = Files.createTempDirectory("libsdir");
-        builder.setLibDir(libDir.toFile());
-        Path baseDir = Files.createTempDirectory("mariadb");
-        builder.setBaseDir(baseDir.toFile());
+    void modifiedLibDir(@TempDir Path tempDir) {
+        DBConfigurationBuilder builder = configureTempDB(tempDir);
+        Path libDir = tempDir.resolve("libsdir");
+        builder.setLibDir(libDir);
+        builder.setBaseDir(tempDir.resolve("mariadb"));
         DBConfiguration config = builder.build();
 
-        File updatedLibDir = config.getLibDir();
-        assertEquals(updatedLibDir, libDir.toFile());
+        Path updatedLibDir = config.libDir();
+        assertEquals(updatedLibDir, libDir);
     }
 
     @Test
-    public void deletesTemporaryDirectoriesAsDefault() {
+    void deletesTemporaryDirectoriesAsDefault() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
         assertTrue(config.isDeletingTemporaryBaseAndDataDirsOnShutdown());
     }
 
     @Test
-    public void keepsTemporaryDirectories() {
+    void keepsTemporaryDirectories() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         builder.setDeletingTemporaryBaseAndDataDirsOnShutdown(false);
         DBConfiguration config = builder.build();
@@ -177,32 +170,32 @@ public class DBConfigurationBuilderTest {
     }
 
     @Test
-    public void defaultCharacterSet() {
+    void defaultCharacterSet() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         String character = "utf8mb4";
         builder.setDefaultCharacterSet(character);
         DBConfiguration config = builder.build();
-        String defaultCharacterSet = config.getDefaultCharacterSet();
+        String defaultCharacterSet = config.defaultCharacterSet();
         assertEquals(character, defaultCharacterSet);
     }
 
     @Test
-    public void defaultCharacterSetIsEmpty() {
+    void defaultCharacterSetIsEmpty() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
-        String defaultCharacterSet = config.getDefaultCharacterSet();
+        String defaultCharacterSet = config.defaultCharacterSet();
         assertNull(defaultCharacterSet);
     }
 
     @Test
-    public void defaultExecutables() {
+    void defaultExecutables() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
         DBConfiguration config = builder.build();
-        var pathSeparator = System.getProperty("file.separator");
+        var pathSeparator = FileSystems.getDefault().getSeparator();
         var expectedMariaDB4jString = "MariaDB4j/base/".replace("/", pathSeparator);
         var expectedMariaDBString = "bin/mariadbd".replace("/", pathSeparator);
         var expectedMySqlString = "bin/mysqld".replace("/", pathSeparator);
-        String executable = config.getExecutable(Executable.Server).toString();
+        String executable = config.getExecutable(Executable.SERVER).toString();
         assertTrue(
                 executable.contains(expectedMariaDB4jString)
                         || executable.contains(expectedMariaDBString)
@@ -210,10 +203,12 @@ public class DBConfigurationBuilderTest {
     }
 
     @Test
-    public void customExecutables() {
+    void customExecutables() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        builder.setExecutable(Executable.Server, "/usr/sbin/mariadbd");
+        builder.setExecutable(Executable.SERVER, "/usr/sbin/mariadbd");
         DBConfiguration config = builder.build();
-        assertEquals(new File("/usr/sbin/mariadbd"), config.getExecutable(Executable.Server));
+        assertEquals(
+                Path.of("/usr").resolve("sbin").resolve("mariadbd"),
+                config.getExecutable(Executable.SERVER));
     }
 }

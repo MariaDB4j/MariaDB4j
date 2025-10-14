@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2014 Michael Vorburger
+ * Copyright (C) 2012 - 2025 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,24 @@
  * limitations under the License.
  * #L%
  */
-package ch.vorburger.mariadb4j.tests.junit;
+package ch.vorburger.mariadb4j.junit;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.commons.io.file.PathUtils;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-import ch.vorburger.mariadb4j.junit.MariaDB4jRule;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Rule;
-import org.junit.Test;
+final class TempRoot implements ExtensionContext.Store.CloseableResource {
+    final Path dir;
 
-public class MariaDB4jUnitRuleOverrideDefaultPortTest {
+    TempRoot() throws IOException {
+        this.dir = Files.createTempDirectory("junit-");
+    }
 
-    @Rule public MariaDB4jRule dbRule = new MariaDB4jRule(3307);
-
-    @Test
-    public void validatePort() {
-        assertEquals(3307, dbRule.getDBConfiguration().getPort());
+    @Override
+    public void close() throws IOException {
+        PathUtils.deleteDirectory(dir);
     }
 }

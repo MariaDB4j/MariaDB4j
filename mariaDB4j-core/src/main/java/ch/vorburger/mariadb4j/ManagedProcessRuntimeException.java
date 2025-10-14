@@ -21,6 +21,8 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessException;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when unexpected thing happen in {@link ch.vorburger.exec.ManagedProcess} and <a
  * href="https://github.com/MariaDB4j/MariaDB4j/issues/88">caller needs an unchecked instead of a
@@ -30,7 +32,7 @@ import ch.vorburger.exec.ManagedProcessException;
  */
 public class ManagedProcessRuntimeException extends RuntimeException {
 
-    private static final long serialVersionUID = -415492090964791430L;
+    @Serial private static final long serialVersionUID = -415492090964791430L;
 
     /**
      * Constructor.

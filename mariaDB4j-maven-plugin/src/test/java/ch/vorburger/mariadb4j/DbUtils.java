@@ -19,17 +19,18 @@
  */
 package ch.vorburger.mariadb4j;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
-import com.google.common.math.IntMath;
+
+import org.jooq.*;
+import org.jooq.Record;
+import org.jooq.impl.DSL;
+import org.jspecify.annotations.NonNull;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * DbUtils for testing.
@@ -40,35 +41,32 @@ import java.sql.Statement;
 class DbUtils {
     private DbUtils() {}
 
-    public static ImmutableMap<String, String> showVariables(Connection conn, String likeness)
-            throws SQLException {
-        checkArgument(likeness.matches("[\\w%]*"), "likeness value invalid");
-        ImmutableMap.Builder<String, String> b = ImmutableMap.builder();
-        try (Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SHOW VARIABLES LIKE '" + likeness + "'")) {
-            while (rs.next()) {
-                b.put(rs.getString(1), rs.getString(2));
+    public static ImmutableMap<@NonNull String, @NonNull String> showVariables(
+            Connection conn, String likeness) throws SQLException {
+        ImmutableMap.Builder<@NonNull String, @NonNull String> b = ImmutableMap.builder();
+        try (PreparedStatement ps = conn.prepareStatement("SHOW VARIABLES LIKE ?")) {
+            ps.setString(1, likeness);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    b.put(rs.getString(1), rs.getString(2));
+                }
             }
         }
         return b.build();
     }
 
-    public static ImmutableTable<Integer, String, Object> selectAll(Connection conn, String table)
-            throws SQLException {
-        checkArgument(table.matches("[A-Za-z]\\w+"), "table name invalid");
-        ImmutableTable.Builder<Integer, String, Object> b = ImmutableTable.builder();
-        try (Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM `" + table + "` WHERE 1")) {
-            ResultSetMetaData md = rs.getMetaData();
-            int row = 0;
-            while (rs.next()) {
-                for (int column = 1; column <= md.getColumnCount(); column++) {
-                    String columnName = md.getColumnName(column);
-                    Object value = rs.getObject(column);
-                    b.put(row, columnName, value);
-                }
-                row = IntMath.checkedAdd(row, 1);
-            }
+    public static ImmutableTable<@NonNull Integer, @NonNull String, @NonNull Object> selectAll(
+            Connection conn, String table) {
+        DSLContext dsl = DSL.using(conn, SQLDialect.MARIADB);
+        Table<Record> t = DSL.table(DSL.name(table));
+        Result<Record> result = dsl.selectFrom(t).fetch();
+        ImmutableTable.Builder<@NonNull Integer, @NonNull String, @NonNull Object> b =
+                ImmutableTable.builder();
+        int row = 0;
+        for (Record r : result) {
+            int finalRow = row;
+            r.intoMap().forEach((col, val) -> b.put(finalRow, col, val));
+            row++;
         }
         return b.build();
     }

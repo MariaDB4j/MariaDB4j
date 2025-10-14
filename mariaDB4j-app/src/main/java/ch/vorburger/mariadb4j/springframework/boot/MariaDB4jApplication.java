@@ -32,6 +32,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import java.io.IOException;
+
 /**
  * Spring Boot based MariaDB4j main() "Application" launcher.
  *
@@ -60,17 +62,15 @@ public class MariaDB4jApplication implements ExitCodeGenerator {
      * Main.
      *
      * @param args an array of {@link java.lang.String} objects
-     * @throws java.lang.Exception if any.
+     * @throws java.io.IOException if any.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         SpringApplication app = new SpringApplication(MariaDB4jApplication.class);
         app.setBannerMode(Mode.OFF);
-        ConfigurableApplicationContext ctx = app.run(args);
-
-        MariaDB4jService.waitForKeyPressToCleanlyExit();
-
-        ctx.stop();
-        ctx.close();
+        try (ConfigurableApplicationContext ctx = app.run(args)) {
+            MariaDB4jService.waitForKeyPressToCleanlyExit();
+            ctx.stop();
+        }
     }
 
     /** {@inheritDoc} */

@@ -19,17 +19,23 @@
  */
 package ch.vorburger.mariadb4j;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * File utilities.
@@ -44,38 +50,28 @@ public class Util {
     private Util() {}
 
     /**
-     * Retrieve the directory located at the given path. Checks that path indeed is a reabable
+     * Retrieve the directory located at the given path. Checks that path indeed is a readable
      * directory. If this does not exist, create it (and log having done so).
      *
      * @param dir directory(ies, can include parent directories) names, as forward slash ('/')
      *     separated String
-     * @return safe File object representing that path name
+     * @return safe Path object representing that path name
      * @throws java.lang.IllegalArgumentException If it is not a directory, or it is not readable
      */
-    public static File getDirectory(File dir) {
-        boolean log = false;
-        if (!dir.exists()) {
-            log = true;
-            try {
-                FileUtils.forceMkdir(dir);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(
-                        "Unable to create new directory at path: " + dir, e);
-            }
+    public static Path getDirectory(Path dir) {
+        try {
+            Files.createDirectories(dir);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Unable to create new directory at path: " + dir, e);
         }
-        String absPath = dir.getAbsolutePath();
-        if (absPath.trim().length() == 0) {
-            throw new IllegalArgumentException(dir + " is empty");
-        }
-        if (!dir.isDirectory()) {
+
+        if (dir.toString().trim().isEmpty()) throw new IllegalArgumentException(dir + " is empty");
+        if (!Files.isDirectory(dir))
             throw new IllegalArgumentException(dir + " is not a directory");
-        }
-        if (!dir.canRead()) {
+        if (!Files.isReadable(dir))
             throw new IllegalArgumentException(dir + " is not a readable directory");
-        }
-        if (log) {
-            logger.info("Created directory: " + absPath);
-        }
+
+        logger.info("Ensured directory exists: {}", dir.toAbsolutePath());
         return dir;
     }
 
@@ -85,26 +81,31 @@ public class Util {
      * @param directory directory name
      * @return true if the passed directory name starts with the system temporary directory name.
      */
-    public static boolean isTemporaryDirectory(File directory) {
-        return directory != null
-                && directory.getAbsolutePath().startsWith(SystemUtils.JAVA_IO_TMPDIR);
+    public static boolean isTemporaryDirectory(Path directory) {
+        if (directory == null) return false;
+        Path tmp = Path.of(SystemUtils.JAVA_IO_TMPDIR).toAbsolutePath().normalize();
+        Path dir = directory.toAbsolutePath().normalize();
+        return dir.startsWith(tmp);
     }
 
-    public static void forceExecutable(File executableFile) throws IOException {
-        if (executableFile.exists()) {
-            if (!executableFile.canExecute()) {
-                boolean succeeded = executableFile.setExecutable(true);
-                if (!succeeded) {
-                    throw new IOException(
-                            "Failed to do chmod +x "
-                                    + executableFile.toString()
-                                    + " using java.io.File.setExecutable, which will be a problem on *NIX...");
-                }
-                logger.info("chmod +x {} (using java.io.File.setExecutable)", executableFile);
-            }
-        } else {
-            logger.info("chmod +x requested on non-existing file: {}", executableFile);
+    public static void forceExecutable(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            logger.info("chmod +x requested on non-existing file: {}", path);
+            return;
         }
+        if (Files.isExecutable(path)) return;
+        if (Files.getFileStore(path).supportsFileAttributeView(PosixFileAttributeView.class)) {
+            Set<PosixFilePermission> perms = Files.getPosixFilePermissions(path);
+            perms.add(PosixFilePermission.OWNER_EXECUTE);
+            Files.setPosixFilePermissions(path, perms);
+            return;
+        }
+        if (!path.toFile().setExecutable(true))
+            throw new IOException(
+                    "Failed to do chmod +x "
+                            + path
+                            + " using java.io.File.setExecutable, which will be a problem on *NIX...");
+        logger.info("chmod +x {} (using java.io.File.setExecutable fallback)", path);
     }
 
     /**
@@ -116,59 +117,65 @@ public class Util {
      * @throws java.io.IOException if something goes wrong, including if nothing was found on
      *     classpath
      */
-    public static int extractFromClasspathToFile(String packagePath, File toDir)
-            throws IOException {
+    public static int extractFromClasspathToDir(String packagePath, Path toDir) throws IOException {
         String locationPattern = "classpath*:" + packagePath + "/**";
-        ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-        Resource[] resources = resourcePatternResolver.getResources(locationPattern);
-        if (resources.length == 0) {
-            throw new IOException("Nothing found at " + locationPattern);
-        }
+        Resource[] resources =
+                new PathMatchingResourcePatternResolver().getResources(locationPattern);
+        if (resources.length == 0) throw new IOException("Nothing found at " + locationPattern);
         int counter = 0;
         for (Resource resource : resources) {
-            if (resource.isReadable()) { // Skip hidden or system files
-                final URL url = resource.getURL();
-                String path = url.toString();
-                if (!path.endsWith("/")) { // Skip directories
-                    int p = path.lastIndexOf(packagePath) + packagePath.length();
-                    path = path.substring(p);
-                    final File targetFile = new File(toDir, path);
-                    long len = resource.contentLength();
-                    if (!targetFile.exists() || targetFile.length() != len) { // Only copy new files
-                        tryN(5, 500, () -> FileUtils.copyURLToFile(url, targetFile));
-                        counter++;
-                    }
-                }
-            }
+            if (!resource.isReadable()) continue;
+            URL url = resource.getURL();
+            String urlString = url.toString();
+            if (urlString.endsWith("/")) continue;
+            String relative =
+                    urlString.substring(urlString.lastIndexOf(packagePath) + packagePath.length());
+            Path target = toDir.resolve(relative.substring(relative.startsWith("/") ? 1 : 0));
+            if (Files.exists(target) && Files.size(target) == resource.contentLength()) continue;
+            tryN(
+                    5,
+                    500,
+                    () -> {
+                        PathUtils.createParentDirectories(target);
+                        PathUtils.copy(
+                                url::openStream, target, StandardCopyOption.REPLACE_EXISTING);
+                    });
+            counter++;
         }
-        if (counter > 0) {
-            Object[] info = {counter, locationPattern, toDir};
-            logger.info("Unpacked {} files from {} to {}", info);
-        }
+        if (counter > 0)
+            logger.info("Unpacked {} files from {} to {}", counter, locationPattern, toDir);
         return counter;
     }
 
-    @SuppressWarnings("null")
-    private static void tryN(int n, long msToWait, Procedure<IOException> procedure)
+    @SuppressWarnings("SameParameterValue")
+    private static void tryN(int totalAttempts, long msToWait, Procedure<IOException> procedure)
             throws IOException {
         IOException lastIOException = null;
-        int numAttempts = 0;
-        while (numAttempts++ < n) {
+        for (int attempt = 1; attempt <= totalAttempts; attempt++) {
             try {
                 procedure.apply();
                 return;
-            } catch (IOException e) {
-                lastIOException = e;
+            } catch (IOException ioException) {
+                lastIOException = ioException;
+                if (attempt == totalAttempts) break;
                 logger.warn(
-                        "Failure {} of {}, retrying again in {}ms", numAttempts, n, msToWait, e);
+                        "Failure {} of {}, retrying again in {}ms",
+                        attempt,
+                        totalAttempts,
+                        msToWait,
+                        ioException);
                 try {
                     Thread.sleep(msToWait);
-                } catch (InterruptedException interruptedException) {
-                    // Ignore
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    InterruptedIOException interruptedIOException =
+                            new InterruptedIOException("Interrupted while waiting to retry");
+                    interruptedIOException.initCause(ie);
+                    throw interruptedIOException;
                 }
             }
         }
-        throw lastIOException;
+        throw Objects.requireNonNull(lastIOException);
     }
 
     private interface Procedure<E extends Throwable> {

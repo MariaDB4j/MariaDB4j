@@ -23,15 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Tests overriding the default configuration of a MariaDB4jSpringService set in a {@link
@@ -39,27 +37,26 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  * @author Michael Vorburger
  */
-@ContextConfiguration(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@SpringJUnitConfig(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
 @TestPropertySource(properties = {MariaDB4jSpringService.PORT + "=5678"})
-public class MariaDB4jSpringServiceNewDefaultsOverriddenBySpringValueTest {
+class MariaDB4jSpringServiceNewDefaultsOverriddenBySpringValueTest {
 
     @Autowired MariaDB4jSpringService s;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         if (!s.isRunning()) {
             s.start(); // Only start if not already running
         }
     }
 
     @Test
-    public void testNewDefaults() {
-        assertEquals(5678, s.getConfiguration().getPort());
+    void testNewDefaults() {
+        assertEquals(5678, s.getConfiguration().port());
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         if (s.isRunning()) {
             s.stop();
         }

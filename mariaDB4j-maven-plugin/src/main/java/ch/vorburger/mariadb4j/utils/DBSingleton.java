@@ -39,9 +39,7 @@ public final class DBSingleton {
     private static DB db;
     private static DBConfigurationBuilder configurationBuilder;
 
-    private DBSingleton() {
-        // static final singleton utility class
-    }
+    private DBSingleton() {}
 
     public static DB getDB() {
         if (db == null) throw new IllegalStateException("db not set");
@@ -49,11 +47,10 @@ public final class DBSingleton {
     }
 
     public static void shutdownDB() throws ManagedProcessException {
-        if (db != null) {
-            db.stop();
-            db = null;
-            configurationBuilder = null;
-        }
+        if (db == null) return;
+        db.stop();
+        db = null;
+        configurationBuilder = null;
     }
 
     public static void setDB(DB db) {

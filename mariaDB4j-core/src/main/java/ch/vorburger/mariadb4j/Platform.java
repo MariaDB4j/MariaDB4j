@@ -39,8 +39,17 @@ final class Platform implements AutoCloseable {
     }
 
     // TODO Introduce OTHER instead of falling back to LINUX
-    private static final OS real =
-            SystemUtils.IS_OS_WINDOWS ? OS.WINDOWS : SystemUtils.IS_OS_MAC ? OS.MAC : OS.LINUX;
+    private static final OS real;
+
+    static {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            real = OS.WINDOWS;
+        } else if (SystemUtils.IS_OS_MAC) {
+            real = OS.MAC;
+        } else {
+            real = OS.LINUX;
+        }
+    }
 
     private static OS simulated = real;
 
@@ -48,10 +57,11 @@ final class Platform implements AutoCloseable {
         return simulated;
     }
 
-    // https://errorprone.info/bugpattern/StaticAssignmentInConstructor
-    @SuppressWarnings("StaticAssignmentInConstructor")
-    Platform(OS simulated) {
+    private Platform() {}
+
+    static Platform simulate(OS simulated) {
         Platform.simulated = simulated;
+        return new Platform();
     }
 
     @Override

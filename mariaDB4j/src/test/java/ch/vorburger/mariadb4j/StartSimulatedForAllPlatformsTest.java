@@ -19,16 +19,19 @@
  */
 package ch.vorburger.mariadb4j;
 
-import static org.junit.Assert.assertTrue;
+import static ch.vorburger.mariadb4j.TestUtil.buildTempDB;
+import static ch.vorburger.mariadb4j.TestUtil.configureTempDB;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ch.vorburger.exec.ManagedProcess;
-import ch.vorburger.exec.ManagedProcessException;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Simulating starting MariaDB4j on all supported platforms.
@@ -38,39 +41,41 @@ import java.io.IOException;
  *
  * @author Michael Vorburger
  */
-public class StartSimulatedForAllPlatformsTest {
+class StartSimulatedForAllPlatformsTest {
 
     @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
     @Test
-    public void simulatedStartWin64() throws Exception {
-        try (var platform = new Platform(Platform.OS.WINDOWS)) {
-            checkPlatformStart(DBConfigurationBuilder.WINX64);
+    void simulatedStartWin64(@TempDir Path tempDir) throws IOException {
+        try (@SuppressWarnings("unused")
+                var platform = Platform.simulate(Platform.OS.WINDOWS)) {
+            checkPlatformStart(tempDir, DBConfigurationBuilder.WINX64);
         }
     }
 
     @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
     @Test
-    public void simulatedStartLinux() throws Exception {
-        try (var platform = new Platform(Platform.OS.LINUX)) {
-            checkPlatformStart(DBConfigurationBuilder.LINUX);
+    void simulatedStartLinux(@TempDir Path tempDir) throws IOException {
+        try (@SuppressWarnings("unused")
+                var platform = Platform.simulate(Platform.OS.LINUX)) {
+            checkPlatformStart(tempDir, DBConfigurationBuilder.LINUX);
         }
     }
 
     @SuppressWarnings("try") // TODO Replace platform with _ when Java 22+
     @Test
-    public void simulatedStartOSX() throws Exception {
-        try (var platform = new Platform(Platform.OS.MAC)) {
-            checkPlatformStart(DBConfigurationBuilder.OSX);
+    void simulatedStartOSX(@TempDir Path tempDir) throws IOException {
+        try (@SuppressWarnings("unused")
+                var platform = Platform.simulate(Platform.OS.MAC)) {
+            checkPlatformStart(tempDir, DBConfigurationBuilder.OSX);
         }
     }
 
-    void checkPlatformStart(String platform) throws ManagedProcessException, IOException {
-        DBConfigurationBuilder configBuilder = DBConfigurationBuilder.newBuilder();
-        configBuilder.setOS(platform);
-        configBuilder.setBaseDir(new File(configBuilder.getBaseDir() + "/" + platform));
-        DBConfiguration config = configBuilder.build();
+    void checkPlatformStart(Path tempDir, String platform) throws IOException {
+        DBConfigurationBuilder config = configureTempDB(tempDir);
+        config.setOS(platform);
+        config.setBaseDir(config.getBaseDir().resolve(platform));
 
-        DB db = new DB(config);
+        DB db = buildTempDB(tempDir, config, DB::new);
         db.prepareDirectories();
         db.unpackEmbeddedDb();
 
@@ -79,16 +84,11 @@ public class StartSimulatedForAllPlatformsTest {
 
         ManagedProcess startProc = db.startPreparation();
         checkManagedProcessExists(startProc);
-
-        // This is super important.. without this, the test is useless,
-        // as it will not catch platform specific problems, because the files
-        // from previous platform test will still be available
-        FileUtils.deleteDirectory(config.getBaseDir());
     }
 
     void checkManagedProcessExists(ManagedProcess proc) {
         File installProcFile = proc.getExecutableFile();
-        assertTrue("Does not exist: " + installProcFile.toString(), installProcFile.exists());
-        assertTrue("Is not a File: " + installProcFile.toString(), installProcFile.isFile());
+        assertTrue(installProcFile.exists(), "Does not exist: " + installProcFile);
+        assertTrue(installProcFile.isFile(), "Is not a File: " + installProcFile);
     }
 }

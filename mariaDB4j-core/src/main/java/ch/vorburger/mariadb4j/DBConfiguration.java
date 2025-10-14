@@ -21,11 +21,8 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Enables passing in custom options when starting up the database server. This is similar to
@@ -40,53 +37,53 @@ public interface DBConfiguration {
      *
      * @return returns port value
      */
-    int getPort();
+    int port();
 
     /**
      * UNIX Socket to start DB server on (ignored on Windows).
      *
      * @return returns socket value
      */
-    String getSocket();
+    String socket();
 
     /**
      * Where from on the classpath should the binaries be extracted to the file system.
      *
      * @return null (not empty) if nothing should be extracted.
      */
-    String getBinariesClassPathLocation();
+    String binariesClassPathLocation();
 
     /**
      * Base directory where DB binaries are expected to be found.
      *
      * @return returns base directory value
      */
-    File getBaseDir();
+    Path baseDir();
 
     /**
      * Base directory where DB binaries' linked libraries are expected to be found.
      *
      * @return returns lib directory value
      */
-    File getLibDir();
+    Path libDir();
 
     /**
      * Base directory for DB's actual data files.
      *
      * @return returns data directory value
      */
-    File getDataDir();
+    Path dataDir();
 
     /**
      * Directory for DB's temporary files.
      *
      * @return returns temporary directory value
      */
-    File getTmpDir();
+    Path tmpDir();
 
     /**
      * Whether to delete the base and data directory on shutdown, if it is in a temporary directory.
-     * NB: If you've set the base and data directories to non temporary directories, then they'll
+     * NB: If you've set the base and data directories to non-temporary directories, then they'll
      * never get deleted.
      *
      * @return returns value of isDeletingTemporaryBaseAndDataDirsOnShutdown
@@ -98,9 +95,10 @@ public interface DBConfiguration {
      *
      * @return returns boolean isWindows
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean isWindows();
 
-    List<String> getArgs();
+    List<String> args();
 
     String getOSLibraryEnvironmentVarName();
 
@@ -112,7 +110,7 @@ public interface DBConfiguration {
     ManagedProcessListener getProcessListener();
 
     /**
-     * Whether to to "--skip-grant-tables".
+     * Whether to "--skip-grant-tables".
      *
      * @return returns boolean isSecurityDisabled value
      */
@@ -120,159 +118,15 @@ public interface DBConfiguration {
 
     String getURL(String dbName);
 
-    String getDefaultCharacterSet();
+    String defaultCharacterSet();
 
-    File getExecutable(Executable executable);
+    Path getExecutable(Executable executable);
 
     enum Executable {
-        InstallDB,
-        Server,
-        Client,
-        Dump,
-        PrintDefaults
-    }
-
-    class Impl implements DBConfiguration {
-
-        private final int port;
-        private final String socket;
-        private final String binariesClassPathLocation;
-        private final File baseDir;
-        private final File libDir;
-        private final File dataDir;
-        private final File tmpDir;
-        private final boolean isDeletingTemporaryBaseAndDataDirsOnShutdown;
-        private final boolean isWindows;
-        private final List<String> args;
-        private final String osLibraryEnvironmentVarName;
-        private final String defaultCharacterSet;
-        private final ManagedProcessListener listener;
-        private final boolean isSecurityDisabled;
-        private final Function<String, String> getURL;
-
-        @SuppressWarnings("ImmutableMemberCollection")
-        private final Map<Executable, Supplier<File>> executables;
-
-        Impl(
-                int port,
-                String socket,
-                String binariesClassPathLocation,
-                File baseDir,
-                File libDir,
-                File dataDir,
-                File tmpDir,
-                boolean isWindows,
-                List<String> args,
-                String osLibraryEnvironmentVarName,
-                boolean isSecurityDisabled,
-                boolean isDeletingTemporaryBaseAndDataDirsOnShutdown,
-                Function<String, String> getURL,
-                String defaultCharacterSet,
-                Map<Executable, Supplier<File>> executables,
-                ManagedProcessListener listener) {
-            this.port = port;
-            this.socket = socket;
-            this.binariesClassPathLocation = binariesClassPathLocation;
-            this.baseDir = baseDir;
-            this.libDir = libDir;
-            this.dataDir = dataDir;
-            this.tmpDir = tmpDir;
-            this.isDeletingTemporaryBaseAndDataDirsOnShutdown =
-                    isDeletingTemporaryBaseAndDataDirsOnShutdown;
-            this.isWindows = isWindows;
-            this.args = args;
-            this.osLibraryEnvironmentVarName = osLibraryEnvironmentVarName;
-            this.isSecurityDisabled = isSecurityDisabled;
-            this.getURL = getURL;
-            this.defaultCharacterSet = defaultCharacterSet;
-            this.listener = listener;
-            this.executables = Map.copyOf(executables);
-        }
-
-        @Override
-        public int getPort() {
-            return port;
-        }
-
-        @Override
-        public String getSocket() {
-            return socket;
-        }
-
-        @Override
-        public String getBinariesClassPathLocation() {
-            return binariesClassPathLocation;
-        }
-
-        @Override
-        public File getBaseDir() {
-            return baseDir;
-        }
-
-        @Override
-        public File getLibDir() {
-            return libDir;
-        }
-
-        @Override
-        public File getDataDir() {
-            return dataDir;
-        }
-
-        @Override
-        public File getTmpDir() {
-            return tmpDir;
-        }
-
-        @Override
-        public boolean isDeletingTemporaryBaseAndDataDirsOnShutdown() {
-            return isDeletingTemporaryBaseAndDataDirsOnShutdown;
-        }
-
-        @Override
-        public boolean isWindows() {
-            return isWindows;
-        }
-
-        @Override
-        public List<String> getArgs() {
-            return args;
-        }
-
-        @Override
-        public String getOSLibraryEnvironmentVarName() {
-            return osLibraryEnvironmentVarName;
-        }
-
-        @Override
-        public boolean isSecurityDisabled() {
-            return isSecurityDisabled;
-        }
-
-        @Override
-        public String getURL(String dbName) {
-            return getURL.apply(dbName);
-        }
-
-        @Override
-        public ManagedProcessListener getProcessListener() {
-            return listener;
-        }
-
-        @Override
-        public String getDefaultCharacterSet() {
-            return defaultCharacterSet;
-        }
-
-        @Override
-        public File getExecutable(Executable executable) {
-            return executables
-                    .getOrDefault(
-                            executable,
-                            () -> {
-                                throw new IllegalArgumentException(executable.name());
-                            })
-                    .get();
-        }
+        INSTALL_DB,
+        SERVER,
+        CLIENT,
+        DUMP,
+        PRINT_DEFAULTS
     }
 }

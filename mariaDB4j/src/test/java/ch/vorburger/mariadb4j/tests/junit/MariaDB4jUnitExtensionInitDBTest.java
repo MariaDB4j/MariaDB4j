@@ -19,37 +19,36 @@
  */
 package ch.vorburger.mariadb4j.tests.junit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
-import ch.vorburger.mariadb4j.junit.MariaDB4jRule;
+import ch.vorburger.mariadb4j.junit.MariaDB4jExtension;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-public class MariaDB4jUnitRuleInitDBTest {
+class MariaDB4jUnitExtensionInitDBTest {
 
     private static final String DB_NAME = "junittest";
 
-    @Rule
-    public MariaDB4jRule dbRule =
-            new MariaDB4jRule(
-                    DBConfigurationBuilder.newBuilder().build(),
+    @RegisterExtension
+    private static final MariaDB4jExtension dbRule =
+            new MariaDB4jExtension(
+                    DBConfigurationBuilder.newBuilder(),
                     DB_NAME,
                     "ch/vorburger/mariadb4j/basicSource.sql");
 
     @Test
-    public void validateSourceInitialization() throws SQLException {
+    void validateSourceInitialization() throws SQLException {
         String connString = dbRule.getURL();
-        Connection conn;
-        conn = DriverManager.getConnection(connString, "root", "");
+        Connection conn = DriverManager.getConnection(connString, "root", "");
         QueryRunner qr = new QueryRunner();
 
         // Should be able to create a new table

@@ -23,29 +23,14 @@ package ch.vorburger.mariadb4j;
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.DosFileAttributeView;
-import java.nio.file.attribute.PosixFileAttributeView;
-import java.nio.file.attribute.PosixFileAttributes;
-import java.nio.file.attribute.PosixFilePermission;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -64,13 +49,13 @@ import java.util.function.Supplier;
  */
 class DBShutdownHook extends Thread implements FileVisitor<Path> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DB.class);
+    private static final Logger logger = LoggerFactory.getLogger(DBShutdownHook.class);
 
     private final DB db;
     private final Supplier<ManagedProcess> mysqldProcessSupplier;
-    private final Supplier<File> dataDirSupplier;
-    private final Supplier<File> baseDirSupplier;
-    private final Supplier<File> tmpDirSupplier;
+    private final Supplier<Path> dataDirSupplier;
+    private final Supplier<Path> baseDirSupplier;
+    private final Supplier<Path> tmpDirSupplier;
     private final DBConfiguration configuration;
     private final LinkOption[] linkOptions = {};
 
@@ -89,9 +74,9 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
             String threadName,
             DB db,
             Supplier<ManagedProcess> mysqldProcessSupplier,
-            Supplier<File> baseDirSupplier,
-            Supplier<File> tmpDirSupplier,
-            Supplier<File> dataDirSupplier,
+            Supplier<Path> baseDirSupplier,
+            Supplier<Path> tmpDirSupplier,
+            Supplier<Path> dataDirSupplier,
             DBConfiguration configuration) {
         super(threadName);
         this.db = db;
@@ -102,31 +87,29 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         this.configuration = configuration;
     }
 
-    private boolean deleteQuietly(File file) {
-        if (file == null) {
-            return false;
-        }
+    @SuppressWarnings("UnusedReturnValue")
+    private boolean deleteQuietly(Path path) {
+        if (path == null) return false;
         try {
-            if (file.isDirectory()) {
-                cleanDirectory(file);
-            }
+            if (Files.isDirectory(path)) cleanDirectory(path);
         } catch (Exception ignore) {
             // Quiet.
         }
 
         try {
-            return file.delete();
-        } catch (Exception ignore) {
+            Files.delete(path);
+            return true;
+        } catch (IOException ignore) {
             return false;
         }
     }
 
-    private void cleanDirectory(File directory) throws IOException {
-        File[] files = listFiles(directory, null);
+    private void cleanDirectory(Path directory) throws IOException {
+        Path[] paths = listFiles(directory, null);
         List<Exception> causeList = new ArrayList<>();
-        for (File file : files) {
+        for (Path path : paths) {
             try {
-                forceDelete(file);
+                forceDelete(path);
             } catch (IOException exception) {
                 causeList.add(exception);
             }
@@ -139,13 +122,13 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         }
     }
 
-    private void forceDelete(File file) throws IOException {
-        Objects.requireNonNull(file, "file");
+    private void forceDelete(Path path) throws IOException {
+        Objects.requireNonNull(path, "path");
 
         try {
-            delete(file.toPath());
+            delete(path);
         } catch (IOException exception) {
-            throw new IOException("Cannot delete file: " + file, exception);
+            throw new IOException("Cannot delete file: " + path, exception);
         }
     }
 
@@ -173,6 +156,7 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
         Files.deleteIfExists(file);
     }
 
+    @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
     private Path setReadOnly(Path path, boolean readOnly) throws IOException {
         List<Exception> causeList = new ArrayList<>(2);
         DosFileAttributeView fileAttributeView =
@@ -213,37 +197,50 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
                         path, Arrays.toString(linkOptions)));
     }
 
-    private File[] listFiles(File directory, FileFilter fileFilter) throws IOException {
+    @SuppressWarnings("SameParameterValue")
+    private Path[] listFiles(Path directory, DirectoryStream.Filter<Path> filter)
+            throws IOException {
         requireDirectoryExists(directory, "directory");
-        File[] files = fileFilter == null ? directory.listFiles() : directory.listFiles(fileFilter);
-        if (files == null) {
-            throw new IOException("Unknown I/O error listing contents of directory: " + directory);
+        try (DirectoryStream<Path> stream =
+                (filter == null)
+                        ? Files.newDirectoryStream(directory)
+                        : Files.newDirectoryStream(directory, filter)) {
+            List<Path> files = new ArrayList<>();
+            for (Path path : stream) {
+                files.add(path);
+            }
+            return files.toArray(Path[]::new);
+        } catch (IOException e) {
+            throw new IOException(
+                    "Unknown I/O error listing contents of directory: " + directory, e);
         }
-        return files;
     }
 
-    private File requireDirectoryExists(File directory, String name) {
+    @SuppressWarnings({"UnusedReturnValue", "SameParameterValue"})
+    private Path requireDirectoryExists(Path directory, String name) {
         requireExists(directory, name);
         requireDirectory(directory, name);
         return directory;
     }
 
-    private File requireExists(File file, String fileParamName) {
-        Objects.requireNonNull(file, fileParamName);
-        if (!file.exists()) {
+    @SuppressWarnings("UnusedReturnValue")
+    private Path requireExists(Path path, String fileParamName) {
+        Objects.requireNonNull(path, fileParamName);
+        if (!Files.exists(path)) {
             throw new IllegalArgumentException(
                     "File system element for parameter '"
                             + fileParamName
                             + "' does not exist: '"
-                            + file
+                            + path
                             + "'");
         }
-        return file;
+        return path;
     }
 
-    private File requireDirectory(File directory, String name) {
+    @SuppressWarnings("UnusedReturnValue")
+    private Path requireDirectory(Path directory, String name) {
         Objects.requireNonNull(directory, name);
-        if (!directory.isDirectory()) {
+        if (!Files.isDirectory(directory)) {
             throw new IllegalArgumentException(
                     "Parameter '" + name + "' is not a directory: '" + directory + "'");
         }
@@ -258,14 +255,16 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
 
     /** {@inheritDoc} */
     @Override
-    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-            throws IOException {
+    @NonNull
+    public FileVisitResult preVisitDirectory(Path dir, @NonNull BasicFileAttributes attrs) {
         return FileVisitResult.CONTINUE;
     }
 
     /** {@inheritDoc} */
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+    @NonNull
+    public FileVisitResult visitFile(Path file, @NonNull BasicFileAttributes attrs)
+            throws IOException {
         if (Files.exists(file, linkOptions)) {
             setReadOnly(file, false);
             Files.deleteIfExists(file);
@@ -283,6 +282,7 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
 
     /** {@inheritDoc} */
     @Override
+    @NonNull
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
         Objects.requireNonNull(file);
         throw exc;
@@ -290,6 +290,7 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
 
     /** {@inheritDoc} */
     @Override
+    @NonNull
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         if (isEmptyDirectory(dir)) {
             Files.deleteIfExists(dir);
@@ -306,7 +307,7 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
     public void run() {
         ManagedProcess mysqldProcess = mysqldProcessSupplier.get();
         // ManagedProcess DestroyOnShutdown ProcessDestroyer does
-        // something similar, but it shouldn't hurt to better be save
+        // something similar, but it shouldn't hurt to better be safe
         // than sorry and do it again ourselves here as well.
         try {
             // Shut up and don't log if it was already stop() before
@@ -319,30 +320,27 @@ class DBShutdownHook extends Thread implements FileVisitor<Path> {
                     "cleanupOnExit() ShutdownHook: An error occurred while stopping the database",
                     e);
         }
-
-        File dataDir = dataDirSupplier.get();
-        if (dataDir.exists()
-                && configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
-                && Util.isTemporaryDirectory(dataDir.getAbsoluteFile())) {
-            logger.info(
-                    "cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: "
-                            + dataDir);
-            deleteQuietly(dataDir);
+        if (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()) {
+            Path dataDir = dataDirSupplier.get();
+            if (Files.exists(dataDir) && Util.isTemporaryDirectory(dataDir.toAbsolutePath())) {
+                logger.info(
+                        "cleanupOnExit() ShutdownHook quietly deleting temporary DB data directory: {}",
+                        dataDir);
+                deleteQuietly(dataDir);
+            }
+            Path baseDir = baseDirSupplier.get();
+            if (Files.exists(baseDir) && Util.isTemporaryDirectory(baseDir.toAbsolutePath())) {
+                logger.info(
+                        "cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: {}",
+                        baseDir);
+                deleteQuietly(baseDir);
+            }
         }
-        File baseDir = baseDirSupplier.get();
-        if (baseDir.exists()
-                && configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
-                && Util.isTemporaryDirectory(baseDir.getAbsoluteFile())) {
+        Path tmpDir = tmpDirSupplier.get();
+        if (Files.exists(tmpDir) && Util.isTemporaryDirectory(tmpDir.toAbsolutePath())) {
             logger.info(
-                    "cleanupOnExit() ShutdownHook quietly deleting temporary DB base directory: "
-                            + baseDir);
-            deleteQuietly(baseDir);
-        }
-        File tmpDir = tmpDirSupplier.get();
-        if (tmpDir.exists() && Util.isTemporaryDirectory(tmpDir.getAbsoluteFile())) {
-            logger.info(
-                    "cleanupOnExit() ShutdownHook quietly deleting temporary DB tmp directory: "
-                            + tmpDir);
+                    "cleanupOnExit() ShutdownHook quietly deleting temporary DB tmp directory: {}",
+                    tmpDir);
             deleteQuietly(tmpDir);
         }
     }

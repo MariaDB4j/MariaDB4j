@@ -20,7 +20,7 @@
 package ch.vorburger.mariadb4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
@@ -28,19 +28,18 @@ import ch.vorburger.mariadb4j.utils.DBSingleton;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Table;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.junit.Rule;
-import org.junit.Test;
+import io.takari.maven.testing.TestMavenRuntime5;
+import io.takari.maven.testing.TestResources5;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
+import java.sql.*;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,80 +49,56 @@ import java.util.Set;
  * @author mike10004
  * @author William Dutton
  */
-public class MariaDB4jStartMojoTest {
+class MariaDB4jStartMojoTest {
 
-    @SuppressWarnings("rawtypes")
-    private Map pluginContext;
+    private static final Logger logger = LoggerFactory.getLogger(MariaDB4jStartMojoTest.class);
 
-    @Rule
-    public MojoRule mojoRule =
-            new MojoRule() {
-                @Override
-                protected void after() {
-                    try {
-                        System.out.println("stopping database...");
-                        DBSingleton.shutdownDB();
-                        System.out.println("database stopped");
-                    } catch (ManagedProcessException e) {
-                        System.err.println("could not stop database");
-                        e.printStackTrace(System.err);
-                    }
-                }
-            };
+    @RegisterExtension
+    final TestResources5 resources =
+            new TestResources5("src/test/resources", "target/test-projects");
+
+    @RegisterExtension final TestMavenRuntime5 maven = new TestMavenRuntime5();
+
+    @AfterEach
+    void stopDb() {
+        try {
+            logger.info("stopping database...");
+            DBSingleton.shutdownDB();
+            logger.info("database stopped");
+        } catch (ManagedProcessException e) {
+            logger.error("could not stop database", e);
+        }
+    }
 
     private static final String BASIC_TABLE_NAME = "bar";
     private static final String BASIC_DB_NAME = "foo";
     private static final String BASIC_TABLE_INSERT_STMT = "INSERT INTO bar (baz) VALUES (?)";
     private static final String BASIC_TABLE_VALUE_COLUMN = "baz";
 
-    @Test(timeout = 500)
-    public void shouldSkipIfSkipIsSet() throws Exception {
-        File pom = new File(getClass().getResource("/skip/pom.xml").toURI());
-        StartMojo mojo = (StartMojo) mojoRule.lookupMojo("start", pom);
-        assertThat(mojo).isNotNull();
-        mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
-        mojo.execute();
-        // without config and plugin context, combined with timeout, this will most certainly fail
-        // if not skipped
-        try {
-            DBSingleton.getDB();
-            fail("database was created when it should have skipped");
-        } catch (IllegalStateException e) {
-            // pass
-        }
+    @Test
+    void shouldSkipIfSkipIsSet() throws Exception {
+        File basedir = resources.getBasedir("skip");
+        maven.executeMojo(basedir, "start");
+        assertThrows(IllegalStateException.class, DBSingleton::getDB);
     }
 
     @Test
-    public void basicUsage() throws Exception {
-        // NB: This is a mess... after an rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j,
-        // this test fails at first, until after the 2nd (!) "mvn install" it passes.
-        // It only works on CI because ~/.m2/** is cached there.
-        File pom = new File(getClass().getResource("/basic-usage/pom.xml").toURI());
-        assertThat(pom.isFile()).overridingErrorMessage("not found: %s", pom).isTrue();
-        assertThat(pom.exists()).isTrue();
-        StartMojo mojo = (StartMojo) mojoRule.lookupConfiguredMojo(pom.getParentFile(), "start");
-        assertThat(mojo).isNotNull();
-        pluginContext = mojo.getPluginContext();
-        if (pluginContext == null) {
-            pluginContext = new HashMap<>();
-            mojo.setPluginContext(pluginContext);
-        }
-        mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
-        String databaseName = mojo.getDatabaseName();
-        assertThat(databaseName)
-                .overridingErrorMessage("databaseName(name)")
-                .isEqualTo(BASIC_DB_NAME);
-        mojo.execute();
+    void basicUsage() throws Exception {
+        File basedir = resources.getBasedir("basic-usage");
+        maven.executeMojo(basedir, "start");
+
         DB db = getDb();
         assertThat(db).overridingErrorMessage("db from plugin context").isNotNull();
-        System.out.println("querying database...");
+        logger.info("Querying database...");
         Map<String, String> vars;
         Table<Integer, String, Object> table;
         try (Connection conn = openConnection(db, BASIC_DB_NAME)) {
             vars = DbUtils.showVariables(conn, "version");
-            System.out.println(vars);
+            logger.info(vars.toString());
+
             table = DbUtils.selectAll(conn, BASIC_TABLE_NAME);
-            System.out.format("table pre-insertion: %s%n", table);
+            logger.info("Table pre-insertion: {}", table);
+
             try (PreparedStatement stmt = conn.prepareStatement(BASIC_TABLE_INSERT_STMT)) {
                 stmt.setString(1, "a");
                 stmt.execute();
@@ -131,9 +106,9 @@ public class MariaDB4jStartMojoTest {
                 stmt.execute();
             }
             table = DbUtils.selectAll(conn, BASIC_TABLE_NAME);
-            System.out.format("table post-insertion: %s%n", table);
+            logger.info("Table post-insertion: {}", table);
         }
-        assertThat(vars.size()).overridingErrorMessage("vars like version").isEqualTo(1);
+        assertThat(vars).overridingErrorMessage("vars like version").hasSize(1);
         Set<Object> valueSet = ImmutableSet.copyOf(table.column(BASIC_TABLE_VALUE_COLUMN).values());
         assertThat(valueSet)
                 .overridingErrorMessage("table values")
@@ -152,7 +127,7 @@ public class MariaDB4jStartMojoTest {
         assertThat(db).isNotNull();
         String jdbcUrl =
                 "jdbc:mariadb://localhost:"
-                        + db.getConfiguration().getPort()
+                        + db.getConfiguration().port()
                         + "/"
                         + databaseName
                         + "?serverTimezone=UTC";
@@ -162,18 +137,35 @@ public class MariaDB4jStartMojoTest {
     private static final String UTF8MB4_TEST_DB_NAME = "charset_test";
 
     @Test
-    public void utf8mb4() throws Exception {
-        File pom = new File(getClass().getResource("/utf8mb4/pom.xml").toURI());
-        assertThat(pom.isFile()).overridingErrorMessage("not found: %s", pom).isTrue();
-        StartMojo mojo = (StartMojo) mojoRule.lookupConfiguredMojo(pom.getParentFile(), "start");
-        assertThat(mojo).isNotNull();
-        pluginContext = mojo.getPluginContext();
-        if (pluginContext == null) {
-            pluginContext = new HashMap<>();
-            mojo.setPluginContext(pluginContext);
+    void utf8mb4() throws Exception {
+        // Copies src/test/resources/utf8mb4 -> target/test-projects/<TestName>_utf8mb4_utf8mb4
+        File basedir = resources.getBasedir("utf8mb4");
+
+        // Start the DB via the plugin configured in utf8mb4/pom.xml
+        maven.executeMojo(basedir, "start");
+
+        // Insert and read back a complex UTF-8 string
+        String complexString = getComplexString();
+
+        try (Connection conn = openConnection(getDb(), UTF8MB4_TEST_DB_NAME);
+                PreparedStatement stmt =
+                        conn.prepareStatement("INSERT INTO supertext (content) VALUES (?)")) {
+            stmt.setString(1, complexString);
+            stmt.execute();
         }
-        mojoRule.configureMojo(mojo, "mariaDB4j-maven-plugin", pom);
-        mojo.execute();
+
+        String retrievedValue;
+        try (Connection conn = openConnection(getDb(), UTF8MB4_TEST_DB_NAME);
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT content FROM supertext WHERE 1")) {
+            assertThat(rs.next()).isTrue();
+            retrievedValue = rs.getString(1);
+        }
+
+        assertThat(retrievedValue).isEqualTo(complexString);
+    }
+
+    private static String getComplexString() {
         byte[] pokerHandBytes = {
             (byte) 0xf0,
             (byte) 0x9f,
@@ -196,20 +188,6 @@ public class MariaDB4jStartMojoTest {
             (byte) 0x83,
             (byte) 0x93,
         };
-        String complexString = new String(pokerHandBytes, StandardCharsets.UTF_8);
-        try (Connection conn = openConnection(getDb(), UTF8MB4_TEST_DB_NAME);
-                PreparedStatement stmt =
-                        conn.prepareStatement("INSERT INTO supertext (content) VALUES (?)")) {
-            stmt.setString(1, complexString);
-            stmt.execute();
-        }
-        String retrievedValue;
-        try (Connection conn = openConnection(getDb(), UTF8MB4_TEST_DB_NAME);
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT content FROM supertext WHERE 1")) {
-            assertThat(rs.next()).isTrue();
-            retrievedValue = rs.getString(1);
-        }
-        assertThat(retrievedValue).isEqualTo(complexString);
+        return new String(pokerHandBytes, StandardCharsets.UTF_8);
     }
 }

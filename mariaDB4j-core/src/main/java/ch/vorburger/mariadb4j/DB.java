@@ -19,35 +19,23 @@
  */
 package ch.vorburger.mariadb4j;
 
-import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Client;
-import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
-import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
-import static ch.vorburger.mariadb4j.DBConfiguration.Executable.PrintDefaults;
-import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.*;
 
-import ch.vorburger.exec.ManagedProcess;
-import ch.vorburger.exec.ManagedProcessBuilder;
-import ch.vorburger.exec.ManagedProcessException;
-import ch.vorburger.exec.ManagedProcessListener;
-import ch.vorburger.exec.OutputStreamLogDispatcher;
+import ch.vorburger.exec.*;
 import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -64,10 +52,10 @@ public class DB {
 
     protected final DBConfiguration configuration;
 
-    private File baseDir;
-    private File libDir;
-    private File dataDir;
-    private File tmpDir;
+    private Path baseDir;
+    private Path libDir;
+    private Path dataDir;
+    private Path tmpDir;
     private ManagedProcess mysqldProcess;
 
     protected int dbStartMaxWaitInMS = 30000;
@@ -101,20 +89,16 @@ public class DB {
         // If the data dir does not already exist and is empty, proceed to install normally.
         // Otherwise, we will reuse the existing data directory.
         try {
-            final Path absPath = Paths.get(config.getDataDir().getAbsolutePath());
-            if (Files.isDirectory(absPath)) {
-                try (Stream<Path> entries = Files.list(absPath)) {
-                    if (entries.findFirst().isEmpty()) {
-                        db.unpackEmbeddedDb();
-                        db.install();
-                    }
-                }
+            final Path absPath = config.dataDir().toAbsolutePath();
+            if (!Files.isDirectory(absPath)) return db;
+            try (Stream<Path> entries = Files.list(absPath)) {
+                if (entries.findFirst().isPresent()) return db;
+                db.unpackEmbeddedDb();
+                db.install();
             }
-
         } catch (IOException e) { // do not change the method signature, catch, wrap, and re-throw
             throw new ManagedProcessException(e.getMessage(), e);
         }
-
         return db;
     }
 
@@ -127,29 +111,34 @@ public class DB {
      * @return a new DB instance
      * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
+    @SuppressWarnings("unused")
     public static DB newEmbeddedDB(int port) throws ManagedProcessException {
         DBConfigurationBuilder config = new DBConfigurationBuilder();
         config.setPort(port);
         return newEmbeddedDB(config.build());
     }
 
-    protected ManagedProcess createDBInstallProcess() throws ManagedProcessException, IOException {
-        logger.info("Installing a new embedded database to: " + baseDir);
-        File installDbCmdFile = configuration.getExecutable(Executable.InstallDB);
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
+    protected ManagedProcess createDBInstallProcess() throws IOException {
+        logger.info("Installing a new embedded database to: {}", baseDir);
+        Path installDbCmdFile = configuration.getExecutable(Executable.INSTALL_DB);
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile.toFile());
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
         builder.getEnvironment()
-                .put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
-        builder.setWorkingDirectory(baseDir);
+                .put(
+                        configuration.getOSLibraryEnvironmentVarName(),
+                        String.valueOf(libDir.toAbsolutePath()));
+        File baseDirAsFile = baseDir.toFile();
+        File dataDirAsFile = dataDir.toFile();
+        builder.setWorkingDirectory(baseDirAsFile);
         if (!configuration.isWindows()) {
-            builder.addFileArgument("--datadir", dataDir);
-            builder.addFileArgument("--basedir", baseDir);
+            builder.addFileArgument("--datadir", dataDirAsFile);
+            builder.addFileArgument("--basedir", baseDirAsFile);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
             builder.addArgument("--skip-name-resolve");
             // builder.addArgument("--verbose");
         } else {
-            builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
+            builder.addFileArgument("--datadir", dataDirAsFile.getCanonicalFile());
         }
         return builder.build();
     }
@@ -157,7 +146,7 @@ public class DB {
     /**
      * Installs the database to the location specified in the configuration.
      *
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     protected synchronized void install() throws ManagedProcessException {
         try {
@@ -177,14 +166,13 @@ public class DB {
      */
     public synchronized void start() throws ManagedProcessException {
         logger.info("Starting up the database...");
-        boolean ready = false;
+        boolean ready;
         try {
             mysqldProcess = startPreparation();
             ready =
                     mysqldProcess.startAndWaitForConsoleMessageMaxMs(
                             getReadyForConnectionsTag(), dbStartMaxWaitInMS);
         } catch (Exception e) {
-            logger.error("failed to start mysqld", e);
             throw new ManagedProcessException("An error occurred while starting the database", e);
         }
         if (!ready) {
@@ -205,12 +193,14 @@ public class DB {
         return ": ready for connections.";
     }
 
-    synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
+    synchronized ManagedProcess startPreparation() throws IOException {
         ManagedProcessBuilder builder =
-                new ManagedProcessBuilder(configuration.getExecutable(Server));
+                new ManagedProcessBuilder(configuration.getExecutable(SERVER).toFile());
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqld"));
         builder.getEnvironment()
-                .put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
+                .put(
+                        configuration.getOSLibraryEnvironmentVarName(),
+                        String.valueOf(libDir.toAbsolutePath()));
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
         builder.addArgument("--console");
         if (configuration.isSecurityDisabled()) {
@@ -219,31 +209,35 @@ public class DB {
         if (!hasArgument("--max_allowed_packet")) {
             builder.addArgument("--max_allowed_packet=64M");
         }
-        builder.addFileArgument("--basedir", baseDir).setWorkingDirectory(baseDir);
+        File baseDirAsFile = baseDir.toFile();
+        File dataDirAsFile = dataDir.toFile();
+        File tmpDirAsFile = tmpDir.toFile();
+        builder.addFileArgument("--basedir", baseDirAsFile).setWorkingDirectory(baseDirAsFile);
         if (!configuration.isWindows()) {
-            builder.addFileArgument("--datadir", dataDir);
-            builder.addFileArgument("--tmpdir", tmpDir);
+            builder.addFileArgument("--datadir", dataDirAsFile);
+            builder.addFileArgument("--tmpdir", tmpDirAsFile);
         } else {
-            builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
-            builder.addFileArgument("--tmpdir", tmpDir.getCanonicalFile());
+            builder.addFileArgument("--datadir", dataDirAsFile.getCanonicalFile());
+            builder.addFileArgument("--tmpdir", tmpDirAsFile.getCanonicalFile());
         }
         addPortAndMaybeSocketArguments(builder);
-        for (String arg : configuration.getArgs()) {
+        for (String arg : configuration.args()) {
             builder.addArgument(arg);
         }
-        if (StringUtils.isNotBlank(configuration.getDefaultCharacterSet())) {
-            builder.addArgument("--character-set-server=", configuration.getDefaultCharacterSet());
+        if (StringUtils.isNotBlank(configuration.defaultCharacterSet())) {
+            builder.addArgument("--character-set-server=", configuration.defaultCharacterSet());
         }
         cleanupOnExit();
         // because cleanupOnExit() just installed our (class DB) own
         // Shutdown hook, we don't need the one from ManagedProcess:
         builder.setDestroyOnShutdown(false);
-        logger.info("mysqld executable: " + builder.getExecutable());
+        logger.info("mysqld executable: {}", builder.getExecutable());
         return builder.build();
     }
 
+    @SuppressWarnings("SameParameterValue")
     protected boolean hasArgument(final String argumentName) {
-        for (String argument : configuration.getArgs()) {
+        for (String argument : configuration.args()) {
             if (argument.startsWith(argumentName)) {
                 return true;
             }
@@ -253,40 +247,37 @@ public class DB {
 
     protected void addPortAndMaybeSocketArguments(ManagedProcessBuilder builder)
             throws IOException {
-        builder.addArgument("--port=" + configuration.getPort());
+        builder.addArgument("--port=" + configuration.port());
         if (!configuration.isWindows()) {
-            builder.addFileArgument("--socket", getAbsoluteSocketFile());
+            builder.addFileArgument("--socket", getAbsoluteSocketFile().toFile());
         }
     }
 
     protected void addSocketOrPortArgument(ManagedProcessBuilder builder) throws IOException {
         if (!configuration.isWindows()) {
-            builder.addFileArgument("--socket", getAbsoluteSocketFile());
+            builder.addFileArgument("--socket", getAbsoluteSocketFile().toFile());
         } else {
-            builder.addArgument("--port=" + configuration.getPort());
+            builder.addArgument("--port=" + configuration.port());
         }
     }
 
     /**
-     * Config Socket as absolute path. By default this is the case because DBConfigurationBuilder
+     * Config Socket as absolute path. By default, this is the case because DBConfigurationBuilder
      * creates the socket in /tmp, but if a user uses setSocket() he may give a relative location,
-     * so we double check.
+     * so we double-check.
      *
-     * @return config.getSocket() as File getAbsolutePath()
+     * @return config.getSocket() as Path toAbsolutePath()
      */
-    protected File getAbsoluteSocketFile() {
-        String socket = configuration.getSocket();
-        File socketFile = new File(socket);
-        return socketFile.getAbsoluteFile();
+    protected Path getAbsoluteSocketFile() {
+        return Path.of(configuration.socket()).toAbsolutePath();
     }
 
     /**
      * Source.
      *
      * @param resource a {@link java.lang.String} object
-     * @throws ch.vorburger.exec.ManagedProcessException if any.
      */
-    public void source(String resource) throws ManagedProcessException {
+    public void source(String resource) {
         source(resource, null, null, null);
     }
 
@@ -296,6 +287,7 @@ public class DB {
      * @param resource a {@link java.io.InputStream} object
      * @throws ch.vorburger.exec.ManagedProcessException if any.
      */
+    @SuppressWarnings("unused")
     public void source(InputStream resource) throws ManagedProcessException {
         source(resource, null, null, null);
     }
@@ -305,9 +297,8 @@ public class DB {
      *
      * @param resource a {@link java.lang.String} object
      * @param dbName a {@link java.lang.String} object
-     * @throws ch.vorburger.exec.ManagedProcessException if any.
      */
-    public void source(String resource, String dbName) throws ManagedProcessException {
+    public void source(String resource, String dbName) {
         source(resource, null, null, dbName);
     }
 
@@ -318,6 +309,7 @@ public class DB {
      * @param dbName a {@link java.lang.String} object
      * @throws ch.vorburger.exec.ManagedProcessException if any.
      */
+    @SuppressWarnings("unused")
     public void source(InputStream resource, String dbName) throws ManagedProcessException {
         source(resource, null, null, dbName);
     }
@@ -326,8 +318,8 @@ public class DB {
      * Takes in a {@link java.io.InputStream} and sources it via the mysql command line tool.
      *
      * @param resource an {@link java.io.InputStream} InputStream to source
-     * @param username the username used to login to the database
-     * @param password the password used to login to the database
+     * @param username the username used to log in to the database
+     * @param password the password used to log in to the database
      * @param dbName the name of the database (schema) to source into
      * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
@@ -341,13 +333,11 @@ public class DB {
      * command line tool.
      *
      * @param resource the path to a resource on the classpath to source
-     * @param username the username used to login to the database
-     * @param password the password used to login to the database
+     * @param username the username used to log in to the database
+     * @param password the password used to log in to the database
      * @param dbName the name of the database (schema) to source into
-     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
-    public void source(String resource, String username, String password, String dbName)
-            throws ManagedProcessException {
+    public void source(String resource, String username, String password, String dbName) {
         source(resource, username, password, dbName, false);
     }
 
@@ -356,15 +346,13 @@ public class DB {
      * command line tool. Optionally force continue if individual statements fail.
      *
      * @param resource the path to a resource on the classpath to source
-     * @param username the username used to login to the database
-     * @param password the password used to login to the database
+     * @param username the username used to log in to the database
+     * @param password the password used to log in to the database
      * @param dbName the name of the database (schema) to source into
      * @param force if true then continue on error (mysql --force)
-     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     public void source(
-            String resource, String username, String password, String dbName, boolean force)
-            throws ManagedProcessException {
+            String resource, String username, String password, String dbName, boolean force) {
         try (InputStream from = getClass().getClassLoader().getResourceAsStream(resource)) {
             if (from == null) {
                 throw new IllegalArgumentException(
@@ -477,12 +465,12 @@ public class DB {
             String dbName,
             boolean force)
             throws ManagedProcessException {
-        logger.info("Running a " + logInfoText);
+        logger.info("Running a {}", logInfoText);
         try {
             ManagedProcessBuilder builder =
-                    new ManagedProcessBuilder(configuration.getExecutable(Client));
+                    new ManagedProcessBuilder(configuration.getExecutable(CLIENT).toFile());
             builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
-            builder.setWorkingDirectory(baseDir);
+            builder.setWorkingDirectory(baseDir.toFile());
             builder.addArgument("--default-character-set=utf8");
             if (username != null && !username.isEmpty()) {
                 builder.addArgument("-u", username);
@@ -503,9 +491,9 @@ public class DB {
             if (configuration.getProcessListener() != null) {
                 builder.setProcessListener(configuration.getProcessListener());
             }
-            if (configuration.getDefaultCharacterSet() != null) {
+            if (configuration.defaultCharacterSet() != null) {
                 builder.addArgument(
-                        "--default-character-set=", configuration.getDefaultCharacterSet());
+                        "--default-character-set=", configuration.defaultCharacterSet());
             }
 
             ManagedProcess process = builder.build();
@@ -515,7 +503,7 @@ public class DB {
             throw new ManagedProcessException(
                     "An error occurred while running a " + logInfoText, e);
         }
-        logger.info("Successfully ran the " + logInfoText);
+        logger.info("Successfully ran the {}", logInfoText);
     }
 
     /**
@@ -541,8 +529,8 @@ public class DB {
         this.run("create database if not exists `" + dbName + "`;", username, password);
     }
 
-    protected OutputStreamLogDispatcher getOutputStreamLogDispatcher(
-            @SuppressWarnings("unused") String exec) {
+    @SuppressWarnings("unused")
+    protected OutputStreamLogDispatcher getOutputStreamLogDispatcher(String exec) {
         return new MariaDBOutputStreamLogDispatcher();
     }
 
@@ -566,20 +554,20 @@ public class DB {
      * on the configuration.
      */
     protected void unpackEmbeddedDb() {
-        if (configuration.getBinariesClassPathLocation() == null) {
+        if (configuration.binariesClassPathLocation() == null) {
             logger.info(
                     "Not unpacking any embedded database (as BinariesClassPathLocation configuration is null)");
             return;
         }
 
         try {
-            Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
+            Util.extractFromClasspathToDir(configuration.binariesClassPathLocation(), baseDir);
             if (!configuration.isWindows()) {
-                Util.forceExecutable(configuration.getExecutable(PrintDefaults));
-                Util.forceExecutable(configuration.getExecutable(InstallDB));
-                Util.forceExecutable(configuration.getExecutable(Server));
-                Util.forceExecutable(configuration.getExecutable(Dump));
-                Util.forceExecutable(configuration.getExecutable(Client));
+                Util.forceExecutable(configuration.getExecutable(PRINT_DEFAULTS));
+                Util.forceExecutable(configuration.getExecutable(INSTALL_DB));
+                Util.forceExecutable(configuration.getExecutable(SERVER));
+                Util.forceExecutable(configuration.getExecutable(DUMP));
+                Util.forceExecutable(configuration.getExecutable(CLIENT));
             }
         } catch (IOException e) {
             throw new RuntimeException("Error unpacking embedded DB", e);
@@ -590,16 +578,18 @@ public class DB {
      * If the data directory specified in the configuration is a temporary directory, this deletes
      * any previous version. It also makes sure that the directory exists.
      *
-     * @throws ManagedProcessException if something fatal went wrong
+     * @throws ch.vorburger.exec.ManagedProcessException if something fatal went wrong
      */
     protected void prepareDirectories() throws ManagedProcessException {
-        baseDir = Util.getDirectory(configuration.getBaseDir());
-        libDir = Util.getDirectory(configuration.getLibDir());
-        tmpDir = Util.getDirectory(configuration.getTmpDir());
+        baseDir = Util.getDirectory(configuration.baseDir());
+        libDir = Util.getDirectory(configuration.libDir());
+        tmpDir = Util.getDirectory(configuration.tmpDir());
         try {
-            File dataDirPath = configuration.getDataDir();
-            if (Util.isTemporaryDirectory(dataDirPath)) {
-                FileUtils.deleteDirectory(dataDirPath);
+            Path dataDirPath = configuration.dataDir();
+            if (configuration.isDeletingTemporaryBaseAndDataDirsOnShutdown()
+                    && Files.exists(dataDirPath)
+                    && Util.isTemporaryDirectory(dataDirPath)) {
+                PathUtils.deleteDirectory(dataDirPath);
             }
             dataDir = Util.getDirectory(dataDirPath);
         } catch (Exception e) {
@@ -637,55 +627,56 @@ public class DB {
     /**
      * DumpXML.
      *
-     * @param outputFile a {@link java.io.File} object
+     * @param outputFile a {@link java.nio.file.Path} object
      * @param dbName a {@link java.lang.String} object
      * @param user a {@link java.lang.String} object
      * @param password a {@link java.lang.String} object
      * @return a {@link ch.vorburger.exec.ManagedProcess} object
      * @throws java.io.IOException if any.
-     * @throws ch.vorburger.exec.ManagedProcessException if any.
      */
-    public ManagedProcess dumpXML(File outputFile, String dbName, String user, String password)
-            throws IOException, ManagedProcessException {
-        return dump(outputFile, Arrays.asList(dbName), true, true, true, user, password);
+    public ManagedProcess dumpXML(Path outputFile, String dbName, String user, String password)
+            throws IOException {
+        return dump(
+                outputFile, Collections.singletonList(dbName), true, true, true, user, password);
     }
 
     /**
      * DumpSQL.
      *
-     * @param outputFile a {@link java.io.File} object
+     * @param outputFile a {@link java.nio.file.Path} object
      * @param dbName a {@link java.lang.String} object
      * @param user a {@link java.lang.String} object
      * @param password a {@link java.lang.String} object
      * @return a {@link ch.vorburger.exec.ManagedProcess} object
      * @throws java.io.IOException if any.
-     * @throws ch.vorburger.exec.ManagedProcessException if any.
      */
-    public ManagedProcess dumpSQL(File outputFile, String dbName, String user, String password)
-            throws IOException, ManagedProcessException {
-        return dump(outputFile, Arrays.asList(dbName), true, true, false, user, password);
+    public ManagedProcess dumpSQL(Path outputFile, String dbName, String user, String password)
+            throws IOException {
+        return dump(
+                outputFile, Collections.singletonList(dbName), true, true, false, user, password);
     }
 
+    @SuppressWarnings("SameParameterValue")
     protected ManagedProcess dump(
-            File outputFile,
+            Path outputFile,
             List<String> dbNamesToDump,
             boolean compactDump,
             boolean lockTables,
             boolean asXml,
             String user,
             String password)
-            throws ManagedProcessException, IOException {
+            throws IOException {
 
         ManagedProcessBuilder builder =
-                new ManagedProcessBuilder(configuration.getExecutable(Dump));
+                new ManagedProcessBuilder(configuration.getExecutable(DUMP).toFile());
 
         BufferedOutputStream outputStream =
-                new BufferedOutputStream(new FileOutputStream(outputFile));
+                new BufferedOutputStream(Files.newOutputStream(outputFile));
         builder.addStdOut(outputStream);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqldump"));
-        builder.addArgument("--port=" + configuration.getPort());
+        builder.addArgument("--port=" + configuration.port());
         if (!configuration.isWindows()) {
-            builder.addFileArgument("--socket", getAbsoluteSocketFile());
+            builder.addFileArgument("--socket", getAbsoluteSocketFile().toFile());
         }
         if (lockTables) {
             builder.addArgument("--flush-logs");
@@ -714,7 +705,7 @@ public class DB {
                     }
 
                     @Override
-                    public void onProcessFailed(int i, Throwable throwable) {
+                    public void onProcessFailed(int i, @NonNull Throwable throwable) {
                         closeOutputStream();
                     }
 

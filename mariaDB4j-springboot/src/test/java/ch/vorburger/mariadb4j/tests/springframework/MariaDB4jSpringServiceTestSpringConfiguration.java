@@ -45,5 +45,6 @@ public abstract class MariaDB4jSpringServiceTestSpringConfiguration {
         return ppc;
     }
 
+    @SuppressWarnings("unused")
     protected static void configureProperties(Properties properties) {}
 }

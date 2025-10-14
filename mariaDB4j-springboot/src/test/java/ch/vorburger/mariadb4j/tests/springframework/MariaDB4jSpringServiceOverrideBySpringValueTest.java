@@ -19,28 +19,25 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Tests setting the configuration of a MariaDB4jSpringService via Spring Value properties.
  *
  * @author Michael Vorburger
  */
-@ContextConfiguration(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@SpringJUnitConfig(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
 @TestPropertySource(
         properties = {
             MariaDB4jSpringService.PORT + "=5679",
@@ -53,36 +50,30 @@ import java.io.File;
             MariaDB4jSpringService.TMP_DIR
                     + "=target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir"
         })
-public class MariaDB4jSpringServiceOverrideBySpringValueTest {
+class MariaDB4jSpringServiceOverrideBySpringValueTest {
 
     @Autowired MariaDB4jSpringService s;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         if (!s.isRunning()) {
             s.start(); // Only start if not already running
         }
     }
 
     @Test
-    public void testOverrideBySpringValue() {
-        assertEquals(5679, s.getConfiguration().getPort());
-        assertEquals(
-                new File("target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir"),
-                s.getConfiguration().getBaseDir());
-        assertEquals(
-                new File("target/MariaDB4jSpringServiceOverrideBySpringValueTest/baseDir/libs"),
-                s.getConfiguration().getLibDir());
-        assertEquals(
-                new File("target/MariaDB4jSpringServiceOverrideBySpringValueTest/dataDir"),
-                s.getConfiguration().getDataDir());
-        assertEquals(
-                new File("target/MariaDB4jSpringServiceOverrideBySpringValueTest/tmpDir"),
-                s.getConfiguration().getTmpDir());
+    void testOverrideBySpringValue() {
+        assertEquals(5679, s.getConfiguration().port());
+        Path basePath =
+                Path.of("target").resolve("MariaDB4jSpringServiceOverrideBySpringValueTest");
+        assertEquals(basePath.resolve("baseDir"), s.getConfiguration().baseDir());
+        assertEquals(basePath.resolve("baseDir").resolve("libs"), s.getConfiguration().libDir());
+        assertEquals(basePath.resolve("dataDir"), s.getConfiguration().dataDir());
+        assertEquals(basePath.resolve("tmpDir"), s.getConfiguration().tmpDir());
     }
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         if (s.isRunning()) {
             s.stop();
         }

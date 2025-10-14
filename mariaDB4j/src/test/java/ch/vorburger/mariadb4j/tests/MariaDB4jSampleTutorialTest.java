@@ -19,22 +19,26 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
-import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.SERVER;
+import static ch.vorburger.mariadb4j.TestUtil.buildTempDB;
+import static ch.vorburger.mariadb4j.TestUtil.configureTempDB;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
-import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.SystemUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -46,45 +50,47 @@ import java.util.List;
  * @author Michael Vorburger
  * @author Michael Seaton
  */
-public class MariaDB4jSampleTutorialTest {
+class MariaDB4jSampleTutorialTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(MariaDB4jSampleTutorialTest.class);
 
     /**
      * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on the host,
      * instead of one that was bundled with and extracted from a MariaDB4j JAR.
      */
     @Test
-    public void testLocalMariaDB() throws Exception {
+    void testLocalMariaDB(@TempDir Path tempDir) throws ManagedProcessException, SQLException {
         final String LINUX_EXECUTABLE = "/usr/sbin/mysqld";
         final String MACOS_EXECUTABLE = "/opt/homebrew/opt/mariadb@11.4/bin/mariadbd";
         final String WINDOWS_EXECUTABLE = "C:\\Program Files\\MariaDB 11.4\\bin\\mysqld.exe";
 
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-
-        config.setPort(0); // 0 => autom. detect free port
+        DBConfigurationBuilder config = configureTempDB(tempDir);
         config.setUnpackingFromClasspath(false);
 
         if (config.isMacOS()) {
-            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs"));
-            config.setBaseDir(new File("/opt/homebrew/opt/mariadb@11.4/"));
-            config.setExecutable(Server, MACOS_EXECUTABLE);
+            config.setLibDir(tempDir.resolve("MariaDB4j").resolve("no-libs"));
+            config.setBaseDir(
+                    Path.of("/opt").resolve("homebrew").resolve("opt").resolve("mariadb@11.4"));
+            config.setExecutable(SERVER, MACOS_EXECUTABLE);
         } else if (config.isWindows()) {
-            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs"));
-            config.setBaseDir(new File("C:\\Program Files\\MariaDB 11.4"));
-            config.setExecutable(Server, WINDOWS_EXECUTABLE);
+            config.setLibDir(tempDir.resolve("MariaDB4j").resolve("no-libs"));
+            config.setBaseDir(Path.of("C:\\").resolve("Program Files").resolve("MariaDB 11.4"));
+            config.setExecutable(SERVER, WINDOWS_EXECUTABLE);
         } else { // Linux
-            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs"));
-            config.setBaseDir(new File("/usr"));
-            config.setExecutable(Server, LINUX_EXECUTABLE);
+            config.setLibDir(tempDir.resolve("MariaDB4j").resolve("no-libs"));
+            config.setBaseDir(Path.of("/usr"));
+            config.setExecutable(SERVER, LINUX_EXECUTABLE);
         }
 
         // Only actually run this test if the binary is available
-        File executable = config.getExecutable(Server);
-        if (executable.canExecute()) check(config);
-        else
-            System.err.println(
-                    "MariaDB4jSampleTutorialTest: Skipping testLocalMariaDB(), because "
-                            + executable
-                            + " is not executable");
+        Path executable = config.getExecutable(SERVER);
+        if (Files.isExecutable(executable)) {
+            check(tempDir, config, "mariaDB4jTest");
+        } else {
+            logger.warn(
+                    "MariaDB4jSampleTutorialTest: Skipping testLocalMariaDB(), because {} is not executable",
+                    executable);
+        }
     }
 
     /**
@@ -92,27 +98,20 @@ public class MariaDB4jSampleTutorialTest {
      * classpath.
      */
     @Test
-    public void testEmbeddedMariaDB4j() throws Exception {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-        config.setPort(0); // 0 => autom. detect free port
-        check(config);
+    void testEmbeddedMariaDB4j(@TempDir Path tempDir) throws ManagedProcessException, SQLException {
+        DBConfigurationBuilder config = configureTempDB(tempDir);
+        check(tempDir, config, "mariaDB4jTest");
     }
 
-    protected void check(DBConfigurationBuilder config)
+    @SuppressWarnings("SameParameterValue")
+    protected void check(Path tempDir, DBConfigurationBuilder config, String dbName)
             throws SQLException, ManagedProcessException {
-        DB db = DB.newEmbeddedDB(config.build());
+        DB db = buildTempDB(tempDir, config);
         db.start();
+        db.createDB(dbName);
 
-        String dbName = "mariaDB4jTest"; // or just "test"
-        if (!"test".equals(dbName)) {
-            // mysqld out-of-the-box already has a DB named "test"
-            // in case we need another DB, here's how to create it first
-            db.createDB(dbName);
-        }
-
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "");
+        try (Connection conn =
+                DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "")) {
             QueryRunner qr = new QueryRunner();
 
             // Should be able to create a new table
@@ -122,32 +121,30 @@ public class MariaDB4jSampleTutorialTest {
             qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
 
             // Should be able to select from a table
-            List<String> results =
-                    qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            Assert.assertEquals(1, results.size());
-            Assert.assertEquals("Hello, world", results.get(0));
+            List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<>());
+            assertEquals(1, results.size());
+            assertEquals("Hello, world", results.get(0));
 
             // Should be able to source a SQL file
             db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", null, dbName);
             db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", "", dbName);
-            results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            Assert.assertEquals(5, results.size());
-            Assert.assertEquals("Hello, world", results.get(0));
-            Assert.assertEquals("Bonjour, monde", results.get(1));
-            Assert.assertEquals("Hola, mundo", results.get(2));
-        } finally {
-            DbUtils.closeQuietly(conn);
+
+            results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<>());
+            assertEquals(5, results.size());
+            assertEquals("Hello, world", results.get(0));
+            assertEquals("Bonjour, monde", results.get(1));
+            assertEquals("Hola, mundo", results.get(2));
         }
+        db.stop();
     }
 
     @Test
-    public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
-        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-        config.setPort(0); // 0 => autom. detect free port
+    void testEmbeddedMariaDB4jWithSecurity(@TempDir Path tempDir)
+            throws ManagedProcessException, SQLException {
+        DBConfigurationBuilder config = configureTempDB(tempDir);
         config.setSecurityDisabled(false);
-        DB db = DB.newEmbeddedDB(config.build());
+        DB db = buildTempDB(tempDir, config);
         db.start();
-
         // Starting with MariaDB 10.4, the root user has an invalid password.
         // We will therefore modify the root user password to a secure random string (a security
         // best practice).
@@ -158,20 +155,15 @@ public class MariaDB4jSampleTutorialTest {
         // root user, so we can just use the root user.
         var randomRootPassword = RandomStringUtils.secureStrong().next(69, 97, 122, true, true);
         db.run(
-                "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('" + randomRootPassword + "');",
+                /* language=sql */ "ALTER USER 'root'@'localhost' IDENTIFIED BY '"
+                        + randomRootPassword
+                        + "';",
                 config.isWindows() ? "root" : System.getProperty("user.name"),
                 "");
-
-        String dbName = "mariaDB4jTestWSecurity"; // or just "test"
-        if (!"test".equals(dbName)) {
-            // mysqld out-of-the-box already has a DB named "test"
-            // in case we need another DB, here's how to create it first
-            db.createDB(dbName, "root", randomRootPassword);
-        }
-
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(config.getURL(dbName), "root", randomRootPassword);
+        String dbName = "mariaDB4jTestWSecurity";
+        db.createDB(dbName, "root", randomRootPassword);
+        try (Connection conn =
+                DriverManager.getConnection(config.getURL(dbName), "root", randomRootPassword)) {
             QueryRunner qr = new QueryRunner();
 
             // Should be able to create a new table
@@ -185,19 +177,17 @@ public class MariaDB4jSampleTutorialTest {
             qr.update(
                     conn,
                     "GRANT ALL PRIVILEGES ON mariaDB4jTestWSecurity.* TO 'testUser'@'localhost'");
-
-            // reconnect with the new user
-            conn = DriverManager.getConnection(config.getURL(dbName), "testUser", "superSecret");
-
-            // Should be able to select from a table
-            List<String> results =
-                    qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            Assert.assertEquals(1, results.size());
-            Assert.assertEquals("Hello, world", results.get(0));
-
-        } finally {
-            DbUtils.closeQuietly(conn);
         }
+        // reconnect with the new user
+        try (Connection conn =
+                DriverManager.getConnection(config.getURL(dbName), "testUser", "superSecret")) {
+            QueryRunner qr = new QueryRunner();
+            // Should be able to select from a table
+            List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<>());
+            assertEquals(1, results.size());
+            assertEquals("Hello, world", results.get(0));
+        }
+        db.stop();
     }
 
     /**
@@ -205,38 +195,29 @@ public class MariaDB4jSampleTutorialTest {
      * persistence of data across restarts.
      */
     @Test
-    public void testEmbeddedMariaDB4jReopenExisting() throws Exception {
-        String dbName = "test";
-        File tempDir = new File("target/testEmbeddedMariaDB4jReopenExisting");
-        tempDir.mkdirs();
-        try {
-            DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-            config.setPort(0); // 0 => autom. detect free port
-            config.setDataDir(new File(tempDir, "data"));
-            config.setBaseDir(new File(tempDir, "base"));
-            // First create a bew DB instance with a new data directory
-            DB db = DB.newEmbeddedDB(config.build());
-            db.start();
-            db.createDB(dbName);
-            Connection conn =
-                    DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "");
+    void testEmbeddedMariaDB4jReopenExisting(@TempDir Path tempDir)
+            throws ManagedProcessException, SQLException {
+        String dbName = "mariaDB4jTestReopen";
+        DBConfigurationBuilder config = configureTempDB(tempDir);
+        config.setDeletingTemporaryBaseAndDataDirsOnShutdown(false);
+        DB db = buildTempDB(tempDir, config);
+        db.start();
+        db.createDB(dbName);
+        try (Connection conn =
+                DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "")) {
             QueryRunner qr = new QueryRunner();
             qr.update(conn, "CREATE TABLE hello(world VARCHAR(100))");
             qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
-            DbUtils.closeQuietly(conn);
-            db.stop();
-            // Now reopen the existing DB instance so that the existing data is preserved
-            DB reopenedDb = DB.newEmbeddedDB(config.build());
-            reopenedDb.start();
-            conn = DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "");
-            List<String> results =
-                    qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            Assert.assertEquals("Hello, world", results.get(0));
-            DbUtils.closeQuietly(conn);
-            reopenedDb.stop();
-        } finally {
-            // Clean up the temporary directory
-            FileUtils.deleteDirectory(tempDir);
         }
+        db.stop();
+        db = buildTempDB(tempDir, config);
+        db.start();
+        try (Connection conn =
+                DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "")) {
+            QueryRunner qr = new QueryRunner();
+            List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<>());
+            assertEquals("Hello, world", results.get(0));
+        }
+        db.stop();
     }
 }
