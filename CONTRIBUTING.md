@@ -1,11 +1,7 @@
-New issues with bug reports or new feature proposals are welcome of course - but nothing speaks like proposed code and pull requests.. thus that's the preferred way of contributing to this project!  To propose a change, do the usual GitHub thing (or glance at [guides.github.com](https://guides.github.com) if this is your first contribution to an open source project on GitHub - welcome!):
+# Contributing
 
-Pull this, create a local branch.
+We welcome incremental pull requests with small changes.
 
-Then first, add your name to the [CONTRIBUTORS.md](CONTRIBUTORS.md) file as part of your PR! ;-)
-
-Then, hack some cool extension, bug fix, etc.
-
-Raise Pull Request...
+To propose a larger enhancement or change, it's typically best to 1st open an issue to discuss it.
 
 Thanks for your help!
