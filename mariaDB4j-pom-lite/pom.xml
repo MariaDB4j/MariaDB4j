@@ -80,7 +80,7 @@
 
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.1</version>
+        <version>3.4.0</version>
         <configuration>
           <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
           <excludeResources>true</excludeResources>
