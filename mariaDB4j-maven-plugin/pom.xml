@@ -13,7 +13,7 @@
   <name>MariaDB4j Maven Plugin</name>
 
   <properties>
-    <maven.version>3.9.11</maven.version>
+    <maven.version>3.9.12</maven.version>
     <skipTests>false</skipTests>
   </properties>
 
