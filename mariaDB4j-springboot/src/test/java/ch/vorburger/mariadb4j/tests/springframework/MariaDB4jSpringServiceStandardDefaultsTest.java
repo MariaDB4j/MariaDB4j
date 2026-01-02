@@ -19,30 +19,32 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Tests the default configuration of a MariaDB4jSpringService.
  *
  * @author Michael Vorburger
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
 public class MariaDB4jSpringServiceStandardDefaultsTest {
 
     @Autowired MariaDB4jSpringService s;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         if (!s.isRunning()) {
             s.start(); // Only start if not already running
@@ -51,16 +53,16 @@ public class MariaDB4jSpringServiceStandardDefaultsTest {
 
     @Test
     public void testStandardDefaults() {
-        Assert.assertNotEquals(3306, s.getConfiguration().getPort());
-        Assert.assertTrue(
+        assertNotEquals(3306, s.getConfiguration().getPort());
+        assertTrue(
                 s.getConfiguration().getBaseDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
-        Assert.assertTrue(
+        assertTrue(
                 s.getConfiguration().getDataDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
-        Assert.assertTrue(
+        assertTrue(
                 s.getConfiguration().getTmpDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (s.isRunning()) {
             s.stop();
