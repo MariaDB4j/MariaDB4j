@@ -19,7 +19,8 @@
  */
 package ch.vorburger.mariadb4j.mariadb4jmavenplugintest.basic;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,19 +29,21 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class BasicUsageIT {
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
     public void openDatabase() throws Exception {
         int port = Integer.parseInt(System.getProperty("mariadb4j.port"));
-        assertTrue("expect positive port value: " + port, port > 0);
+        assertTrue(port > 0, "expect positive port value: " + port);
         String jdbcUrl = "jdbc:mariadb://localhost:" + port + "/foo";
-        assertEquals("database url in system properties", jdbcUrl, System.getProperty("mariadb.databaseurl"));
+        assertEquals(jdbcUrl, System.getProperty("mariadb.databaseurl"), "database url in system properties");
         try (Connection conn = DriverManager.getConnection(jdbcUrl)) {
             try (Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SHOW TABLES LIKE 'bar'")) {
@@ -48,7 +51,7 @@ public class BasicUsageIT {
                 while (rs.next()) {
                     tables.add(rs.getString(1));
                 }
-                assertEquals("table names", Collections.singletonList("bar"), tables);
+                assertEquals(Collections.singletonList("bar"), tables, "table names");
             }
         }
     }

@@ -1,5 +1,3 @@
-import static org.junit.Assert.assertFalse
-
 def file = new File(basedir, "build.log")
-assertFalse 'MariaDB4j should not have run', file.text.contains("Installing a new embedded database")
-assertFalse 'MariaDB4j Should not attempt to stop', file.text.contains("Database stopped.")
+assert !file.text.contains("Installing a new embedded database") : 'MariaDB4j should not have run'
+assert !file.text.contains("Database stopped.") : 'MariaDB4j Should not attempt to stop'
