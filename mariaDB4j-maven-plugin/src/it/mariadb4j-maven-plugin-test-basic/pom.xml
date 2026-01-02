@@ -34,7 +34,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.5.4</version>
         <configuration>
           <systemPropertyVariables>
             <mariadb4j.port>${mariadb4j.port}</mariadb4j.port>
@@ -61,9 +61,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.12.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
