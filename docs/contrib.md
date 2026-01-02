@@ -18,6 +18,8 @@ Of course, even if we would replace existing version with new binaries (like it 
 
 ## Release Process
 
+**FIRST** always check https://central.sonatype.com/usertoken, and update `~/.m2/settings.xml` ([see #1317](https://github.com/MariaDB4j/MariaDB4j/issues/1317)).
+
 To deploy the `mariaDB4j-pom-lite`, use:
 
     ./mvnw deploy -Pgpg -f mariaDB4j-pom-lite/pom.xml

@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v3.3.1 - 2026-01-03 (Issue #[1272](https://github.com/MariaDB4j/MariaDB4j/issues/1272))
+
+### Details
+
+* Change Dependabot update schedule from monthly to quarterly by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1306
+* fix: Move commons-lang3 version from core/ into root by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1313
+* docs: Update supported version for security patches from 3.2.0 to 3.3.0 by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1261
+* clean: Remove AssertJ usage and dependencies by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1309
+* clean: Remove Mockito usage and dependencies by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1310
+* clean: Inline errorprone.version & jakarta.annotation-api.version by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1314
+* docs: Revise release process (see #1250) by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1269
+* docs: Revise CONTRIBUTING.md for clearer instructions by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1274
+* docs: Change Log / Release Notes for 3.3.0 by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1268
+* Version next by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1266
+* chore: ./mvnw wrapper:wrapper by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1316
+
+### Version Bumps
+
+* Bump commons-lang3 to [3.20.0,) by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1312
+* chore: Bump maven-plugin-testing-harness from 3.3.0 to 3.4.0,  by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1308
+* deps: Bump Spring Boot from 3.5.6 to 3.5.9 by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1315
+* build(deps-dev): Bump org.junit.jupiter:junit-jupiter-engine from 6.0.0 to 6.0.1 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1278
+* build(deps): Bump actions/checkout from 5.0.0 to 6.0.1 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1301
+* build(deps): Bump actions/dependency-review-action from 4.8.0 to 4.8.2 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1292
+* build(deps): Bump actions/setup-java from 5.0.0 to 5.1.0 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1300
+* build(deps): Bump actions/upload-artifact from 4.6.2 to 6.0.0 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1304
+* build(deps): Bump awalsh128/cache-apt-pkgs-action from 1.5.3 to 1.6.0 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1279
+* build(deps): Bump commons-io:commons-io from 2.20.0 to 2.21.0 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1291
+* build(deps): Bump commons-lang3 to 3.18.0+ by @vorburger in https://github.com/MariaDB4j/MariaDB4j/pull/1270
+* build(deps): Bump github/codeql-action from 3.30.6 to 4.31.9 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1298
+* build(deps): Bump maven.version from 3.9.11 to 3.9.12 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1297
+* build(deps): Bump org.apache.maven:maven-compat from 3.9.11 to 3.9.12 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1296
+* build(deps): Bump org.apache.maven.plugin-tools:maven-plugin-annotations from 3.15.1 to 3.15.2 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1284
+* build(deps): Bump org.apache.maven.plugins:maven-jar-plugin from 3.4.2 to 3.5.0 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1287
+* build(deps): Bump org.apache.maven.plugins:maven-plugin-plugin from 3.15.1 to 3.15.2 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1283
+* build(deps): Bump org.apache.maven.plugins:maven-release-plugin from 3.1.1 to 3.3.1 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1305
+* build(deps): Bump org.apache.maven.plugins:maven-source-plugin from 3.3.1 to 3.4.0 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1288
+* build(deps): Bump org.mockito:mockito-core from 5.20.0 to 5.21.0 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1302
+* build(deps): Bump step-security/harden-runner from 2.13.1 to 2.14.0 by @dependabot[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1303
+* [pre-commit.ci] pre-commit autoupdate by @pre-commit-ci[bot] in https://github.com/MariaDB4j/MariaDB4j/pull/1285
+
+**Full Changelog**: https://github.com/MariaDB4j/MariaDB4j/compare/mariaDB4j-3.3.0...mariaDB4j-3.3.1
+
 ## v3.3.0 - 2025-10-03 (Issue #[1250](https://github.com/MariaDB4j/MariaDB4j/issues/1250))
 
 ### TL;DR
