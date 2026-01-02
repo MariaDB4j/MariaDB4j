@@ -10,16 +10,9 @@ updates:
   - dependency-name: mysql:mysql-connector-java
     versions:
     - 8.0.23
-  - dependency-name: org.mockito:mockito-core
-    versions:
-    - 3.7.7
-    - 3.8.0
   - dependency-name: org.apache.maven.shared:maven-common-artifact-filters
     versions:
     - 3.1.1
-  - dependency-name: org.assertj:assertj-core
-    versions:
-    - 3.18.1
 
 - package-ecosystem: "github-actions"
   directory: "/"
