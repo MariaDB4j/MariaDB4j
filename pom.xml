@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>mariaDB4j-pom</artifactId>
-  <version>3.3.1</version>
+  <version>3.3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>MariaDB4j POM</name>
 
@@ -22,7 +22,7 @@
              see https://github.com/MariaDB4j/MariaDB4j/issues/43.
          -->
     <developerConnection>scm:git:git@github.com:vorburger/MariaDB4j.git</developerConnection>
-    <tag>mariaDB4j-3.3.1</tag>
+    <tag>mariaDB4j-3.0.1</tag>
   </scm>
 
   <modules>
@@ -42,7 +42,7 @@
 
   <properties>
     <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-    <project.build.outputTimestamp>2026-01-02T23:13:36Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2026-01-02T23:14:18Z</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Only use version properties for BOMs or if a version is used across multiple dependencies; otherwise, inline. -->
     <springboot.version>3.5.9</springboot.version>
