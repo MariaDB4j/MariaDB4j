@@ -77,7 +77,7 @@ public class MariaDB4jStartMojoTest {
     private static final String BASIC_TABLE_VALUE_COLUMN = "baz";
 
     @Test
-    @Timeout(500)
+    @Timeout(1)
     @InjectMojo(goal = "start", pom = "src/test/resources/skip/pom.xml")
     public void shouldSkipIfSkipIsSet(StartMojo mojo) throws Exception {
         assertThat(mojo).isNotNull();

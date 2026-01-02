@@ -19,19 +19,19 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 
@@ -42,7 +42,7 @@ import java.io.File;
  * @author Michael Vorburger
  */
 @ContextConfiguration(classes = MariaDB4jSpringServiceTestSpringConfiguration.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @TestPropertySource(
         properties = {
             MariaDB4jSpringService.PORT + "=5677",
@@ -55,7 +55,7 @@ public class MariaDB4jSpringServiceOverrideBySetTest {
 
     @Autowired MariaDB4jSpringService s;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         if (!s.isRunning()) {
             s.start(); // Only start if not already running
@@ -76,7 +76,7 @@ public class MariaDB4jSpringServiceOverrideBySetTest {
                 s.getConfiguration().getDataDir());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (s.isRunning()) {
             s.stop();
