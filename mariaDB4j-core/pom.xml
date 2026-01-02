@@ -31,7 +31,7 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <!-- https://github.com/MariaDB4j/MariaDB4j/security/dependabot/31 -->
-      <version>[3.18.0,)</version>
+      <version>[3.20.0,)</version>
     </dependency>
     <dependency>
       <!-- For ClasspathUnpacker -->
