@@ -19,9 +19,10 @@
  */
 package ch.vorburger.mariadb4j.springboot.autoconfigure;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -38,9 +39,8 @@ public class MariaDB4JSpringConfigurationTest {
                 .withUserConfiguration(MariaDB4jSpringService.class)
                 .run(
                         context -> {
-                            Assertions.assertThat(
-                                            context.getBeansOfType(MariaDB4jSpringService.class))
-                                    .isNotEmpty();
+                            assertFalse(
+                                    context.getBeansOfType(MariaDB4jSpringService.class).isEmpty());
                         });
     }
 }

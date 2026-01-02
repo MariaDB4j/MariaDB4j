@@ -19,8 +19,10 @@
  */
 package ch.vorburger.mariadb4j;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
@@ -80,7 +82,7 @@ public class MariaDB4jStartMojoTest {
     @Timeout(1)
     @InjectMojo(goal = "start", pom = "src/test/resources/skip/pom.xml")
     public void shouldSkipIfSkipIsSet(StartMojo mojo) throws Exception {
-        assertThat(mojo).isNotNull();
+        assertNotNull(mojo);
         mojo.execute();
         // without config and plugin context, combined with timeout, this will most certainly fail
         // if not skipped
@@ -98,19 +100,17 @@ public class MariaDB4jStartMojoTest {
         // NB: This is a mess... after an rm -rf ~/.m2/repository/ch/vorburger/mariaDB4j,
         // this test fails at first, until after the 2nd (!) "mvn install" it passes.
         // It only works on CI because ~/.m2/** is cached there.
-        assertThat(mojo).isNotNull();
+        assertNotNull(mojo);
         pluginContext = mojo.getPluginContext();
         if (pluginContext == null) {
             pluginContext = new HashMap<>();
             mojo.setPluginContext(pluginContext);
         }
         String databaseName = mojo.getDatabaseName();
-        assertThat(databaseName)
-                .overridingErrorMessage("databaseName(name)")
-                .isEqualTo(BASIC_DB_NAME);
+        assertEquals(BASIC_DB_NAME, databaseName, "databaseName(name)");
         mojo.execute();
         DB db = getDb();
-        assertThat(db).overridingErrorMessage("db from plugin context").isNotNull();
+        assertNotNull(db, "db from plugin context");
         System.out.println("querying database...");
         Map<String, String> vars;
         Table<Integer, String, Object> table;
@@ -128,11 +128,9 @@ public class MariaDB4jStartMojoTest {
             table = DbUtils.selectAll(conn, BASIC_TABLE_NAME);
             System.out.format("table post-insertion: %s%n", table);
         }
-        assertThat(vars.size()).overridingErrorMessage("vars like version").isEqualTo(1);
+        assertEquals(1, vars.size(), "vars like version");
         Set<Object> valueSet = ImmutableSet.copyOf(table.column(BASIC_TABLE_VALUE_COLUMN).values());
-        assertThat(valueSet)
-                .overridingErrorMessage("table values")
-                .isEqualTo(ImmutableSet.of("a", "b"));
+        assertEquals(ImmutableSet.of("a", "b"), valueSet, "table values");
     }
 
     private DB getDb() {
@@ -144,7 +142,7 @@ public class MariaDB4jStartMojoTest {
     }
 
     private Connection openConnection(DB db, String databaseName) throws SQLException {
-        assertThat(db).isNotNull();
+        assertNotNull(db);
         String jdbcUrl =
                 "jdbc:mariadb://localhost:"
                         + db.getConfiguration().getPort()
@@ -198,9 +196,9 @@ public class MariaDB4jStartMojoTest {
         try (Connection conn = openConnection(getDb(), UTF8MB4_TEST_DB_NAME);
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT content FROM supertext WHERE 1")) {
-            assertThat(rs.next()).isTrue();
+            assertTrue(rs.next());
             retrievedValue = rs.getString(1);
         }
-        assertThat(retrievedValue).isEqualTo(complexString);
+        assertEquals(complexString, retrievedValue);
     }
 }
