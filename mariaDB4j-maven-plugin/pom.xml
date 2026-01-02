@@ -64,11 +64,6 @@
     </dependency>
     <dependency>
       <scope>test</scope>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-    </dependency>
-    <dependency>
-      <scope>test</scope>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
     </dependency>
@@ -124,12 +119,6 @@
         <groupId>org.apache.maven.plugin-tools</groupId>
         <artifactId>maven-plugin-annotations</artifactId>
         <version>3.15.2</version>
-      </dependency>
-      <dependency>
-        <scope>test</scope>
-        <groupId>org.assertj</groupId>
-        <artifactId>assertj-core</artifactId>
-        <version>3.27.6</version>
       </dependency>
       <dependency>
         <scope>test</scope>
