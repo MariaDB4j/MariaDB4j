@@ -61,6 +61,16 @@
       <artifactId>junit</artifactId>
     </dependency>
     <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-compat</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
       <scope>test</scope>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
@@ -139,7 +149,7 @@
         <scope>test</scope>
         <groupId>org.apache.maven.plugin-testing</groupId>
         <artifactId>maven-plugin-testing-harness</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.0</version>
       </dependency>
       <dependency>
         <scope>test</scope>
