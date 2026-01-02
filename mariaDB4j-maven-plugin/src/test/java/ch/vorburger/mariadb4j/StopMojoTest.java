@@ -22,11 +22,6 @@ package ch.vorburger.mariadb4j;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
@@ -35,11 +30,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,18 +42,15 @@ import java.util.List;
 public class StopMojoTest {
 
     StopMojo stopMojo;
-
-    @Mock Log mockLog;
-
-    @Mock DB mockDb;
-
-    @Captor ArgumentCaptor<String> logCaptor;
+    MockLog mockLog;
+    MockDB mockDb;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        mockDb = new MockDB();
         DBSingleton.setDB(mockDb);
         stopMojo = new StopMojo();
+        mockLog = new MockLog();
         stopMojo.setLog(mockLog);
     }
 
@@ -70,31 +59,26 @@ public class StopMojoTest {
         stopMojo.setSkip(true);
         stopMojo.execute();
 
-        verifyNoMoreInteractions(mockDb);
-        verify(mockLog, times(1)).debug(logCaptor.capture());
-        verifyNoMoreInteractions(mockLog);
-
-        assertEquals("skipping stop as per configuration.", logCaptor.getValue());
+        assertEquals(0, mockDb.stopCallCount);
+        assertEquals(1, mockLog.debugMessages.size());
+        assertEquals("skipping stop as per configuration.", mockLog.debugMessages.get(0));
+        assertEquals(0, mockLog.infoMessages.size());
+        assertEquals(0, mockLog.warnMessages.size());
+        assertEquals(0, mockLog.errorMessages.size());
     }
 
     @Test
     public void stopCallsDbSingleton() throws Exception {
         stopMojo.execute();
 
-        verify(mockDb).stop();
-        verify(mockLog, times(1)).info(logCaptor.capture());
-        verifyNoMoreInteractions(mockLog);
-
-        assertEquals("Stopping MariaDB4j...", logCaptor.getValue());
+        assertEquals(1, mockDb.stopCallCount);
+        assertEquals(1, mockLog.infoMessages.size());
+        assertEquals("Stopping MariaDB4j...", mockLog.infoMessages.get(0));
     }
 
     @Test
     public void stopCallsDbSingletonAndHandlesManagedProcessException() throws Exception {
-        DB mockDb = mock(DB.class);
-        DBSingleton.setDB(mockDb);
-
-        Exception exception = new ManagedProcessException("error");
-        doThrow(exception).when(mockDb).stop();
+        mockDb.throwExceptionOnStop = true;
 
         try {
             stopMojo.execute();
@@ -104,12 +88,96 @@ public class StopMojoTest {
             assertTrue(e.getMessage().contains("MariaDB4j Database. Could not stop gracefully"));
         }
 
-        verify(mockDb).stop();
-        verify(mockLog, times(1)).info(logCaptor.capture());
-        verifyNoMoreInteractions(mockLog);
+        assertEquals(1, mockDb.stopCallCount);
+        assertEquals(1, mockLog.infoMessages.size());
+        assertEquals("Stopping MariaDB4j...", mockLog.infoMessages.get(0));
+    }
 
-        List<String> logMessages = logCaptor.getAllValues();
+    private static class MockDB extends DB {
+        int stopCallCount = 0;
+        boolean throwExceptionOnStop = false;
 
-        assertEquals("Stopping MariaDB4j...", logMessages.get(0));
+        MockDB() {
+            super(null);
+        }
+
+        @Override
+        public synchronized void stop() throws ManagedProcessException {
+            stopCallCount++;
+            if (throwExceptionOnStop) {
+                throw new ManagedProcessException("error");
+            }
+        }
+    }
+
+    private static class MockLog implements Log {
+        List<String> debugMessages = new ArrayList<>();
+        List<String> infoMessages = new ArrayList<>();
+        List<String> warnMessages = new ArrayList<>();
+        List<String> errorMessages = new ArrayList<>();
+
+        @Override
+        public void debug(CharSequence content) {
+            debugMessages.add(content.toString());
+        }
+
+        @Override
+        public void debug(CharSequence content, Throwable error) {}
+
+        @Override
+        public void debug(Throwable error) {}
+
+        @Override
+        public void info(CharSequence content) {
+            infoMessages.add(content.toString());
+        }
+
+        @Override
+        public void info(CharSequence content, Throwable error) {}
+
+        @Override
+        public void info(Throwable error) {}
+
+        @Override
+        public void warn(CharSequence content) {
+            warnMessages.add(content.toString());
+        }
+
+        @Override
+        public void warn(CharSequence content, Throwable error) {}
+
+        @Override
+        public void warn(Throwable error) {}
+
+        @Override
+        public void error(CharSequence content) {
+            errorMessages.add(content.toString());
+        }
+
+        @Override
+        public void error(CharSequence content, Throwable error) {}
+
+        @Override
+        public void error(Throwable error) {}
+
+        @Override
+        public boolean isDebugEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isInfoEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isWarnEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isErrorEnabled() {
+            return true;
+        }
     }
 }
