@@ -3,8 +3,7 @@ updates:
 - package-ecosystem: maven
   directory: "/"
   schedule:
-    interval: monthly
-    day: sunday
+    interval: quarterly
     time: "04:00"
   open-pull-requests-limit: 99
   ignore:
@@ -25,14 +24,12 @@ updates:
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
-    interval: monthly
-    day: sunday
+    interval: quarterly
     time: "04:00"
   open-pull-requests-limit: 99
 
 - package-ecosystem: "devcontainers"
   directory: "/"
   schedule:
-    interval: monthly
-    day: sunday
+    interval: quarterly
     time: "04:00"
