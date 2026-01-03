@@ -28,7 +28,7 @@ MariaDB4j CONTRIBUTORS
 - Tamas Gaspar [@tomlincoln](https://github.com/tomlincoln), Oct 2020 Make MariaDB4jService start method do not recreate the DB when already started
 - Knowles Atchison, Jr [@TheKnowles](https://github.com/TheKnowles), September 2023 Added MariaDB 10.11.5 to build, March 2025 Windows MariaDB 11.4.5
 - Cristian Ghezzi [@xtianus](https://github.com/xtianus), April 2025 Add reusing data folder on startup with DB.openEmbeddedDB()
-- Bob Bass [@robertjbass](https://github.com/robertjbass) <bob@bbass.co>, January 2026 Add macOS/Linux arm64 binaries for MariaDB 10.5.29, 10.6.24, 10.11.15, 11.8.5; for SpinDB
+- Bob Bass [@robertjbass](https://github.com/robertjbass) <bob@bbass.co>, January 2026 Add macOS/Linux arm64 binaries for MariaDB 10.5.29, 10.6.24, 10.11.15, 11.4.9, 11.8.5; for SpinDB
 - also see https://github.com/MariaDB4j/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
