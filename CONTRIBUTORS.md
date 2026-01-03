@@ -20,7 +20,7 @@ MariaDB4j CONTRIBUTORS
 - Andrew Groot [@thesquaregroot](https://github.com/thesquaregroot) <groot@softwareverde.com>, June 2018; for https://softwareverde.com
 - Yftach Zur [@yiftizur](https://github.com/yiftizur), June 2018; for MariaDB4jRule for easy integration with JUnit
 - William Dutton [@duttonw](https://github.com/duttonw) <will.dutt@gmail.com>, June 2018; for mariaDB4j-maven-plugin integration testing of micro services under services.qld.gov.au
-- Mike Chaberski [@mike10004](https://github.com/mike10004),  May 2017; initial [mariadb4j-maven-plugin](https://github.com/mike10004/mariadb4j-maven-plugin) incorporated to improve mariaDB4j-maven-plugin
+- Mike Chaberski [@mike10004](https://github.com/mike10004), May 2017; initial [mariadb4j-maven-plugin](https://github.com/mike10004/mariadb4j-maven-plugin) incorporated to improve mariaDB4j-maven-plugin
 - Yuexiang Gao [@kbyyd24](https://github.com/kbyyd24) <melo@gaoyuexiang.cn> (http://blog.gaoyuexiang.cn), August 2018; for mariaDB4j-springboot auto-configure with spring boot
 - Neelesh Shastry [@neeleshs](https://github.com/neeleshs), Dec 2017 Provide a callback if the DB process crashes
 - Gordon Little [@glittle1972](https://github.com/glittle1972), Jun 2019 Add option to force continue-on-error for sourcing SQL scripts
@@ -28,6 +28,7 @@ MariaDB4j CONTRIBUTORS
 - Tamas Gaspar [@tomlincoln](https://github.com/tomlincoln), Oct 2020 Make MariaDB4jService start method do not recreate the DB when already started
 - Knowles Atchison, Jr [@TheKnowles](https://github.com/TheKnowles), September 2023 Added MariaDB 10.11.5 to build, March 2025 Windows MariaDB 11.4.5
 - Cristian Ghezzi [@xtianus](https://github.com/xtianus), April 2025 Add reusing data folder on startup with DB.openEmbeddedDB()
+- Bob Bass [@robertjbass](https://github.com/robertjbass) <bob@bbass.co>, January 2026 Add macOS/Linux arm64 binaries for MariaDB 10.5.29, 10.6.24, 10.11.15, 11.8.5; for SpinDB
 - also see https://github.com/MariaDB4j/MariaDB4j/graphs/contributors
 
 Contributions, patches, forks more than welcome - hack it, and add your name here! ;-)
