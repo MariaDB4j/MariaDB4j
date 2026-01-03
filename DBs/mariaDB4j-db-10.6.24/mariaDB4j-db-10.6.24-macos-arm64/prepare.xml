@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<project name="MariaDB4j-homebrew" default="extract">
+
+  <target name="env">
+    <echo message="Project path   : ${project.basedir}" />
+    <echo message="Output location: ${project.build.directory}" />
+    <echo message="Cache location : ${cacheDir}" />
+    <echo message="MariaDB version: ${mariaDB.version}" />
+    <mkdir dir="${cacheDir}" />
+    <mkdir dir="${cacheDir}/input" />
+  </target>
+
+  <target name="brew" depends="env">
+    <exec executable="brew">
+      <arg value="install" />
+      <arg value="mariadb@10.6" />
+    </exec>
+  </target>
+
+  <target name="extract" depends="env,brew">
+    <copy failonerror="true" verbose="true"
+      todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx">
+      <fileset dir="/opt/homebrew/opt/mariadb@10.6/">
+        <include name="share/**/*" />
+      </fileset>
+    </copy>
+
+    <copy failonerror="true" verbose="true"
+      todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/libs">
+      <fileset dir="/opt/homebrew/opt/mariadb@10.6/lib/">
+        <include name="**/*" />
+      </fileset>
+    </copy>
+
+    <copy failonerror="true" verbose="true"
+      todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/bin">
+      <fileset dir="/opt/homebrew/opt/mariadb@10.6/bin">
+        <include name="mariadb" />
+        <include name="mariadbd" />
+        <include name="mariadb-check" />
+        <include name="mariadb-dump" />
+        <include name="my_print_defaults" />
+        <include name="resolveip" />
+      </fileset>
+    </copy>
+
+    <copy failonerror="true" verbose="true"
+      file="/opt/homebrew/opt/mariadb@10.6/scripts/mariadb-install-db"
+      tofile="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/scripts/mariadb-install-db">
+    </copy>
+
+    <chmod
+      dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/bin"
+      perm="ugo+rx"
+      includes="*" />
+  </target>
+</project>
