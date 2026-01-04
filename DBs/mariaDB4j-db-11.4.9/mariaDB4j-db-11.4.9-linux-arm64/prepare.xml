@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="MariaDB4j-docker" default="extract">
+
+  <target name="env">
+    <echo message="Project path   : ${project.basedir}" />
+    <echo message="Output location: ${project.build.directory}" />
+    <echo message="Cache location : ${cacheDir}" />
+    <echo message="MariaDB version: ${mariaDB.version}" />
+    <mkdir dir="${cacheDir}" />
+    <mkdir dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin" />
+    <mkdir dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/share" />
+    <mkdir dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/scripts" />
+  </target>
+
+  <target name="extract" depends="env">
+    <echo message="Extracting binaries from Docker image mariadb:11.4.9 (linux/arm64)..." />
+
+    <!-- Extract binaries, scripts, and shared files -->
+    <exec executable="docker" failonerror="true">
+      <arg value="run" />
+      <arg value="--rm" />
+      <arg value="--platform" />
+      <arg value="linux/arm64" />
+      <arg value="-v" />
+      <arg value="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux:/out" />
+      <arg value="mariadb:11.4.9" />
+      <arg value="sh" />
+      <arg value="-c" />
+      <arg value="cp /usr/sbin/mariadbd /usr/bin/mariadb /usr/bin/mariadb-check /usr/bin/mariadb-dump /usr/bin/my_print_defaults /usr/bin/resolveip /out/bin/ &amp;&amp; cp /usr/bin/mariadb-install-db /out/scripts/ &amp;&amp; cp -r /usr/share/mariadb/* /out/share/" />
+    </exec>
+
+    <chmod dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin"
+      perm="ugo+rx" includes="*" />
+    <chmod dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/scripts"
+      perm="ugo+rx" includes="*" />
+  </target>
+</project>
