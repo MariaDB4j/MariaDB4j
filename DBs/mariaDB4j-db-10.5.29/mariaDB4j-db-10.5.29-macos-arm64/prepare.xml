@@ -15,26 +15,30 @@
       <arg value="install" />
       <arg value="mariadb@10.5" />
     </exec>
+    <exec executable="brew" outputproperty="mariadb.prefix" failonerror="true">
+      <arg value="--prefix" />
+      <arg value="mariadb@10.5" />
+    </exec>
   </target>
 
   <target name="extract" depends="env,brew">
     <copy failonerror="true" verbose="true"
       todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx">
-      <fileset dir="/opt/homebrew/opt/mariadb@10.5/">
+      <fileset dir="${mariadb.prefix}/">
         <include name="share/**/*" />
       </fileset>
     </copy>
 
     <copy failonerror="true" verbose="true"
       todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/libs">
-      <fileset dir="/opt/homebrew/opt/mariadb@10.5/lib/">
+      <fileset dir="${mariadb.prefix}/lib/">
         <include name="**/*" />
       </fileset>
     </copy>
 
     <copy failonerror="true" verbose="true"
       todir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/bin">
-      <fileset dir="/opt/homebrew/opt/mariadb@10.5/bin">
+      <fileset dir="${mariadb.prefix}/bin">
         <include name="mariadb" />
         <include name="mariadbd" />
         <include name="mariadb-check" />
@@ -49,7 +53,7 @@
     </copy>
 
     <copy failonerror="true" verbose="true"
-      file="/opt/homebrew/opt/mariadb@10.5/scripts/mariadb-install-db"
+      file="${mariadb.prefix}/scripts/mariadb-install-db"
       tofile="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/osx/scripts/mariadb-install-db">
     </copy>
 

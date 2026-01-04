@@ -13,48 +13,20 @@
   </target>
 
   <target name="extract" depends="env">
-    <echo message="Extracting binaries from Docker image mariadb:11.8 (linux/arm64)..." />
+    <echo message="Extracting binaries from Docker image mariadb:11.8.5 (linux/arm64)..." />
 
-    <!-- Extract server binary -->
+    <!-- Extract binaries, scripts, and shared files -->
     <exec executable="docker" failonerror="true">
       <arg value="run" />
       <arg value="--rm" />
       <arg value="--platform" />
       <arg value="linux/arm64" />
       <arg value="-v" />
-      <arg value="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin:/out" />
-      <arg value="mariadb:11.8" />
+      <arg value="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux:/out" />
+      <arg value="mariadb:11.8.5" />
       <arg value="sh" />
       <arg value="-c" />
-      <arg value="cp /usr/sbin/mariadbd /usr/bin/mariadb /usr/bin/mariadb-check /usr/bin/mariadb-dump /usr/bin/my_print_defaults /usr/bin/resolveip /out/" />
-    </exec>
-
-    <!-- Extract install script -->
-    <exec executable="docker" failonerror="true">
-      <arg value="run" />
-      <arg value="--rm" />
-      <arg value="--platform" />
-      <arg value="linux/arm64" />
-      <arg value="-v" />
-      <arg value="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/scripts:/out" />
-      <arg value="mariadb:11.8" />
-      <arg value="sh" />
-      <arg value="-c" />
-      <arg value="cp /usr/bin/mariadb-install-db /out/" />
-    </exec>
-
-    <!-- Extract share directory -->
-    <exec executable="docker" failonerror="true">
-      <arg value="run" />
-      <arg value="--rm" />
-      <arg value="--platform" />
-      <arg value="linux/arm64" />
-      <arg value="-v" />
-      <arg value="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/share:/out" />
-      <arg value="mariadb:11.8" />
-      <arg value="sh" />
-      <arg value="-c" />
-      <arg value="cp -r /usr/share/mariadb/* /out/" />
+      <arg value="cp /usr/sbin/mariadbd /usr/bin/mariadb /usr/bin/mariadb-check /usr/bin/mariadb-dump /usr/bin/my_print_defaults /usr/bin/resolveip /out/bin/ &amp;&amp; cp /usr/bin/mariadb-install-db /out/scripts/ &amp;&amp; cp -r /usr/share/mariadb/* /out/share/" />
     </exec>
 
     <chmod dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin"
