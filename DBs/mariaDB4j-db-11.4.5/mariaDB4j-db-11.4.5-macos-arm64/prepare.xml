@@ -37,6 +37,7 @@
       <fileset dir="/opt/homebrew/opt/mariadb@11.4/bin">
         <include name="mariadb" />
         <include name="mariadbd" />
+        <include name="mariadb-admin" />
         <include name="mariadb-check" />
         <include name="mariadb-dump" />
         <include name="my_print_defaults" />

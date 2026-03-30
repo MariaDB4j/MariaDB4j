@@ -129,7 +129,8 @@ public interface DBConfiguration {
         Server,
         Client,
         Dump,
-        PrintDefaults
+        PrintDefaults,
+        Admin
     }
 
     class Impl implements DBConfiguration {

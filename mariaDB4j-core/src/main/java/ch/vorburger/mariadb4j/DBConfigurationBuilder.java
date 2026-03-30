@@ -19,6 +19,7 @@
  */
 package ch.vorburger.mariadb4j;
 
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Admin;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Client;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
@@ -461,6 +462,13 @@ public class DBConfigurationBuilder {
                         isWindows()
                                 ? new File(baseDir, "bin/mysqldump.exe")
                                 : new File(baseDir, "bin/mariadb-dump"));
+
+        executables.putIfAbsent(
+                Admin,
+                () ->
+                        isWindows()
+                                ? new File(baseDir, "bin/mysqladmin.exe")
+                                : new File(baseDir, "bin/mariadb-admin"));
 
         String name = isWindows() ? "mysql" : "mariadb";
         executables.putIfAbsent(

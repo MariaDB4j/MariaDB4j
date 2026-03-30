@@ -19,6 +19,7 @@
  */
 package ch.vorburger.mariadb4j;
 
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Admin;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Client;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
@@ -554,10 +555,47 @@ public class DB {
     public synchronized void stop() throws ManagedProcessException {
         if (mysqldProcess != null && mysqldProcess.isAlive()) {
             logger.debug("Stopping the database...");
-            mysqldProcess.destroy();
+            if (configuration.isWindows()) {
+                shutdownGracefullyOnWindows();
+            } else {
+                mysqldProcess.destroy();
+            }
             logger.info("Database stopped.");
         } else {
             logger.debug("Database was already stopped.");
+        }
+    }
+
+    /**
+     * Sends a shutdown command via mysqladmin/mariadb-admin for a graceful stop on Windows, falling
+     * back to destroy() if the admin tool is unavailable or the command fails.
+     */
+    private void shutdownGracefullyOnWindows() throws ManagedProcessException {
+        File adminExe = configuration.getExecutable(Admin);
+        if (adminExe.exists()) {
+            try {
+                ManagedProcessBuilder builder = new ManagedProcessBuilder(adminExe);
+                builder.setOutputStreamLogDispatcher(
+                        getOutputStreamLogDispatcher(adminExe.getName()));
+                builder.addArgument("--port=" + configuration.getPort());
+                builder.addArgument("-h");
+                builder.addArgument("127.0.0.1");
+                builder.addArgument("shutdown");
+                ManagedProcess adminProcess = builder.build();
+                adminProcess.start();
+                adminProcess.waitForExit();
+                // Wait for mysqld to finish shutting down
+                mysqldProcess.waitForExitMaxMsOrDestroy(dbStartMaxWaitInMS);
+                return;
+            } catch (Exception e) {
+                logger.warn(
+                        "Graceful shutdown via mysqladmin failed, falling back to destroy()", e);
+            }
+        } else {
+            logger.debug("mysqladmin not found at {}, falling back to destroy()", adminExe);
+        }
+        if (mysqldProcess.isAlive()) {
+            mysqldProcess.destroy();
         }
     }
 
@@ -580,6 +618,7 @@ public class DB {
                 Util.forceExecutable(configuration.getExecutable(Server));
                 Util.forceExecutable(configuration.getExecutable(Dump));
                 Util.forceExecutable(configuration.getExecutable(Client));
+                Util.forceExecutable(configuration.getExecutable(Admin));
             }
         } catch (IOException e) {
             throw new RuntimeException("Error unpacking embedded DB", e);
