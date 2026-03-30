@@ -19,7 +19,8 @@
  */
 package ch.vorburger.mariadb4j.mariadb4jmavenplugintest.basic;
 
-import static com.google.common.truth.Truth.assertWithMessage;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,8 +30,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class BasicUsageIT {
@@ -39,21 +41,17 @@ public class BasicUsageIT {
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
     public void openDatabase() throws Exception {
         int port = Integer.parseInt(System.getProperty("mariadb4j.port"));
-        assertWithMessage("expect positive port value: " + port).that(port).isGreaterThan(0);
+        assertTrue(port > 0, "expect positive port value: " + port);
         String jdbcUrl = "jdbc:mariadb://localhost:" + port + "/foo";
-        assertWithMessage("database url in system properties")
-                .that(System.getProperty("mariadb.databaseurl"))
-                .isEqualTo(jdbcUrl);
+        assertEquals(jdbcUrl, System.getProperty("mariadb.databaseurl"), "database url in system properties");
         try (Connection conn = DriverManager.getConnection(jdbcUrl)) {
             try (Statement stmt = conn.createStatement();
-                    ResultSet rs = stmt.executeQuery("SHOW TABLES LIKE 'bar'")) {
+                ResultSet rs = stmt.executeQuery("SHOW TABLES LIKE 'bar'")) {
                 List<String> tables = new ArrayList<>();
                 while (rs.next()) {
                     tables.add(rs.getString(1));
                 }
-                assertWithMessage("table names")
-                        .that(tables)
-                        .isEqualTo(Collections.singletonList("bar"));
+                assertEquals(Collections.singletonList("bar"), tables, "table names");
             }
         }
     }
