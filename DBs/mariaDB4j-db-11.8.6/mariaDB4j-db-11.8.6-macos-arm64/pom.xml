@@ -10,8 +10,8 @@
     <relativePath>../../../mariaDB4j-pom-lite/pom.xml</relativePath>
   </parent>
 
-  <artifactId>mariaDB4j-db-linux-arm64</artifactId>
-  <version>11.8.5</version>
+  <artifactId>mariaDB4j-db-macos-arm64</artifactId>
+  <version>11.8.6</version>
 
   <properties>
     <mariaDB.version>${project.version}</mariaDB.version>
