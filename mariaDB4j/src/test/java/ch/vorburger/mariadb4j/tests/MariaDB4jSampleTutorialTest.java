@@ -132,7 +132,7 @@ public class MariaDB4jSampleTutorialTest {
             db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", null, dbName);
             db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", "", dbName);
             results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            assertThat(results.size()).isEqualTo(5);
+            assertThat(results).hasSize(5);
             assertThat(results.get(0)).isEqualTo("Hello, world");
             assertThat(results.get(1)).isEqualTo("Bonjour, monde");
             assertThat(results.get(2)).isEqualTo("Hola, mundo");
