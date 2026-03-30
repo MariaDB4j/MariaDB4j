@@ -67,7 +67,7 @@ jobs:
           distribution: adopt
           java-version-file: .java-version
           cache: maven
-      - uses: ankane/setup-mariadb@ed858ebb43d738ad5a93c7cfe3c2d914e066c988 # v1 as of 2025-03-17
+      - uses: ankane/setup-mariadb@6caf5fe71e6d7165cd21ca2dcfe5b1d023286795 # v1 as of 2026-03-30, required for 11.8 support
         with:
           mariadb-version: "11.8"
       # Build the new Windows 11.8.6 DB package (includes mysqladmin.exe for graceful shutdown)
