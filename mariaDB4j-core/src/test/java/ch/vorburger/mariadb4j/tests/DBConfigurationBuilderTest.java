@@ -141,7 +141,7 @@ public class DBConfigurationBuilderTest {
 
         File baseDir = config.getBaseDir();
         File defaultLibDir = config.getLibDir();
-        assertThat(defaultLibDir).isEqualTo(new File(baseDir, "/libs"));
+        assertThat(defaultLibDir).isEqualTo(new File(baseDir, "libs"));
     }
 
     @Test
