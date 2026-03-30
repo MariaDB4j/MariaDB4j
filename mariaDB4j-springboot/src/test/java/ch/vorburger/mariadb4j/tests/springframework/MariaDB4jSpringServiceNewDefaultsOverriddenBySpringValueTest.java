@@ -19,7 +19,7 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
@@ -55,7 +55,7 @@ public class MariaDB4jSpringServiceNewDefaultsOverriddenBySpringValueTest {
 
     @Test
     public void testNewDefaults() {
-        assertEquals(5678, s.getConfiguration().getPort());
+        assertThat(s.getConfiguration().getPort()).isEqualTo(5678);
     }
 
     @AfterEach

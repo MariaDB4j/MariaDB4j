@@ -19,8 +19,7 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
 
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
@@ -73,8 +72,8 @@ public class MariaDB4jSampleDumpTest {
         // Should be able to create a new table
         List<String> results =
                 qr.query(conn, "SELECT * FROM crew;", new ColumnListHandler<String>());
-        assertEquals(4, results.size());
-        assertEquals("John A Zoidberg", results.get(2));
+        assertThat(results).hasSize(4);
+        assertThat(results.get(2)).isEqualTo("John A Zoidberg");
     }
 
     @Test
@@ -82,9 +81,9 @@ public class MariaDB4jSampleDumpTest {
         File outputDumpFile = File.createTempFile("sqlDump ", ".sql");
         ManagedProcess dumpProcess = db.dumpSQL(outputDumpFile, DBNAME, "root", "");
         dumpProcess.start();
-        assertEquals(0, dumpProcess.waitForExit());
-        assertTrue(outputDumpFile.exists() || outputDumpFile.isDirectory());
-        assertTrue(FileUtils.sizeOf(outputDumpFile) > 0);
+        assertThat(dumpProcess.waitForExit()).isEqualTo(0);
+        assertThat(outputDumpFile.exists() || outputDumpFile.isDirectory()).isTrue();
+        assertThat(FileUtils.sizeOf(outputDumpFile)).isGreaterThan(0L);
         FileUtils.forceDeleteOnExit(outputDumpFile);
     }
 
@@ -98,9 +97,9 @@ public class MariaDB4jSampleDumpTest {
         File outputDumpFile = File.createTempFile("xmlsqlDump", ".xml");
         ManagedProcess dumpProcess = db.dumpXML(outputDumpFile, DBNAME, "root", "");
         dumpProcess.start();
-        assertEquals(0, dumpProcess.waitForExit());
-        assertTrue(outputDumpFile.exists() || outputDumpFile.isDirectory());
-        assertTrue(FileUtils.sizeOf(outputDumpFile) > 0);
+        assertThat(dumpProcess.waitForExit()).isEqualTo(0);
+        assertThat(outputDumpFile.exists() || outputDumpFile.isDirectory()).isTrue();
+        assertThat(FileUtils.sizeOf(outputDumpFile)).isGreaterThan(0L);
         // We just want to check that the file is a valid XML, output of it is mysqldump's
         // responsibility
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

@@ -21,6 +21,8 @@ package ch.vorburger.mariadb4j.tests;
 
 import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
@@ -31,7 +33,6 @@ import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -124,17 +125,17 @@ public class MariaDB4jSampleTutorialTest {
             // Should be able to select from a table
             List<String> results =
                     qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            Assert.assertEquals(1, results.size());
-            Assert.assertEquals("Hello, world", results.get(0));
+            assertThat(results.size()).isEqualTo(1);
+            assertThat(results.get(0)).isEqualTo("Hello, world");
 
             // Should be able to source a SQL file
             db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", null, dbName);
             db.source("ch/vorburger/mariadb4j/testSourceFile.sql", "root", "", dbName);
             results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            Assert.assertEquals(5, results.size());
-            Assert.assertEquals("Hello, world", results.get(0));
-            Assert.assertEquals("Bonjour, monde", results.get(1));
-            Assert.assertEquals("Hola, mundo", results.get(2));
+            assertThat(results.size()).isEqualTo(5);
+            assertThat(results.get(0)).isEqualTo("Hello, world");
+            assertThat(results.get(1)).isEqualTo("Bonjour, monde");
+            assertThat(results.get(2)).isEqualTo("Hola, mundo");
         } finally {
             DbUtils.closeQuietly(conn);
         }
@@ -192,8 +193,8 @@ public class MariaDB4jSampleTutorialTest {
             // Should be able to select from a table
             List<String> results =
                     qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            Assert.assertEquals(1, results.size());
-            Assert.assertEquals("Hello, world", results.get(0));
+            assertThat(results.size()).isEqualTo(1);
+            assertThat(results.get(0)).isEqualTo("Hello, world");
 
         } finally {
             DbUtils.closeQuietly(conn);
@@ -231,7 +232,7 @@ public class MariaDB4jSampleTutorialTest {
             conn = DriverManager.getConnection(db.getConfiguration().getURL(dbName), "root", "");
             List<String> results =
                     qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            Assert.assertEquals("Hello, world", results.get(0));
+            assertThat(results.get(0)).isEqualTo("Hello, world");
             DbUtils.closeQuietly(conn);
             reopenedDb.stop();
         } finally {

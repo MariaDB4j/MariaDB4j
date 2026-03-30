@@ -19,7 +19,7 @@
  */
 package ch.vorburger.mariadb4j;
 
-import static org.junit.Assert.assertTrue;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessException;
@@ -88,7 +88,11 @@ public class StartSimulatedForAllPlatformsTest {
 
     void checkManagedProcessExists(ManagedProcess proc) {
         File installProcFile = proc.getExecutableFile();
-        assertTrue("Does not exist: " + installProcFile.toString(), installProcFile.exists());
-        assertTrue("Is not a File: " + installProcFile.toString(), installProcFile.isFile());
+        assertWithMessage("Does not exist: " + installProcFile)
+                .that(installProcFile.exists())
+                .isTrue();
+        assertWithMessage("Is not a File: " + installProcFile)
+                .that(installProcFile.isFile())
+                .isTrue();
     }
 }

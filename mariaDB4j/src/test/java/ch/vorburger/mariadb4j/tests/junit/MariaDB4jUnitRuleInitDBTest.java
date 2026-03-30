@@ -19,7 +19,7 @@
  */
 package ch.vorburger.mariadb4j.tests.junit;
 
-import static org.junit.Assert.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.junit.MariaDB4jRule;
@@ -54,8 +54,8 @@ public class MariaDB4jUnitRuleInitDBTest {
 
         // Should be able to create a new table
         List<String> results = qr.query(conn, "SELECT * FROM test;", new ColumnListHandler<>(2));
-        assertEquals(2, results.size());
-        assertEquals("John Doe", results.get(0));
-        assertEquals("Jane Doe", results.get(1));
+        assertThat(results).hasSize(2);
+        assertThat(results.get(0)).isEqualTo("John Doe");
+        assertThat(results.get(1)).isEqualTo("Jane Doe");
     }
 }

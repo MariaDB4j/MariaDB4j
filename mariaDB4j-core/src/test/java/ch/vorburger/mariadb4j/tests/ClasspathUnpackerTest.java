@@ -19,9 +19,9 @@
  */
 package ch.vorburger.mariadb4j.tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ch.vorburger.mariadb4j.Util;
 
@@ -44,7 +44,7 @@ public class ClasspathUnpackerTest {
         File toDir = new File("target/testUnpack1");
         FileUtils.deleteDirectory(toDir);
         Util.extractFromClasspathToFile("org/apache/commons/exec", toDir);
-        assertTrue(new File(toDir, "CommandLine.class").exists());
+        assertThat(new File(toDir, "CommandLine.class").exists()).isTrue();
     }
 
     @Test
@@ -65,14 +65,14 @@ public class ClasspathUnpackerTest {
         File toDir = new File("target/testUnpack3");
         FileUtils.deleteDirectory(toDir);
         int c1 = Util.extractFromClasspathToFile("test", toDir);
-        assertEquals(3, c1);
-        assertTrue(new File(toDir, "a.txt").exists());
-        assertTrue(new File(toDir, "b.txt").exists());
-        assertTrue(new File(toDir, "subdir/c.txt").exists());
+        assertThat(c1).isEqualTo(3);
+        assertThat(new File(toDir, "a.txt").exists()).isTrue();
+        assertThat(new File(toDir, "b.txt").exists()).isTrue();
+        assertThat(new File(toDir, "subdir/c.txt").exists()).isTrue();
 
         // Now try again - it shouldn't copy anything anymore (optimization)
         int c2 = Util.extractFromClasspathToFile("test", toDir);
-        assertEquals(0, c2);
+        assertThat(c2).isEqualTo(0);
     }
 
     @Test

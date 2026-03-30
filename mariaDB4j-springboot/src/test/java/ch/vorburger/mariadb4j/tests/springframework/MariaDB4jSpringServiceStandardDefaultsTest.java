@@ -19,8 +19,7 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
@@ -53,13 +52,13 @@ public class MariaDB4jSpringServiceStandardDefaultsTest {
 
     @Test
     public void testStandardDefaults() {
-        assertNotEquals(3306, s.getConfiguration().getPort());
-        assertTrue(
-                s.getConfiguration().getBaseDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
-        assertTrue(
-                s.getConfiguration().getDataDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
-        assertTrue(
-                s.getConfiguration().getTmpDir().toString().contains(SystemUtils.JAVA_IO_TMPDIR));
+        assertThat(s.getConfiguration().getPort()).isNotEqualTo(3306);
+        assertThat(s.getConfiguration().getBaseDir().toString())
+                .contains(SystemUtils.JAVA_IO_TMPDIR);
+        assertThat(s.getConfiguration().getDataDir().toString())
+                .contains(SystemUtils.JAVA_IO_TMPDIR);
+        assertThat(s.getConfiguration().getTmpDir().toString())
+                .contains(SystemUtils.JAVA_IO_TMPDIR);
     }
 
     @AfterEach

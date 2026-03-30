@@ -19,9 +19,8 @@
  */
 package ch.vorburger.mariadb4j;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assert_;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.utils.DBSingleton;
@@ -59,21 +58,21 @@ public class StopMojoTest {
         stopMojo.setSkip(true);
         stopMojo.execute();
 
-        assertEquals(0, mockDb.stopCallCount);
-        assertEquals(1, mockLog.debugMessages.size());
-        assertEquals("skipping stop as per configuration.", mockLog.debugMessages.get(0));
-        assertEquals(0, mockLog.infoMessages.size());
-        assertEquals(0, mockLog.warnMessages.size());
-        assertEquals(0, mockLog.errorMessages.size());
+        assertThat(mockDb.stopCallCount).isEqualTo(0);
+        assertThat(mockLog.debugMessages).hasSize(1);
+        assertThat(mockLog.debugMessages.get(0)).isEqualTo("skipping stop as per configuration.");
+        assertThat(mockLog.infoMessages).isEmpty();
+        assertThat(mockLog.warnMessages).isEmpty();
+        assertThat(mockLog.errorMessages).isEmpty();
     }
 
     @Test
     public void stopCallsDbSingleton() throws Exception {
         stopMojo.execute();
 
-        assertEquals(1, mockDb.stopCallCount);
-        assertEquals(1, mockLog.infoMessages.size());
-        assertEquals("Stopping MariaDB4j...", mockLog.infoMessages.get(0));
+        assertThat(mockDb.stopCallCount).isEqualTo(1);
+        assertThat(mockLog.infoMessages).hasSize(1);
+        assertThat(mockLog.infoMessages.get(0)).isEqualTo("Stopping MariaDB4j...");
     }
 
     @Test
@@ -82,15 +81,15 @@ public class StopMojoTest {
 
         try {
             stopMojo.execute();
-            fail("Should have thrown exception");
+            assert_().withMessage("Should have thrown exception").fail();
         } catch (MojoExecutionException e) {
             // expected
-            assertTrue(e.getMessage().contains("MariaDB4j Database. Could not stop gracefully"));
+            assertThat(e.getMessage()).contains("MariaDB4j Database. Could not stop gracefully");
         }
 
-        assertEquals(1, mockDb.stopCallCount);
-        assertEquals(1, mockLog.infoMessages.size());
-        assertEquals("Stopping MariaDB4j...", mockLog.infoMessages.get(0));
+        assertThat(mockDb.stopCallCount).isEqualTo(1);
+        assertThat(mockLog.infoMessages).hasSize(1);
+        assertThat(mockLog.infoMessages.get(0)).isEqualTo("Stopping MariaDB4j...");
     }
 
     private static class MockDB extends DB {

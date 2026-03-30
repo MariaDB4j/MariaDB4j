@@ -19,7 +19,7 @@
  */
 package ch.vorburger.mariadb4j.tests.springframework;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
 
@@ -64,16 +64,13 @@ public class MariaDB4jSpringServiceOverrideBySetTest {
 
     @Test
     public void testOverrideBySet() {
-        assertEquals(5677, s.getConfiguration().getPort());
-        assertEquals(
-                new File("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir"),
-                s.getConfiguration().getBaseDir());
-        assertEquals(
-                new File("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir/libs"),
-                s.getConfiguration().getLibDir());
-        assertEquals(
-                new File("target/MariaDB4jSpringServiceOverrideBySetTest/dataDir"),
-                s.getConfiguration().getDataDir());
+        assertThat(s.getConfiguration().getPort()).isEqualTo(5677);
+        assertThat(s.getConfiguration().getBaseDir())
+                .isEqualTo(new File("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir"));
+        assertThat(s.getConfiguration().getLibDir())
+                .isEqualTo(new File("target/MariaDB4jSpringServiceOverrideBySetTest/baseDir/libs"));
+        assertThat(s.getConfiguration().getDataDir())
+                .isEqualTo(new File("target/MariaDB4jSpringServiceOverrideBySetTest/dataDir"));
     }
 
     @AfterEach
