@@ -65,6 +65,15 @@
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
     </dependency>
+    <dependency>
+      <!-- plexus-utils 4.0.x moved XML classes to plexus-xml; required at test scope
+           because maven-plugin-testing-harness uses XmlStreamReader from plexus-utils 3.x.
+           See https://github.com/MariaDB4j/MariaDB4j/security/dependabot/47 -->
+      <scope>test</scope>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-xml</artifactId>
+      <version>3.0.1</version>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -124,6 +133,16 @@
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-compat</artifactId>
         <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <!-- Override plexus-utils to 4.0.3 to fix GHSA-6fmv-xxpf-w3cw (Directory Traversal in extractFile).
+             Maven 3.9.x depends on plexus-utils 3.6.0 which is in the vulnerable range (<= 4.0.2),
+             and the 3.x line does not have a backported fix; upgrading to 4.0.3 is required.
+             See https://github.com/MariaDB4j/MariaDB4j/security/dependabot/47 -->
+        <scope>provided</scope>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>4.0.3</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
