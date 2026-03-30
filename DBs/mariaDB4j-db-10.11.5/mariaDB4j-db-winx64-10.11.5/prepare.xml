@@ -40,7 +40,6 @@
       <patternset>
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysql.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqld.exe" />
-        <include name="mariadb-${mariaDB.version}-winx64/bin/mysqladmin.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqlcheck.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqldump.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysql_install_db.exe" />

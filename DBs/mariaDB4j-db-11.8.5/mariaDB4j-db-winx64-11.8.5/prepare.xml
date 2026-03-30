@@ -18,7 +18,7 @@
     description="Download Windows zip file from mariadb.com">
     <echo message="Downloading Windows MariaDB ${mariaDB.version} file ..." />
     <get
-      src="https://dlm.mariadb.com/4047850/MariaDB/mariadb-${mariaDB.version}/winx64-packages/mariadb-${mariaDB.version}-winx64.zip"
+      src="https://ftp.osuosl.org/pub/mariadb/mariadb-${mariaDB.version}/winx64-packages/mariadb-${mariaDB.version}-winx64.zip"
       skipexisting="true"
       dest="${cacheDir}/input/mariadb-${mariaDB.version}-winx64.zip" />
   </target>
@@ -35,6 +35,7 @@
                String name = isWindows() ? "mysql" : "mariadb"; -->
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysql.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqld.exe" />
+        <include name="mariadb-${mariaDB.version}-winx64/bin/mysqladmin.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqlcheck.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysqldump.exe" />
         <include name="mariadb-${mariaDB.version}-winx64/bin/mysql_install_db.exe" />

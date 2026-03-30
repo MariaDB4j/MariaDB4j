@@ -26,7 +26,7 @@
       <arg value="mariadb:11.4.9" />
       <arg value="sh" />
       <arg value="-c" />
-      <arg value="cp /usr/sbin/mariadbd /usr/bin/mariadb /usr/bin/mariadb-check /usr/bin/mariadb-dump /usr/bin/my_print_defaults /usr/bin/resolveip /out/bin/ &amp;&amp; cp /usr/bin/mariadb-install-db /out/scripts/ &amp;&amp; cp -r /usr/share/mariadb/* /out/share/" />
+      <arg value="cp /usr/sbin/mariadbd /usr/bin/mariadb /usr/bin/mariadb-admin /usr/bin/mariadb-check /usr/bin/mariadb-dump /usr/bin/my_print_defaults /usr/bin/resolveip /out/bin/ &amp;&amp; cp /usr/bin/mariadb-install-db /out/scripts/ &amp;&amp; cp -r /usr/share/mariadb/* /out/share/" />
     </exec>
 
     <chmod dir="${project.build.directory}/generated-resources/ch/vorburger/mariadb4j/mariadb-${mariaDB.version}/linux/bin"

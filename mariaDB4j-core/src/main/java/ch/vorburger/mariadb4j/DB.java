@@ -581,6 +581,7 @@ public class DB {
                 builder.addArgument("-h");
                 builder.addArgument("127.0.0.1");
                 builder.addArgument("shutdown");
+                builder.addArgument("--wait-for-all-slaves");
                 ManagedProcess adminProcess = builder.build();
                 adminProcess.start();
                 adminProcess.waitForExit();

@@ -366,7 +366,9 @@ public class DBConfigurationBuilder {
                                 + "of the package that the binaries are in, for: "
                                 + SystemUtils.OS_VERSION);
             }
-            return "mariadb-11.4.5";
+            // Windows now ships with mysqladmin for graceful shutdown (see DB.java
+            // shutdownGracefullyOnWindows)
+            return WINX64.equals(getOS()) ? "mariadb-11.8.5" : "mariadb-11.4.5";
         }
         return databaseVersion;
     }
