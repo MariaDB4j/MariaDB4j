@@ -45,7 +45,7 @@
     <project.build.outputTimestamp>2026-01-02T23:14:18Z</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Only use version properties for BOMs or if a version is used across multiple dependencies; otherwise, inline. -->
-    <springboot.version>3.5.9</springboot.version>
+    <springboot.version>3.5.13</springboot.version>
   </properties>
 
   <build>
