@@ -193,7 +193,7 @@ public class MariaDB4jSampleTutorialTest {
             // Should be able to select from a table
             List<String> results =
                     qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
-            assertThat(results.size()).isEqualTo(1);
+            assertThat(results).hasSize(1);
             assertThat(results.get(0)).isEqualTo("Hello, world");
 
         } finally {
