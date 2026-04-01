@@ -40,8 +40,7 @@ When doing a normal release, here are a few things to do every time:
    git pull origin
    git push vorburger
 
-   # TODO Next time, to save GPG during prepare, try: ./mvnw -DskipTests -Darguments=-DskipTests clean release:clean release:prepare && ./mvnw -DskipTests -Darguments=-DskipTests release:perform -Pgpg
-   ./mvnw -DskipTests -Darguments=-DskipTests clean release:clean release:prepare release:perform -Pgpg
+   ./mvnw -DskipTests -Darguments=-DskipTests clean release:clean release:prepare && ./mvnw -DskipTests -Darguments=-DskipTests release:perform -Pgpg
 
    git push origin mariaDB4j-3.3.0
 
