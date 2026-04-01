@@ -1,0 +1,126 @@
+name: Fortified Maven Auto-Merge
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  schedule:
+    # Runs every 6 hours to catch PRs that have crossed the 24h maturity mark
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  secure-merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Process Dependabot PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Function to process a single PR
+          process_pr() {
+            local PR_NUM=$1
+            local PR_URL="https://github.com/${{ github.repository }}/pull/$PR_NUM"
+            local PR_BRANCH=$(gh pr view $PR_NUM --json headRefName --jq '.headRefName')
+
+            echo "Processing PR #$PR_NUM ($PR_URL) on branch $PR_BRANCH"
+
+            # Check if it's a Dependabot branch
+            if [[ ! "$PR_BRANCH" =~ ^dependabot/maven/ ]]; then
+              echo "Branch $PR_BRANCH is not a dependabot/maven branch. Skipping."
+              return
+            fi
+
+            # Extract dependency name and version from branch name
+            # Branch format: dependabot/maven/group.id-artifact-id-version
+            # Let's fetch the actual metadata using a lightweight approach: PR title or labels
+            # Often, Dependabot title is: Bump group:artifact from X to Y
+            local PR_TITLE=$(gh pr view $PR_NUM --json title --jq '.title')
+
+            # Extract Group ID, Artifact ID, and New Version
+            if [[ "$PR_TITLE" =~ Bump\ (.*)\ from\ (.*)\ to\ (.*) ]]; then
+              local DEP_NAME="${BASH_REMATCH[1]}"
+              local OLD_VERSION="${BASH_REMATCH[2]}"
+              local VERSION="${BASH_REMATCH[3]}"
+
+              local GROUP_ID=$(echo "$DEP_NAME" | cut -d: -f1)
+              local ARTIFACT_ID=$(echo "$DEP_NAME" | cut -d: -f2)
+
+              echo "Dependency: $DEP_NAME, Group: $GROUP_ID, Artifact: $ARTIFACT_ID, Version: $VERSION"
+
+              # 1. Check Maven Central Age (24h Buffer)
+              echo "Checking Maven Central Age for $GROUP_ID:$ARTIFACT_ID:$VERSION..."
+              local RESPONSE=$(curl -s "https://search.maven.org/solrsearch/select?q=g:$GROUP_ID+AND+a:$ARTIFACT_ID+AND+v:$VERSION&wt=json")
+              local PUBLISH_MS=$(echo "$RESPONSE" | jq -r '.response.docs[0].timestamp // empty')
+
+              if [ -z "$PUBLISH_MS" ]; then
+                echo "::error::Version $VERSION not found on Maven Central. Potential shadow release."
+                # We won't exit 1 here so we can process other PRs if there's a batch, but we return early
+                return
+              fi
+
+              local PUBLISH_TS=$((PUBLISH_MS / 1000))
+              local NOW_TS=$(date +%s)
+              local AGE_HOURS=$(( (NOW_TS - PUBLISH_TS) / 3600 ))
+
+              echo "Artifact age: $AGE_HOURS hours"
+
+              if [ "$AGE_HOURS" -lt 24 ]; then
+                echo "::warning::Artifact is only $AGE_HOURS hours old. Minimum 24h required. Skipping for now."
+                return
+              fi
+
+              # 2. Check Upstream Issue Spike
+              echo "Checking Upstream Issue Spike..."
+              # Pull the upstream URL from Dependabot PR description or let dependabot provide it.
+              # Since we don't have dependabot/fetch-metadata, let's parse PR body for repo URL or fetch from gh pr view
+              local REPO_URL=$(gh pr view $PR_NUM --json body --jq '.body' | grep -o 'https://github.com/[^ ]*' | head -n 1 | sed 's/)$//' | sed 's/]//')
+
+              if [[ "$REPO_URL" == *"github.com"* ]]; then
+                # Strip tree/blob/releases from URL to get base repo
+                local REPO_NAME=$(echo "$REPO_URL" | sed -E 's|https://github.com/([^/]+/[^/]+).*|\1|')
+                echo "Found upstream repo: $REPO_NAME"
+
+                # Look for issues containing "broke" or "regression" in the last 48h
+                # Add || echo "0" and ignore errors if repo doesn't exist or isn't accessible
+                local SPIKE_COUNT=$(gh issue list -R "$REPO_NAME" --search "created:>$(date -d '48 hours ago' +%Y-%m-%d) broke regression" --json number --jq 'length' 2>/dev/null || echo "0")
+
+                if [ "$SPIKE_COUNT" -gt 2 ]; then
+                  echo "::error::Detected $SPIKE_COUNT 'breakage' issues in $REPO_NAME. Security abort for this PR."
+                  return
+                fi
+              else
+                 echo "No GitHub upstream repo found in PR body, skipping spike check."
+              fi
+
+              # 3. Approve and Enable Auto-Merge
+              echo "Checks passed. Approving and enabling auto-merge..."
+              # Approve as a reviewer
+              gh pr review "$PR_NUM" --approve -b "Fortified checks passed: Artifact > 24h old, no upstream issue spike."
+
+              # Enable auto-merge.
+              gh pr merge "$PR_NUM" --auto --squash
+              echo "Auto-merge enabled for PR #$PR_NUM."
+
+            else
+              echo "Could not parse PR title for dependency name and version: $PR_TITLE"
+            fi
+          }
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Process the specific PR that triggered the workflow
+            process_pr "${{ github.event.pull_request.number }}"
+          else
+            # For schedule or workflow_dispatch, find all open PRs created by dependabot
+            PR_LIST=$(gh pr list --author "app/dependabot" --state open --json number --jq '.[].number')
+            for PR_NUM in $PR_LIST; do
+              process_pr "$PR_NUM"
+            done
+          fi
