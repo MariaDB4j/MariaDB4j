@@ -32,60 +32,82 @@ jobs:
 
             echo "Processing PR #$PR_NUM ($PR_URL) on branch $PR_BRANCH"
 
-            # Check if it's a Dependabot branch
-            if [[ ! "$PR_BRANCH" =~ ^dependabot/maven/ ]]; then
-              echo "Branch $PR_BRANCH is not a dependabot/maven branch. Skipping."
+            # Check if it's a Dependabot branch for maven or github_actions
+            if [[ ! "$PR_BRANCH" =~ ^dependabot/maven/ ]] && [[ ! "$PR_BRANCH" =~ ^dependabot/github_actions/ ]]; then
+              echo "Branch $PR_BRANCH is not a dependabot/maven or dependabot/github_actions branch. Skipping."
               return
             fi
 
-            # Extract dependency name and version from branch name
-            # Branch format: dependabot/maven/group.id-artifact-id-version
-            # Let's fetch the actual metadata using a lightweight approach: PR title or labels
-            # Often, Dependabot title is: Bump group:artifact from X to Y
+            # Extract dependency name and version from PR title
+            # Often, Dependabot title is: Bump group:artifact from X to Y or Bump actions/checkout from X to Y
             local PR_TITLE=$(gh pr view $PR_NUM --json title --jq '.title')
 
-            # Extract Group ID, Artifact ID, and New Version
+            # The regex handles both 'group:artifact' and 'action/name' without colons
             if [[ "$PR_TITLE" =~ Bump\ (.*)\ from\ (.*)\ to\ (.*) ]]; then
               local DEP_NAME="${BASH_REMATCH[1]}"
               local OLD_VERSION="${BASH_REMATCH[2]}"
               local VERSION="${BASH_REMATCH[3]}"
 
-              local GROUP_ID=$(echo "$DEP_NAME" | cut -d: -f1)
-              local ARTIFACT_ID=$(echo "$DEP_NAME" | cut -d: -f2)
+              echo "Dependency: $DEP_NAME, Version: $VERSION"
 
-              echo "Dependency: $DEP_NAME, Group: $GROUP_ID, Artifact: $ARTIFACT_ID, Version: $VERSION"
-
-              # 1. Check Maven Central Age (24h Buffer)
-              echo "Checking Maven Central Age for $GROUP_ID:$ARTIFACT_ID:$VERSION..."
-              local RESPONSE=$(curl -s "https://search.maven.org/solrsearch/select?q=g:$GROUP_ID+AND+a:$ARTIFACT_ID+AND+v:$VERSION&wt=json")
-              local PUBLISH_MS=$(echo "$RESPONSE" | jq -r '.response.docs[0].timestamp // empty')
-
-              if [ -z "$PUBLISH_MS" ]; then
-                echo "::error::Version $VERSION not found on Maven Central. Potential shadow release."
-                # We won't exit 1 here so we can process other PRs if there's a batch, but we return early
-                return
+              local IS_MAVEN=0
+              if [[ "$PR_BRANCH" =~ ^dependabot/maven/ ]]; then
+                IS_MAVEN=1
               fi
 
-              local PUBLISH_TS=$((PUBLISH_MS / 1000))
-              local NOW_TS=$(date +%s)
-              local AGE_HOURS=$(( (NOW_TS - PUBLISH_TS) / 3600 ))
+              if [ "$IS_MAVEN" -eq 1 ]; then
+                local GROUP_ID=$(echo "$DEP_NAME" | cut -d: -f1)
+                local ARTIFACT_ID=$(echo "$DEP_NAME" | cut -d: -f2)
 
-              echo "Artifact age: $AGE_HOURS hours"
+                echo "Group: $GROUP_ID, Artifact: $ARTIFACT_ID"
 
-              if [ "$AGE_HOURS" -lt 24 ]; then
-                echo "::warning::Artifact is only $AGE_HOURS hours old. Minimum 24h required. Skipping for now."
-                return
+                # If GROUP_ID equals ARTIFACT_ID, it's a property update, skip Maven age check
+                if [ "$GROUP_ID" != "$ARTIFACT_ID" ]; then
+                  # 1. Check Maven Central Age (24h Buffer) using HTTP Last-Modified header for reliability
+                  echo "Checking Maven Central Age for $GROUP_ID:$ARTIFACT_ID:$VERSION..."
+
+                  local GROUP_PATH=$(echo "$GROUP_ID" | tr '.' '/')
+                  local POM_URL="https://repo1.maven.org/maven2/$GROUP_PATH/$ARTIFACT_ID/$VERSION/$ARTIFACT_ID-$VERSION.pom"
+
+                  local LAST_MODIFIED=$(curl -sI "$POM_URL" | grep -i "^Last-Modified:" | sed -e 's/^Last-Modified: //i' | tr -d '\r')
+
+                  if [ -z "$LAST_MODIFIED" ]; then
+                    echo "::error::Version $VERSION not found on Maven Central or missing Last-Modified header. URL: $POM_URL"
+                    return
+                  fi
+
+                  local PUBLISH_TS=$(date -d "$LAST_MODIFIED" +%s)
+                  local NOW_TS=$(date +%s)
+                  local AGE_HOURS=$(( (NOW_TS - PUBLISH_TS) / 3600 ))
+
+                  echo "Artifact age: $AGE_HOURS hours"
+
+                  if [ "$AGE_HOURS" -lt 24 ]; then
+                    echo "::warning::Artifact is only $AGE_HOURS hours old. Minimum 24h required. Skipping for now."
+                    return
+                  fi
+                else
+                  echo "Property update detected ($GROUP_ID == $ARTIFACT_ID). Skipping Maven Central age check."
+                fi
+              else
+                 echo "GitHub Action dependency detected. Skipping Maven Central age check."
               fi
 
               # 2. Check Upstream Issue Spike
               echo "Checking Upstream Issue Spike..."
               # Pull the upstream URL from Dependabot PR description or let dependabot provide it.
-              # Since we don't have dependabot/fetch-metadata, let's parse PR body for repo URL or fetch from gh pr view
               local REPO_URL=$(gh pr view $PR_NUM --json body --jq '.body' | grep -o 'https://github.com/[^ ]*' | head -n 1 | sed 's/)$//' | sed 's/]//')
 
+              local REPO_NAME=""
               if [[ "$REPO_URL" == *"github.com"* ]]; then
                 # Strip tree/blob/releases from URL to get base repo
-                local REPO_NAME=$(echo "$REPO_URL" | sed -E 's|https://github.com/([^/]+/[^/]+).*|\1|')
+                REPO_NAME=$(echo "$REPO_URL" | sed -E 's|https://github.com/([^/]+/[^/]+).*|\1|')
+              elif [ "$IS_MAVEN" -eq 0 ]; then
+                # For Github Actions, the dependency name is often the repo name itself (e.g. actions/checkout)
+                REPO_NAME="$DEP_NAME"
+              fi
+
+              if [ -n "$REPO_NAME" ]; then
                 echo "Found upstream repo: $REPO_NAME"
 
                 # Look for issues containing "broke" or "regression" in the last 48h
@@ -97,13 +119,13 @@ jobs:
                   return
                 fi
               else
-                 echo "No GitHub upstream repo found in PR body, skipping spike check."
+                 echo "No GitHub upstream repo found, skipping spike check."
               fi
 
               # 3. Approve and Enable Auto-Merge
               echo "Checks passed. Approving and enabling auto-merge..."
               # Approve as a reviewer
-              gh pr review "$PR_NUM" --approve -b "Fortified checks passed: Artifact > 24h old, no upstream issue spike."
+              gh pr review "$PR_NUM" --approve -b "Fortified checks passed: >24h maturity (if applicable), no upstream issue spike."
 
               # Enable auto-merge.
               gh pr merge "$PR_NUM" --auto --squash
