@@ -56,13 +56,14 @@ jobs:
               fi
 
               if [ "$IS_MAVEN" -eq 1 ]; then
-                local GROUP_ID=$(echo "$DEP_NAME" | cut -d: -f1)
-                local ARTIFACT_ID=$(echo "$DEP_NAME" | cut -d: -f2)
+                # Only do the Maven Central age check when DEP_NAME is a real coordinate (contains ':').
+                # A plain word (no colon) means Dependabot is bumping a Maven property, not a versioned artifact.
+                if [[ "$DEP_NAME" == *":"* ]]; then
+                  local GROUP_ID=$(echo "$DEP_NAME" | cut -d: -f1)
+                  local ARTIFACT_ID=$(echo "$DEP_NAME" | cut -d: -f2)
 
-                echo "Group: $GROUP_ID, Artifact: $ARTIFACT_ID"
+                  echo "Group: $GROUP_ID, Artifact: $ARTIFACT_ID"
 
-                # If GROUP_ID equals ARTIFACT_ID, it's a property update, skip Maven age check
-                if [ "$GROUP_ID" != "$ARTIFACT_ID" ]; then
                   # 1. Check Maven Central Age (24h Buffer) using HTTP Last-Modified header for reliability
                   echo "Checking Maven Central Age for $GROUP_ID:$ARTIFACT_ID:$VERSION..."
 
@@ -87,7 +88,7 @@ jobs:
                     return
                   fi
                 else
-                  echo "Property update detected ($GROUP_ID == $ARTIFACT_ID). Skipping Maven Central age check."
+                  echo "Property update detected (no groupId:artifactId format in '$DEP_NAME'). Skipping Maven Central age check."
                 fi
               else
                  echo "GitHub Action dependency detected. Skipping Maven Central age check."
