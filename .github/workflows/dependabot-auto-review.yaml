@@ -48,7 +48,7 @@ jobs:
               local OLD_VERSION="${BASH_REMATCH[2]}"
               local VERSION="${BASH_REMATCH[3]}"
 
-              echo "Dependency: $DEP_NAME, Version: $VERSION"
+              echo "Dependency: $DEP_NAME, Old Version: $OLD_VERSION, New Version: $VERSION"
 
               local IS_MAVEN=0
               if [[ "$PR_BRANCH" =~ ^dependabot/maven/ ]]; then
