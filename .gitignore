@@ -7,6 +7,7 @@ target/
 .project
 .classpath
 .factorypath
+.direnv/
 .venv/
 
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
