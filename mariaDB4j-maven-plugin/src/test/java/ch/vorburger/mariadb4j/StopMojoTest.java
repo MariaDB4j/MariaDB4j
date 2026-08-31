@@ -41,8 +41,8 @@ import java.util.List;
 public class StopMojoTest {
 
     StopMojo stopMojo;
-    MockLog mockLog;
-    MockDB mockDb;
+    private MockLog mockLog;
+    private MockDB mockDb;
 
     @BeforeEach
     public void setUp() {

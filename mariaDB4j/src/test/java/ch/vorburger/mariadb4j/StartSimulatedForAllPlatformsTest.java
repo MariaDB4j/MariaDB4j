@@ -88,10 +88,10 @@ public class StartSimulatedForAllPlatformsTest {
 
     void checkManagedProcessExists(ManagedProcess proc) {
         File installProcFile = proc.getExecutableFile();
-        assertWithMessage("Does not exist: " + installProcFile)
+        assertWithMessage("Does not exist: %s", installProcFile)
                 .that(installProcFile.exists())
                 .isTrue();
-        assertWithMessage("Is not a File: " + installProcFile)
+        assertWithMessage("Is not a File: %s", installProcFile)
                 .that(installProcFile.isFile())
                 .isTrue();
     }
