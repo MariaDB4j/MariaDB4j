@@ -41,13 +41,8 @@ jobs:
           distribution: temurin
           java-version-file: .java-version
           cache: maven
-      # Build the new Windows 11.8.6 DB package (includes mysqladmin.exe for graceful shutdown)
-      # so it is available in the local Maven cache for the tests below.
-      - name: Build Windows MariaDB 11.8.6 DB package
-        run: ./mvnw --batch-mode -f DBs/mariaDB4j-db-11.8.6/mariaDB4j-db-winx64-11.8.6/pom.xml clean install
       # Run verify, not just package, to catch any failures of mariaDB4j-maven-plugin's integration test
       - run: ./mvnw --show-version --batch-mode --strict-checksums verify
-      # When contrib. new DB version, then ./mvnw -f DBs/pom.xml clean install
 
       # https://github.com/marketplace/actions/maven-dependency-tree-dependency-submission
       - name: Maven Dependency Tree Dependency Submission
