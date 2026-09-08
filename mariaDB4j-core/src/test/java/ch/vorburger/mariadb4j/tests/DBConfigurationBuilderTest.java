@@ -101,7 +101,7 @@ public class DBConfigurationBuilderTest {
     @Test
     public void tmpDirDoesNotIncludePortNumberEvenItsExplicitlySet() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        builder.setTmpDir("db/tmp");
+        builder.setTmpDir(new File("db/tmp"));
         DBConfiguration config = builder.build();
         File defaultTmpDir = config.getTmpDir();
         assertThat(Util.isTemporaryDirectory(defaultTmpDir)).isFalse();
@@ -112,14 +112,14 @@ public class DBConfigurationBuilderTest {
     @Test
     public void resetTmpDirToDefaultTemporary() {
         DBConfigurationBuilder builder = DBConfigurationBuilder.newBuilder();
-        builder.setTmpDir("db/tmp");
+        builder.setTmpDir(new File("db/tmp"));
         assertThat(builder.getTmpDir()).isEqualTo(new File("db/tmp"));
-        builder.setTmpDir(null);
-        assertThat(Util.isTemporaryDirectory(builder.getTmpDir())).isTrue();
         builder.setTmpDir(null);
         DBConfiguration config = builder.build();
         File defaultTmpDir = config.getTmpDir();
         assertThat(Util.isTemporaryDirectory(defaultTmpDir)).isTrue();
+        int port = config.getPort();
+        assertThat(defaultTmpDir.toString()).contains(Integer.toString(port));
     }
 
     @Test
