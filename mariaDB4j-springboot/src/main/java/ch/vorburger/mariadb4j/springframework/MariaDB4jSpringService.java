@@ -97,7 +97,7 @@ public class MariaDB4jSpringService implements Lifecycle {
 
     @Value("${" + MariaDB4jSpringService.TMP_DIR + ":NA}")
     public void setDefaultTmpDir(String tmpDir) {
-        if (!"NA".equals(tmpDir)) builder.setTmpDir(tmpDir);
+        if (!"NA".equals(tmpDir)) builder.setTmpDir(new File(tmpDir));
     }
 
     @Value("${" + MariaDB4jSpringService.BASE_DIR + ":NA}")
