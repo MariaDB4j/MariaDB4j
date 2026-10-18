@@ -19,7 +19,7 @@ The table below lists these required binaries along with their statically linked
 | *(Optional)* | `bin/mariadb-check` | 12 MB | Table maintenance and check utility |
 | *(Optional)* | `bin/resolveip` | 4.6 MB | Resolves hostnames to IP addresses |
 | `PrintDefaults` | `bin/my_print_defaults` | 4.5 MB | Reads configuration options / defaults |
-| `InstallDB` | `scripts/mariadb-install-db` | 23 KB | Shell script to initialize system database tables |
+| `InstallDB` | `bin/mariadb-install-db` *(also symlinked at `scripts/`)* | 23 KB | Shell script to initialize system database tables |
 | **Total** | | **~90 MB** *(~31 MB compressed `.tar.gz` with `share/`)* | Full standalone binary footprint |
 
 Everything else built by upstream MariaDB (e.g. `mariadb-backup` [29 MB], `aria_chk` [11 MB], `innochecksum` [4.8 MB], `wsrep_*`, test suites, and examples) is never used by MariaDB4j.
@@ -31,6 +31,10 @@ Everything else built by upstream MariaDB (e.g. `mariadb-backup` [29 MB], `aria_
 To build the static MariaDB server, client, and tools:
 
 ```bash
+# From repository root:
+nix build ./nix#mariadb-static
+
+# Or from inside the nix directory:
 cd nix
 nix build .#mariadb-static
 ```
