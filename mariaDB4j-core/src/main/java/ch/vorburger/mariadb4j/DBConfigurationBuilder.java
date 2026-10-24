@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
@@ -59,10 +60,6 @@ public class DBConfigurationBuilder {
     protected static final String LINUX = "linux";
     protected static final String OSX = "osx";
 
-    private static final String DEFAULT_DATA_DIR = "/data";
-
-    private static final String DEFAULT_TMP_DIR = "/tmp";
-
     private String databaseVersion = null;
 
     // All of the following are just the defaults, which can be overridden
@@ -72,11 +69,13 @@ public class DBConfigurationBuilder {
                 case MAC -> OSX;
                 case WINDOWS -> WINX64;
             };
-    protected File baseDir = new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/base");
-    protected File libDir = null;
 
-    protected File dataDir = new File(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_DATA_DIR);
-    protected File tmpDir = new File(SystemUtils.JAVA_IO_TMPDIR + DEFAULT_TMP_DIR);
+    protected File rootDir = new File(SystemUtils.JAVA_IO_TMPDIR);
+    protected File baseDir = null; // see _getBaseDir()
+    protected File libDir = null; // see _getLibDir()
+    protected File dataDir = null; // see _getDataDir()
+    protected File tmpDir = null; // see _getTmpDir()
+
     protected String socket = null; // see _getSocket()
     protected int port = 0;
     protected boolean isDeletingTemporaryBaseAndDataDirsOnShutdown = true;
@@ -98,6 +97,7 @@ public class DBConfigurationBuilder {
         DBConfigurationBuilder builder = new DBConfigurationBuilder();
         builder.databaseVersion = cloneFrom.databaseVersion;
         builder.osDirectoryName = cloneFrom.osDirectoryName;
+        builder.rootDir = cloneFrom.rootDir;
         builder.baseDir = cloneFrom.baseDir;
         builder.libDir = cloneFrom.libDir;
         builder.dataDir = cloneFrom.dataDir;
@@ -124,12 +124,18 @@ public class DBConfigurationBuilder {
         }
     }
 
-    public File getBaseDir() {
-        return baseDir;
+    public File getRootDir() {
+        return rootDir;
     }
 
-    public String path() {
-        return "MariaDB4j/" + java.util.UUID.randomUUID().toString() + "-" + port + "/";
+    public DBConfigurationBuilder setRootDir(File rootDir) {
+        checkIfFrozen("setRootDir");
+        this.rootDir = rootDir;
+        return this;
+    }
+
+    public File getBaseDir() {
+        return baseDir;
     }
 
     public DBConfigurationBuilder setBaseDir(File baseDir) {
@@ -139,9 +145,6 @@ public class DBConfigurationBuilder {
     }
 
     public File getLibDir() {
-        if (libDir == null) {
-            libDir = new File(baseDir + "/libs");
-        }
         return libDir;
     }
 
@@ -165,16 +168,9 @@ public class DBConfigurationBuilder {
         return tmpDir;
     }
 
-    public DBConfigurationBuilder setTmpDir(String tmpDir) {
+    public DBConfigurationBuilder setTmpDir(File tmpDir) {
         checkIfFrozen("setTmpDir");
-        this.tmpDir =
-                new File(
-                        (tmpDir == null)
-                                ? SystemUtils.JAVA_IO_TMPDIR
-                                        + File.separator
-                                        + path()
-                                        + DEFAULT_TMP_DIR
-                                : tmpDir);
+        this.tmpDir = tmpDir;
         return this;
     }
 
@@ -251,9 +247,8 @@ public class DBConfigurationBuilder {
     }
 
     public DBConfiguration build() {
-        if (dataDir == null || tmpDir == null) {
-            String p = SystemUtils.JAVA_IO_TMPDIR + "/" + path();
-            this.baseDir = new File(p + "/base");
+        if (rootDir == null) {
+            rootDir = new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/" + UUID.randomUUID() + "-" + _getPort());
         }
 
         frozen = true;
@@ -261,8 +256,9 @@ public class DBConfigurationBuilder {
                 _getPort(),
                 _getSocket(),
                 _getBinariesClassPathLocation(),
-                getBaseDir(),
-                getLibDir(),
+                getRootDir(),
+                _getBaseDir(),
+                _getLibDir(),
                 _getDataDir(),
                 _getTmpDir(),
                 isWindows(),
@@ -298,28 +294,30 @@ public class DBConfigurationBuilder {
         return this;
     }
 
+    protected File _getBaseDir() {
+        if (isNull(getBaseDir())) {
+            return new File(rootDir + "/MariaDB4j/base");
+        }
+        return getBaseDir();
+    }
+
+    protected File _getLibDir() {
+        if (isNull(getLibDir())) {
+            return new File(_getBaseDir() + "/libs");
+        }
+        return getLibDir();
+    }
+
     protected File _getDataDir() {
-        if (isNull(getDataDir())
-                || getDataDir().equals(new File(SystemUtils.JAVA_IO_TMPDIR, DEFAULT_DATA_DIR))) {
-            return new File(
-                    SystemUtils.JAVA_IO_TMPDIR
-                            + File.separator
-                            + DEFAULT_DATA_DIR
-                            + File.separator
-                            + _getPort());
+        if (isNull(getDataDir())) {
+            return new File(rootDir + "/data/" + _getPort());
         }
         return getDataDir();
     }
 
     protected File _getTmpDir() {
-        if (isNull(getTmpDir())
-                || getTmpDir().equals(new File(SystemUtils.JAVA_IO_TMPDIR, DEFAULT_TMP_DIR))) {
-            return new File(
-                    SystemUtils.JAVA_IO_TMPDIR
-                            + File.separator
-                            + DEFAULT_TMP_DIR
-                            + File.separator
-                            + getPort());
+        if (isNull(getTmpDir())) {
+            return new File(rootDir + "/tmp/" + _getPort());
         }
         return getTmpDir();
     }
@@ -340,9 +338,7 @@ public class DBConfigurationBuilder {
         String socket = getSocket();
         if (socket == null) {
             String portStr = String.valueOf(getPort());
-            // Use /tmp instead getBaseDir() here, else we too easily hit
-            // the "mysqld ERROR The socket file path is too long (> 107)" issue
-            socket = SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j." + portStr + ".sock";
+            socket = rootDir + "/MariaDB4j." + portStr + ".sock";
         }
         return socket;
     }
@@ -453,7 +449,7 @@ public class DBConfigurationBuilder {
 
     protected Map<Executable, Supplier<File>> _getExecutables() {
         executables.putIfAbsent(
-                PrintDefaults, () -> new File(baseDir, "bin/my_print_defaults" + getExtension()));
+                PrintDefaults, () -> new File(_getBaseDir(), "bin/my_print_defaults" + getExtension()));
 
         // See https://github.com/MariaDB4j/MariaDB4j/pull/1126/files#r2019771660
         //   re. why we're keeping mysql*.exe but not packaging mariadb*.exe ...
@@ -462,32 +458,33 @@ public class DBConfigurationBuilder {
                 Dump,
                 () ->
                         isWindows()
-                                ? new File(baseDir, "bin/mysqldump.exe")
-                                : new File(baseDir, "bin/mariadb-dump"));
+                                ? new File(_getBaseDir(), "bin/mysqldump.exe")
+                                : new File(_getBaseDir(), "bin/mariadb-dump"));
 
         executables.putIfAbsent(
                 Admin,
                 () ->
                         isWindows()
-                                ? new File(baseDir, "bin/mysqladmin.exe")
-                                : new File(baseDir, "bin/mariadb-admin"));
+                                ? new File(_getBaseDir(), "bin/mysqladmin.exe")
+                                : new File(_getBaseDir(), "bin/mariadb-admin"));
 
         String name = isWindows() ? "mysql" : "mariadb";
         executables.putIfAbsent(
-                Server, () -> new File(baseDir, "bin/" + name + "d" + getExtension()));
-        executables.putIfAbsent(Client, () -> new File(baseDir, "bin/" + name + getExtension()));
+                Server, () -> new File(_getBaseDir(), "bin/" + name + "d" + getExtension()));
+        executables.putIfAbsent(
+                Client, () -> new File(_getBaseDir(), "bin/" + name + getExtension()));
         executables.putIfAbsent(
                 InstallDB,
                 () -> {
                     // It's mysql_install_db.exe (but mariadb-install-db.exe - watch out!) on
                     // Windows...
-                    File bin = new File(baseDir, "bin/mariadb-install-db" + getExtension());
+                    File bin = new File(_getBaseDir(), "bin/mariadb-install-db" + getExtension());
                     if (bin.exists()) return bin;
 
-                    bin = new File(baseDir, "bin/mysql_install_db" + getExtension());
+                    bin = new File(_getBaseDir(), "bin/mysql_install_db" + getExtension());
                     if (bin.exists()) return bin;
 
-                    bin = new File(baseDir, "scripts/" + name + "-install-db" + getExtension());
+                    bin = new File(_getBaseDir(), "scripts/" + name + "-install-db" + getExtension());
                     if (bin.exists()) return bin;
 
                     throw new IllegalStateException("Could not find installDB tool...");

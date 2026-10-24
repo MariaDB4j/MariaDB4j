@@ -57,6 +57,14 @@ public interface DBConfiguration {
     String getBinariesClassPathLocation();
 
     /**
+     * Directory under which all other directories will be placed, unless they are explicitly
+     * overridden.
+     *
+     * @return returns root directory value
+     */
+    File getRootDir();
+
+    /**
      * Base directory where DB binaries are expected to be found.
      *
      * @return returns base directory value
@@ -138,6 +146,7 @@ public interface DBConfiguration {
         private final int port;
         private final String socket;
         private final String binariesClassPathLocation;
+        private final File rootDir;
         private final File baseDir;
         private final File libDir;
         private final File dataDir;
@@ -158,6 +167,7 @@ public interface DBConfiguration {
                 int port,
                 String socket,
                 String binariesClassPathLocation,
+                File rootDir,
                 File baseDir,
                 File libDir,
                 File dataDir,
@@ -174,6 +184,7 @@ public interface DBConfiguration {
             this.port = port;
             this.socket = socket;
             this.binariesClassPathLocation = binariesClassPathLocation;
+            this.rootDir = rootDir;
             this.baseDir = baseDir;
             this.libDir = libDir;
             this.dataDir = dataDir;
@@ -203,6 +214,11 @@ public interface DBConfiguration {
         @Override
         public String getBinariesClassPathLocation() {
             return binariesClassPathLocation;
+        }
+
+        @Override
+        public File getRootDir() {
+            return rootDir;
         }
 
         @Override
