@@ -526,7 +526,11 @@ public class DB {
      * @throws ch.vorburger.exec.ManagedProcessException if any.
      */
     public void createDB(String dbName) throws ManagedProcessException {
-        this.run("create database if not exists `" + dbName + "`;");
+        if (dbName == null || dbName.trim().isEmpty()) {
+            throw new IllegalArgumentException("dbName must not be blank");
+        }
+        String escapedDbName = dbName.replace("`", "``");
+        this.run("create database if not exists `" + escapedDbName + "`;");
     }
 
     /**
@@ -539,7 +543,11 @@ public class DB {
      */
     public void createDB(String dbName, String username, String password)
             throws ManagedProcessException {
-        this.run("create database if not exists `" + dbName + "`;", username, password);
+        if (dbName == null || dbName.trim().isEmpty()) {
+            throw new IllegalArgumentException("dbName must not be blank");
+        }
+        String escapedDbName = dbName.replace("`", "``");
+        this.run("create database if not exists `" + escapedDbName + "`;", username, password);
     }
 
     protected OutputStreamLogDispatcher getOutputStreamLogDispatcher(
